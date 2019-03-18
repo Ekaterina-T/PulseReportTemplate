@@ -11,12 +11,12 @@ class ListControlUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        var pageId = pageContext.Items['CurrentPageId'];
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         if(parameterName === 'p_Results_BreakBy') {
 
-            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_'+pageId, 'BreakByTimeUnits');
-            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_'+pageId, 'BreakVariables');
+            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
+            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakVariables');
 
             if(!breakByTimeUnits && breakBy && breakBy.length > 0) {
                 return false;
@@ -27,7 +27,7 @@ class ListControlUtil {
 
         if(parameterName === 'p_TimeUnitNoDefault') {
 
-            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_'+pageId, 'BreakByTimeUnits');
+            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
 
             if(!breakByTimeUnits) {
                 return true;
@@ -38,7 +38,7 @@ class ListControlUtil {
 
         if(parameterName === 'p_BenchmarkSet') {
 
-            if(!DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet')) {
+            if(!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) {
                 return true;
             } else {
                 return false;

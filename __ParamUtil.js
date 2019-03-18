@@ -15,7 +15,7 @@ class ParamUtil {
         'p_TimeUnitWithDefault':      { propertyName: 'TimeUnitsWithDefaultValue', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_TimeUnitNoDefault':        { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
 
-        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
+        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Result'},
         'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
         'p_Demographics':         { propertyName: 'DemographicsQuestions', type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
         'p_OpenTextQs':           { propertyName: 'Comments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
@@ -23,7 +23,7 @@ class ParamUtil {
         'p_TagQs':                { propertyName: 'TagsForComments',       type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
         'p_TrendQs':              { propertyName: 'TrendQuestions' ,       type: 'QuestionList', locationType: 'Page', page: 'Page_Trends'},
 
-        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'}
+        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Result'}
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens

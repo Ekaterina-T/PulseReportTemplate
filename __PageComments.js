@@ -62,12 +62,13 @@ class PageComments {
     static function hitlistComments_Render(context){
 
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         Hitlist.AddColumnsByParameter(context, "p_OpenTextQs", {sortable: true, searchable: false});
         Hitlist.AddColumnsByParameter(context, "p_ScoreQs", {sortable: true, searchable: false});
         Hitlist.AddColumnsByParameter(context, "p_TagQs", {sortable: false, searchable: false});
 
-        var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_Comments', 'staticColumns');
+        var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }

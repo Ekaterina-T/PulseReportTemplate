@@ -64,15 +64,16 @@ class PageCategorical {
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var project : Project = DataSourceUtil.getProject(context);
 
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, "Page_Categorical", questionConfigParamName);
-        var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, "Page_Categorical", "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, "Page_Categorical", "topN_single");
-        var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, "Page_Categorical", "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
+        var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
+        var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
 
         for (var i=0; i<Qs.length; i++) {
 
@@ -172,18 +173,19 @@ class PageCategorical {
         var state = context.state;
         var table = context.table;
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // depending on <answerLimit> display a pie or list of topN answers
-        var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, "Page_Categorical", "categoricalAnswerLimit");
+        var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "categoricalAnswerLimit");
 
         // show topN answers in a list for questions with more than <answerLimit> options
-        var topN = (tableType=='multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, "Page_Categorical", "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, "Page_Categorical", "topN_single");
+        var topN = (tableType=='multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
 
         var project : Project = DataSourceUtil.getProject(context);
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
         var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, "Page_Categorical", questionConfigParamName);
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
 
         var row_index = 0;  // iterator through table rows
         var categoricals = [];

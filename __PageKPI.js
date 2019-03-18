@@ -46,9 +46,10 @@ class PageKPI {
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
         var row : HeaderQuestion = new HeaderQuestion(qe);
         row.IsCollapsed = true;
@@ -110,9 +111,10 @@ class PageKPI {
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
 
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
         var row: HeaderQuestion = new HeaderQuestion(qe);
@@ -186,8 +188,9 @@ class PageKPI {
         var state = context.state;
         var log = context.log;
         var verbatimTable = context.component;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPIComment');
+        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
         verbatimTable.QuestionnaireElement = qe;
 
@@ -209,15 +212,16 @@ class PageKPI {
         var report = context.report;
         var state = context.state;
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
         var result = {title: QuestionUtil.getQuestionTitle (context, Q), score: 'N/A', color: Config.primaryGreyColor};
 
         if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI",1).length) {
             var cell : Datapoint = report.TableUtils.GetCellValue("KPI:KPI",1,1);
             if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
                 result.score = parseFloat(cell.Value.toFixed(Config.Decimal));
-                var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPIthreshold');
+                var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
                 for (var i=0; i<thresholds.length; i++) {
                     if (result.score >= thresholds[i].score) {
                         result.color =  thresholds[i].color;
@@ -244,9 +248,10 @@ class PageKPI {
         var report = context.report;
         var state = context.state;
         var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = open text question
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPIComment');
+        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
         var row : HeaderQuestion = new HeaderQuestion(qe);
         row.IsCollapsed = true;
@@ -259,16 +264,3 @@ class PageKPI {
     }
 
 }
-
-/* Привет!
-
-Вспомнила такое: Эннова на резалтс странице хотели отключать RemoveEmptyHeaders, чтобы видеть все доступные вопросы, даже если там нет данных.
-В связи с этим была проблема при BreakBy по тайм юнитам. Хэдер показывал месяца и пр., который выходили за выбранный период, т.к. к хэдеру ограничение не применялось.
-Поэтому я добавляла скриптик, кот. явно прописывал старт и энд даты у дэйт хэдера.
-И тут тоже добавила в класс DateUtil. Его по идее и для фильтров можно юзать.
-На резалтсах я его прикрутила, а в других таблицах не стала. Как думаешь, впилить сразу или подождать?
-
-Чего-то ощущение, что мы студию пишем...
-Надо определиться, где проходит граница темплэйта и кастомизации.
-В принципе, после вызова теплэйтной функции, всегда можно сверху ещё дописать настроек))) Табличных по крайней мере.
-*/

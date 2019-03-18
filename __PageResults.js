@@ -40,8 +40,9 @@ class PageResults {
         var state = context.state;
         var table = context.table;
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'hasBenchmarks')) {
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'hasBenchmarks')) {
 
             tableStatements_AddRows(context);
             tableBenchmarks_AddColumns_Banner0(context);
@@ -60,7 +61,10 @@ class PageResults {
      */
 
     static function tableStatements_AddColumns(context, bannerId) {
-        var log = context.log;
+
+        var log = context.log;log.LogDebug('ghgh')
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
         if(bannerId === '0') {
             tableStatements_AddColumns_Banner0(context);
             return;
@@ -71,12 +75,12 @@ class PageResults {
             return;
         }
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'ResultStatements')) { // for not pulse
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements')) { // for not pulse
             tableStatements_AddColumns_Banner0(context);
             return;
         }
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'Dimensions')) { // for pulse
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')) { // for pulse
             tableStatements_AddColumns_Banner1(context);
             return;
         }
@@ -90,10 +94,12 @@ class PageResults {
 
     static function tableStatements_AddRows(context) {
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'ResultStatements')) {
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements')) {
 
             tableStatements_AddRows_Banner0(context);
-        } else if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'Dimensions')) {
+        } else if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')) {
 
             tableStatements_AddRows_Banner1(context);
         }
@@ -111,6 +117,7 @@ class PageResults {
         var state = context.state;
         var table = context.table;
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
         var responses: HeaderBase = new HeaderBase();
@@ -120,9 +127,9 @@ class PageResults {
 
         var benchmarks: HeaderBenchmark = new HeaderBenchmark();
 
-        benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkProject');
+        benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet')) {// there's benchmark set
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) {// there's benchmark set
 
             var selectedBMSet = ParamUtil.GetSelectedCodes(context, 'p_BenchmarkSet'); // can be only one option
             benchmarks.BenchmarkSet = selectedBMSet[0];
@@ -431,7 +438,9 @@ class PageResults {
 
     static function isBenchmarkAvailable(context) {
 
-        if(!DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'hasBenchmarks')) {
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        if(!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'hasBenchmarks')) {
             return false;
         }
 
@@ -447,7 +456,7 @@ class PageResults {
     }
 
     /*
-     * Add categorizations as table rows based on Survey Config-> Page_Results-> Dimensions property
+     * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
 
@@ -456,7 +465,7 @@ class PageResults {
         var state = context.state;
         var table = context.table;
         var log = context.log;
-        var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'ResultStatements');
+        var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'ResultStatements');
 
         for(var i=0; i<questions.length; i++) {
             var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, questions[i]);
@@ -468,7 +477,7 @@ class PageResults {
     }
 
     /*
-     * Add statement questions as table rows based on Survey Config-> Page_Results-> ResultStatements
+     * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
 
@@ -478,8 +487,9 @@ class PageResults {
         var state = context.state;
         var table = context.table;
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var categorizations = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'Dimensions');
+        var categorizations = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var hideDimensionResults = state.Parameters.GetString('p_Results_TableTabSwitcher')==='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
@@ -518,8 +528,9 @@ class PageResults {
     static function addNestedHeader(context, parentHeader) {
 
         var log = context.log;
-        var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakByTimeUnits');
-        var breakVariables = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
+        var breakVariables = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakVariables');
         var breakByParameter = null;
         var nestedHeader: HeaderQuestion;
         var questionElem: QuestionnaireElement;
@@ -631,8 +642,6 @@ class PageResults {
 
 
 /* ------------------ COMMENTS
-
-# line 170, 316: what's the reason for declaring variable 'i' outside the loop? )
 
 # line 191-193: shouldn't the null check be first? and then getting the parameter value? or maybe even use paramUtil.GetSelectedCodes ?
 

@@ -10,9 +10,17 @@ class PageUtil {
 
         var state = context.state;
         var page = context.page;
+        var log = context.log;
         var pageContext = context.pageContext;
 
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
+
+        // if in current DS a page shouldn't be visible, than redirect to default page
+        // very actual when 1st report page should be visible
+        if(!isPageVisible(context)) {
+            page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
+            return;
+        }
 
         ParamUtil.Initialise(context); // initialise parameters
 
@@ -45,11 +53,9 @@ class PageUtil {
 
         for(var property in surveyProperties) {
             if(property.indexOf('Page_')===0) { //page config
+
                 var isHidden = false;
                 isHidden = DataSourceUtil.getPagePropertyValueFromConfig(context, property, 'isHidden');
-
-                log.LogDebug('property='+property+'; isHidden='+isHidden)
-
                 if(!isHidden) {
                     pagesToShow.push(TextAndParameterUtil.getTextTranslationByKey(context, property));
                 }
@@ -96,4 +102,14 @@ class PageUtil {
         return false;
     }
 
+    /*
+     * Get property name for page config
+     * @param {object} context object {state: state, report: report, log: log, pageContext: pageContext}
+     * @returns {string} 'Page_'+pageId
+     */
+    static function getCurrentPageIdInConfig (context) {
+
+        var pageContext = context.pageContext;
+        return 'Page_'+pageContext.Items['CurrentPageId'];
+    }
 }
