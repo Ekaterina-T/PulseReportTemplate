@@ -206,5 +206,4 @@ class Filters {
         return expression.join(' AND ');
     }
 
-
-}benchmarkset
+}
