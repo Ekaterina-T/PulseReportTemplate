@@ -17,9 +17,29 @@ class TextAndParameterUtil {
         return setOfLabelsAndCodes;
     }
 
+
+    /*
+     * Get all properties for the selected parameter value
+     * @param {string} parameterName - the name of the report parameter
+     * @param {string} parameterValue - the selected answer code of the report parameter
+     * @returns {object} - object containing Code, Label and other properties, e.g. TimeUnit
+     */
+    static function getInfoByParameterValue(parameterName, parameterValue) {
+
+        var configParamName = ParamUtil.reportParameterValuesMap[parameterName];
+        var domainParamValues = getParameterValuesByKey(configParamName);
+
+        for (var i=0; i< domainParamValues.length; i++) {
+            if (domainParamValues[i].Code === parameterValue) {
+                return domainParamValues[i];
+            }
+        }
+    }
+
+
     /*
      * Get translation for text by key
-     * @param {object} context {state: stae, report: report, log: log}
+     * @param {object} context {state: state, report: report, log: log}
      * @param {string} keyName
      * @returns {object} property value
      */
@@ -27,27 +47,50 @@ class TextAndParameterUtil {
     static function getTextTranslationByKey(context, keyName) {
 
         var report = context.report;
+        var log = context.log;
         var currentLanguage = report.CurrentLanguage;
-        var translation = TextAndParameterLibrary.TextLibrary[keyName][currentLanguage];
+        var translation = TextAndParameterLibrary.TextLibrary[keyName];
+
+        if(translation != null) {
+            translation = translation[currentLanguage];
+        }
 
         if(translation == null) {
-            throw new Error('TextAndParameterTextLibrary.getParameterValuesByKey: No translation for '+keyName+' for language "'+currentLanguage+'" were found');
+            throw new Error('TextAndParameterTextLibrary.getParameterValuesByKey: No translation for '+keyName+' for language "'+currentLanguage+'" was found');
         }
 
         return translation;
     }
 
+
     /*
-     * Get defaultCode for parameter
+     * Get Multilingual label by key
+     * @param {object} context {state: stae, report: report, log: log}
      * @param {string} keyName
-     * @returns {string} defaultCode value
+     * @returns {Label} - Multilingual label
      */
+    static function getLabelByKey(context, keyName) {
 
-    static function getDefaultParameterCodeByKey(keyName) {
+        var report = context.report;
+        var log = context.log;
 
-        var defaultCode = TextAndParameterLibrary.ParameterValuesLibrary[keyName][0].Code;
-
-        return defaultCode;
+        var translation = getTextTranslationByKey(context, keyName);
+        return new Label(report.CurrentLanguage, translation);
     }
+
+    /*
+     * Set Multilingual label for Text Component by its name
+     * @param {object} context {state: state, report: report, log: log, text: text}
+     */
+    static function displayLabelByTextName(context) {
+
+        var report = context.report;
+        var log = context.log;
+        var text = context.text;
+
+        text.Output.Append(getTextTranslationByKey(context, text.Name));
+
+    }
+
 
 }

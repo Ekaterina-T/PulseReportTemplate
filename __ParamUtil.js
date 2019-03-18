@@ -2,22 +2,35 @@ class ParamUtil {
 
     /*
      * Object with resources (values) for parameters.
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * - propertyName: name of property (the lowest level of the path so to say) that keeps the value
+     * - type (type of data): StaticArrayofObjects (static array text values in format {Code: code, Label: label}), QuestionList (array of question ids), QuestionId (sring with questionId)
+     * - locationType (where data is stored): TextAndParameterLibrary (as is), Page (in page property), Survey (in survey property), Report (general report property in Config)
+     * - page: when locationType is 'Page' this property specifies pageId
      */
 
-    static var reportParameterValues = {
-        'p_Results_CountsPercents' : 'Distribution',
-        'p_Results_TableTabSwitcher' : 'ResultsTabSwitcher',
-        'p_TimePeriod' : 'TimePeriods',
-        'p_TimeUnit' : 'TimeUnits',
+    static var reportParameterValuesMap = {
+        'p_Results_CountsPercents':   { propertyName: 'Distribution',              type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_Results_TableTabSwitcher': { propertyName: 'ResultsTabSwitcher',        type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_TimePeriod':               { propertyName: 'TimePeriods',               type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_TimeUnitWithDefault':      { propertyName: 'TimeUnitsWithDefaultValue', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_TimeUnitNoDefault':        { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
 
-        'p_BreakBy' : 'BreakVariables',
-        'p_Demographics' : 'DemographicsQuestions',
-        'p_OpenTextQs' : 'Comments',
-        'p_ScoreQs' : 'ScoresForComments',
-        'p_TagQs' : 'TagsForComments',
-        'p_TrendQs' : 'TrendQuestions'
+        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
+        'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
+        'p_Demographics':         { propertyName: 'DemographicsQuestions', type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
+        'p_OpenTextQs':           { propertyName: 'Comments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_ScoreQs':              { propertyName: 'ScoresForComments',     type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_TagQs':                { propertyName: 'TagsForComments',       type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_TrendQs':              { propertyName: 'TrendQuestions' ,       type: 'QuestionList', locationType: 'Page', page: 'Page_Trends'},
+
+        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'}
     };
+
+    // mandatory parameters can be single or multi. Must have default value when a page opens
+    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_ScoreQs', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet'];
+
+    // optional parameters are usually multiple. Can be empty by default
+    static var optionalPageParameters = ['p_TagQs', 'p_TimeUnitNoDefault'];
 
 
     /*
@@ -33,7 +46,7 @@ class ParamUtil {
 
         for (var i=0; i<surveys.length; i++) {
 
-            if(!surveys[i].ifHide) {
+            if(!surveys[i].isHidden) {
                 var val : ParameterValueProject = new ParameterValueProject();
                 val.ProjectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, surveys[i].Source);
                 parameter.Items.Add(val);
@@ -71,65 +84,108 @@ class ParamUtil {
     }
 
     /*
-     * Adding values to string response parameter with options from a question's answers
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     * @param {string} parameterResource - list of questions from survey's Config property
+     * This function returns parameter options in standardised format.
+     * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
+     * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
+     * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
 
-    static function LoadParameter_QuestionSelector (context, parameterResource)  {
-
-        var report = context.report;
-        var state = context.state;
-        var parameter = context.parameter;
-        var log = context.log;
-
-        var i;
-
-        for (i=0; i<parameterResource.length; i++) {
-
-            var parameterValue : ParameterValueResponse = new ParameterValueResponse();
-            var qId = parameterResource[i];
-            var qText = QuestionUtil.getQuestionTitle(context, qId);
-
-            parameterValue.StringKeyValue = qId;
-            parameterValue.StringValue = qText;
-            parameter.Items.Add(parameterValue);
-        }
-
-        return;
-    }
-
-    /*
-     * Adding values to single response parameter based on static list from TextAndParameterLibrary.
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     * @param {array} parameterResource is an array of objects like this: { Code:'P', Label: { en: 'Percent', no: 'Prosent' }}
-     */
-
-    static function LoadParameter_StaticPredefinedValues (context, parameterResource)  {
+    static function GetParameterOptions (context, parameterName) {
 
         var state = context.state;
         var report = context.report;
-        var parameter = context.parameter;
         var log = context.log;
+        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var parameterResource = reportParameterValuesMap[parameterId]; //where to take parameter values from
+        var propertyValue;
+        var parameterOptions = [];
         var language = report.CurrentLanguage;
         var i;
 
-        for(i=0; i<parameterResource.length; i++) {
-
-            var parameterValue : ParameterValueResponse = new ParameterValueResponse();
-            var code = parameterResource[i].Code;
-            var label = parameterResource[i].Label[language];
-
-            if(label == null) {
-                throw new Error('ParamUtil.LoadParameter_StaticPredefinedValues: no label for code "'+code+'" and language "'+language+'" was found.');
-            }
-
-            parameterValue.StringKeyValue = code;
-            parameterValue.StringValue = label;
-            parameter.Items.Add(parameterValue);
+        if(!parameterResource) {
+            throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
         }
 
-        return;
+        // fetch propertyValue and then transform into needed format
+        // locationType will tell where to fetch value from
+
+        if(parameterResource.locationType === 'TextAndParameterLibrary') {
+
+            propertyValue = TextAndParameterLibrary.ParameterValuesLibrary[parameterResource.propertyName]; // return value as is
+        } else if(parameterResource.locationType === 'Page') {
+
+            propertyValue = DataSourceUtil.getPagePropertyValueFromConfig (context, parameterResource.page, parameterResource.propertyName); // static array, qid array, qid
+        }
+
+        if(!propertyValue) {
+            return null; //[];
+        }
+
+        // type will tell how to handle it; by that moment propertyValue must be defined
+
+        // static arrays with predefined options
+        if(parameterResource.type === 'StaticArrayofObjects') {
+
+            for(i=0; i<propertyValue.length; i++) {
+
+                var option = {};  // {Code:'', Label: ''}
+
+                for(var prop in propertyValue[i]) {
+                    if(prop !== 'Label') {
+                        option[prop] = propertyValue[i][prop];
+                    } else {
+                        option[prop] = propertyValue[i][prop][language];
+                    }
+                }
+
+                parameterOptions.push(option);
+            }
+
+            return parameterOptions;
+        }
+
+        // propertyValue is list of question ids, i.e. populate question selector
+        if(parameterResource.type === 'QuestionList') {
+
+            if(!propertyValue instanceof Array) {
+
+                throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
+            }
+
+            for(i=0; i<propertyValue.length; i++) {
+
+                var option = {};
+                option.Code = propertyValue[i]; // propertyValue[i] is qid in this case
+                option.Label = QuestionUtil.getQuestionTitle(context, propertyValue[i]);
+                parameterOptions.push(option);
+            }
+
+            return parameterOptions;
+        }
+
+        // propertyValue is questionId
+        if(parameterResource.type === 'QuestionAnswers') {
+
+            var answers: Answer[];
+
+            try {
+                answers = QuestionUtil.getQuestionAnswers(context, propertyValue);
+            } catch(e) {
+                throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, '+e.Message);
+            }
+
+            for(i=0; i<answers.length; i++) {
+
+                var option = {};
+                option.Code = answers[i].Precode;
+                option.Label = answers[i].Text;
+                parameterOptions.push(option);
+            }
+
+            return parameterOptions;
+        }
+
+        throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
     }
 
 
@@ -137,39 +193,36 @@ class ParamUtil {
      * Adding values to single response parameter
      * @param {object} context - contains Reportal scripting state, log, report, parameter objects
      */
-
     static function LoadParameter (context) {
 
-        var state = context.state;
         var parameter = context.parameter;
         var log = context.log;
-        var parameterReference = reportParameterValues[parameter.ParameterId];
-        var parameterType;
-        var parameterResource;
+        var parameterOptions = GetParameterOptions(context); // get options
 
-        if(parameterReference == null) {
-            throw new Error ('ParamUtil.LoadParameter: No parameterReferense was found for "'+parameter.ParameterId+'".')
-        }
+        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
-        if(TextAndParameterLibrary.ParameterValuesLibrary.hasOwnProperty(parameterReference)) {
-            parameterType = 'staticList';
-        } else {
-            parameterType = 'questionSelector';
-        }
-
-        if(parameterType === 'questionSelector') {
-
-            parameterResource = DataSourceUtil.getPropertyValueFromConfig(context, parameterReference);
-            LoadParameter_QuestionSelector(context, parameterResource);
-
-        } else if (parameterType === 'staticList') {
-
-            parameterResource = TextAndParameterUtil.getParameterValuesByKey(parameterReference); // array of option objects
-            LoadParameter_StaticPredefinedValues(context, parameterResource);
-
+            var val = new ParameterValueResponse();
+            val.StringKeyValue = parameterOptions[i].Code;
+            val.StringValue = parameterOptions[i].Label;
+            parameter.Items.Add(val);
         }
 
         return;
+    }
+
+    /*
+     * Get defaultParameterValue for parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * @param {string} parameterName
+     * @returns {object} default value
+     */
+
+    static function getDefaultParameterValue(context, parameterName) {
+
+        var log = context.log;
+        var parameterOptions = GetParameterOptions(context, parameterName); // get all options
+
+        return parameterOptions ? parameterOptions[0].Code : null; // return the 1st option
     }
 
     /*
@@ -205,95 +258,111 @@ class ParamUtil {
         var report = context.report;
         var page = context.page;
         var log = context.log;
-
-        var pageLevelParameters = ['p_ScoreQs', 'p_OpenTextQs', 'p_TagQs', 'p_TrendQs', 'p_Demographics'];
-        var filterParameters = ['p_TimeUnit', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics'];
         var i;
 
-        // reset parameters if a page refreshes when switching the surveys
-        if (page.SubmitSource == 'p_SurveyType') {
-
-            ResetParameters(context, pageLevelParameters);
+        // reset all parameters if a page refreshes when switching the surveys
+        if (page.SubmitSource === 'surveyType') {
+            ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
-
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        // set default values for mandotary page parameters
+        // set default values for mandatory page parameters
+        for(i=0; i<mandatoryPageParameters.length; i++) {
 
-        for(i=0; i<filterParameters; i++) {
-            if (state.Parameters.IsNull(filterParameters[i])){ // safety check: set default value if not defined
+            if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
-                var keyName = reportParameterValues[filterParameters[i]];
-                state.Parameters[filterParameters[i]] = new ParameterValueResponse(TextAndParameterUtil.getDefaultParameterCodeByKey(keyName));
+                var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
 
+                if(!defaultParameterValue) {//parameter is not defined for this DS
+                    break;
+                }
+
+                // We can't get the type of parameter (single or multi) before its initialisation.
+                // So firstly check if it supports ParameterValueMultiSelect options
+                try {
+                    var valArr = [new ParameterValueResponse(defaultParameterValue)];
+                    var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+                    state.Parameters[mandatoryPageParameters[i]] = multiResponse;
+                }
+                    //if not, set it as single select parameter
+                catch (e) {
+                    state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
+                }
             }
         }
+
     }
 
+    /*
+     * Get selected answer codes of the report parameter (single or multi response)
+     * @param {Object} context  - object {state: state, log: log}
+     * @param {String} parameterName - the name of the report parameter
+     * @returns {Array} - list of selected answer codes
+    */
 
-
-    //-----------------------------------------------------------------------------------
-    // Summary:
-    // GetParamCode is used to get the current code value of a given string response parameter
-    // where the string response parameter has an associated list of selectable items.
-    //
-    // Parameter inputs:
-    //   * context - contains Reportal scripting state object.
-    //   * parameterName - The name of the string response parameter to get the value from.
-    // Returns:
-    //   * The string code value of the given parameter. If the parameter does not have a string
-    //     code value null is returned.
-    //
-    static function GetParamCode (context, parameterName) {
+    static function GetSelectedCodes (context, parameterName) {
         var state = context.state;
+        var log = context.log;
+
         if (state.Parameters.IsNull(parameterName))
-            return null;
-        var pvr : ParameterValueResponse = state.Parameters[parameterName];
-        if (pvr.StringKeyValue != null && pvr.StringKeyValue !='')
-            return pvr.StringKeyValue;
-        return state.Parameters.GetString(parameterName);
+            return [];
 
-    }
+        try {
+            var param = state.Parameters[parameterName];
 
-    static function Selected(context, parameterName, configParameterName)  {
-        var Log = context.log;
-        var field : System.Reflection.FieldInfo = Config.GetField(configParameterName);
-        var paramValues = field.GetValue(Config);
-        var currentCode = GetParamCode(context, parameterName);
-        for(var i = 0; i < paramValues.length; i++)
-        {
-            if(paramValues[i].Code == currentCode) {
-                return paramValues[i];
+            // single select parameter
+            if (param instanceof ParameterValueResponse) {
+                return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
+
+            // multi-select response
+            if (param instanceof ParameterValueMultiSelect) {
+                var selectedCodes = [];
+                for (var i=0; i<param.Count; i++) {
+                    var response : ParameterValueResponse = param[i];
+                    selectedCodes.push(response.StringValue || response.StringKeyValue);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can extracted via StringValue
+                }
+                return selectedCodes;
+            }
+
+        }
+        catch (e) {
+            throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
         }
     }
 
 
-    /**
-     * show break by value in pdf export
-     * (dropdowns are not rendered in pdf exports)
-     */
+    /* TO REVIEW */
+    /*
+    * Get full info about selected answers of the report parameter (single or multi response)
+    * @param {Object} context  - object {state: state, log: log}
+    * @param {String} parameterName - the name of the report parameter
+    * @returns {Array} - list of objects with all parameter properties Code, Label, TimeUnit, etc.
+    */
 
-    static function breakByLabelForPdfExport (state, paramName){
+    static function GetSelectedOptions (context, parameterName) {
 
-        var str = 'Break by: ';
+        var log = context.log;
+        var selectedCodes = GetSelectedCodes (context, parameterName);
+        var parameterOptions = GetParameterOptions( context, parameterName);
+        var selectedOptions = [];
 
-        if (state.ReportExecutionMode == ReportExecutionMode.PdfExport) {
-
-            if (state.Parameters.IsNull(paramName)) {
-                str+='none';
-            } else {
-                var selectedOption : ParameterValueResponse = state.Parameters[paramName];
-                str+= selectedOption.DisplayValue;
+        for (var i=0; i<selectedCodes.length; i++) {
+            for (var j=0; j<parameterOptions.length; j++) {
+                if (selectedCodes[i] === parameterOptions[j].Code) {
+                    selectedOptions.push(parameterOptions[j]);
+                    break;
+                }
             }
         }
 
-        return str;
+        return selectedOptions;
     }
+
 }

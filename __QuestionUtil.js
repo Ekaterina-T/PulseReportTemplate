@@ -5,9 +5,10 @@ class QuestionUtil {
      * - Type: general, singleFromGrid, otherOpenText.
      * - Question Id
      * - Precode for single from grid and other
+     * - QuestionnaireElement for this qid
      * @param {object} context object {state: state, report: report, log: log}
      * @param {string} questionId
-     * @returns {object} questionInfo { type: string, qid: string, precode: string }
+     * @returns {object} questionInfo { type: string, qid: string, precode: string}
      */
 
     static function getQuestionInfo (context, questionId) {
@@ -16,29 +17,27 @@ class QuestionUtil {
         var project : Project = DataSourceUtil.getProject(context);
         var question : Question = project.GetQuestion(questionId);
         var questionInfo = {};
+        var splittedQuestionId;
 
         if(question!=null) { // single, multi, open, numeric, grid itself, open text list, numeric list
 
             questionInfo.type = 'general';
             questionInfo.questionId = questionId;
 
-        } else if(questionId.lastIndexOf('_other') == questionId.length - '_other'.length) { // other option of single or multi
+        } else if(questionId.slice(-6) === '.other') { // other option of single or multi
 
-            var splittedQuestionId = splitStringByLastUndersore(questionId.substr(0,questionId.lastIndexOf('_other')));
+            splittedQuestionId = splitStringByLastPoint(questionId.substr(0,questionId.lastIndexOf('.other')));
 
             questionInfo.type = 'otherOpenText';
-            questionInfo.questionId = splittedQuestionId.beforeUnderscore;
-            questionInfo.precode = splittedQuestionId.afterUnderscore;
+            questionInfo.questionId = splittedQuestionId.beforeLastPoint;
+            questionInfo.precode = splittedQuestionId.afterLastPoint;
 
-        } else { //check if it's single from grid, open text list or numeric list
+        } else if(questionId.indexOf('.')>-1) { //check if it's single from grid, open text list or numeric list
 
-            var splittedQuestionId = splitStringByLastUndersore(questionId);
-
-            questionInfo.questionId = splittedQuestionId.beforeUnderscore;
-            questionInfo.precode = splittedQuestionId.afterUnderscore;
-
+            splittedQuestionId = splitStringByLastPoint(questionId);
+            questionInfo.questionId = splittedQuestionId.beforeLastPoint;
+            questionInfo.precode = splittedQuestionId.afterLastPoint;
             var q : Question = project.GetQuestion(questionInfo.questionId);
-
             if(q.QuestionType == QuestionType.Grid) {
                 questionInfo.type = 'singleFromGrid';
             } else if(q.QuestionType == QuestionType.MultiNumeric) {
@@ -46,26 +45,41 @@ class QuestionUtil {
             } else if(q.QuestionType == QuestionType.MultiOpen) {
                 questionInfo.type = 'openFromList';
             }
-
-        }
-
-        // last verification if question really exists
-
-        var qe: QuestionnaireElement;
-
-        if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
-            qe = project.CreateQuestionnaireElement(questionInfo.questionId);
-        } else if (questionInfo.type == 'singleFromGrid' || questionInfo.type == 'numericFromList' || questionInfo.type == 'openFromList') {
-            qe = project.CreateQuestionnaireElement(questionInfo.questionId, questionInfo.precode);
-        } else if (questionInfo.type == 'otherOpenText') {
-            qe = project.CreateQuestionnaireElement(questionInfo.questionId, questionInfo.precode, true);
-        }
-
-        if(project.GetQuestion(qe) == null) { // caution: it doesn't catch all invalid question ids
+        } else { // question is not found
             throw new Error('QuestionUtil.questionInfo: Question "'+questionId+'" is not found');
         }
 
         return questionInfo;
+    }
+
+    /*
+     * Get Questionnaire Element.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} questionId
+     * @returns {QuestionnaireElement} qe
+     */
+
+    static function getQuestionnaireElement(context, questionId) {
+
+        var log = context.log;
+        var questionInfo =  getQuestionInfo (context, questionId);
+        var project : Project = DataSourceUtil.getProject(context);
+
+        var qe: QuestionnaireElement;
+
+        if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
+            return project.CreateQuestionnaireElement(questionInfo.questionId);
+        }
+
+        if (questionInfo.type == 'singleFromGrid' || questionInfo.type == 'numericFromList' || questionInfo.type == 'openFromList') {
+            return project.CreateQuestionnaireElement(questionInfo.questionId, questionInfo.precode);
+        }
+
+        if (questionInfo.type == 'otherOpenText') {
+            return project.CreateQuestionnaireElement(questionInfo.questionId, questionInfo.precode, true);
+        }
+
+        return;
     }
 
     /*
@@ -83,31 +97,30 @@ class QuestionUtil {
         var question : Question = project.GetQuestion(questionInfo.questionId);
         var title;
         var answer: Answer;
+        var NA = 'No question title/text is specified in survey for question '+question.QuestionId;
 
         if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
-            title = question.Title || question.Text || question.QuestionId;
-
-        } else if (questionInfo.type == 'singleFromGrid') {
-            answer = question.GetAnswer(questionInfo.precode);
-            title = answer.Text;
-
-        } else if (questionInfo.type == 'otherOpenText') {
-            title = question.Title || question.Text || question.QuestionId;
-            title += ' (Other)';
-
-        } else if (questionInfo.type == 'openFromList' || questionInfo.type == 'numericFromList') {
-            answer = question.GetAnswer(questionInfo.precode);
-            title = (question.Title || question.Text || question.QuestionId)+': '+answer.Text;
-
+            return question.Title || question.Text || NA;
         }
 
-        if(title == null || title.length == 0) {
-            throw new Error('DataSourceUtil.getQuestionTitle: '+questionId+' title is empty.');
+        if (questionInfo.type == 'singleFromGrid') {  // TO DO: single from grid has no label, get title from grid question itself
+            answer = question.GetAnswer(questionInfo.precode);
+            return answer.Text || question.Title || question.Text || NA;
         }
 
-        return title;
+        if (questionInfo.type == 'otherOpenText') {
+            title = question.Title || question.Text;
+            answer = question.GetAnswer(questionInfo.precode);
+            return ((title || answer.Text) ? (title+': '+answer.Text) : NA) + ' (Other)';
+        }
+
+        if (questionInfo.type == 'openFromList' || questionInfo.type == 'numericFromList') {
+            answer = question.GetAnswer(questionInfo.precode);
+            title = (question.Title || question.Text);
+            return (title || answer.Text) ? (title+': '+answer.Text) : NA;
+        }
+
     }
-
 
     /*
      * Get question answer list.
@@ -127,32 +140,32 @@ class QuestionUtil {
         var qType = question.QuestionType;
         var answers : Answer[];
 
-        if(questionInfo.type == 'general' && (qType == QuestionType.Single || qType == QuestionType.Multi || qType == QuestionType.Grid)) {
-            answers = question.GetAnswers();
-
-        } else if (questionInfo.type == 'singleFromGrid') { // probably it's an sub-question of a grid
-            answers = question.GetScale();
-
-        } else {
-            throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list');
+        if(questionInfo.type == 'general' && !questionInfo.precode && qType!= QuestionType.OpenText && qType!= QuestionType.Numeric && qType!= QuestionType.Date) {
+            return question.GetAnswers();
         }
 
-        return answers;
+        if (questionInfo.type == 'singleFromGrid') { // probably it's an sub-question of a grid
+            return question.GetScale();
+        }
+
+        // answers are not found
+        throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list');
+
     }
 
 
-    /* split string by last "_" sign
+    /* split string by "." sign (see comments in Config regarding question id's notation)
      * @param {string}
-     * @returns {object} { beforeUnderscore: beforeLastUnderscore, afterUnderscore: afterLastUnderscore}
+     * @returns {object} { beforePoint: beforeLastPoint, afterLastPoint: afterLastPoint}
      */
 
-    static function splitStringByLastUndersore (string) {
+    static function splitStringByLastPoint (string) {
 
-        var positionOfLastUnderscore = string.lastIndexOf('_'); // grid: gridId_answerId
-        var beforeLastUnderscore = string.substring(0,positionOfLastUnderscore);
-        var afterLastUnderscore = string.substring(positionOfLastUnderscore+1, string.length);
+        var positionOfLastPoint = string.lastIndexOf('.'); // grid: gridId.answerId
+        var beforeLastPoint = string.substring(0,positionOfLastPoint);
+        var afterLastPoint = string.substring(positionOfLastPoint+1, string.length);
 
-        return { beforeUnderscore: beforeLastUnderscore, afterUnderscore: afterLastUnderscore};
+        return { beforeLastPoint: beforeLastPoint, afterLastPoint: afterLastPoint};
     }
 
 }

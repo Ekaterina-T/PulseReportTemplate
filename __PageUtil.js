@@ -1,34 +1,32 @@
 class PageUtil {
 
     /*
-     * pageBasis object is collection of references to key page questions stored in Config
-     * the following notation is used:
-     * - property name is pageId
-     * - property value is a reference to basis resource or array of resources
-     */
-
-    static var pageBasis = {
-        'Key KPI': ['KPI'],
-        'Trends': ['TrendQuestions'],
-        'Results': ['Dimensions'],
-        'Result Statements': ['ResultStatements'],
-        'Categorical': ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
-        'Comments': ['Comments']
-    }
-
-    /*
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
-     * @param {object} context object {state: state, report: report, page: page, log: log}
+     * @param {object} context object {state: state, report: report, page: page, pageContext: pageContext, log: log}
      */
 
     static function Initialise(context) {
 
         var state = context.state;
         var page = context.page;
+        var pageContext = context.pageContext;
+
+        pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         ParamUtil.Initialise(context); // initialise parameters
-        //state.Parameters['p_Drilldown']= new ParameterValueResponse(page.SubmitSource);
+
+        // reset not bg var based filters on response rate page
+        if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
+
+            var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+            var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+
+            for(var i=0; i<filterFromSurveyData.length; i++) {
+                state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
+            }
+
+        }
 
     }
 
@@ -38,38 +36,64 @@ class PageUtil {
      * @returns {Array} pagesToHide array of page Names that should be hidden
      */
 
-    static function getPageNamesToHide(context) {
+    static function getPageNamesToShow(context) {
 
         var log = context.log;
-        var pagesToHide = [];
-        var pageBaseRefValue;
+        var pagesToShow = [];
 
-        for (var page in pageBasis) {
+        var surveyProperties = DataSourceUtil.getSurveyConfig(context);
 
-            var pageBasisRef = pageBasis[page];
-            var questions = [];
+        for(var property in surveyProperties) {
+            if(property.indexOf('Page_')===0) { //page config
+                var isHidden = false;
+                isHidden = DataSourceUtil.getPagePropertyValueFromConfig(context, property, 'isHidden');
 
-            for(var i=0; i<pageBasisRef.length; i++) {
-                try {
-                    pageBaseRefValue = DataSourceUtil.getPropertyValueFromConfig(context, pageBasisRef[i]);
-                } catch(e) {
-                    // if property is missing in the config while a script tries to access it an error is thrown
-                    // however here it is standard situation, no drama so we catch the error and do nothing
-                    // otherwise throw the error again
-                    // TO DO: replace with regular expression
-                    if (e.message.indexOf('DataSourceUtil.getPropertyValueFromConfig: Property ')==-1 || e.message.indexOf('is not found for ds')==-1) {
-                        throw e;
-                    }
-                    pageBaseRefValue = [];
+                log.LogDebug('property='+property+'; isHidden='+isHidden)
+
+                if(!isHidden) {
+                    pagesToShow.push(TextAndParameterUtil.getTextTranslationByKey(context, property));
                 }
-                questions = questions.concat(pageBaseRefValue);
-            }
-
-            if(questions.length === 0) {
-                pagesToHide.push(page);
             }
         }
 
-        return pagesToHide;
+        return pagesToShow;
     }
+
+    /*
+     * Indicates if page is vissble for the selected DS or not.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @returns {Boolean}
+     */
+
+    static function isPageVisible(context) {
+
+        var log = context.log;
+
+        var pageContext = context.pageContext;
+
+        try { // check if CurrentPageId doesn't exist
+            var pageId = pageContext.Items['CurrentPageId'];
+            return !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden');
+        } catch (e) {
+
+            return true; // return true by default (i.e. show page)
+        }
+
+    }
+
+    //TO DO: temporarily solution. should bу a check for each component, not for a whole page
+    /*
+     * Check if a page should have a toggle to switch between Chart and Table View
+     * @param {object} context object {state: state, report: report, log: log, pageContext: pageContext}
+     * @returns {Boolean}
+     */
+
+    static function isViewSwitchAvailable (context) {
+        var log = context.log;
+        var pageContext = context.pageContext;
+        if (pageContext.Items['CurrentPageId'] === 'Trend')
+            return true;
+        return false;
+    }
+
 }
