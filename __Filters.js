@@ -99,7 +99,7 @@ class Filters {
             return QuestionUtil.getQuestionTitle(context, filterList[paramNum-1]);
         }
 
-        return;
+        return '';
     }
 
 
@@ -110,21 +110,26 @@ class Filters {
    * @return {String} filter script expression
    */
 
-    static function GeneratePanelFilterExpression (context) {
+    static function GeneratePanelFilterExpression (context, filterType) {
 
         var state = context.state;
         var report = context.report;
         var log = context.log;
 
         var filterExpr = [];
-        var filters = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var startIndex = 0;
+        if (filterType === 'FiltersFromSurveyData') {
+            startIndex = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters').length;
+        }
+        var filters = DataSourceUtil.getSurveyPropertyValueFromConfig(context, filterType);
+        //var filters = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
 
         for (var i=0; i<filters.length; i++) {
 
-            if(!state.Parameters.IsNull('p_ScriptedFilterPanelParameter'+(i+1))) {
+            if(!state.Parameters.IsNull('p_ScriptedFilterPanelParameter'+(i+startIndex+1))) {
 
-                // although the parameter is multi select, interface allows to pick only one option (quicker to extend if needed)
-                var responses = ParamUtil.GetSelectedCodes (context, 'p_ScriptedFilterPanelParameter'+(i+1));
+                // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
+                var responses = ParamUtil.GetSelectedCodes (context, 'p_ScriptedFilterPanelParameter'+(i+startIndex+1));
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
@@ -184,11 +189,6 @@ class Filters {
         }
 
         var timePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
-
-        if(!timePeriod) {
-            return '';
-        }
-
         var expression = [];
         var year;
         var month;
@@ -205,5 +205,6 @@ class Filters {
 
         return expression.join(' AND ');
     }
+
 
 }

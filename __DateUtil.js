@@ -70,7 +70,7 @@ class DateUtil {
             return {startDate: start, endDate: end, startDateString: formatDateTimeToString(start), endDateString: formatDateTimeToString(end)};
         }
 
-        return null;
+        return {};
     }
 
 

@@ -3,7 +3,6 @@ class PageResults {
     static function tableStatements_Hide(context) {
 
         return SuppressUtil.isGloballyHidden(context);
-
     }
 
     /*
@@ -146,7 +145,7 @@ class PageResults {
      * @param {boolean} hasBenchmark
      */
 
-    static function tableStatements_AddColumns_Banner0(context, hasBenchmark) {
+    static function tableStatements_AddColumns_Banner0(context) {
 
         var report = context.report;
         var state = context.state;
@@ -194,11 +193,9 @@ class PageResults {
         table.ColumnHeaders.Add(barChart);
 
         // add scale distribution
-
-        var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
-
         if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
 
+            var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
             var categoryDistr: HeaderCategories = new HeaderCategories();
             var baseDist: HeaderBase = new HeaderBase();
 
@@ -227,78 +224,25 @@ class PageResults {
         table.ColumnHeaders.Add(responses);
 
         // add Benchmark related columns
-
         if(isBenchmarkAvailable(context)) {
-
-            // add benchmark data
-            var benchmarkContent: HeaderContent = new HeaderContent();
-            var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',2);
-            var suppressValue = Config.SuppressSettings.TableSuppressValue;
-
-            for(var i=0; i<benchmarkValues.length; i++) {
-
-                var base: Datapoint = baseValues[i];
-                var benchmark: Datapoint = benchmarkValues[i];
-
-                if (base.Value > suppressValue && !benchmark.IsEmpty) {
-                    benchmarkContent.SetCellValue(i, benchmark.Value);
-                }
-            }
-
-            benchmarkContent.HideData = true;
-            table.ColumnHeaders.Add(benchmarkContent);
-
-            // add formula ro calculate score vs. benchmark
-
-            var barChart_ScoreVsNorm: HeaderChartCombo = new HeaderChartCombo();
-            var chartValue_ScoreVsNorm = [];
-            var barChart_ScoreVsNormColors = Config.barChartColors_NormVsScore;
-
-            barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
-            barChart_ScoreVsNorm.Thickness = '100%';
-            barChart_ScoreVsNorm.Size = 200;
-            barChart_ScoreVsNorm.HideHeader = true;
-
-            var chartValue_Main: ChartComboValue = new ChartComboValue();
-            chartValue_Main.Expression = 'cellv(1,row)-cellv(col-1,row)'; // diff between score and norm value
-            chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
-            chartValue_Main.Name = TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue');
-            chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
-
-            var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
-            chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
-            chartValue_Alternative.Threshold = 0; // If greater than 0
-
-            chartValue_Main.AltColors = [chartValue_Alternative];
-            chartValue_ScoreVsNorm.push(chartValue_Main);
-
-            barChart_ScoreVsNorm.Values = chartValue_ScoreVsNorm;
-            barChart_ScoreVsNorm.Title = new Label(report.CurrentLanguage,TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue'));
-
-            table.ColumnHeaders.Add(barChart_ScoreVsNorm);
-
-            var formula_ScoreVsNorm: HeaderFormula = new HeaderFormula();
-            formula_ScoreVsNorm.Type = FormulaType.Expression;
-            formula_ScoreVsNorm.Expression = 'cellv(1,row)-cellv(col-2,row)';
-            table.ColumnHeaders.Add(formula_ScoreVsNorm);
+            tableStatements_AddBenchmarkColumns_Banner0(context);
         }
+
     }
 
     /*
-     * Add set of columns: %Fav, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     * @param {boolean} hasBenchmark
-     */
-
-    static function tableStatements_AddColumns_Banner1(context, hasBenchmark) {
+   * Add set of columns: %Fav, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart
+   * @param {object} context: {state: state, report: report, log: log, table: table}
+   * @param {boolean} hasBenchmark
+   */
+    static function tableStatements_AddColumns_Banner1(context) {
 
         var report = context.report;
         var state = context.state;
         var table = context.table;
         var log = context.log;
-        // add Score column
 
+        // add Score column
         var ScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
         var fav: HeaderFormula = new HeaderFormula();
         fav.Type = FormulaType.Expression;
@@ -308,7 +252,6 @@ class PageResults {
         table.ColumnHeaders.Add(fav);
 
         //add distribution barChart
-
         var bcCategories: HeaderCategories = new HeaderCategories();
         bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
         bcCategories.Totals = false;
@@ -340,11 +283,9 @@ class PageResults {
         table.ColumnHeaders.Add(barChart);
 
         // add scale distribution
-
-        var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
-
         if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
 
+            var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
             var categoryDistr: HeaderCategories = new HeaderCategories();
             var baseDist: HeaderBase = new HeaderBase();
 
@@ -373,63 +314,76 @@ class PageResults {
         table.ColumnHeaders.Add(responses);
 
         // add Benchmark related columns
-
         if(isBenchmarkAvailable(context)) {
-
-            // add benchmark data
-            var benchmarkContent: HeaderContent = new HeaderContent();
-            var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',2);
-            var suppressValue = Config.SuppressSettings.TableSuppressValue;
-
-            for(var i=0; i<benchmarkValues.length; i++) {
-
-                var base: Datapoint = baseValues[i];
-                var benchmark: Datapoint = benchmarkValues[i];
-
-                if (base.Value > suppressValue && !benchmark.IsEmpty) {
-                    benchmarkContent.SetCellValue(i, benchmark.Value);
-                }
-            }
-
-            benchmarkContent.HideData = true;
-            table.ColumnHeaders.Add(benchmarkContent);
-
-            // add formula ro calculate score vs. benchmark
-
-            var barChart_ScoreVsNorm: HeaderChartCombo = new HeaderChartCombo();
-            var chartValue_ScoreVsNorm = [];
-            var barChart_ScoreVsNormColors = Config.barChartColors_NormVsScore;
-
-            barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
-            barChart_ScoreVsNorm.Thickness = '100%';
-            barChart_ScoreVsNorm.Size = 200;
-            barChart_ScoreVsNorm.HideHeader = true;
-
-            var chartValue_Main: ChartComboValue = new ChartComboValue();
-            chartValue_Main.Expression = 'cellv(1,row)-cellv(col-1,row)'; // diff between score and norm value
-            chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
-            chartValue_Main.Name = TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue');
-            chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
-
-            var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
-            chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
-            chartValue_Alternative.Threshold = 0; // If greater than 0
-
-            chartValue_Main.AltColors = [chartValue_Alternative];
-            chartValue_ScoreVsNorm.push(chartValue_Main);
-
-            barChart_ScoreVsNorm.Values = chartValue_ScoreVsNorm;
-            barChart_ScoreVsNorm.Title = new Label(report.CurrentLanguage,TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue'));
-
-            table.ColumnHeaders.Add(barChart_ScoreVsNorm);
-
-            var formula_ScoreVsNorm: HeaderFormula = new HeaderFormula();
-            formula_ScoreVsNorm.Type = FormulaType.Expression;
-            formula_ScoreVsNorm.Expression = 'cellv(1,row)-cellv(col-2,row)';
-            table.ColumnHeaders.Add(formula_ScoreVsNorm);
+            tableStatements_AddBenchmarkColumns_Banner0(context);
         }
     }
+
+    /*
+     * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+
+    static function tableStatements_AddBenchmarkColumns_Banner0 (context) {
+
+        var report = context.report;
+        var table = context.table;
+        var log = context.log;
+
+        // add benchmark data
+        var benchmarkContent: HeaderContent = new HeaderContent();
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
+        var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',2);
+        var suppressValue = Config.SuppressSettings.TableSuppressValue;
+
+        for(var i=0; i<benchmarkValues.length; i++) {
+
+            var base: Datapoint = baseValues[i];
+            var benchmark: Datapoint = benchmarkValues[i];
+
+            if (base.Value > suppressValue && !benchmark.IsEmpty) {
+                benchmarkContent.SetCellValue(i, benchmark.Value);
+            }
+        }
+
+        benchmarkContent.HideData = true;
+        table.ColumnHeaders.Add(benchmarkContent);
+
+        // add formula ro calculate score vs. benchmark
+
+        var barChart_ScoreVsNorm: HeaderChartCombo = new HeaderChartCombo();
+        var chartValue_ScoreVsNorm = [];
+        var barChart_ScoreVsNormColors = Config.barChartColors_NormVsScore;
+
+        barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
+        barChart_ScoreVsNorm.Thickness = '100%';
+        barChart_ScoreVsNorm.Size = 200;
+        barChart_ScoreVsNorm.HideHeader = true;
+
+        var chartValue_Main: ChartComboValue = new ChartComboValue();
+        chartValue_Main.Expression = 'cellv(1,row)-cellv(col-1,row)'; // diff between score and norm value
+        chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
+        chartValue_Main.Name = TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue');
+        chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
+
+        var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
+        chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
+        chartValue_Alternative.Threshold = 0; // If greater than 0
+
+        chartValue_Main.AltColors = [chartValue_Alternative];
+        chartValue_ScoreVsNorm.push(chartValue_Main);
+
+        barChart_ScoreVsNorm.Values = chartValue_ScoreVsNorm;
+        barChart_ScoreVsNorm.Title = new Label(report.CurrentLanguage,TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue'));
+
+        table.ColumnHeaders.Add(barChart_ScoreVsNorm);
+
+        var formula_ScoreVsNorm: HeaderFormula = new HeaderFormula();
+        formula_ScoreVsNorm.Type = FormulaType.Expression;
+        formula_ScoreVsNorm.Expression = 'cellv(1,row)-cellv(col-2,row)';
+        table.ColumnHeaders.Add(formula_ScoreVsNorm);
+    }
+
 
     /*
      * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
@@ -490,7 +444,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var hideDimensionResults = state.Parameters.GetString('p_Results_TableTabSwitcher')==='noDims';
+        var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
 
@@ -503,11 +457,7 @@ class PageResults {
             categorization.SampleRule = SampleEvaluationRule.Average;
             categorization.Collapsed = false;
 
-            if(hideDimensionResults) {
-                categorization.Totals = false;
-            } else {
-                categorization.Totals = true;
-            }
+            categorization.Totals = isDimensionVisible;
 
             addNestedHeader(context, categorization);
             table.RowHeaders.Add(categorization);
@@ -642,29 +592,6 @@ class PageResults {
 
 
 /* ------------------ COMMENTS
-
-# line 191-193: shouldn't the null check be first? and then getting the parameter value? or maybe even use paramUtil.GetSelectedCodes ?
-
-# line 383: suppressValue is the min required limit so there should be 'greater or equal to suppressValue':
-
-if (base.Value > suppressValue && !benchmark.IsEmpty)
-
-
-# line 479, 491-495: variable hideDimensionResults is used only for setting categorization.Totals
-Should we make it a bit shorter
-
-var hideDimensionResults = state.Parameters.GetString('p_Results_TableTabSwitcher')==='noDims';
-if(hideDimensionResults) {
-	categorization.Totals = false;
-  } else {
-	categorization.Totals = true;
-  }
-
---->
-
-var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
-categorization.Totals = isDimensionVisible;
-
 
 # Where should the call TableUtil.maskOutNA(context, headerQuestion) be added?  Only to the tableStatements_AddRows_Banner0 function?
 --------------- */

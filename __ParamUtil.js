@@ -118,7 +118,7 @@ class ParamUtil {
         }
 
         if(!propertyValue) {
-            return null; //[];
+            return [];//null; //[];
         }
 
         // type will tell how to handle it; by that moment propertyValue must be defined
@@ -222,7 +222,7 @@ class ParamUtil {
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName); // get all options
 
-        return parameterOptions ? parameterOptions[0].Code : null; // return the 1st option
+        return parameterOptions.length>0 ? parameterOptions[0].Code : null; // return the 1st option
     }
 
     /*
@@ -296,7 +296,7 @@ class ParamUtil {
                 }
             }
         }
-
+        log.LogDebug('4')
     }
 
     /*
