@@ -118,7 +118,7 @@ class ParamUtil {
         }
 
         if(!propertyValue) {
-            return [];//null; //[];
+            return [];
         }
 
         // type will tell how to handle it; by that moment propertyValue must be defined
@@ -279,8 +279,9 @@ class ParamUtil {
 
                 var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
 
-                if(!defaultParameterValue) {//parameter is not defined for this DS
-                    break;
+                if(!defaultParameterValue) {//parameter is not defined for this DS or on this page
+                    log.LogDebug(mandatoryPageParameters[i])
+                    continue;
                 }
 
                 // We can't get the type of parameter (single or multi) before its initialisation.
