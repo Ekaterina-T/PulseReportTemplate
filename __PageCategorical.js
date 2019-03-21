@@ -65,7 +65,6 @@ class PageCategorical {
         var log = context.log;
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         var project : Project = DataSourceUtil.getProject(context);
 
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
@@ -74,17 +73,21 @@ class PageCategorical {
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
+        var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
 
         for (var i=0; i<Qs.length; i++) {
 
             var question : Question = project.GetQuestion(Qs[i]);
             var answerCount = question.AnswerCount;
+            if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
+                answerCount--;
+            }
 
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
             var row: HeaderQuestion = new HeaderQuestion(qe);
 
             row.IsCollapsed = (tableType == 'multi') ? true : false;
-            TableUtil.maskOutNA(context, row);
+
             row.ShowTitle = false;
             row.ShowTotals = false;
             row.HideHeader = true;
@@ -96,7 +99,7 @@ class PageCategorical {
                 row.Sorting.Position = 1;
                 row.Sorting.TopN = System.Math.Min(topN, answerCount);
             }
-
+            TableUtil.maskOutNA(context, row);
             table.RowHeaders.Add(row);
         }
 
@@ -122,7 +125,6 @@ class PageCategorical {
         table.RemoveEmptyHeaders.Rows = false;
 
         SuppressUtil.setTableSuppress(table, suppressSettings);
-
     }
 
 
@@ -171,7 +173,6 @@ class PageCategorical {
 
         var report = context.report;
         var state = context.state;
-        var table = context.table;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
@@ -179,12 +180,11 @@ class PageCategorical {
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "categoricalAnswerLimit");
 
         // show topN answers in a list for questions with more than <answerLimit> options
-        var topN = (tableType=='multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
-
+        var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
         var project : Project = DataSourceUtil.getProject(context);
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
         var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-
+        var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
 
         var row_index = 0;  // iterator through table rows
@@ -193,12 +193,13 @@ class PageCategorical {
 
             var question : Question = project.GetQuestion(Qs[i]);
             var answerCount = question.AnswerCount;
+            if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
+                answerCount--;
+            }
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
-            var displayNumberOfAnswers = (answerCount > answerLimit) ? System.Math.Min(topN, answerCount) : answerCount;
-
+            var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
             var result = [];
-
             for (var j=0; j<displayNumberOfAnswers; j++) {
 
                 var answerBase = report.TableUtils.GetCellValue(tableName,row_index+j+1,2).Value.toFixed(0);
@@ -207,6 +208,7 @@ class PageCategorical {
                     var answerName = report.TableUtils.GetRowHeaderCategoryTitles(tableName)[row_index+j][0];
                     var answerPercent = (100*report.TableUtils.GetCellValue(tableName,row_index+j+1,1).Value);
                     result.push({name: answerName, base: answerBase, y: answerPercent});
+
                 }
             }
             categoricals.push({qid: Qs[i], title: title, type: displayType, result: result});
@@ -253,13 +255,11 @@ class PageCategorical {
 
         var report = context.report;
         var state = context.state;
-        var table = context.table;
         var log = context.log;
 
         var singleCategoricals = getCategoricalResult(context, 'single');
         var multiCategoricals = getCategoricalResult(context, 'multi');
         singleCategoricals.sort(SortCategoricals);
-
         var listCollection = [];
         for (var i=singleCategoricals.length-1; i>=0; i--) {
             if (singleCategoricals[i].type != 'list')
@@ -297,7 +297,6 @@ class PageCategorical {
             '</div>';
 
         text.Output.Append(card);
-
     }
 
     /**
@@ -329,11 +328,11 @@ class PageCategorical {
         var state = context.state;
         var log = context.log;
         var text = context.text;
-        var content = '';
 
         // render cards with pies
         var pies = getPieCollection(context);
         for (var i=0; i<pies.length; i++) {
+            var content = '';
             var item = pies[i];
             if (item.result.length != 0) {
                 content =  '<div id="pie-container-'+item.qid+'" class="hideLegendInWeb"> </div>';
@@ -343,6 +342,7 @@ class PageCategorical {
 
         var lists = getTopListCollection(context);
         for (var i=0; i<lists.length; i++) {
+            content = '';
             item = lists[i];
             if (item.result.length != 0) {
                 content = '<ol class="material-card__list">';
@@ -355,12 +355,7 @@ class PageCategorical {
                 content += '</ol>';
             }
             RenderCategoricalCard (context, item.title, item.qid, content);
+
         }
     }
 }
-
-
-
-/*
-why are tableSingleCategorical_Render(context) and tableMultiCategorical_Render needed?
-*/

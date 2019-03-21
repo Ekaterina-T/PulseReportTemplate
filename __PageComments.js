@@ -89,10 +89,10 @@ class PageComments {
         var state = context.state;
         var tagColumnNumbers = [];
 
-        //Hitlist always contains 2 first hidden columns with system fields: Respondent ID and Survey Id.
-        var numberOfColumnsAtStart = (!state.Parameters.IsNull("p_ScoreQs")) ?  4 : 3;
-        var tagCount = ParamUtil.GetSelectedCodes (context, "p_TagQs").length;
-        for (var i=0; i<tagCount; i++) {
+        var numberOfScoresColumns = ParamUtil.GetSelectedCodes (context, "p_ScoreQs").length;
+        var numberOfColumnsAtStart = 3 + numberOfScoresColumns; // Hitlist always contains 1 verbatim + 2 first hidden columns with system fields: Respondent ID and Survey Id.
+        var numberOfTagColumns = ParamUtil.GetSelectedCodes (context, "p_TagQs").length;
+        for (var i=0; i<numberOfTagColumns; i++) {
             tagColumnNumbers.push(i + numberOfColumnsAtStart);
         }
         return tagColumnNumbers;

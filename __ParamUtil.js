@@ -35,7 +35,7 @@ class ParamUtil {
 
     /*
      * Populates p_SurveyType parameter based on surveys from Config.
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
      */
 
     static function LoadParameter_SurveysSelector_ConfigList(context) {
@@ -46,7 +46,7 @@ class ParamUtil {
 
         for (var i=0; i<surveys.length; i++) {
 
-            if(!surveys[i].isHidden) {
+            if(!surveys[i].isHidden && User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles)) {
                 var val : ParameterValueProject = new ParameterValueProject();
                 val.ProjectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, surveys[i].Source);
                 parameter.Items.Add(val);
@@ -296,7 +296,7 @@ class ParamUtil {
                 }
             }
         }
-        log.LogDebug('4')
+
     }
 
     /*

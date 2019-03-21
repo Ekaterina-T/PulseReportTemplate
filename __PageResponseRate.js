@@ -317,4 +317,25 @@ class PageResponseRate {
 
     }
 
+
+
+    /**
+     * @memberof PageResponseRate
+     * @function setChartByTimeSettings
+     * @description function to set chart settings
+     * @param {Object} context - {report: report, user: user, state: state, log: log, chart: chart}
+     */
+    static function setChartByTimeSettings (context) {
+
+        var report = context.report;
+        var state = context.state;
+        var log = context.log;
+        var chart = context.chart;
+
+        var columnNumber = report.TableUtils.GetColumnHeaderCategoryIds("ByTime").length;
+        if (columnNumber > 10) {
+            chart.ChartArea.PrimaryAxisX.LabelStyle.FontAngle = -60;
+        }
+    }
+
 }

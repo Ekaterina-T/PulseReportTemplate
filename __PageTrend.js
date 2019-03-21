@@ -47,6 +47,7 @@ class PageTrend {
         var report = context.report;
         var state = context.state;
         var table = context.component;
+        var suppressSettings = context.suppressSettings;
         var log = context.log;
 
         // add rows (1 or more KPI questions)
@@ -90,7 +91,7 @@ class PageTrend {
 
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = true;
-        SuppressUtil.setTableSuppress(table, 'row', 'hide', 'hide');
+        SuppressUtil.setTableSuppress(table, suppressSettings);
 
 
     }

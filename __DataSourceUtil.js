@@ -22,7 +22,7 @@ class DataSourceUtil {
     /*
      * Since data source can be hidden (isHidden property is true),
      * need to define 1st not hidden ds as default ds.
-     * @param {object} context object {state: state, report: report, log: log}
+     * @param {object} context object {state: state, report: report, user:user, log: log}
      * @returns {string} Source ds id
      */
 
@@ -32,12 +32,12 @@ class DataSourceUtil {
         var surveys = Config.Surveys;
         var i = 0;
 
-        while (surveys[i].isHidden && i<= surveys.length) {
+        while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context,surveys[i].AvailableForRoles))) {
             i++;
         }
 
         if(i === surveys.length) {
-            throw new Error('DataSourceUtil.getDefaultDSFromConfig: No active data sources found in Config.');
+            throw new Error('DataSourceUtil.getDefaultDSFromConfig: No active data sources found in Config for the user.');
         }
 
         return surveys[i].Source;
@@ -84,7 +84,7 @@ class DataSourceUtil {
      * Get property value for the current project.
      * @param {object} context object with two mandotary fields: state and report
      * @param {string} propertyName
-     * @returns {string} property value
+     * @returns {object|array|string|number} property value
      */
 
     static function getSurveyPropertyValueFromConfig (context, propertyName) {

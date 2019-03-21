@@ -3,7 +3,7 @@ class PageUtil {
     /*
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
-     * @param {object} context object {state: state, report: report, page: page, pageContext: pageContext, log: log}
+     * @param {object} context object {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log}
      */
 
     static function Initialise(context) {

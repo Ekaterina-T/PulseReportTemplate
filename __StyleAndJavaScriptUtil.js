@@ -45,11 +45,14 @@ class StyleAndJavaScriptUtil {
             properties.push('kpi: '+JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
-        if (pageContext.Items['CurrentPageId'] === 'Categorical') {
+        if (pageContext.Items['CurrentPageId'] === 'Categorical_') {
             properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context)));
             properties.push('pieColors: '+JSON.stringify(Config.pieColors));
         }
 
+        if (pageContext.Items['CurrentPageId'] === 'CategoricalDrilldown') {
+            properties.push('isProjectSelectorDisabled: '+true);
+        }
 
         globalVarScript.push('<script>');
         globalVarScript.push(';var ReportTemplateConfig = (function(){');

@@ -75,7 +75,7 @@ class Filters {
 
         // paramNum should be less than number of filter components on all pages
         // paramNum should be less than number of filters based on BG vars on Response Rate page
-        if(paramNum > filterList.length || (pageContext.Items['CurrentPageId'] === 'responses' && paramNum >filterFromRespondentData.length)) {
+        if(paramNum > filterList.length || (pageContext.Items['CurrentPageId'] === 'Response_Rate' && paramNum >filterFromRespondentData.length)) {
             return true;    // hide
         }
 
@@ -110,26 +110,23 @@ class Filters {
    * @return {String} filter script expression
    */
 
-    static function GeneratePanelFilterExpression (context, filterType) {
+    static function GeneratePanelFilterExpression (context) {
 
         var state = context.state;
         var report = context.report;
         var log = context.log;
 
         var filterExpr = [];
-        var startIndex = 0;
-        if (filterType === 'FiltersFromSurveyData') {
-            startIndex = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters').length;
-        }
-        var filters = DataSourceUtil.getSurveyPropertyValueFromConfig(context, filterType);
-        //var filters = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+        var filters = filterFromRespondentData.concat(filterFromSurveyData);
 
         for (var i=0; i<filters.length; i++) {
 
-            if(!state.Parameters.IsNull('p_ScriptedFilterPanelParameter'+(i+startIndex+1))) {
+            if(!state.Parameters.IsNull('p_ScriptedFilterPanelParameter'+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
-                var responses = ParamUtil.GetSelectedCodes (context, 'p_ScriptedFilterPanelParameter'+(i+startIndex+1));
+                var responses = ParamUtil.GetSelectedCodes (context, 'p_ScriptedFilterPanelParameter'+(i+1));
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
@@ -172,8 +169,6 @@ class Filters {
         return !DataSourceUtil.isProjectSelectorNeeded(context) // date period filter is hidden in pulse programs
     }
 
-
-
     /*
     * @description function to generate a script expression to filter by selected time period
     * @param {Object} context
@@ -204,6 +199,26 @@ class Filters {
         }
 
         return expression.join(' AND ');
+    }
+
+    /*
+      * not empty comments filter
+      * @param {context}
+      * @param {Array} question list
+      * @return {string} filter expression
+      */
+
+    static function notEmptyCommentsFilter(context, questions) {
+
+        var expressions = [];
+
+        for (var i=0; i<questions.length; i++) {
+
+            var qid = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(questions[i]);
+            expressions.push('NOT ISNULL(' + qid + ') AND '+ qid + ' != "" AND ' + qid + ' != " "');
+        }
+        return expressions.join(' OR ');
+
     }
 
 

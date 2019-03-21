@@ -106,22 +106,39 @@ class TableUtil{
     /*
    * Function that excludes NA answer from header.
    * param {object} context {report: report, user: user, state: state, log: log}
-   * param {HeaderQuestion} headerQuestion - header based on question with NA answer
+   * param {Header} headerQuestion or headerCategory
    */
 
-    static function maskOutNA(context, headerQuestion) {
+    static function maskOutNA(context, header) {
 
+        var log = context.log;
         var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
 
-        if(naCode) {
-            var qMask : MaskFlat = new MaskFlat();
-            qMask.Codes.Add(naCode);
-            qMask.IsInclusive = false;
-            headerQuestion.AnswerMask = qMask;
-            headerQuestion.FilterByMask = true;
+        if(!naCode) {
+            return;
         }
 
-        return;
+        if(header.HeaderType === HeaderVariableType.QuestionnaireElement) {
+            var qId = header.QuestionnaireElement.QuestionId;
+            var project : Project = DataSourceUtil.getProject(context);
+            var q : Question = project.GetQuestion(qId);
+
+            // additional check for Multi. Apply Mask only if a question has NA answer, otherwise Internal Server Error
+            if (q.QuestionType != QuestionType.Multi || (q.QuestionType == QuestionType.Multi && QuestionUtil.hasAnswer(context, qId, naCode))) {
+                var qMask : MaskFlat = new MaskFlat();
+                qMask.Codes.Add(naCode);
+                qMask.IsInclusive = false;
+                header.AnswerMask = qMask;
+                header.FilterByMask = true;
+            }
+
+        }
+
+        if(header.HeaderType === HeaderVariableType.Categories) {
+            header.IgnoreCodes = naCode;
+            header.Mask.Type = MaskType.HideCodes;
+            header.Mask.Codes = naCode;
+        }
     }
 
 }

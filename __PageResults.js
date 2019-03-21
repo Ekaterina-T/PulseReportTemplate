@@ -26,6 +26,7 @@ class PageResults {
         table.Decimals = 0;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
 
     }
 
@@ -61,7 +62,7 @@ class PageResults {
 
     static function tableStatements_AddColumns(context, bannerId) {
 
-        var log = context.log;log.LogDebug('ghgh')
+        var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         if(bannerId === '0') {
@@ -147,8 +148,6 @@ class PageResults {
 
     static function tableStatements_AddColumns_Banner0(context) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
 
@@ -161,67 +160,13 @@ class PageResults {
         table.ColumnHeaders.Add(score);
 
         //add distribution barChart
-
-        var bcCategories: HeaderCategories = new HeaderCategories();
-        bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
-        bcCategories.Totals = false;
-        bcCategories.Distributions.Enabled = true;
-        bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Decimals = 0;
-        bcCategories.HideData = true;
-
-        var barChart: HeaderChartCombo = new HeaderChartCombo();
-        var chartValues = [];
-        var barChartColors = Config.barChartColors_Distribution;
-        var i;
-
-        for(i=0; i< barChartColors.length; i++) {
-            var chartValue: ChartComboValue = new ChartComboValue();
-            chartValue.Expression = 'cellv(col-'+(i+1)+', row)';
-            chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
-            chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
-            chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution '+ barChartColors[i].type;
-            chartValues.push(chartValue);
-
-        }
-
-        barChart.Values = chartValues;
-        barChart.TypeOfChart = ChartComboType.Bar100;
-        barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
-
-        table.ColumnHeaders.Add(bcCategories);
-        table.ColumnHeaders.Add(barChart);
+        addDistributionBarChart(context);
 
         // add scale distribution
-        if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
-
-            var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
-            var categoryDistr: HeaderCategories = new HeaderCategories();
-            var baseDist: HeaderBase = new HeaderBase();
-
-            categoryDistr.Totals = false;
-            baseDist.Distributions.Enabled = true;
-            baseDist.Decimals = 0;
-            baseDist.HideHeader = true;
-
-            if(selectedDistr==='C') { // Counts
-
-                baseDist.Distributions.Count = true;
-                baseDist.Distributions.HorizontalPercents = false;
-            } else { // Percent
-
-                baseDist.Distributions.HorizontalPercents = true;
-                baseDist.Distributions.Count = false;
-            }
-
-            categoryDistr.SubHeaders.Add(baseDist);
-            table.ColumnHeaders.Add(categoryDistr);
-        }
+        addScaleDistributionColumns(context);
 
         // add Responses Column
-
-        var responses: HeaderBase = new HeaderBase();
-        table.ColumnHeaders.Add(responses);
+        addResponsesColumn(context);
 
         // add Benchmark related columns
         if(isBenchmarkAvailable(context)) {
@@ -237,8 +182,6 @@ class PageResults {
    */
     static function tableStatements_AddColumns_Banner1(context) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
 
@@ -252,66 +195,13 @@ class PageResults {
         table.ColumnHeaders.Add(fav);
 
         //add distribution barChart
-        var bcCategories: HeaderCategories = new HeaderCategories();
-        bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
-        bcCategories.Totals = false;
-        bcCategories.Distributions.Enabled = true;
-        bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Decimals = 0;
-        bcCategories.HideData = true;
-
-        var barChart: HeaderChartCombo = new HeaderChartCombo();
-        var chartValues = [];
-        var barChartColors = Config.barChartColors_Distribution;
-        var i;
-
-        for(i=0; i< barChartColors.length; i++) {
-            var chartValue: ChartComboValue = new ChartComboValue();
-            chartValue.Expression = 'cellv(col-'+(i+1)+', row)';
-            chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
-            chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
-            chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution '+ barChartColors[i].type;
-            chartValues.push(chartValue);
-
-        }
-
-        barChart.Values = chartValues;
-        barChart.TypeOfChart = ChartComboType.Bar100;
-        barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
-
-        table.ColumnHeaders.Add(bcCategories);
-        table.ColumnHeaders.Add(barChart);
+        addDistributionBarChart(context);
 
         // add scale distribution
-        if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
-
-            var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
-            var categoryDistr: HeaderCategories = new HeaderCategories();
-            var baseDist: HeaderBase = new HeaderBase();
-
-            categoryDistr.Totals = false;
-            baseDist.Distributions.Enabled = true;
-            baseDist.Decimals = 0;
-            baseDist.HideHeader = true;
-
-            if(selectedDistr==='C') { // Counts
-
-                baseDist.Distributions.Count = true;
-                baseDist.Distributions.HorizontalPercents = false;
-            } else { // Percent
-
-                baseDist.Distributions.HorizontalPercents = true;
-                baseDist.Distributions.Count = false;
-            }
-
-            categoryDistr.SubHeaders.Add(baseDist);
-            table.ColumnHeaders.Add(categoryDistr);
-        }
+        addScaleDistributionColumns(context);
 
         // add Responses Column
-
-        var responses: HeaderBase = new HeaderBase();
-        table.ColumnHeaders.Add(responses);
+        addResponsesColumn(context);
 
         // add Benchmark related columns
         if(isBenchmarkAvailable(context)) {
@@ -361,7 +251,7 @@ class PageResults {
         barChart_ScoreVsNorm.HideHeader = true;
 
         var chartValue_Main: ChartComboValue = new ChartComboValue();
-        chartValue_Main.Expression = 'cellv(1,row)-cellv(col-1,row)'; // diff between score and norm value
+        chartValue_Main.Expression = 'ceil(cellv(col+1,row))'; // diff between score and norm value
         chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
         chartValue_Main.Name = TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue');
         chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
@@ -380,7 +270,7 @@ class PageResults {
 
         var formula_ScoreVsNorm: HeaderFormula = new HeaderFormula();
         formula_ScoreVsNorm.Type = FormulaType.Expression;
-        formula_ScoreVsNorm.Expression = 'cellv(1,row)-cellv(col-2,row)';
+        formula_ScoreVsNorm.Expression = 'cellv(1,row)-cellv(col-2,row)'; // the 1st column in the table is score
         table.ColumnHeaders.Add(formula_ScoreVsNorm);
     }
 
@@ -468,6 +358,104 @@ class PageResults {
 
     }
 
+    /*
+     *  add base column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function addResponsesColumn(context) {
+
+        var table = context.table;
+
+        // add Responses Column
+        var responses: HeaderBase = new HeaderBase();
+        var catForNAMask: HeaderCategories = new HeaderCategories(); // a way to exclude NA from base calculation
+
+        TableUtil.maskOutNA(context, catForNAMask); // exclude NA code
+        catForNAMask.HideHeader = true;
+        catForNAMask.Mask.Type = MaskType.ShowCodes;
+        catForNAMask.Mask.Codes = ''; // do not show any codes but Total
+        responses.SubHeaders.Add(catForNAMask);
+        table.ColumnHeaders.Add(responses);
+    }
+
+
+    /*
+     *  add distribution bar chart
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function addDistributionBarChart(context) {
+
+        var table = context.table;
+
+        //add distribution barChart
+        var bcCategories: HeaderCategories = new HeaderCategories();
+        bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+        bcCategories.Totals = false;
+        bcCategories.Distributions.Enabled = true;
+        bcCategories.Distributions.HorizontalPercents = true;
+        bcCategories.Decimals = 0;
+        bcCategories.HideData = true;
+
+        var barChart: HeaderChartCombo = new HeaderChartCombo();
+        var chartValues = [];
+        var barChartColors = Config.barChartColors_Distribution;
+        var i;
+
+        for(i=0; i< barChartColors.length; i++) {
+            var chartValue: ChartComboValue = new ChartComboValue();
+            chartValue.Expression = 'cellv(col-'+(i+1)+', row)';
+            chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
+            chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
+            chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution '+ barChartColors[i].type;
+            chartValues.push(chartValue);
+        }
+
+        barChart.Values = chartValues;
+        barChart.TypeOfChart = ChartComboType.Bar100;
+        barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
+
+        table.ColumnHeaders.Add(bcCategories);
+        table.ColumnHeaders.Add(barChart);
+    }
+
+    /*
+     *  add scale distribution columns
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function addScaleDistributionColumns(context) {
+
+        var state = context.state;
+        var table = context.table;
+
+        // add scale distribution
+        if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
+
+            var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
+            var categoryDistr: HeaderCategories = new HeaderCategories();
+            var baseDist: HeaderBase = new HeaderBase();
+
+            categoryDistr.Totals = false;
+            baseDist.Distributions.Enabled = true;
+            baseDist.Decimals = 0;
+            baseDist.HideHeader = true;
+
+            if(selectedDistr==='C') { // Counts
+
+                baseDist.Distributions.Count = true;
+                baseDist.Distributions.HorizontalPercents = false;
+            } else { // Percent
+
+                baseDist.Distributions.HorizontalPercents = true;
+                baseDist.Distributions.Count = false;
+            }
+
+            TableUtil.maskOutNA(context, categoryDistr);
+
+            categoryDistr.SubHeaders.Add(baseDist);
+            table.ColumnHeaders.Add(categoryDistr);
+        }
+    }
+
 
     /*
      * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
@@ -501,8 +489,6 @@ class PageResults {
             return;
         }
 
-        selectedOption = selectedOption.Code;
-
         if(breakByParameter === 'p_TimeUnitNoDefault') { // break by time unit
 
             var qid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DateQuestion');
@@ -515,11 +501,11 @@ class PageResults {
             nestedHeader.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
             if(selectedOption.TimeUnit === 'Quarter') {
                 nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Quarter;
-            } else {
+            } else if(selectedOption.TimeUnit === 'Month') {
                 nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
-                if(selectedOption.TimeUnit === 'Day') {
-                    nestedHeader.TimeSeries.Time3 = TimeseriesTimeUnitType.DayOfMonth;
-                }
+            } else if(selectedOption.TimeUnit === 'Day') {
+                nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
+                nestedHeader.TimeSeries.Time3 = TimeseriesTimeUnitType.DayOfMonth;
             }
 
             TableUtil.applyDateRangeFilterToHeader(context, nestedHeader);
@@ -530,7 +516,7 @@ class PageResults {
 
         if(breakByParameter === 'p_Results_BreakBy') { // break by time unit
 
-            questionElem = QuestionUtil.getQuestionnaireElement(context, selectedOption);
+            questionElem = QuestionUtil.getQuestionnaireElement(context, selectedOption.Code);
             nestedHeader = new HeaderQuestion(questionElem);
             nestedHeader.ShowTotals = false;
             parentHeader.SubHeaders.Add(nestedHeader);

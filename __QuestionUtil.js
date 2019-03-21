@@ -154,6 +154,31 @@ class QuestionUtil {
     }
 
 
+
+    /*
+     * Check if a question has a specific answer code.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} questionId
+     * @param {string} answerCode
+     * @returns {boolean}
+     */
+    static function hasAnswer (context, questionId, answerCode) {
+        var state = context.state;
+        var report = context.report;
+        var log = context.log;
+
+        var project : Project = DataSourceUtil.getProject(context);
+        var q : Question = project.GetQuestion(questionId);
+        var answers = q.GetAnswers();
+        for (var k=0; k<answers.length; k++) {
+            if (answers[k] === answerCode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /* split string by "." sign (see comments in Config regarding question id's notation)
      * @param {string}
      * @returns {object} { beforePoint: beforeLastPoint, afterLastPoint: afterLastPoint}
@@ -166,6 +191,16 @@ class QuestionUtil {
         var afterLastPoint = string.substring(positionOfLastPoint+1, string.length);
 
         return { beforeLastPoint: beforeLastPoint, afterLastPoint: afterLastPoint};
+    }
+
+    /* split string by "." sign (see comments in Config regarding question id's notation)
+   * @param {string} questionId with dot
+   * @returns {string} questionId with underscore instead of dot
+   */
+
+    static function getQuestionIdWithUnderscoreInsteadOfDot (questionIdWithDot) {
+
+        return questionIdWithDot.replace(/\./g,'_');
     }
 
 }
