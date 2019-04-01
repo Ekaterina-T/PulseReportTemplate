@@ -11,7 +11,7 @@ class PDFExport {
         var state = context.state;
         var breakBy = 'Break by: ';
 
-        if (state.ReportExecutionMode == ReportExecutionMode.PdfExport) {
+        if (state.ReportExecutionMode === ReportExecutionMode.PdfExport) {
 
             if (state.Parameters.IsNull(parameterName)) {
                 return breakBy+='none';
@@ -20,6 +20,30 @@ class PDFExport {
             return breakBy+= selectedOption.DisplayValue;
         }
 
+    }
+
+    /*
+     * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
+     * @param {object} {state: state, report: report, text: text, log: log}
+     */
+
+    static function displayDataSourceInfo(context) {
+
+        var state = context.state;
+        var text = context.text;
+        var log = context.log;
+        var str = '';
+
+        if (state.ReportExecutionMode === ReportExecutionMode.PdfExport) {
+
+            var selectedProject: Project = DataSourceUtil.getProject(context);
+            str+='Program Name: '+selectedProject.ProjectName+' ';
+
+            if(!state.Parameters.IsNull('p_projectSelector')) {
+                str+= 'Survey Name: '+state.Parameters.GetString('p_projectSelector')+' ';
+            }
+            text.Output.Append(str);
+        }
     }
 
 

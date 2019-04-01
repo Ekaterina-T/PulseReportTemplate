@@ -94,7 +94,7 @@ class PageResponseRate {
      * @memberof PageResponseRate
      * @function tableResponseRate_Render
      * @description function to build Response Rate table
-     * @param {Object} context - {component: table, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {Object} context - {table: table, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     static function tableResponseRate_Render(context){
 
@@ -116,7 +116,7 @@ class PageResponseRate {
      * @memberof PageResponseRate
      * @function tableCollectionPeriod_Render
      * @description function to build the table showing the range of dates
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     static function tableCollectionPeriod_Render(context){
 
@@ -190,15 +190,54 @@ class PageResponseRate {
         var log = context.log;
 
         var cell1 : Datapoint = report.TableUtils.GetCellValue("Response_Rate:ResponseRate",1,1);
-        var cell2 : Datapoint = report.TableUtils.GetCellValue("Response_Rate:ResponseRate",2,1);
+        var cell2 : Datapoint = report.TableUtils.GetCellValue("Response_Rate:NumberOfResponses",1,1);
+        var cell3 : Datapoint = report.TableUtils.GetCellValue("Response_Rate:ResponseRate",3,1);
         var invitationN = (!cell1.IsEmpty && !cell1.Value.Equals(Double.NaN)) ? cell1.Value.ToString() : 'N/A';
         var responseN = (!cell2.IsEmpty && !cell2.Value.Equals(Double.NaN)) ? cell2.Value.ToString() : 'N/A';
+        var responseRate = (!cell3.IsEmpty && !cell3.Value.Equals(Double.NaN)) ? (cell3.Value*100).toFixed(0) : 'N/A';
 
         return {
             invitationN: invitationN,
-            responseN: responseN
+            responseN: responseN,
+            responseRate: responseRate
         }
 
+    }
+
+    /**
+     * @memberof PageResponseRate
+     * @function tableNumberOfResponses_Render
+     * @description function to build NumberOfResponses table: cannot just use ResponseRate table because it is filtered by respondent data date variable.
+     * @param {Object} context - {state: state, report: report, log: log, table: table}
+     */
+    static function tableNumberOfResponses_Render(context){
+
+        var report = context.report;
+        var state = context.state;
+        var table = context.table;
+        var log = context.log;
+        var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, response.qId);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
+
+        hq.IsCollapsed = true;
+        hq.FilterByMask = true;
+        hq.ShowTotals = false;
+        hq.Distributions.Enabled = true;
+        hq.Distributions.Count = true;
+        hq.HideHeader = true;
+
+        if (response.codes.length) {
+            var qmask : MaskFlat = new MaskFlat(true);
+            qmask.Codes.AddRange(response.codes);
+            hq.AnswerMask = qmask;
+        }
+        table.RowHeaders.Add(hq);
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Columns = false;
+        table.RemoveEmptyHeaders.Rows = false;
     }
 
 

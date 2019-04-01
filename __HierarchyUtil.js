@@ -1,5 +1,9 @@
 class HierarchyUtil {
 
+    // cached hierarchy DB table
+    // check page initialize script
+    static var dbTable : DataTable = new DataTable();
+
     /**
      * @memberof HierarchyUtil
      * @function Hide
@@ -20,27 +24,177 @@ class HierarchyUtil {
     }
 
 
+    /**
+     * @memberof HierarchyUtil
+     * @function getHierarchyFilterExpressionForNode
+     * @description function to form expression for scripted Hierarchy filter for the provided hierarchy node id. Since the global Personalised Filter setting is turned off, custom filter is applied depending on whether a survey has Hierarchy question or not (must be specified in Config)
+     * @param {Object} context - {report: report, user: user, state: state, log: log}
+     * @param {string} hierarchyNodeId - not mandotary, default value: current report base
+     * @returns {String} filter expression.
+     */
+
+    static function getHierarchyFilterExpressionForNode (context, hierarchyNodeId) {
+
+        var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+
+        if(hierarchyQId && hierarchyNodeId) {
+            return 'InHierarchy('+hierarchyQId+',"' + hierarchyNodeId + '")';
+        }
+
+        return '';
+    }
 
     /**
      * @memberof HierarchyUtil
-     * @function getHierarchyFilterExpression
-     * @description function to form expression for scripted Hierarchy filter. Since the global Personalised Filter setting is turned off, custom filter is applied depending on whether a survey has Hierarchy question or not (must be specified in Config)
+     * @function getHierarchyFilterExpressionForCurrentRB
+     * @description function to form expression for scripted Hierarchy filter based on current report base. Since the global Personalised Filter setting is turned off, custom filter is applied depending on whether a survey has Hierarchy question or not (must be specified in Config)
      * @param {Object} context - {report: report, user: user, state: state, log: log}
-     * @returns {String} filter expression. If no hierarchy is specified for a survey in Config, an empty string will be returned.
+     * @returns {String} filter expression.
      */
 
-    static function getHierarchyFilterExpression (context) {
+    static function getHierarchyFilterExpressionForCurrentRB (context) {
 
         var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
 
         if(hierarchyQId) {
-            return 'INHIERARCHY('+hierarchyQId+',"' + context.user.PersonalizedReportBase + '")';
+            return getHierarchyFilterExpressionForNode (context, context.user.PersonalizedReportBase);
         }
 
         return '';
-
     }
 
+    /**
+     * @memberof HierarchyUtil
+     * @function isDataTableEmpty
+     * @description check if DB table already populated
+     * @returns {Boolean}
+     */
+
+    static function isDataTableEmpty() {
+        if(dbTable.Rows.Count > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function setDataTable
+     * @description sets static variable that holds hierarchy data table
+     * @param {Object} context {confirmit: confirmit}
+     */
+
+    static function setDataTable(context) {
+
+        if(isDataTableEmpty()) {
+            var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("nodes");
+            dbTable = dbTableNew.GetDataTable();
+        }
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function setDataTable
+     * @description gets static variable that holds hierarchy data table
+     * @returns {Object}
+     */
+    static function getDataTable() {
+        return dbTable;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getParentsForHierarchyNode
+     * @description gets array of parent nodes for the specified hierarchy node
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @param {string} hierarchyNodeId
+     * @param {numberOfLevelsUp} number of levels to go up the hierarchy
+     * @returns {Array} item of array is an object {parent: parent, label: parentLabel}
+     */
+    static function getParentsForHierarchyNode(context, hierarchyNodeId, numberOfLevelsUp) {
+
+        var log = context.log;
+        var rows = dbTable.Rows;
+        var nodeList = {};
+        var parentArray = [];
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row : DataRow = rows[i];
+            nodeList[row['id']] = {};
+            nodeList[row['id']].label = row['__l9'];
+            nodeList[row['id']].parent = row['parent'];
+        }
+
+        if(!numberOfLevelsUp) {
+            numberOfLevelsUp=rows.Count; // max possible value
+        }
+
+        do {
+            var currentParent = {};
+            currentParent.id = nodeList[hierarchyNodeId].parent;
+            currentParent.label = currentParent.id ? nodeList[currentParent.id].label : nodeList[hierarchyNodeId].label;
+            parentArray.push(currentParent);
+
+            hierarchyNodeId = currentParent.id;
+            numberOfLevelsUp-=1;
+
+        } while(hierarchyNodeId && numberOfLevelsUp)
+
+        return parentArray;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getParentsForCurrentHierarchyNode
+     * @description gets array of parent nodes for the specified hierarchy node
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @param {numberOfLevelsUp} number of levels to go up the hierarchy
+     * @returns {Array}
+     */
+    static function getParentsForCurrentHierarchyNode(context, numberOfLevelsUp) {
+
+        var log = context.log;
+        var hierarchyNodeId = context.user.PersonalizedReportBase;
+
+        return getParentsForHierarchyNode(context, hierarchyNodeId, numberOfLevelsUp);
+    }
+
+    /*
+      static function getLevel(user) {
+        return getParents(user).length;
+      }
+
+      static function isLowestLevelInHierarchy(user, confirmit) {
+        var reportBase = user.PersonalizedReportBase;
+        var rows = dbTable.Rows;
+        var isLowest = true;
+
+        for (var i = 0; i < rows.Count; i++) {
+          var row : DataRow = rows[i];
+          if(row['parent'] === reportBase) {
+            isLowest = false;
+            break;
+          }
+        }
+        return isLowest;
+      }
+
+      static function isLowestLevelInHierarchyAnyUser(userID, confirmit) {
+        var rows = dbTable.Rows;
+        var isLowest = true;
+
+        for (var i = 0; i < rows.Count; i++) {
+          var row : DataRow = rows[i];
+          if(row['parent'] === userID) {
+            isLowest = false;
+            break;
+          }
+        }
+        return isLowest;
+      }
+     */
 
 
 }

@@ -58,6 +58,7 @@ class PageCategoricalDrilldown {
         row.IsCollapsed = (question.QuestionType === QuestionType.Single) ? false : true;
         row.ShowTitle = false;
         row.ShowTotals = false;
+        TableUtil.addBreakByNestedHeader(context, row);
         table.RowHeaders.Add(row);
 
 
@@ -93,4 +94,6 @@ class PageCategoricalDrilldown {
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
     }
+
+
 }

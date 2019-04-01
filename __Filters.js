@@ -153,6 +153,8 @@ class Filters {
         var report = context.report;
         var log = context.log;
 
+        qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(qId);
+
         if (answerCodes.length) {
             return 'IN(' + qId + ', "'+answerCodes.join('","')+'")';
         }
@@ -221,5 +223,40 @@ class Filters {
 
     }
 
+    /*
+      * not empty comments filter
+      * @param {context}
+      * @param {string} KPIGroupName: KPIPositiveAnswerCodes, KPINegativeAnswerCodes (as in Config)
+      * @return {string} filter expression
+      */
+
+    static function filterByKPIGroup(context, KPIGroupName) {
+
+        var kpiQid = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(kpiQid);
+        var answerCodes = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', KPIGroupName);
+
+        return getFilterExpressionByAnswerRange(context, qId, answerCodes);
+
+    }
+
+    /*
+	* filter by particular project in pulse program
+	* @param {context} {state: state, report: report}
+	* @param {string}
+	* @return {string} filter expression
+    */
+
+    static function projectSelectorInPulseProgram(context) {
+
+        var project : Project = DataSourceUtil.getProject(context);
+
+        if(project.GetQuestion('pid') != null) {
+            return 'IN(pid, PValStr("p_projectSelector"))';
+        }
+
+        return '';
+
+    }
 
 }

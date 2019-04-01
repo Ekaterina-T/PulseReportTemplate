@@ -97,7 +97,7 @@ class QuestionUtil {
         var question : Question = project.GetQuestion(questionInfo.questionId);
         var title;
         var answer: Answer;
-        var NA = 'No question title/text is specified in survey for question '+question.QuestionId;
+        var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
         if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
             return question.Title || question.Text || NA;
@@ -149,7 +149,7 @@ class QuestionUtil {
         }
 
         // answers are not found
-        throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list');
+        throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list. Check if it\'s open text question without \'single in reporting\' property.');
 
     }
 
@@ -171,7 +171,7 @@ class QuestionUtil {
         var q : Question = project.GetQuestion(questionId);
         var answers = q.GetAnswers();
         for (var k=0; k<answers.length; k++) {
-            if (answers[k] === answerCode) {
+            if (answers[k].Precode === answerCode) {
                 return true;
             }
         }

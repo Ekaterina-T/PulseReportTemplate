@@ -105,14 +105,15 @@ class TableUtil{
 
     /*
    * Function that excludes NA answer from header.
-   * param {object} context {report: report, user: user, state: state, log: log}
+   * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
    * param {Header} headerQuestion or headerCategory
    */
 
     static function maskOutNA(context, header) {
 
         var log = context.log;
-        var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
 
         if(!naCode) {
             return;
@@ -138,6 +139,88 @@ class TableUtil{
             header.IgnoreCodes = naCode;
             header.Mask.Type = MaskType.HideCodes;
             header.Mask.Codes = naCode;
+        }
+    }
+
+
+    /*
+   * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
+   * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
+   * @param {Header} parent header
+   */
+
+    static function addBreakByNestedHeader(context, parentHeader) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
+        var breakVariables = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakVariables');
+        var breakByParameter = null;
+        var breakByType = null;
+        var nestedHeader: HeaderQuestion;
+        var questionElem: QuestionnaireElement;
+
+        if(breakByTimeUnits && breakVariables && breakVariables.length>0) {
+            throw new Error('TableUtil.addBreakByNestedHeader: only one property can be used for break by, exclude either BreakByTimeUnits or BreakVariables from config for the DS, page '+pageId);
+        }
+
+        if(!(breakByTimeUnits || (breakVariables && breakVariables.length>0))) { // none of break by values set in config
+            return;
+        }
+
+        if(breakByTimeUnits && pageId === 'Page_Result') {
+            breakByParameter = 'p_TimeUnitNoDefault';
+            breakByType = 'TimeUnit';
+        } else if(breakByTimeUnits && pageId === 'Page_CategoricalDrilldown') {
+            breakByParameter = 'p_CatDD_TimeUnitNoDefault';
+            breakByType = 'TimeUnit';
+        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_Result') {
+            breakByParameter = 'p_Results_BreakBy';
+            breakByType = 'Question';
+        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_CategoricalDrilldown') {
+            breakByParameter = 'p_CategoricalDD_BreakBy';
+            breakByType = 'Question';
+        }
+
+        var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
+
+        if(selectedOption==null || selectedOption.Code === 'na') {//no break by option is selected
+            return;
+        }
+
+        if(breakByType === 'TimeUnit') { // break by time unit
+
+            var qid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DateQuestion');
+
+            questionElem = QuestionUtil.getQuestionnaireElement(context, qid);
+            nestedHeader = new HeaderQuestion(questionElem);
+            nestedHeader.ShowTotals = false;
+            nestedHeader.TimeSeries.FlatLayout = true;
+
+            nestedHeader.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
+            if(selectedOption.TimeUnit === 'Quarter') {
+                nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Quarter;
+            } else if(selectedOption.TimeUnit === 'Month') {
+                nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
+            } else if(selectedOption.TimeUnit === 'Day') {
+                nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
+                nestedHeader.TimeSeries.Time3 = TimeseriesTimeUnitType.DayOfMonth;
+            }
+
+            TableUtil.applyDateRangeFilterToHeader(context, nestedHeader);
+            parentHeader.SubHeaders.Add(nestedHeader);
+
+            return;
+        }
+
+        if(breakByType === 'Question') { // break by time unit
+
+            questionElem = QuestionUtil.getQuestionnaireElement(context, selectedOption.Code);
+            nestedHeader = new HeaderQuestion(questionElem);
+            nestedHeader.ShowTotals = false;
+            parentHeader.SubHeaders.Add(nestedHeader);
+
+            return;
         }
     }
 

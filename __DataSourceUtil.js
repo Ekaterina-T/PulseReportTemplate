@@ -130,6 +130,40 @@ class DataSourceUtil {
 
     }
 
+
+    /*
+     * Get property value from config. Performs double check: if a property exists on a page level, get it from the page config.
+     * Otherwise, search this property among global settings in project config
+     * @param {object} context object with two mandotary fields: state and report
+     * @param {string} pageId - should match config page property
+     * @param {string} propertyName
+     * @returns {string} property value
+     */
+
+    // Nastya, why do we need that function? Is it for suppress?
+    // I can't find duplicated properties on page and survey level apart from isHidden
+    // cannot it be a bit dangerous in some cases in future?
+    // and function name seems misleading, isn't it?
+    // Don't we need to throw Error in case property isn't found anywhere?
+    static function getPropertyValueFromConfig (context, pageId, propertyName) {
+
+        var state = context.state;
+        var log = context.log;
+        var value;
+
+        try {
+            value = getPagePropertyValueFromConfig (context, pageId, propertyName);
+        }
+        catch (e) {};
+
+        // if the property isn't defined on the page level, grab it from the survey config
+        if(!value) {
+            value = getSurveyPropertyValueFromConfig (context, propertyName);
+        }
+
+        return value;
+    }
+
     /*
      * Check if surveyType selector should be hidden (only one survey and nothing to switch to) or not.
      * @param {object} context object with three mandotary fields: {state: state, report: report, log: log}
@@ -154,7 +188,7 @@ class DataSourceUtil {
      * @returns {bool} ifHide gives false if Config contains more than one data source.
      */
 
-    static function isProjectSelectorNeeded (context) {  // isProjectSelectorNeeded
+    static function isProjectSelectorNeeded (context) {
 
         var log = context.log;
         var project : Project = getProject(context);

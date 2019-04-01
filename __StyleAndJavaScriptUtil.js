@@ -1,6 +1,31 @@
 class StyleAndJavaScriptUtil {
 
     /*
+    * Assemble all "backend dependant" css styles and js scripts
+     * @param {object} context {state: state, report: report, log: log}
+     * @returns {string} script and style string
+     */
+
+    static function assembleBackendDependantStylesAndJS (context) {
+
+        var str = '';
+
+        try {
+            str += buildReportTemplateModule (context); //js
+        } catch(e) {
+            throw new Error('StyleAndJavaScriptUtil.buildReportTemplateModule: failed with error "'+e.Message+'"');
+        }
+
+        try {
+            str += applyTheme(); // css
+        } catch(e) {
+            throw new Error('StyleAndJavaScriptUtil.applyTheme: failed with error "'+e.Message+'"');
+        }
+
+        return str;
+    }
+
+    /*
      * all js variables and functions that
      * - are specific to the template
      * - are defined based on Config
@@ -36,6 +61,10 @@ class StyleAndJavaScriptUtil {
         properties.push('TableChartColName_ScoreVsNormValue: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));
 
         properties.push('TableChartColName_Distribution: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Distribution')));
+
+        properties.push('About: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'About')));
+
+        properties.push('CollapseExpand: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'CollapseExpand')));
 
         if (pageContext.Items['CurrentPageId'] === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(PageComments.getTagColumnNumbers (context)));
@@ -76,9 +105,9 @@ class StyleAndJavaScriptUtil {
         var primaryGreyColor = Config.primaryGreyColor;
         var pieColors = Config.pieColors;
         var barChartColors = Config.barChartColors_Distribution;
+        var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
 
         var css_string = '';
-
 
         css_string += ''
 
@@ -130,6 +159,16 @@ class StyleAndJavaScriptUtil {
             +'div .hitlist-nav-page:hover {'
             +'background-color: '+kpiColor+' !important;'
             +'}'
+
+            //loading animation colors (three blinking dots)
+            +'@keyframes pulse { '
+            +'from { background-color:'+kpiColor+';}'
+            +'to { background-color:'+kpiColor_dark+';}'
+            +'}';
+
+        if(!isThreeDotsMenuNeeded) {
+            css_string += '.material-card__title .kebab-menu { display: none; }';
+        }
 
         return '<style>'+css_string+'</style>';
     }

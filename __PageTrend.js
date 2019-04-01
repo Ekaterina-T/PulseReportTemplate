@@ -60,13 +60,14 @@ class PageTrend {
             row.DefaultStatistic = StatisticsType.Average;
             row.HideHeader = true;
             TableUtil.maskOutNA(context, row);
+            log.LogDebug('13');
             table.RowHeaders.Add(row);
         }
-
 
         // add column (Date variable)
 
         var timeUnits = ParamUtil.GetSelectedOptions (context, 'p_TimeUnitWithDefault');
+
         if (timeUnits.length) {
             var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
             qe = QuestionUtil.getQuestionnaireElement(context, dateQId);
@@ -88,11 +89,9 @@ class PageTrend {
 
 
         // global table settings
-
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
-
 
     }
 

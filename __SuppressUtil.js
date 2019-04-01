@@ -37,6 +37,7 @@ class SuppressUtil {
         var displayBaseOption = suppressSettings.displayBaseOption;
         var displayCellOption = suppressSettings.displayCellOption;
         var suppressValue = suppressSettings.minBase || Config.SuppressSettings.TableSuppressValue;
+        var cellValue = suppressSettings.cellLimit || suppressValue;
 
         table.SuppressData.SuppressData = true;
         table.SuppressData.BaseLessThan = suppressValue;
@@ -49,8 +50,8 @@ class SuppressUtil {
         else if (displayBaseOption == 'showMarker') table.SuppressData.BaseDisplay = BaseDisplayOption.ShowMarker;
         else table.SuppressData.BaseDisplay = BaseDisplayOption.Show;
 
-        if (displayCellOption == 'hide') { table.SuppressData.CellDisplay = BaseDisplayOption.Hide; table.SuppressData.CellLimit = suppressValue; }
-        else if (displayCellOption == 'showMarker') { table.SuppressData.CellDisplay = BaseDisplayOption.ShowMarker; table.SuppressData.CellLimit = suppressValue; }
+        if (displayCellOption == 'hide') { table.SuppressData.CellDisplay = BaseDisplayOption.Hide; table.SuppressData.CellLimit = cellValue; }
+        else if (displayCellOption == 'showMarker') { table.SuppressData.CellDisplay = BaseDisplayOption.ShowMarker; table.SuppressData.CellLimit = cellValue; }
         else table.SuppressData.CellDisplay = BaseDisplayOption.Show;
     }
 
@@ -84,6 +85,15 @@ class SuppressUtil {
             row2.ReferenceGroup.Parent = true;
             row2.ShowTotals = false;
             table.RowHeaders.Add(row2);
+
+            var row3 : HeaderQuestion = new HeaderQuestion(qe);
+            row3.HierLayout = HierLayout.Nested;
+            row3.ReferenceGroup.Enabled = true;
+            row3.ReferenceGroup.Self = true;
+            row3.ReferenceGroup.AllSiblings = true;
+            row3.ShowTotals = false;
+            table.RowHeaders.Add(row3);
+
         }
 
     }
@@ -114,7 +124,7 @@ class SuppressUtil {
     }
 
 
-
+    // Hide small units: a node should not show if it has less than X
     static function reportBaseIsLow (context) {
 
         var report = context.report;
@@ -146,7 +156,6 @@ class SuppressUtil {
             return false;
         }
 
-        var X = Config.SuppressSettings.HierarchySuppress.unitValue;
         var delta = Config.SuppressSettings.HierarchySuppress.minGap;
         var parentBase = (bases.Length > 1) ? bases[1].Value : selfUnitBase;
         var allSiblingsBase = 0;
@@ -154,17 +163,13 @@ class SuppressUtil {
             allSiblingsBase += bases[i].Value;
         }
 
-        // 2. Hide small units: a node should not show if it has less than X
-        if (selfUnitBase < X) {
-            return true;
-        }
 
-        // 3. Hide a unit when there are small siblings next to it or few people are connected directly to its parent node
+        // 2. Hide a unit when there are small siblings next to it or few people are connected directly to its parent node
         if (parentBase - selfUnitBase && parentBase - selfUnitBase <= delta) {
             return true;
         }
 
-        // 4. Hide a unit if too few people are connected directly to the parent node
+        // 3. Hide a unit if too few people are connected directly to the parent node
         if (parentBase - allSiblingsBase && parentBase - allSiblingsBase <= delta) {
             return true;
         }

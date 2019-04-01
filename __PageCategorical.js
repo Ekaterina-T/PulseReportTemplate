@@ -73,7 +73,7 @@ class PageCategorical {
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
-        var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
+        var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
 
         for (var i=0; i<Qs.length; i++) {
 
@@ -163,6 +163,7 @@ class PageCategorical {
      * @property {String} qid - Question Id
      * @property {String} title - Question title
      * @property {String} type - pie or list
+     * @property {Int} order - the index of question in Config (used in the sorting function to preserve the order of elements of the same type so they appear as they are listed in Config)
      * @property {Object[]} result - array of objects containing information about answers to a categorical question:
      * @property {String} name - answer text
      * @property {String} base - # of responses
@@ -184,15 +185,15 @@ class PageCategorical {
         var project : Project = DataSourceUtil.getProject(context);
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
         var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-        var naCode = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'NA_answerCode');
+        var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
-
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
         for (var i=0; i<Qs.length; i++) {
 
             var question : Question = project.GetQuestion(Qs[i]);
             var answerCount = question.AnswerCount;
+
             if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
                 answerCount--;
             }
@@ -211,7 +212,7 @@ class PageCategorical {
 
                 }
             }
-            categoricals.push({qid: Qs[i], title: title, type: displayType, result: result});
+            categoricals.push({qid: Qs[i], title: title, type: displayType, result: result, order: i});
             row_index += displayNumberOfAnswers;
 
         }
@@ -261,10 +262,10 @@ class PageCategorical {
         var multiCategoricals = getCategoricalResult(context, 'multi');
         singleCategoricals.sort(SortCategoricals);
         var listCollection = [];
-        for (var i=singleCategoricals.length-1; i>=0; i--) {
-            if (singleCategoricals[i].type != 'list')
-                break;
-            listCollection.push(singleCategoricals[i]);
+        for (var i=0; i<singleCategoricals.length; i++) {
+            if (singleCategoricals[i].type == 'list') {
+                listCollection.push(singleCategoricals[i]);
+            }
         }
         return listCollection.concat(multiCategoricals);
 
@@ -285,14 +286,14 @@ class PageCategorical {
         var text = context.text;
         var log = context.log;
 
-        var hoverTxt = TextAndParameterUtil.getTextTranslationByKey(context, 'ViewMore');
+        var hover = (content != '') ? 'title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ViewMore')+'"' : '';
 
         var card = '<div class="material-card flex material-card--categorical">'+
             '<div class="material-card__info">'+ TextAndParameterUtil.getTextTranslationByKey(context, 'Categorical_InfoTooltip') +'</div>'+
             '<div class="material-card__title">'+
             '<div class="material-card__title--left">'+title+'</div>'+
             '</div>'+
-            '<div id="'+ qid +'" class="material-card__content" title="'+hoverTxt+'">'+content+
+            '<div id="'+ qid +'" class="material-card__content" '+hover+'>'+content+
             '</div>'+
             '</div>';
 
@@ -310,7 +311,14 @@ class PageCategorical {
     static function SortCategoricals (a, b) {
         if (a.type != b.type && a.type === 'pie') return -1;
         if (a.type != b.type && a.type === 'list') return 1;
-        if (a.type == b.type) return 0;
+        if (a.type == b.type) {  // preserve the order of elements of the same type (so they appear as they are listed in Config)
+            if(a.order < b.order)
+                return -1;
+            return 1;
+        }
+
+
+
     }
 
 

@@ -16,7 +16,7 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         // if in current DS a page shouldn't be visible, than redirect to default page
-        // very actual when 1st report page should be visible
+        // very actual when 1st report page should not be visible
         if(!isPageVisible(context)) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
@@ -33,7 +33,12 @@ class PageUtil {
             for(var i=0; i<filterFromSurveyData.length; i++) {
                 state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
             }
+        }
 
+        if(pageContext.Items['CurrentPageId'] === 'Result') {
+            // populate cached hierarchy if needed
+            // for now it's only needed for results page hierarchy benchamrks
+            HierarchyUtil.setDataTable(context);
         }
 
     }
@@ -66,7 +71,7 @@ class PageUtil {
     }
 
     /*
-     * Indicates if page is vissble for the selected DS or not.
+     * Indicates if page is visible for the selected DS or not.
      * @param {object} context object {state: state, report: report, log: log}
      * @returns {Boolean}
      */
