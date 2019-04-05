@@ -60,7 +60,6 @@ class PageTrend {
             row.DefaultStatistic = StatisticsType.Average;
             row.HideHeader = true;
             TableUtil.maskOutNA(context, row);
-            log.LogDebug('13');
             table.RowHeaders.Add(row);
         }
 
@@ -98,7 +97,6 @@ class PageTrend {
     static function chartTrend_Hide(context){
 
         return SuppressUtil.isGloballyHidden(context);
-
     }
 
 }

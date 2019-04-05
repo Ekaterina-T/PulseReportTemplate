@@ -102,7 +102,6 @@ class Filters {
         return '';
     }
 
-
     /*
    * @function GeneratePanelFilterExpression
    * @description function to generate filter expression for the 'FilterPanel' filter. Filter parameters can be both single and multi selects
@@ -137,6 +136,38 @@ class Filters {
         }
         return filterExpr.join(' AND ');
 
+    }
+
+    /*
+   * @function GetFilterValues
+   * @description function to generate filter expression for the 'FilterPanel' filter. Filter parameters can be both single and multi selects
+   * @param {Object} context
+   * @return {Array} Array of objects {Label: label, selectedOptions: [{Label: label, Code: code}]}
+   */
+
+    static function GetFiltersValues (context) {
+
+        var state = context.state;
+        var report = context.report;
+        var log = context.log;
+
+        var filterValues = [];
+        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+        var filters = filterFromRespondentData.concat(filterFromSurveyData);
+
+        for (var i=0; i<filters.length; i++) {
+
+            // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
+            var selectedOptions = ParamUtil.GetSelectedOptions(context, 'p_ScriptedFilterPanelParameter'+(i+1));
+            var filterName = getScriptedFilterNameByOrder(context, i+1);
+
+            if(selectedOptions.length>0) {
+                filterValues.push({Label: filterName, selectedOptions: selectedOptions});
+            }
+        }
+
+        return filterValues;
     }
 
     /*

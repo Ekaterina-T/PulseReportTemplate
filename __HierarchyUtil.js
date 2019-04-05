@@ -116,9 +116,13 @@ class HierarchyUtil {
     static function getParentsForHierarchyNode(context, hierarchyNodeId, numberOfLevelsUp) {
 
         var log = context.log;
-        var rows = dbTable.Rows;
         var nodeList = {};
         var parentArray = [];
+        var rows = dbTable && dbTable.Rows;
+
+        if(!rows || rows.Count === 0) {
+            throw new Error('HierarchyUtil.getParentsForHierarchyNode: hierarchy dbTable is not set although requested.');
+        }
 
         for (var i = 0; i < rows.Count; i++) {
             var row : DataRow = rows[i];

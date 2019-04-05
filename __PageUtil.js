@@ -35,12 +35,11 @@ class PageUtil {
             }
         }
 
-        if(pageContext.Items['CurrentPageId'] === 'Result') {
+        if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-
     }
 
     /*
@@ -58,7 +57,6 @@ class PageUtil {
 
         for(var property in surveyProperties) {
             if(property.indexOf('Page_')===0) { //page config
-
                 var isHidden = false;
                 isHidden = DataSourceUtil.getPagePropertyValueFromConfig(context, property, 'isHidden');
                 if(!isHidden) {
@@ -66,7 +64,6 @@ class PageUtil {
                 }
             }
         }
-
         return pagesToShow;
     }
 
@@ -115,6 +112,13 @@ class PageUtil {
     static function getCurrentPageIdInConfig (context) {
 
         var pageContext = context.pageContext;
-        return 'Page_'+pageContext.Items['CurrentPageId'];
+        var log = context.log;
+        var pageId = pageContext.Items['CurrentPageId'];
+
+        if(pageId.indexOf('_ExcelExport')>0) {
+            pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
+        }
+
+        return 'Page_'+pageId;
     }
 }

@@ -20,41 +20,5 @@ class ListControlUtil {
 
         }
 
-        /* TO REMOVE
-        // NOT USED - hide empty parameter selectors and text labels by js on Report Master
-
-        if(parameterName === 'p_Results_BreakBy') {
-
-          var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
-          var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakVariables');
-
-          if(!breakByTimeUnits && breakBy && breakBy.length > 0) {
-            return false;
-          } else {
-            return true;
-          }
-        }
-
-        if(parameterName === 'p_TimeUnitNoDefault') {
-
-          var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BreakByTimeUnits');
-
-          if(!breakByTimeUnits) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        if(parameterName === 'p_BenchmarkSet') {
-
-          if(!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) {
-            return true;
-          } else {
-            return false;
-          }
-
-        } */
-
     }
 }

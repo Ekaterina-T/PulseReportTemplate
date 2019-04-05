@@ -16,7 +16,7 @@ class ParamUtil {
         'p_TimeUnitNoDefault':        { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_CatDD_TimeUnitNoDefault':  { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
 
-        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Result'},
+        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
         'p_CategoricalDD_BreakBy':{ propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown'},
         'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
         'p_Demographics':         { propertyName: 'DemographicsQuestions', type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
@@ -25,7 +25,7 @@ class ParamUtil {
         'p_TagQs':                { propertyName: 'TagsForComments',       type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
         'p_TrendQs':              { propertyName: 'TrendQuestions' ,       type: 'QuestionList', locationType: 'Page', page: 'Page_Trends'},
 
-        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Result'}
+        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'}
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
@@ -98,20 +98,33 @@ class ParamUtil {
         var report = context.report;
         var log = context.log;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        var parameterResource = reportParameterValuesMap[parameterId]; //where to take parameter values from
+        var parameterResource = reportParameterValuesMap[parameterId] || {}; //where to take parameter values from
         var propertyValue;
         var parameterOptions = [];
         var language = report.CurrentLanguage;
+        var option;  // {Code:'', Label: ''}
         var i;
 
-        if(!parameterResource) {
+        if(!parameterResource && !parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
         }
 
         // fetch propertyValue and then transform into needed format
         // locationType will tell where to fetch value from
+        if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
 
-        if(parameterResource.locationType === 'TextAndParameterLibrary') {
+            parameterResource.type = 'QuestionId';
+
+            var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+            var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+            var filterList = filterFromRespondentData.concat(filterFromSurveyData);
+            var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
+
+            if(paramNumber <= filterList.length) {
+                propertyValue = filterList[paramNumber-1];
+            }
+
+        } else if(parameterResource.locationType === 'TextAndParameterLibrary') {
 
             propertyValue = TextAndParameterLibrary.ParameterValuesLibrary[parameterResource.propertyName]; // return value as is
         } else if(parameterResource.locationType === 'Page') {
@@ -125,12 +138,27 @@ class ParamUtil {
 
         // type will tell how to handle it; by that moment propertyValue must be defined
 
-        // static arrays with predefined options
+        // propertyValue is a questionId; question answer list are options
+        if(parameterResource.type === 'QuestionId') {
+
+            var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, propertyValue);
+
+            for(var i=0; i<answers.length; i++) {
+                option = {};
+                option.Label = answers[i].Text;
+                option.Code = answers[i].Precode;
+                parameterOptions.push(option);
+            }
+
+            return parameterOptions;
+        }
+
+        // propertyValue is a static array with predefined options
         if(parameterResource.type === 'StaticArrayofObjects') {
 
             for(i=0; i<propertyValue.length; i++) {
 
-                var option = {};  // {Code:'', Label: ''}
+                option = {};
 
                 for(var prop in propertyValue[i]) {
                     if(prop !== 'Label') {
@@ -139,24 +167,20 @@ class ParamUtil {
                         option[prop] = propertyValue[i][prop][language];
                     }
                 }
-
                 parameterOptions.push(option);
             }
-
             return parameterOptions;
         }
 
-        // propertyValue is list of question ids, i.e. populate question selector
+        // propertyValue is a list of question ids, i.e. populate question selector
         if(parameterResource.type === 'QuestionList') {
 
             if(!propertyValue instanceof Array) {
-
                 throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
             }
 
             for(i=0; i<propertyValue.length; i++) {
-
-                var option = {};
+                option = {};
                 option.Code = propertyValue[i]; // propertyValue[i] is qid in this case
                 option.Label = QuestionUtil.getQuestionTitle(context, propertyValue[i]);
                 parameterOptions.push(option);
@@ -165,27 +189,6 @@ class ParamUtil {
             return parameterOptions;
         }
 
-        // propertyValue is questionId
-        if(parameterResource.type === 'QuestionAnswers') {
-
-            var answers: Answer[];
-
-            try {
-                answers = QuestionUtil.getQuestionAnswers(context, propertyValue);
-            } catch(e) {
-                throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, '+e.Message);
-            }
-
-            for(i=0; i<answers.length; i++) {
-
-                var option = {};
-                option.Code = answers[i].Precode;
-                option.Label = answers[i].Text;
-                parameterOptions.push(option);
-            }
-
-            return parameterOptions;
-        }
 
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
     }
@@ -234,12 +237,12 @@ class ParamUtil {
         }
 
         if(parameterName === 'p_Results_BreakBy') {
-            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Result', 'BreakVariables');
+            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
             return (breakBy && breakBy.length > 0) ? true : false;
         }
 
         if(parameterName === 'p_TimeUnitNoDefault') {
-            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Result', 'BreakByTimeUnits');
+            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakByTimeUnits');
             return breakByTimeUnits ? true : false;
         }
 
@@ -254,7 +257,7 @@ class ParamUtil {
         }
 
         if(parameterName === 'p_BenchmarkSet') {
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Result', 'BenchmarkSet') ? true : false;
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
 
         return true;
@@ -388,7 +391,6 @@ class ParamUtil {
     }
 
 
-    /* TO REVIEW */
     /*
     * Get full info about selected answers of the report parameter (single or multi response)
     * @param {Object} context  - object {state: state, log: log}

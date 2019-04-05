@@ -167,14 +167,14 @@ class TableUtil{
         if(!(breakByTimeUnits || (breakVariables && breakVariables.length>0))) { // none of break by values set in config
             return;
         }
-
-        if(breakByTimeUnits && pageId === 'Page_Result') {
+        //TO DO: get rid of explicit page names
+        if(breakByTimeUnits && pageId === 'Page_Results') {
             breakByParameter = 'p_TimeUnitNoDefault';
             breakByType = 'TimeUnit';
         } else if(breakByTimeUnits && pageId === 'Page_CategoricalDrilldown') {
             breakByParameter = 'p_CatDD_TimeUnitNoDefault';
             breakByType = 'TimeUnit';
-        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_Result') {
+        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_Results') {
             breakByParameter = 'p_Results_BreakBy';
             breakByType = 'Question';
         } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_CategoricalDrilldown') {

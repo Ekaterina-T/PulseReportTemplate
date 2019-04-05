@@ -322,6 +322,10 @@ class PageResponseRate {
             var qe:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
             var hq: HeaderQuestion = new HeaderQuestion(qe);
             hq.ShowTotals = false;
+
+            if(state.ReportExecutionMode !== ReportExecutionMode.Web) {
+                hq.ShowTitle = true;
+            }
             table.RowHeaders.Add(hq);
         }
 

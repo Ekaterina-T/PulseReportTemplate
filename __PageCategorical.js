@@ -66,7 +66,6 @@ class PageCategorical {
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var project : Project = DataSourceUtil.getProject(context);
-
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
@@ -88,7 +87,7 @@ class PageCategorical {
 
             row.IsCollapsed = (tableType == 'multi') ? true : false;
 
-            row.ShowTitle = false;
+            row.ShowTitle = true;//false; - changed to true for excel export
             row.ShowTotals = false;
             row.HideHeader = true;
 
@@ -102,7 +101,6 @@ class PageCategorical {
             TableUtil.maskOutNA(context, row);
             table.RowHeaders.Add(row);
         }
-
 
         // add 2 Base columns
 
@@ -123,7 +121,6 @@ class PageCategorical {
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
-
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 
