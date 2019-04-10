@@ -132,7 +132,7 @@ class PageResults {
         for (var i=0; i<categorizations.length; i++) {
 
             var categorization : HeaderCategorization = new HeaderCategorization();
-            categorization.CategorizationId = categorizations[i];
+            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
             categorization.DefaultStatistic = StatisticsType.Average;
             categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
@@ -206,8 +206,6 @@ class PageResults {
         // add Benchmark related columns
         tableStatements_AddBenchmarkColumns_Banner0(context);
     }
-
-
 
     /*
   *  add base column
