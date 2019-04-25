@@ -14,10 +14,17 @@ class ListControlUtil {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
 
+
         if(parameterName === 'p_Results_TableTabSwitcher') {
 
             return DataSourceUtil.isProjectSelectorNeeded(context); // only needed for pulse programs
+        }
 
+        var kpiQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+
+        if (parameterName === 'p_QsToFilterBy' && kpiQids.length == 1) {
+
+            return true;
         }
 
     }

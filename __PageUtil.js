@@ -15,14 +15,14 @@ class PageUtil {
 
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
+        ParamUtil.Initialise(context); // initialise parameters
+
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
         if(!isPageVisible(context)) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
-
-        ParamUtil.Initialise(context); // initialise parameters
 
         // reset not bg var based filters on response rate page
         if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {

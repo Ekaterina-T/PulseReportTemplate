@@ -48,25 +48,8 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        if(bannerId === '0') {
-            tableStatements_AddColumns_Banner0(context);
-            return;
-        }
-
-        if (bannerId === '1') {
-            tableStatements_AddColumns_Banner1(context);
-            return;
-        }
-
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements')) { // for not pulse
-            tableStatements_AddColumns_Banner0(context);
-            return;
-        }
-
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')) { // for pulse
-            tableStatements_AddColumns_Banner1(context);
-            return;
-        }
+        tableStatements_AddColumns_Banner0(context); // default set
+        return;
 
     }
 
@@ -77,18 +60,27 @@ class PageResults {
 
     static function tableStatements_AddRows(context) {
 
+        var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
+        var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements')) {
-
-            tableStatements_AddRows_Banner0(context);
-        } else if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')) {
-
-            tableStatements_AddRows_Banner1(context);
+        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
+            throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
+
+        if (resultStatements && resultStatements.length > 0) {
+            tableStatements_AddRows_Banner0(context);
+            return;
+        }
+
+        if (dimensions && dimensions.length > 0) {
+            tableStatements_AddRows_Banner1(context);
+            return;
+        }
+
+        throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
     }
-
-
 
     /*
   * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
@@ -126,7 +118,7 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var categorizations = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+        var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
@@ -146,28 +138,53 @@ class PageResults {
         }
 
         table.TotalsFirst = true;
+    }
 
+    /*
+* Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
+*  @param {object} context: {state: state, report: report, log: log, table: table}
+* @return {array} array of categorization ids
+*/
+
+    static function
+
+    getActiveCategorizations(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        /*
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
+
+        if(schemaId && tableName) { // there is storage for baby survey dimensions
+
+          var confirmit = context.confirmit;
+          var schema: DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
+          var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+          var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+          var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
+
+          if(dimensions && dimensions.Count>0) {
+            return dimensions[0].split(',');
+          }
+        }
+        */
+        return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
     }
 
 
     /*
-  * Add set of columns: Score (Avg), distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart
+  * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
   * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {string} scoreType
   */
 
     static function tableStatements_AddColumns_Banner0(context) {
 
-        var table = context.table;
         var log = context.log;
 
         // add Score column
-
-        var score: HeaderStatistics = new HeaderStatistics();
-        score.Decimals = 0;
-        score.Statistics.Avg = true;
-        score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
-        table.ColumnHeaders.Add(score);
-
+        addScore(context);
         //add distribution barChart
         addDistributionBarChart(context);
         // add scale distribution
@@ -176,35 +193,99 @@ class PageResults {
         addResponsesColumn(context);
         // add Benchmark related columns
         tableStatements_AddBenchmarkColumns_Banner0(context);
-
     }
 
     /*
-  * Add set of columns: %Fav, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart
+  * Add Score calculation
   * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
+  * @param {Header} parentHeader - not mandotary
+  * @param {Array} [Header1, Header2,...]
   */
-    static function tableStatements_AddColumns_Banner1(context) {
+    static function
+
+    addScore(context, parentHeader) {
 
         var table = context.table;
-        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var scoreType = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ScoreType');
 
-        // add Score column
-        var ScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
-        var fav: HeaderFormula = new HeaderFormula();
-        fav.Type = FormulaType.Expression;
-        fav.Expression = 'cellv(col+'+ScoreRecodingCols.join(', row)+cellv(col+')+',row)';
-        fav.Decimals = 0;
-        fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
-        table.ColumnHeaders.Add(fav);
+        scoreType = scoreType.toLowerCase();
 
-        //add distribution barChart
-        addDistributionBarChart(context);
-        // add scale distribution
-        addScaleDistributionColumns(context);
-        // add Responses Column
-        addResponsesColumn(context);
-        // add Benchmark related columns
-        tableStatements_AddBenchmarkColumns_Banner0(context);
+        if (scoreType === 'avg') {
+            var score: HeaderStatistics = new HeaderStatistics();
+            score.Decimals = 0;
+            score.Statistics.Avg = true;
+            score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
+
+            if (parentHeader) {
+                parentHeader.SubHeaders.Add(score);
+            } else {
+                table.ColumnHeaders.Add(score);
+            }
+            return [score];
+        }
+
+        var bcCategories: HeaderCategories = new HeaderCategories();
+
+        if (scoreType === '%fav') {
+
+            // add Score column
+            var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
+            var fav: HeaderFormula = new HeaderFormula();
+            fav.Type = FormulaType.Expression;
+            fav.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row)';
+            fav.Decimals = 0;
+            fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
+
+            //add distribution barChart
+            bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+            bcCategories.Totals = false;
+            bcCategories.Distributions.Enabled = true;
+            bcCategories.Distributions.HorizontalPercents = true;
+            bcCategories.Decimals = 0;
+            bcCategories.HideData = true;
+
+            if (parentHeader) {
+                parentHeader.SubHeaders.Add(fav);
+                parentHeader.SubHeaders.Add(bcCategories);
+            } else {
+                table.ColumnHeaders.Add(fav);
+                table.ColumnHeaders.Add(bcCategories);
+            }
+            return [fav, bcCategories];
+        }
+
+        if (scoreType === '%fav-%unfav') {
+
+            // add Score column
+            var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
+            var negScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_NegativeCols');
+            var diff: HeaderFormula = new HeaderFormula();
+            diff.Type = FormulaType.Expression;
+            diff.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row) - cellv(col+' + negScoreRecodingCols.join(', row)-cellv(col+') + ',row)';
+            diff.Decimals = 0;
+            diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
+
+            //add distribution barChart
+            bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+            bcCategories.Totals = false;
+            bcCategories.Distributions.Enabled = true;
+            bcCategories.Distributions.HorizontalPercents = true;
+            bcCategories.Decimals = 0;
+            bcCategories.HideData = true;
+
+            if (parentHeader) {
+                parentHeader.SubHeaders.Add(diff);
+                parentHeader.SubHeaders.Add(bcCategories);
+            } else {
+                table.ColumnHeaders.Add(diff);
+                table.ColumnHeaders.Add(bcCategories);
+            }
+            return [diff, bcCategories];
+        }
+
+        throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
     }
 
     /*
@@ -319,6 +400,8 @@ class PageResults {
 
     static function tableStatements_AddBenchmarkColumns_Banner0 (context) {
 
+        var log = context.log;
+
         if(!isBenchmarkAvailable(context)) {
             return;
         }
@@ -326,11 +409,37 @@ class PageResults {
         var report = context.report;
         var state = context.state;
         var table = context.table;
-        var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
         var suppressValue = Config.SuppressSettings.TableSuppressValue;
+        var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
+
+        // !!!order of how bm cols are added must comply with bm table column order!!!
+
+        // previous wave benchmark
+        var prevWave = getPreviousWave(context);
+        if (prevWave) {
+            // add values
+            var waveHeader: HeaderContent = new HeaderContent();
+            var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+            waveHeader.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+
+            for (var j = 0; j < preWaveVals.length; j++) {
+
+                var prevWaveVal: Datapoint = preWaveVals[j];
+                base = baseValues[j];
+
+                if (base.Value >= suppressValue && !prevWaveVal.IsEmpty) {
+                    waveHeader.SetCellValue(j, prevWaveVal.Value);
+                } else if (base.Value >= suppressValue) {
+                    waveHeader.SetCellValue(j, '-');
+                }
+            }
+
+            table.ColumnHeaders.Add(waveHeader);
+            bmColumn += 1;
+        }
 
         // add benchmark data based on benchmark project
         if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
@@ -338,7 +447,6 @@ class PageResults {
             var benchmarkContent: HeaderContent = new HeaderContent();
             var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',bmColumn);
 
-            // TO DO: below there is a similar loop, need to unite them in one
             for(var i=0; i<benchmarkValues.length; i++) {
 
                 var base: Datapoint = baseValues[i];
@@ -388,13 +496,13 @@ class PageResults {
             formula_ScoreVsNorm.Expression = 'if((cellv(1,row)-cellv(col-2,row) < 1 AND (cellv(1,row)-cellv(col-2,row) > -1)), 0, cellv(1,row)-cellv(col-2,row))'; // the 1st column in the table is score
 
             if(state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
+                formula_ScoreVsNorm.Expression = 'if((cellv(1,row)-cellv(col-1,row) < 1 AND (cellv(1,row)-cellv(col-1,row) > -1)), 0, cellv(1,row)-cellv(col-1,row))'; // no bar chart header in excel
                 formula_ScoreVsNorm.Title = TextAndParameterUtil.getLabelByKey(context, 'ScoreVsNormValue');
             }
             table.ColumnHeaders.Add(formula_ScoreVsNorm);
-
             bmColumn+=1;
-
         }
+
 
         //add hierarchy comparison benchmarks
         var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
@@ -403,8 +511,7 @@ class PageResults {
 
             var hierCompContent: HeaderContent = new HeaderContent();
             var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',bmColumn); // num of column where values are bmVolumn
-            var hierLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks',bmColumn);
-            hierCompContent.Title = new Label(9, hierLabels[bmColumn-1]);
+            hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
 
             for(var j=0; j<baseValues.length; j++) {
 
@@ -419,10 +526,7 @@ class PageResults {
             table.ColumnHeaders.Add(hierCompContent);
             bmColumn +=1;
         }
-
-
     }
-
 
 
     /*
@@ -492,7 +596,6 @@ class PageResults {
         if(isBenchmarkAvailable(context)) {
             tableStatements_AddRows(context);
             tableBenchmarks_AddColumns_Banner0(context);
-            //addResponsesColumn(context);
 
             table.Decimals = 0;
             table.RowNesting = TableRowNestingType.Nesting;
@@ -514,21 +617,27 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
-        var hierarchyFilter: HeaderSegment = new HeaderSegment();
+        var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         var responses: HeaderBase = new HeaderBase();
 
-        hierarchyFilter.DataSourceNodeId = DataSourceUtil.getDsId(context);
-        hierarchyFilter.SegmentType = HeaderSegmentType.Expression;
-        hierarchyFilter.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
-        hierarchyFilter.SubHeaders.Add(responses);
+        excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        excludedFiltersForN.SegmentType = HeaderSegmentType.Expression;
+        excludedFiltersForN.Expression = Filters.getHierarchyAndWaveFilter(context);
+        excludedFiltersForN.HideHeader = true;
+        excludedFiltersForN.SubHeaders.Add(responses);
+        table.ColumnHeaders.Add(excludedFiltersForN);
 
-        table.ColumnHeaders.Add(hierarchyFilter);
+        //add previous wave column
+        var prevWave = getPreviousWave(context);
 
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        if (prevWave) {
+            tableBenchmarks_addWaveScoreColumn(context, prevWave);
+        }
 
-            //add Benchmarks from benchmark project
+        //add Benchmarks from benchmark project
+        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+
             var benchmarks: HeaderBenchmark = new HeaderBenchmark();
-
             benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
 
             if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) {// there's benchmark set
@@ -572,30 +681,78 @@ class PageResults {
         }
 
         if(parentsList && parentsList.length>0) {
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentsList[parentsList.length - 1]['id'], null);
             levelSegment.Label = new Label(report.CurrentLanguage, parentsList[parentsList.length-1]['label']);
-            levelSegment.Expression = HierarchyUtil.getHierarchyFilterExpressionForNode(context, parentsList[parentsList.length-1]['id']);
         } else {
             return; // no such parent in the hierarchy
         }
 
-        //calc %Fav
-        var ScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
-        var fav: HeaderFormula = new HeaderFormula();
-        fav.Type = FormulaType.Expression;
-        fav.Expression = 'cellv(col+'+ScoreRecodingCols.join(', row)+cellv(col+')+',row)';
-        fav.Decimals = 0;
-        fav.Title = levelSegment.Label;
-        table.ColumnHeaders.Add(fav);
+        //calc score
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = levelSegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+        newHeaders[1].SubHeaders.Add(levelSegment);
 
-        var bcCategories: HeaderCategories = new HeaderCategories();
-        bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
-        bcCategories.Totals = false;
-        bcCategories.Distributions.Enabled = true;
-        bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Decimals = 0;
-        bcCategories.SubHeaders.Add(levelSegment);
-        bcCategories.HideData = true;
-        table.ColumnHeaders.Add(bcCategories);
+    }
+
+    /**
+     *  gets previous wave column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {Anwser} answer of wave question for code previous to the selected one
+     *  @returns {Header}
+     */
+    static function
+
+    tableBenchmarks_addWaveScoreColumn(context, prevWave) {
+
+        var report = context.report;
+        var table = context.table;
+        var log = context.log;
+
+        var currentHierarchyAndWaveId: HeaderSegment = new HeaderSegment();
+        currentHierarchyAndWaveId.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        currentHierarchyAndWaveId.SegmentType = HeaderSegmentType.Expression;
+        currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
+        currentHierarchyAndWaveId.HideData = true;
+
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
+        newHeaders[1].SubHeaders.Add(currentHierarchyAndWaveId);
+
+    }
+
+    /*
+* get code of previous wave
+*  @param {object} context: {state: state, report: report, log: log, table: table}
+* @return {Answer} {Code: code, Label: label}
+*/
+
+    static function
+
+    getPreviousWave(context) {
+
+        var log = context.log;
+        var waveQ = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+
+        if (waveQ) {
+            var waves: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQ);
+            var currentWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+            var prevWave;
+
+            if (!currentWave || currentWave.length === 0) {
+                throw new Error('PageResults.getPreviousWave: Current wave is not selected.');
+            }
+
+            currentWave = currentWave[0];
+            var i = 0;
+
+            while (i < waves.length && waves[i].Precode !== currentWave) {
+                i++;
+            }
+
+            return (i > 0 && i < waves.length) ? waves[i - 1] : null;     // i==0 -> no previous wave
+        }
+
+        return null;
     }
 
 
@@ -610,11 +767,11 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var previousWave = getPreviousWave(context);
 
-        if(benchmarkProject || (hierarchyLevels && hierarchyLevels.length>0)) {
+        if (benchmarkProject || previousWave || (hierarchyLevels && hierarchyLevels.length > 0)) {
             return true;
         }
-
         return false;
     }
 
@@ -625,7 +782,6 @@ class PageResults {
   */
 
     static function table_Benchmarks_hide(context) {
-
         return !isBenchmarkAvailable(context);
     }
 

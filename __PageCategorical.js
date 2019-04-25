@@ -57,7 +57,9 @@ class PageCategorical {
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
 
-    static function tableCategorical_Render(context, tableType){
+    static function
+
+    tableCategorical_Render(context, tableType) {
 
         var report = context.report;
         var state = context.state;
@@ -271,34 +273,6 @@ class PageCategorical {
 
     /**
      * @memberof PageCategorical
-     * @function RenderCategoricalCard
-     * @description function to render a card/tile for a categorical question
-     * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
-     * @return {String} - string representing HTML markup for 1 card
-     */
-    static function RenderCategoricalCard (context, title, qid, content) {
-
-        var report = context.report;
-        var state = context.state;
-        var text = context.text;
-        var log = context.log;
-
-        var hover = (content != '') ? 'title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ViewMore')+'"' : '';
-
-        var card = '<div class="material-card flex material-card--categorical">'+
-            '<div class="material-card__info">'+ TextAndParameterUtil.getTextTranslationByKey(context, 'Categorical_InfoTooltip') +'</div>'+
-            '<div class="material-card__title">'+
-            '<div class="material-card__title--left">'+title+'</div>'+
-            '</div>'+
-            '<div id="'+ qid +'" class="material-card__content" '+hover+'>'+content+
-            '</div>'+
-            '</div>';
-
-        text.Output.Append(card);
-    }
-
-    /**
-     * @memberof PageCategorical
      * @function SortCategoricals
      * @description sorting function. Regardless of the order qIds in Config, display pie-questions first
      * @param {Object} a - object representing a categorical question
@@ -336,30 +310,47 @@ class PageCategorical {
 
         // render cards with pies
         var pies = getPieCollection(context);
+
         for (var i=0; i<pies.length; i++) {
-            var content = '';
             var item = pies[i];
+            var content = {
+                title: item.title,
+                tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'Categorical_InfoTooltip'),
+                hoverText: '',
+                qid: item.qid,
+                data: ''
+            };
+
             if (item.result.length != 0) {
-                content =  '<div id="pie-container-'+item.qid+'" class="hideLegendInWeb"> </div>';
+                content.data = '<div id="pie-container-' + item.qid + '" class = "hideLegendInWeb"> </div>';
             }
-            RenderCategoricalCard (context, item.title, item.qid, content);
+
+            CardUtil.RenderCard(context, content, 'material-card--categorical');
         }
 
         var lists = getTopListCollection(context);
+
         for (var i=0; i<lists.length; i++) {
-            content = '';
             item = lists[i];
+            var content = {
+                title: item.title,
+                tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'Categorical_InfoTooltip'),
+                hoverText: '',
+                qid: item.qid,
+                data: ''
+            };
+
             if (item.result.length != 0) {
-                content = '<ol class="material-card__list">';
+                content.data = '<ol class="material-card__list">';
                 for (var j=0; j<item.result.length; j++) {
-                    content +=
+                    content.data +=
                         '<li class="material-card__list-item">'+item.result[j].name+
                         '<div class="material-card__note">'+(item.result[j].y).toFixed(0)+'%' +' ('+ item.result[j].base + ' responses) </div>'+
                         '</li>';
                 }
-                content += '</ol>';
+                content.data += '</ol>';
             }
-            RenderCategoricalCard (context, item.title, item.qid, content);
+            CardUtil.RenderCard(context, content, 'material-card--categorical');
 
         }
     }

@@ -55,6 +55,8 @@ class StyleAndJavaScriptUtil {
 
         properties.push('hideTimePeriodFilters: '+Filters.isTimePeriodFilterHidden(context));
 
+        properties.push('hideWaveFilter: ' + Filters.isWaveFilterHidden(context));
+
         properties.push('noDataWarning: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg')));
 
         properties.push('TableChartColName_ScoreVsNormValue: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));
@@ -70,7 +72,7 @@ class StyleAndJavaScriptUtil {
         }
 
         if (pageContext.Items['CurrentPageId'] === 'KPI') {
-            properties.push('kpi: '+JSON.stringify(PageKPI.getKPIResult(context)));
+            properties.push('gaugeData: ' + JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
         if (pageContext.Items['CurrentPageId'] === 'Categorical_') {
@@ -171,4 +173,29 @@ class StyleAndJavaScriptUtil {
 
         return '<style>'+css_string+'</style>';
     }
+
+    static function
+
+    reportStatisticsTile_Render(context, stat, icon) {
+
+        var log = context.log;
+        var str = '';
+        var value;
+
+        switch (stat) {
+            case 'collectionPeriod':
+                value = PageResponseRate.getCollectionPeriod(context);
+                break;
+            default:
+                value = PageResponseRate.getResponseRateSummary(context)[stat];
+                break;
+        }
+
+        str += '<div class="layout horizontal">'
+            + '<div class="icon icon--' + icon + '"></div>'
+            + '<div class="flex digit self-center">' + value + '</div></div>';
+
+        return str;
+    }
+
 }

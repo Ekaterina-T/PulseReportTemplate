@@ -48,10 +48,10 @@ class JSON
         '<': '&lt;',
         '>': '&gt;',
         '&': '&amp;',
-        '\"': '\\&quot;',
-        '\'':'&amp;apos;'
+        '\"': '\\&quot;'/*,
+            '\'':'&amp;apos;'*/ //https://jiraosl.firmglobal.com/browse/TQA-4215
     };
-    return str.replace(/[&<>\"\']/g, function(key) {
+    return str.replace(/[&<>\"]/g, function (key) { // old expre /[&<>\"\']/g, https://jiraosl.firmglobal.com/browse/TQA-4215
         return entitiesMap[key];
     });
 }

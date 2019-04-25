@@ -84,7 +84,6 @@ class PageCategoricalDrilldown {
         hc.SubHeaders.Add(hb);
         table.ColumnHeaders.Add(hc);
 
-
         // global table settings
         table.RemoveEmptyHeaders.Rows = false;
         table.Sorting.Rows.SortByType = TableSortByType.Position;

@@ -140,11 +140,6 @@ class DataSourceUtil {
      * @returns {string} property value
      */
 
-    // Why do we need that function? Is it for suppress?
-    // I can't find duplicated properties on page and survey level apart from isHidden
-    // cannot it be a bit dangerous in some cases in future?
-    // and function name seems misleading, isn't it?
-    // Don't we need to throw Error in case property isn't found anywhere?
     static function getPropertyValueFromConfig (context, pageId, propertyName) {
 
         var state = context.state;

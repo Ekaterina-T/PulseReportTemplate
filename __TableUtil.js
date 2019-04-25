@@ -83,6 +83,59 @@ class TableUtil{
 
     }
 
+
+    /**
+     * @memberof TableUtil
+     * @function addTrending
+     * @description function to add trending by date variable to Aggregated table column
+     * @param {Object} context - {table: table, report: report, user: user, state: state, log: log}
+     * @param {String} qId - date question id for trending
+     */
+    static function
+
+    addTrending(context, qId) {
+
+        var log = context.log;
+        var table = context.table;
+
+        var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
+
+        if (timeUnits.length) {
+
+            // though it can be multi-parameter, use only 1 option for trend
+            var timeUnit = timeUnits[0];
+
+            // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
+            if (timeUnit.TimeUnit) {
+
+                // add trending by a date variable passed as a parameter
+                var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
+                var timeQuestionHeader: HeaderQuestion = new HeaderQuestion(qe);
+                setTimeSeriesByTimeUnit(context, timeQuestionHeader, timeUnit);
+
+                // set rolling if time unit count is specified in TextAndParameterLibrary->ParameterValuesLibrary
+                if (timeUnit.TimeUnitCount != null) {
+                    setRollingByTimeUnit(context, timeQuestionHeader, timeUnit);
+                }
+                timeQuestionHeader.TimeSeries.FlatLayout = true;
+
+            } else {
+
+                //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
+                qe = QuestionUtil.getQuestionnaireElement(context, timeUnit.Code);
+                timeQuestionHeader = new HeaderQuestion(qe);
+
+            }
+
+            timeQuestionHeader.ShowTotals = false;
+            timeQuestionHeader.HideData = false;
+            timeQuestionHeader.HideHeader = false;
+
+            table.RemoveEmptyHeaders.Columns = true;  //https://jiraosl.firmglobal.com/browse/TQA-4243
+            table.ColumnHeaders.Add(timeQuestionHeader);
+
+        }
+    }
     /*
      * Function sets start and end date for Date header.
      * That allows to limit date interval and number of columns in table when
@@ -213,15 +266,45 @@ class TableUtil{
             return;
         }
 
-        if(breakByType === 'Question') { // break by time unit
+        if (breakByType === 'Question') { // break by question
+
+            var questionInfo = QuestionUtil.getQuestionInfo(context, selectedOption.Code);
 
             questionElem = QuestionUtil.getQuestionnaireElement(context, selectedOption.Code);
             nestedHeader = new HeaderQuestion(questionElem);
+
+            if (questionInfo.standardType === 'hierarchy') {
+                nestedHeader.ReferenceGroup.Enabled = true;
+                nestedHeader.ReferenceGroup.Self = false;
+                nestedHeader.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length + 1;
+            }
+
             nestedHeader.ShowTotals = false;
             parentHeader.SubHeaders.Add(nestedHeader);
 
             return;
         }
+    }
+
+
+    /**
+     *Function adds AVG and Base subheader to a
+     *@param {object} context
+     *@param {Header} parent header
+     */
+
+    static function
+
+    addAvgAndBaseSubheaders(context, header) {
+
+        var hs: HeaderStatistics = new HeaderStatistics();
+        hs.Statistics.Avg = true;
+        hs.HideHeader = true;
+        header.SubHeaders.Add(hs);
+
+        var hBase: HeaderBase = new HeaderBase();
+        hBase.HideHeader = true;
+        header.SubHeaders.Add(hBase);
     }
 
 }

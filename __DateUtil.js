@@ -17,7 +17,7 @@ class DateUtil {
             var now: DateTime = DateTime.Now;
             var start: DateTime = new DateTime (2000, 1, 1);  // if no StartDate is specified, set it to 1 Jan,2000 to reliably include all possible historical responses
 
-            var end: DateTime = now.AddDays(1);
+            var end: DateTime = now;//.AddDays(1);
 
             if(selectedTimePeriod.TimeUnit === 'Year') { // time period is defined in years
 
@@ -64,7 +64,7 @@ class DateUtil {
                 }
 
             } else if(selectedTimePeriod.Code !== 'ALL') {
-                throw new Error('DateUtil.defineDateRangeBasedOnFilters: Time period is selected, but there\'s no enough data to build interval.');
+                throw new Error('DateUtil.defineDateRangeBasedOnFilters: Time period is selected, but there\'s not enough data to build interval.');
             }
 
             return {startDate: start, endDate: end, startDateString: formatDateTimeToString(start), endDateString: formatDateTimeToString(end)};

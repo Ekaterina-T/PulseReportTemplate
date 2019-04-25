@@ -49,13 +49,20 @@ class PageKPI {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
-        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
-        var row : HeaderQuestion = new HeaderQuestion(qe);
-        row.IsCollapsed = true;
-        row.HideHeader = true;
-        TableUtil.maskOutNA(context, row);
-        table.RowHeaders.Add(row);
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+
+        if (Qs.length == 0) {
+            throw new Error('PageKPI.tableKPI_Render: KPI questions are not specified.');
+        }
+
+        for (var i = 0; i < Qs.length; i++) {
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
+            var row: HeaderQuestion = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.HideHeader = true;
+            TableUtil.maskOutNA(context, row);
+            table.RowHeaders.Add(row);
+        }
 
         // add column statics
         var s : HeaderStatistics = new HeaderStatistics();
@@ -65,8 +72,9 @@ class PageKPI {
         // global table settings
 
         table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Columns = true;
+        //table.RemoveEmptyHeaders.Columns = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
+
     }
 
 
@@ -114,43 +122,26 @@ class PageKPI {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
 
-        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
-        var row: HeaderQuestion = new HeaderQuestion(qe);
-        row.IsCollapsed = true;
-        row.DefaultStatistic = StatisticsType.Average;
-        row.HideHeader = true;
-        TableUtil.maskOutNA(context, row);
-        table.RowHeaders.Add(row);
-
-        // add column (Date variable)
-
-        var timeUnits = ParamUtil.GetSelectedOptions (context, 'p_TimeUnitWithDefault');
-        if (timeUnits.length) {
-            var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
-            qe = QuestionUtil.getQuestionnaireElement(context, dateQId);
-            var timeQuestionCol: HeaderQuestion = new HeaderQuestion(qe);
-
-            // though it can be multi-parameter, use only 1 option for trend
-            var timeUnit = timeUnits[0];
-            TableUtil.setTimeSeriesByTimeUnit(context, timeQuestionCol, timeUnit);
-
-            // Set rolling if time unit count is specified in Config
-            if (timeUnit.TimeUnitCount != null) {
-                TableUtil.setRollingByTimeUnit(context, timeQuestionCol, timeUnit);
-            }
-
-            timeQuestionCol.ShowTotals = false;
-            timeQuestionCol.TimeSeries.FlatLayout = true;
-            table.ColumnHeaders.Add(timeQuestionCol);
-
-
-            // global table settings
-            table.Caching.Enabled = false;
-            table.RemoveEmptyHeaders.Columns = true;
-            SuppressUtil.setTableSuppress(table, suppressSettings);
+        for (var i = 0; i < Qs.length; i++) {
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
+            var row: HeaderQuestion = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.DefaultStatistic = StatisticsType.Average;
+            row.HideHeader = false;
+            TableUtil.addAvgAndBaseSubheaders(context, row);
+            TableUtil.maskOutNA(context, row);
+            table.RowHeaders.Add(row);
         }
+        // add column - trending by Date variable
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DateQuestion');
+        TableUtil.addTrending(context, dateQId);
+
+        // global table settings
+        table.Caching.Enabled = false;
+        SuppressUtil.setTableSuppress(table, suppressSettings);
+
     }
 
     /**
@@ -172,8 +163,10 @@ class PageKPI {
         // check base value for the verbatim question. If it is less than VerbatimSuppressValue, Verbatim table is hidden
 
         var counts : Datapoint[] = report.TableUtils.GetColumnValues("VerbatimBase", 1);
+
         for (var i=0; i<counts.Length; i++) {
             var base = parseInt(counts[i].Value);
+            log.LogDebug('counts ' + base);
             if (base < Config.SuppressSettings.VerbatimSuppressValue) {
                 return true;
             }
@@ -189,7 +182,6 @@ class PageKPI {
         var log = context.log;
         var verbatimTable = context.component;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
         verbatimTable.QuestionnaireElement = qe;
@@ -214,27 +206,34 @@ class PageKPI {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
-        var result = {title: QuestionUtil.getQuestionTitle (context, Q), score: 'N/A', color: Config.primaryGreyColor};
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+        var results = [];
+        for (var i = 0; i < Qs.length; i++) {
+            var result = {
+                qid: Qs[i],
+                title: QuestionUtil.getQuestionTitle(context, Qs[i]),
+                score: 'N/A',
+                color: Config.primaryGreyColor
+            };
 
-        if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI",1).length) {
-            var cell : Datapoint = report.TableUtils.GetCellValue("KPI:KPI",1,1);
-            if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
-                result.score = parseFloat(cell.Value.toFixed(Config.Decimal));
-                var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
-                for (var i=0; i<thresholds.length; i++) {
-                    if (result.score >= thresholds[i].score) {
-                        result.color =  thresholds[i].color;
-                        break;
+            if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI", i + 1).length) {
+                var cell: Datapoint = report.TableUtils.GetCellValue("KPI:KPI", i + 1, 1);
+                if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
+                    result.score = parseFloat(cell.Value.toFixed(Config.Decimal));
+                    var thresholds = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPIthreshold');
+                    for (var j = 0; j < thresholds.length; j++) {
+                        if (result.score >= thresholds[j].score) {
+                            result.color = thresholds[j].color;
+                            break;
+                        }
                     }
                 }
             }
+            results.push(result);
         }
 
-        return result;
-
+        return results;
     }
-
 
     /**
      * @memberof PageKPI
@@ -249,7 +248,6 @@ class PageKPI {
         var state = context.state;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         // add row = open text question
         var Q = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Q);
@@ -257,10 +255,41 @@ class PageKPI {
         row.IsCollapsed = true;
         row.ShowTotals = false;
         table.RowHeaders.Add(row);
-
         table.Distribution.Enabled = true;
         table.Distribution.Count = true;
         table.Distribution.VerticalPercents = false;
+    }
+
+    /**
+     * @memberof PageCategorical
+     * @function buildCategoricalTiles
+     * @description function to generate material cards with categories
+     * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+
+
+    static function
+
+    buildKPITiles(context) {
+
+        var report = context.report;
+        var state = context.state;
+        var log = context.log;
+        var text = context.text;
+
+        // render cards
+        var kpiResults = getKPIResult(context);
+        for (var i = 0; i < kpiResults.length; i++) {
+            var content = {
+                title: kpiResults[i].title,
+                tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'KPI_InfoTooltip'),
+                hoverText: '',
+                qid: kpiResults[i].qid,
+                data: '<div id="gauge-container-' + kpiResults[i].qid + '" class = "gauge-container"> </div>'
+            };
+
+            CardUtil.RenderCard(context, content, 'material-card--kpi');
+        }
     }
 
 }

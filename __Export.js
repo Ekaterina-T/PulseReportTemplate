@@ -31,8 +31,6 @@ class Export {
 
     }
     */
-
-
     /*
      * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} {state: state, report: report, text: text, log: log}
@@ -52,7 +50,8 @@ class Export {
         str += 'Program Name: ' + selectedProject.ProjectName + ' ';
 
         if (!state.Parameters.IsNull('p_projectSelector')) {
-            str += 'Survey Name: ' + state.Parameters.GetString('p_projectSelector') + ' ';
+            var selectedSurvey: ParameterValueResponse = state.Parameters['p_projectSelector'];
+            str += 'Survey Name: ' + selectedSurvey.DisplayValue + ' ';
             str = '<div class="data-source-info">' + str + '</div>';
         }
 

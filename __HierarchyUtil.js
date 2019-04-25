@@ -124,11 +124,12 @@ class HierarchyUtil {
             throw new Error('HierarchyUtil.getParentsForHierarchyNode: hierarchy dbTable is not set although requested.');
         }
 
+        //object of all nodes and their parents
         for (var i = 0; i < rows.Count; i++) {
             var row : DataRow = rows[i];
             nodeList[row['id']] = {};
             nodeList[row['id']].label = row['__l9'];
-            nodeList[row['id']].parent = row['parent'];
+            nodeList[row['id']].parent = !row['parent'] ? row['id'] : row['parent'];
         }
 
         if(!numberOfLevelsUp) {
@@ -137,6 +138,8 @@ class HierarchyUtil {
 
         do {
             var currentParent = {};
+            var prevNodeId = hierarchyNodeId;
+
             currentParent.id = nodeList[hierarchyNodeId].parent;
             currentParent.label = currentParent.id ? nodeList[currentParent.id].label : nodeList[hierarchyNodeId].label;
             parentArray.push(currentParent);
@@ -144,7 +147,7 @@ class HierarchyUtil {
             hierarchyNodeId = currentParent.id;
             numberOfLevelsUp-=1;
 
-        } while(hierarchyNodeId && numberOfLevelsUp)
+        } while (hierarchyNodeId && prevNodeId !== hierarchyNodeId && numberOfLevelsUp)
 
         return parentArray;
     }
