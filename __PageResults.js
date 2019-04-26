@@ -65,16 +65,16 @@ class PageResults {
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
-        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
+        if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
-        if (resultStatements && resultStatements.length > 0) {
+        if(resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
             return;
         }
 
-        if (dimensions && dimensions.length > 0) {
+        if(dimensions && dimensions.length>0) {
             tableStatements_AddRows_Banner1(context);
             return;
         }
@@ -124,7 +124,7 @@ class PageResults {
         for (var i=0; i<categorizations.length; i++) {
 
             var categorization : HeaderCategorization = new HeaderCategorization();
-            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
+            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g,'');
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
             categorization.DefaultStatistic = StatisticsType.Average;
             categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
@@ -146,29 +146,27 @@ class PageResults {
 * @return {array} array of categorization ids
 */
 
-    static function
-
-    getActiveCategorizations(context) {
+    static function getActiveCategorizations(context) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        /*
+
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
 
         if(schemaId && tableName) { // there is storage for baby survey dimensions
 
-          var confirmit = context.confirmit;
-          var schema: DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
-          var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-          var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-          var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
+            var confirmit = context.confirmit;
+            var schema: DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
+            var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+            var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
 
-          if(dimensions && dimensions.Count>0) {
-            return dimensions[0].split(',');
-          }
+            if(dimensions && dimensions.Count>0) {
+                return dimensions[0].split(',');
+            }
         }
-        */
+
         return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
     }
 
@@ -202,9 +200,7 @@ class PageResults {
   * @param {Header} parentHeader - not mandotary
   * @param {Array} [Header1, Header2,...]
   */
-    static function
-
-    addScore(context, parentHeader) {
+    static function addScore(context, parentHeader) {
 
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -212,13 +208,13 @@ class PageResults {
 
         scoreType = scoreType.toLowerCase();
 
-        if (scoreType === 'avg') {
+        if(scoreType === 'avg')	{
             var score: HeaderStatistics = new HeaderStatistics();
             score.Decimals = 0;
             score.Statistics.Avg = true;
             score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
-            if (parentHeader) {
+            if(parentHeader) {
                 parentHeader.SubHeaders.Add(score);
             } else {
                 table.ColumnHeaders.Add(score);
@@ -228,13 +224,13 @@ class PageResults {
 
         var bcCategories: HeaderCategories = new HeaderCategories();
 
-        if (scoreType === '%fav') {
+        if(scoreType === '%fav') {
 
             // add Score column
             var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
             var fav: HeaderFormula = new HeaderFormula();
             fav.Type = FormulaType.Expression;
-            fav.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row)';
+            fav.Expression = 'cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row)';
             fav.Decimals = 0;
             fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
 
@@ -246,7 +242,7 @@ class PageResults {
             bcCategories.Decimals = 0;
             bcCategories.HideData = true;
 
-            if (parentHeader) {
+            if(parentHeader) {
                 parentHeader.SubHeaders.Add(fav);
                 parentHeader.SubHeaders.Add(bcCategories);
             } else {
@@ -256,14 +252,14 @@ class PageResults {
             return [fav, bcCategories];
         }
 
-        if (scoreType === '%fav-%unfav') {
+        if(scoreType === '%fav-%unfav') {
 
             // add Score column
             var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
             var negScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_NegativeCols');
             var diff: HeaderFormula = new HeaderFormula();
             diff.Type = FormulaType.Expression;
-            diff.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row) - cellv(col+' + negScoreRecodingCols.join(', row)-cellv(col+') + ',row)';
+            diff.Expression = 'cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row)';
             diff.Decimals = 0;
             diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
 
@@ -275,7 +271,7 @@ class PageResults {
             bcCategories.Decimals = 0;
             bcCategories.HideData = true;
 
-            if (parentHeader) {
+            if(parentHeader) {
                 parentHeader.SubHeaders.Add(diff);
                 parentHeader.SubHeaders.Add(bcCategories);
             } else {
@@ -285,7 +281,7 @@ class PageResults {
             return [diff, bcCategories];
         }
 
-        throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
+        throw new Error('PageResults.addScore: Calculation of score for type "'+scoreType+' is not found."');
     }
 
     /*
@@ -419,13 +415,13 @@ class PageResults {
 
         // previous wave benchmark
         var prevWave = getPreviousWave(context);
-        if (prevWave) {
+        if(prevWave) {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
-            waveHeader.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+            waveHeader.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn-1]);
 
-            for (var j = 0; j < preWaveVals.length; j++) {
+            for(var j=0; j<preWaveVals.length; j++) {
 
                 var prevWaveVal: Datapoint = preWaveVals[j];
                 base = baseValues[j];
@@ -438,7 +434,7 @@ class PageResults {
             }
 
             table.ColumnHeaders.Add(waveHeader);
-            bmColumn += 1;
+            bmColumn+=1;
         }
 
         // add benchmark data based on benchmark project
@@ -511,7 +507,7 @@ class PageResults {
 
             var hierCompContent: HeaderContent = new HeaderContent();
             var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',bmColumn); // num of column where values are bmVolumn
-            hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+            hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn-1]);
 
             for(var j=0; j<baseValues.length; j++) {
 
@@ -630,12 +626,12 @@ class PageResults {
         //add previous wave column
         var prevWave = getPreviousWave(context);
 
-        if (prevWave) {
+        if(prevWave) {
             tableBenchmarks_addWaveScoreColumn(context, prevWave);
         }
 
         //add Benchmarks from benchmark project
-        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarks: HeaderBenchmark = new HeaderBenchmark();
             benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
@@ -681,7 +677,7 @@ class PageResults {
         }
 
         if(parentsList && parentsList.length>0) {
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentsList[parentsList.length - 1]['id'], null);
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentsList[parentsList.length-1]['id'], null);
             levelSegment.Label = new Label(report.CurrentLanguage, parentsList[parentsList.length-1]['label']);
         } else {
             return; // no such parent in the hierarchy
@@ -700,9 +696,7 @@ class PageResults {
      *  @param {Anwser} answer of wave question for code previous to the selected one
      *  @returns {Header}
      */
-    static function
-
-    tableBenchmarks_addWaveScoreColumn(context, prevWave) {
+    static function tableBenchmarks_addWaveScoreColumn(context, prevWave) {
 
         var report = context.report;
         var table = context.table;
@@ -726,30 +720,28 @@ class PageResults {
 * @return {Answer} {Code: code, Label: label}
 */
 
-    static function
-
-    getPreviousWave(context) {
+    static function getPreviousWave(context) {
 
         var log = context.log;
         var waveQ = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
 
-        if (waveQ) {
+        if(waveQ) {
             var waves: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQ);
             var currentWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
             var prevWave;
 
-            if (!currentWave || currentWave.length === 0) {
+            if(!currentWave || currentWave.length === 0) {
                 throw new Error('PageResults.getPreviousWave: Current wave is not selected.');
             }
 
             currentWave = currentWave[0];
             var i = 0;
 
-            while (i < waves.length && waves[i].Precode !== currentWave) {
+            while(i<waves.length && waves[i].Precode !== currentWave) {
                 i++;
             }
 
-            return (i > 0 && i < waves.length) ? waves[i - 1] : null;     // i==0 -> no previous wave
+            return (i>0 && i<waves.length) ? waves[i-1] : null;     // i==0 -> no previous wave
         }
 
         return null;
@@ -769,7 +761,7 @@ class PageResults {
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
         var previousWave = getPreviousWave(context);
 
-        if (benchmarkProject || previousWave || (hierarchyLevels && hierarchyLevels.length > 0)) {
+        if(benchmarkProject || previousWave || (hierarchyLevels && hierarchyLevels.length>0)) {
             return true;
         }
         return false;
