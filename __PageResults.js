@@ -209,14 +209,25 @@ class PageResults {
         scoreType = scoreType.toLowerCase();
 
         if(scoreType === 'avg')	{
+
+            // add Score column
+            var avg: HeaderFormula = new HeaderFormula();
+            avg.Type = FormulaType.Expression;
+            avg.Expression = 'cellv(col+1, row)';
+            avg.Decimals = 0;
+            avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
+
             var score: HeaderStatistics = new HeaderStatistics();
             score.Decimals = 0;
             score.Statistics.Avg = true;
-            score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
+            score.HideData = true;
+            //score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
             if(parentHeader) {
+                parentHeader.SubHeaders.Add(avg);
                 parentHeader.SubHeaders.Add(score);
             } else {
+                table.ColumnHeaders.Add(avg);
                 table.ColumnHeaders.Add(score);
             }
             return [score];
