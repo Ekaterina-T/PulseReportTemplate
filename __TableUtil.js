@@ -91,14 +91,12 @@ class TableUtil{
      * @param {Object} context - {table: table, report: report, user: user, state: state, log: log}
      * @param {String} qId - date question id for trending
      */
-    static function
-
-    addTrending(context, qId) {
+    static function addTrending(context, qId) {
 
         var log = context.log;
         var table = context.table;
 
-        var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
+        var timeUnits = ParamUtil.GetSelectedOptions (context, 'p_TimeUnitWithDefault');
 
         if (timeUnits.length) {
 
@@ -266,17 +264,17 @@ class TableUtil{
             return;
         }
 
-        if (breakByType === 'Question') { // break by question
+        if(breakByType === 'Question') { // break by question
 
             var questionInfo = QuestionUtil.getQuestionInfo(context, selectedOption.Code);
 
             questionElem = QuestionUtil.getQuestionnaireElement(context, selectedOption.Code);
             nestedHeader = new HeaderQuestion(questionElem);
 
-            if (questionInfo.standardType === 'hierarchy') {
+            if(questionInfo.standardType === 'hierarchy') {
                 nestedHeader.ReferenceGroup.Enabled = true;
                 nestedHeader.ReferenceGroup.Self = false;
-                nestedHeader.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length + 1;
+                nestedHeader.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
             }
 
             nestedHeader.ShowTotals = false;
@@ -286,25 +284,34 @@ class TableUtil{
         }
     }
 
-
     /**
      *Function adds AVG and Base subheader to a
      *@param {object} context
      *@param {Header} parent header
      */
 
-    static function
+    static function getTrendQuestionHeader(context, qid) {
 
-    addAvgAndBaseSubheaders(context, header) {
+        var report = context.report;
 
-        var hs: HeaderStatistics = new HeaderStatistics();
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qid);
+        var qTitle = QuestionUtil.getQuestionTitle (context, qid);
+        var row: HeaderQuestion = new HeaderQuestion(qe);
+        row.IsCollapsed = true;
+        row.HideHeader = true;
+        maskOutNA(context, row);
+
+        var hs : HeaderStatistics = new HeaderStatistics();
         hs.Statistics.Avg = true;
+        hs.Statistics.Count = true;
         hs.HideHeader = true;
-        header.SubHeaders.Add(hs);
+        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (AVG)');
+        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+        row.SubHeaders.Add(hs);
 
-        var hBase: HeaderBase = new HeaderBase();
-        hBase.HideHeader = true;
-        header.SubHeaders.Add(hBase);
+
+        return row;
     }
+
 
 }

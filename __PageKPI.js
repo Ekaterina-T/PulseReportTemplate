@@ -49,15 +49,15 @@ class PageKPI {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
 
         if (Qs.length == 0) {
             throw new Error('PageKPI.tableKPI_Render: KPI questions are not specified.');
         }
 
-        for (var i = 0; i < Qs.length; i++) {
+        for (var i=0; i < Qs.length; i++) {
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var row: HeaderQuestion = new HeaderQuestion(qe);
+            var row : HeaderQuestion = new HeaderQuestion(qe);
             row.IsCollapsed = true;
             row.HideHeader = true;
             TableUtil.maskOutNA(context, row);
@@ -122,20 +122,13 @@ class PageKPI {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add row = KPI question
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
 
-        for (var i = 0; i < Qs.length; i++) {
-            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var row: HeaderQuestion = new HeaderQuestion(qe);
-            row.IsCollapsed = true;
-            row.DefaultStatistic = StatisticsType.Average;
-            row.HideHeader = false;
-            TableUtil.addAvgAndBaseSubheaders(context, row);
-            TableUtil.maskOutNA(context, row);
-            table.RowHeaders.Add(row);
+        for (var i=0; i<Qs.length; i++) {
+            table.RowHeaders.Add(TableUtil.getTrendQuestionHeader(context, Qs[i]));
         }
         // add column - trending by Date variable
-        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DateQuestion');
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
         TableUtil.addTrending(context, dateQId);
 
         // global table settings
@@ -206,24 +199,19 @@ class PageKPI {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPI');
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
         var results = [];
-        for (var i = 0; i < Qs.length; i++) {
-            var result = {
-                qid: Qs[i],
-                title: QuestionUtil.getQuestionTitle(context, Qs[i]),
-                score: 'N/A',
-                color: Config.primaryGreyColor
-            };
+        for (var i=0; i < Qs.length; i++) {
+            var result = {qid: Qs[i], title: QuestionUtil.getQuestionTitle (context, Qs[i]), score: 'N/A', color: Config.primaryGreyColor};
 
-            if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI", i + 1).length) {
-                var cell: Datapoint = report.TableUtils.GetCellValue("KPI:KPI", i + 1, 1);
+            if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI",i+1).length) {
+                var cell : Datapoint = report.TableUtils.GetCellValue("KPI:KPI",i+1,1);
                 if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
                     result.score = parseFloat(cell.Value.toFixed(Config.Decimal));
-                    var thresholds = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'KPIthreshold');
-                    for (var j = 0; j < thresholds.length; j++) {
+                    var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
+                    for (var j=0; j<thresholds.length; j++) {
                         if (result.score >= thresholds[j].score) {
-                            result.color = thresholds[j].color;
+                            result.color =  thresholds[j].color;
                             break;
                         }
                     }
@@ -268,9 +256,7 @@ class PageKPI {
      */
 
 
-    static function
-
-    buildKPITiles(context) {
+    static function buildKPITiles (context) {
 
         var report = context.report;
         var state = context.state;
@@ -279,16 +265,16 @@ class PageKPI {
 
         // render cards
         var kpiResults = getKPIResult(context);
-        for (var i = 0; i < kpiResults.length; i++) {
+        for (var i=0; i<kpiResults.length; i++) {
             var content = {
                 title: kpiResults[i].title,
                 tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'KPI_InfoTooltip'),
                 hoverText: '',
                 qid: kpiResults[i].qid,
-                data: '<div id="gauge-container-' + kpiResults[i].qid + '" class = "gauge-container"> </div>'
+                data: '<div id="gauge-container-'+kpiResults[i].qid+'" class = "gauge-container"> </div>'
             };
 
-            CardUtil.RenderCard(context, content, 'material-card--kpi');
+            CardUtil.RenderCard (context, content, 'material-card--kpi');
         }
     }
 

@@ -54,24 +54,18 @@ class PageTrend {
         var Qs = ParamUtil.GetSelectedCodes (context, "p_TrendQs");
 
         for (var i=0; i<Qs.length; i++) {
-            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var row: HeaderQuestion = new HeaderQuestion(qe);
-            row.IsCollapsed = true;
-            row.DefaultStatistic = StatisticsType.Average;
-            row.HideHeader = false;
-            TableUtil.addAvgAndBaseSubheaders(context, row);
-            TableUtil.maskOutNA(context, row);
-            table.RowHeaders.Add(row);
+            table.RowHeaders.Add(TableUtil.getTrendQuestionHeader(context, Qs[i]));
         }
 
         // add column - trending by Date variable
-        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DateQuestion');
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
         TableUtil.addTrending(context, dateQId);
 
         // global table settings
         table.Caching.Enabled = false;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
+
 
 
     /**
