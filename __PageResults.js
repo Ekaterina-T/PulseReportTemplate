@@ -230,7 +230,7 @@ class PageResults {
                 table.ColumnHeaders.Add(avg);
                 table.ColumnHeaders.Add(score);
             }
-            return [score];
+            return [score, score]; // TO DO: revise, this is cruntch to align avg with other types of scores which consits of 2 cols
         }
 
         var bcCategories: HeaderCategories = new HeaderCategories();
