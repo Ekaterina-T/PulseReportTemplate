@@ -104,7 +104,7 @@ class ParamUtil {
         var state = context.state;
         var report = context.report;
 
-        if (parameterId == 'p_Statements') {
+        if (parameterId === 'p_Statements') {
             mask.Access = ParameterAccessType.Inclusive;
 
             var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
@@ -112,7 +112,7 @@ class ParamUtil {
             for (var i=0; i<qIds.length; i++) {
                 mask.Keys.Add(qIds[i]);
             }
-            //mask.AddKeys(qIds);
+
         }
 
     }
@@ -202,6 +202,11 @@ class ParamUtil {
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
+        }
+
+        // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
+        if (page.SubmitSource === 'p_Dimensions') {
+            ResetParameters(context, ['p_Statements']);
         }
 
         //set ds if it is not defined
