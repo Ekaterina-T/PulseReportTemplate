@@ -17,7 +17,7 @@ class StyleAndJavaScriptUtil {
         }
 
         try {
-            str += applyTheme(); // css
+            str += applyTheme(context); // css
         } catch(e) {
             throw new Error('StyleAndJavaScriptUtil.applyTheme: failed with error "'+e.Message+'"');
         }
@@ -55,6 +55,8 @@ class StyleAndJavaScriptUtil {
 
         properties.push('hideTimePeriodFilters: '+Filters.isTimePeriodFilterHidden(context));
 
+        properties.push('hideWaveFilter: '+Filters.isWaveFilterHidden(context));
+
         properties.push('noDataWarning: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg')));
 
         properties.push('TableChartColName_ScoreVsNormValue: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));
@@ -67,10 +69,11 @@ class StyleAndJavaScriptUtil {
 
         if (pageContext.Items['CurrentPageId'] === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(PageComments.getTagColumnNumbers (context)));
+            properties.push('score_columns: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_ScoreQs')));
         }
 
         if (pageContext.Items['CurrentPageId'] === 'KPI') {
-            properties.push('kpi: '+JSON.stringify(PageKPI.getKPIResult(context)));
+            properties.push('gaugeData: '+JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
         if (pageContext.Items['CurrentPageId'] === 'Categorical_') {
@@ -80,6 +83,12 @@ class StyleAndJavaScriptUtil {
 
         if (pageContext.Items['CurrentPageId'] === 'CategoricalDrilldown') {
             properties.push('isProjectSelectorDisabled: '+true);
+        }
+
+        if (pageContext.Items['CurrentPageId'] === 'Actions') {
+            //properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
+            properties.push('gaugeData: '+JSON.stringify(PageActions.getKPIResult(context)));
+            properties.push('tagColumnNumbers: '+JSON.stringify(PageActions.getTagColumnNumbers (context)));
         }
 
         globalVarScript.push('<script>');
@@ -93,8 +102,9 @@ class StyleAndJavaScriptUtil {
         return globalVarScript.join('');
     }
 
-    static function applyTheme() {
+    static function applyTheme(context) {
 
+        var log = context.log;
         var greenColor = Config.primaryGreenColor;
         var redColor = Config.primaryRedColor;
         var kpiColor = Config.kpiColor;
@@ -105,6 +115,7 @@ class StyleAndJavaScriptUtil {
         var pieColors = Config.pieColors;
         var barChartColors = Config.barChartColors_Distribution;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
+        var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
 
         var css_string = '';
 
@@ -153,6 +164,8 @@ class StyleAndJavaScriptUtil {
             +'div .material-card.favorable .Table td'
             +'{background-color: '+greenColor+';}'
 
+
+
             //hitlist navigation
             +'div .hitlist-nav-button:hover, '
             +'div .hitlist-nav-page:hover {'
@@ -169,6 +182,36 @@ class StyleAndJavaScriptUtil {
             css_string += '.material-card__title .kebab-menu { display: none; }';
         }
 
+
+        //CSS to show only the latest n rows with comments
+        if(numberOfVerbatimComments) {
+            numberOfVerbatimComments = numberOfVerbatimComments + 1;
+            css_string += '.material-card--favorable tr:nth-last-child(n+' + numberOfVerbatimComments + ') td { display: none; }'
+                +'.material-card--unfavorable tr:nth-last-child(n+' + numberOfVerbatimComments + ') td { display: none; }';
+        } else {
+            css_string += '.material-card--favorable tr:nth-last-child(n+6) td { display: none; }'
+                +'.material-card--unfavorable tr:nth-last-child(n+6) td { display: none; }';
+        }
+
         return '<style>'+css_string+'</style>';
     }
+
+    static function reportStatisticsTile_Render(context, stat, icon) {
+
+        var log = context.log;
+        var str = '';
+        var value;
+
+        switch(stat) {
+            case 'collectionPeriod': value = PageResponseRate.getCollectionPeriod(context); break;
+            default: value = PageResponseRate.getResponseRateSummary(context)[stat]; break;
+        }
+
+        str += '<div class="layout horizontal">'
+            + '<div class="icon icon--'+icon+'"></div>'
+            + '<div class="flex digit self-center">'+value+'</div></div>';
+
+        return str;
+    }
+
 }

@@ -22,6 +22,7 @@ class QuestionUtil {
         if(question!=null) { // single, multi, open, numeric, grid itself, open text list, numeric list
 
             questionInfo.type = 'general';
+            questionInfo.standardType = ((String)(question.QuestionType)).toLowerCase();
             questionInfo.questionId = questionId;
 
         } else if(questionId.slice(-6) === '.other') { // other option of single or multi
@@ -67,7 +68,7 @@ class QuestionUtil {
 
         var qe: QuestionnaireElement;
 
-        if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
+        if(questionInfo.type==='general') {  // simple question type: single, open text, grid overall, hierarchy
             return project.CreateQuestionnaireElement(questionInfo.questionId);
         }
 
@@ -99,7 +100,7 @@ class QuestionUtil {
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
-        if(questionInfo.type == 'general') {  // simple question type: single, open text, grid overall
+        if(questionInfo.type==='general') {  // simple question type: single, open text, grid overall
             return question.Title || question.Text || NA;
         }
 
@@ -140,7 +141,7 @@ class QuestionUtil {
         var qType = question.QuestionType;
         var answers : Answer[];
 
-        if(questionInfo.type == 'general' && !questionInfo.precode && qType!= QuestionType.OpenText && qType!= QuestionType.Numeric && qType!= QuestionType.Date) {
+        if(questionInfo.type==='general' && !questionInfo.precode && qType!= QuestionType.OpenText && qType!= QuestionType.Numeric && qType!= QuestionType.Date) {
             return question.GetAnswers();
         }
 

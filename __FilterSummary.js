@@ -23,7 +23,7 @@ class FilterSummary {
             for(var i=0; i<filterValues.length; i++) {
                 filterLabels.push(filterValues[i].Label);
             }
-            text.Output.Append(filterName+" "+filterLabels.join(', ')+"<br>");
+            text.Output.Append(filterName+" "+filterLabels.join(', ')+"<br>"+System.Environment.NewLine);
         }
     }
 
@@ -36,24 +36,36 @@ class FilterSummary {
     static function globalReportFilterSummaryText_Render (context) {
 
         var log = context.log;
+        var state = context.state;
         var user = context.user;
         var pageContext = context.pageContext;
         var str = '';
 
-        if(pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage')) {
+        if(pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage') || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
 
             // data source
             str += Export.displayDataSourceInfo(context);
+            str += System.Environment.NewLine;
 
             //hierarchy
             str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
+            str += System.Environment.NewLine;
 
             //selected date period
-            var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
-            var start: DateTime = datePeriod.startDate;
-            var end: DateTime = datePeriod.endDate;
+            if(DataSourceUtil.isProjectSelectorNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
+                var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
+                var start: DateTime = datePeriod.startDate;
+                var end: DateTime = datePeriod.endDate;
 
-            str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
+                str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
+                str += System.Environment.NewLine;
+            }
+
+            if(DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'WaveQuestion')) {
+
+                str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'Waves')+' '+ParamUtil.GetSelectedOptions(context, 'p_Wave')[0].Label+'</div>';
+                str += System.Environment.NewLine;
+            }
 
             //filter panel filters
             var filterOptions = Filters.GetFiltersValues(context);
@@ -67,6 +79,7 @@ class FilterSummary {
                         options.push(option.Label);
                     }
                     str += '<div>'+filterOptions[i].Label+': '+options.join(', ')+'</div>';
+                    str += System.Environment.NewLine;
                 }
             }
 

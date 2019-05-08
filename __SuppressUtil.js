@@ -98,6 +98,34 @@ class SuppressUtil {
 
     }
 
+    static function buildHierarchyTableForResults(context) {
+
+        var report = context.report;
+        var state = context.state;
+        var table = context.table;
+        var log = context.log;
+
+        var hb : HeaderBase = new HeaderBase();
+        hb.Distributions.Enabled = true;
+        hb.Distributions.Count = true;
+        table.ColumnHeaders.Add(hb);
+
+        var hierachyId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        if (hierachyId) {
+            var qe : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierachyId);
+            var row : HeaderQuestion = new HeaderQuestion(qe);
+            row.ReferenceGroup.Enabled = true;
+            row.ReferenceGroup.Self = true;
+            row.ReferenceGroup.NumberOfChildLevels = 1;
+            row.ShowTotals = false;
+            table.RowHeaders.Add(row);
+
+        }
+
+    }
+
+
+
     static function buildReportBaseTable(context) {
 
         var report = context.report;
@@ -142,6 +170,8 @@ class SuppressUtil {
 
         var report = context.report;
         var log = context.log;
+        var state = context.state;
+        var pageContext = context.pageContext;
 
         // if no hierarchy question is defined in Config, we don't perform checking
         if (!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'))
@@ -174,6 +204,29 @@ class SuppressUtil {
             return true;
         }
 
+
+        // Additional check for Results table with breakdown by child hierarchy level
+        var pageId = pageContext.Items['CurrentPageId'];
+        if (pageId === 'Results' && !state.Parameters.IsNull('p_Results_BreakBy'))  {  // break by option is active
+
+            var selectedOption = ParamUtil.GetSelectedOptions(context, 'p_Results_BreakBy')[0];
+            var questionInfo = QuestionUtil.getQuestionInfo(context, selectedOption.Code);
+
+            if(questionInfo.standardType === 'hierarchy') {
+
+                bases = report.TableUtils.GetColumnValues("Confidentiality:HierarchyTableForResults",1);
+                selfUnitBase = bases[0].Value;
+                var childrenBase = 0;
+                for (var i=1; i<bases.Length; i++) {
+                    childrenBase += bases[i].Value;
+                }
+
+                // Equivalent to item #3: Hide a unit if there is too small gap between level and its children, i.e. too few people are connected directly to the node itself
+                if (selfUnitBase - childrenBase <= delta) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -210,56 +263,10 @@ class SuppressUtil {
         var log = context.log;
 
         // data suppression isn't applied to Response Rate page, so no warning is displayed
-        if (pageContext.Items['CurrentPageId'] === 'Response_Rate') {
+        if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions') {
             return true;
         }
         return !(SuppressUtil.reportBaseIsLow (context) || SuppressUtil.hierarchyUnitIsSensitive (context));
     }
 
 }
-
-/*
-class SuppressUtil {
-
-
-
-  static function defineSupressValue (context, SuppressType) {
-    if(SuppressType == 'categorical')
-      return Config.getValue('categoricalSuppressValue', context);
-    else
-      return Config.SuppressValue;
-  }
-
-  static function hideComponentBasedOnQid(context, qid, SuppressType) {
-    var baseObject = loadBaseValues(context);
-    var suppressValue = defineSupressValue (context, SuppressType);
-    var log = context.log;
-
-    return !baseObject.hasOwnProperty(qid) || baseObject[qid] < suppressValue;
-  }
-
-  static function hideComponentIfOneActiveQuestion(context, SuppressType) {
-    var qid = context.state.Parameters.GetString('p_PageQuestions');
-    return hideComponentBasedOnQid(context, qid, SuppressType);
-  }
-
-  static function ifAnyQuestionHasEnoughAnswers(context, SuppressType) {
-
-    var baseObject = loadBaseValues(context);
-    var ifAnyQuestionHasEnoughAnswers = false;
-    var suppressValue = defineSupressValue (context, SuppressType);
-
-    for(var qid in baseObject) {
-      if(baseObject[qid]>=suppressValue) {
-        ifAnyQuestionHasEnoughAnswers = true;
-        break;
-      }
-    }
-
-    return ifAnyQuestionHasEnoughAnswers;
-  }
-
-}
-
-
-}*/

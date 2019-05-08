@@ -1,23 +1,36 @@
 class DataSourceUtil {
 
     /*
-     * Get current ds id from Config library on basis of p_SurveyType.
-     * @param {object} context object {state: state, report: report, log: log}
-     * @returns {string} surveyType : ds0
-     */
+      * Get current ds id from Config library on basis of p_SurveyType.
+      * Return add-in source from the page context if the source is defined on the page level.
+      * If the page config doesn't have any custom source, the report uses the global one defined on the survey level.
+      * @param {object} context object {state: state, report: report, log: log}
+      * @returns {string} surveyType : ds0
+      */
 
     static function getDsId (context) {
 
         var state = context.state;
         var report = context.report;
         var log = context.log;
+        var pageContext = context.pageContext;
+
+        // Wrapped in try/catch to avoid throwing errors when retrieving pageContext.Items['Source'] when it doesn't exist
+        try {
+            if (context.isCustomSource && pageContext.Items['Source']!==undefined) {
+                return pageContext.Items['Source'];
+            }
+        }
+        catch (e) { }
 
         if (!state.Parameters.IsNull('p_SurveyType')) {
             return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey
         }
 
         return getDefaultDSFromConfig(context);
+
     }
+
 
     /*
      * Since data source can be hidden (isHidden property is true),
@@ -32,7 +45,7 @@ class DataSourceUtil {
         var surveys = Config.Surveys;
         var i = 0;
 
-        while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context,surveys[i].AvailableForRoles))) {
+        while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles))) {
             i++;
         }
 
@@ -91,6 +104,9 @@ class DataSourceUtil {
 
         var state = context.state;
         var log = context.log;
+
+        context.isCustomSource = false;  // for survey properties we always use the global source, so reset the custom source property for safety reasons
+
         var surveyConfig = getSurveyConfig(context);
 
         if(surveyConfig[propertyName] === undefined) {
@@ -140,11 +156,6 @@ class DataSourceUtil {
      * @returns {string} property value
      */
 
-    // Why do we need that function? Is it for suppress?
-    // I can't find duplicated properties on page and survey level apart from isHidden
-    // cannot it be a bit dangerous in some cases in future?
-    // and function name seems misleading, isn't it?
-    // Don't we need to throw Error in case property isn't found anywhere?
     static function getPropertyValueFromConfig (context, pageId, propertyName) {
 
         var state = context.state;
@@ -191,6 +202,8 @@ class DataSourceUtil {
     static function isProjectSelectorNeeded (context) {
 
         var log = context.log;
+
+        context.isCustomSource = false;  // here always use the global source, so reset the custom source property for safety reasons
         var project : Project = getProject(context);
         var ifHide = false;
 

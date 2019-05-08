@@ -110,6 +110,7 @@ class PageResponseRate {
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
+        table.UseRespondentData = true;
     }
 
     /**
@@ -259,40 +260,20 @@ class PageResponseRate {
         // add rows - standard set of headers for response rate calculation
         tableResponseRate_AddBanner(context, 'row');
         /*table.RowHeaders[0].HideData = true;
-        table.RowHeaders[0].SubHeaders[0].HideData = true;
-        table.RowHeaders[1].HideData = true;
-        table.RowHeaders[1].SubHeaders[0].HideData = true;*/
+          table.RowHeaders[0].SubHeaders[0].HideData = true;
+          table.RowHeaders[1].HideData = true;
+          table.RowHeaders[1].SubHeaders[0].HideData = true;*/
 
-        // add column - date variable for trend
-        var timeUnits = ParamUtil.GetSelectedOptions (context, 'p_TimeUnitWithDefault');
 
-        if (timeUnits.length) {
-            var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'MailingDateQuestion');
-            var qe:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, dateQId);
-            var timeQuestionCol: HeaderQuestion = new HeaderQuestion(qe);
+        // add column - trending by Date variable
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'MailingDateQuestion');
+        TableUtil.addTrending(context, dateQId);
 
-            // though it can be multi-parameter, use only 1 option for trend
-            var timeUnit = timeUnits[0];
-
-            TableUtil.setTimeSeriesByTimeUnit(context, timeQuestionCol, timeUnit);
-
-            // Set rolling if time unit count is specified in Config
-            if (timeUnit.TimeUnitCount != null) {
-                TableUtil.setRollingByTimeUnit(context, timeQuestionCol, timeUnit);
-            }
-
-            timeQuestionCol.ShowTotals = false;
-            timeQuestionCol.HideData = false;
-            timeQuestionCol.HideHeader = false;
-            timeQuestionCol.TimeSeries.FlatLayout = true;
-
-            table.ColumnHeaders.Add(timeQuestionCol);
-        }
 
         // global table settings
         table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Columns = true;
         table.RemoveEmptyHeaders.Rows = false;
+        table.UseRespondentData = true;
     }
 
 
@@ -311,28 +292,38 @@ class PageResponseRate {
         var log = context.log;
         var table = context.table;
 
-
         // add columns - standard set of headers for response rate calculation
         tableResponseRate_AddBanner(context, 'column');
 
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
         if (demographics.length) {
+
+            // break by question
+
             var qId = demographics[0].Code;
-            var qe:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
+            var questionInfo = QuestionUtil.getQuestionInfo(context, qId);
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
             var hq: HeaderQuestion = new HeaderQuestion(qe);
             hq.ShowTotals = false;
+
+            if(questionInfo.standardType === 'hierarchy') { // the same code exists in TableUtil break by function :(
+                hq.ReferenceGroup.Enabled = true;
+                hq.ReferenceGroup.Self = false;
+                hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
+            }
 
             if(state.ReportExecutionMode !== ReportExecutionMode.Web) {
                 hq.ShowTitle = true;
             }
             table.RowHeaders.Add(hq);
-        }
 
-        // global table settings
-        table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Columns = false;
-        table.RemoveEmptyHeaders.Rows = false;
+            // global table settings
+            table.Caching.Enabled = false;
+            table.RemoveEmptyHeaders.Columns = false;
+            table.RemoveEmptyHeaders.Rows = false;
+            table.UseRespondentData = true;
+        }
     }
 
 

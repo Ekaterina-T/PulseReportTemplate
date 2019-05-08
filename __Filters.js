@@ -1,6 +1,79 @@
 class Filters {
 
     /*
+    * Get the list of all filters defined on the survey level (including background and survey data variables)
+
+
+    * @param {object} context object {state: state, report: report, log: log}
+    */
+
+    static function GetGlobalFilterList (context) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+
+        // Wrapped in try/catch to avoid throwing errors when retrieving pageContext.Items['Source'] when it doesn't exist
+        // If the custom source is defined => the global filters cannot be applied
+        try {
+
+            if (pageContext.Items['Source'] === undefined) {  // i.e. not a page with custom source
+                return filterFromRespondentData.concat(filterFromSurveyData);
+            }
+            return [];  // page with custom source => only page specific filters, no global ones
+
+        } catch (e) {  // i.e. not a page with custom source
+            return filterFromRespondentData.concat(filterFromSurveyData);
+        }
+    }
+
+
+    /*
+     * Get the list of filters defined as custom page levels
+     * @param {object} context object {state: state, report: report, log: log}
+     */
+
+    static function GetPageSpecificFilterList (context) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        // Wrapped in try/catch to avoid throwing errors when retrieving pageContext.Items['Source'] when it doesn't exist
+        // If the custom source is defined => the global filters cannot be applied
+        try {
+            if (pageContext.Items['Source'] != undefined) {  // i.e. a page with custom source -> can use only custom filters
+                return DataSourceUtil.getPagePropertyValueFromConfig (context, pageContext.Items['CurrentPageId'], 'PageSpecificFilters');
+            }
+        } catch (e) {}
+
+        return [];  // i.e. no page specific source => no filters
+
+    }
+
+
+    /*
+     * Get the list of all available filters depending on type
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {boolean} isPageSpecificType - true if filter is page specific, false if it is global
+     */
+
+    static function GetFilterListByType (context, isPageSpecificType) {
+
+        var log = context.log;
+
+        if (!isPageSpecificType) {
+            return GetGlobalFilterList (context);
+        }
+
+        context.isCustomSource = false;  // to get page specific filters from config we always use main source
+        var filters = GetPageSpecificFilterList (context);
+        context.isCustomSource = true;   // then set it back to true
+        return filters;
+    }
+
+    /*
      * Reset filter parameters.
      * @param {object} context object {state: state, report: report, log: log}
      */
@@ -11,17 +84,23 @@ class Filters {
         var report = context.report;
         var log = context.log;
 
-        var filterLevelParameters = [];
         var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+
+        var filterLevelParameters = filterFromRespondentData.concat(filterFromSurveyData); //GetFullFilterList (context);
         var filterNames = [];
         var i;
-
-        filterLevelParameters = filterFromRespondentData.concat(filterFromSurveyData);
 
         for (i=0; i<filterLevelParameters.length; i++) {
             filterNames.push('p_ScriptedFilterPanelParameter'+(i+1));
         }
+
+        var filterPageLevelParameters = GetPageSpecificFilterList (context);
+
+        for (i=0; i<filterPageLevelParameters.length; i++) {
+            filterNames.push('p_ScriptedPageFilterPanelParam'+(i+1));
+        }
+
 
         ParamUtil.ResetParameters(context, filterNames);
 
@@ -36,13 +115,16 @@ class Filters {
 
     static function populateScriptedFilterByOrder(context, paramNum) {
 
+        var log = context.log;
         var parameter = context.parameter;
-        var project : Project = DataSourceUtil.getProject(context);
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        var filterList = filterFromRespondentData.concat(filterFromSurveyData);
+        var pageContext = context.pageContext;
+        var isPageSpecific = context.pageSpecific;
 
-        if(filterList.length >= paramNum) {
+
+        var filterList = GetFilterListByType (context, isPageSpecific);
+        if (filterList.length >= paramNum) {
+
+
 
             var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum-1]);
 
@@ -69,9 +151,10 @@ class Filters {
 
         var pageContext = context.pageContext;
         var log = context.log;
+        var isPageSpecific = context.pageSpecific;
         var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        var filterList = filterFromRespondentData.concat(filterFromSurveyData);
+        var filterList = GetFilterListByType (context, isPageSpecific);
+
 
         // paramNum should be less than number of filter components on all pages
         // paramNum should be less than number of filters based on BG vars on Response Rate page
@@ -91,9 +174,10 @@ class Filters {
 
     static function getScriptedFilterNameByOrder(context, paramNum) {
 
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        var filterList = filterFromRespondentData.concat(filterFromSurveyData);
+        var pageContext = context.pageContext;
+        var log = context.log;
+        var isPageSpecific = context.pageSpecific;
+        var filterList = GetFilterListByType (context, isPageSpecific);
 
         if(filterList.length >= paramNum) {
             return QuestionUtil.getQuestionTitle(context, filterList[paramNum-1]);
@@ -102,6 +186,7 @@ class Filters {
         return '';
     }
 
+
     /*
    * @function GeneratePanelFilterExpression
    * @description function to generate filter expression for the 'FilterPanel' filter. Filter parameters can be both single and multi selects
@@ -109,23 +194,25 @@ class Filters {
    * @return {String} filter script expression
    */
 
-    static function GeneratePanelFilterExpression (context) {
+    static function GeneratePanelFilterExpression (context, isPageSpecific) {
 
         var state = context.state;
         var report = context.report;
         var log = context.log;
+        var pageContext = context.pageContext;
 
         var filterExpr = [];
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        var filters = filterFromRespondentData.concat(filterFromSurveyData);
+        var filters = isPageSpecific ? GetPageSpecificFilterList(context) : GetGlobalFilterList (context);
+        var paramName = isPageSpecific ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
+
+        context.isCustomSource = isPageSpecific ? true : false;
 
         for (var i=0; i<filters.length; i++) {
 
-            if(!state.Parameters.IsNull('p_ScriptedFilterPanelParameter'+(i+1))) {
+            if(!state.Parameters.IsNull(paramName+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
-                var responses = ParamUtil.GetSelectedCodes (context, 'p_ScriptedFilterPanelParameter'+(i+1));
+                var responses = ParamUtil.GetSelectedCodes (context, paramName+(i+1));
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
@@ -137,6 +224,39 @@ class Filters {
         return filterExpr.join(' AND ');
 
     }
+
+
+    /*
+   * @function GenerateGlobalPanelFilterExpression
+   * @description function to generate filter expression for the 'FilterPanel' filter. Filter parameters can be both single and multi selects
+   * @param {Object} context
+   * @return {String} filter script expression
+   */
+
+    static function GenerateGlobalPanelFilterExpression (context) {
+
+        return GeneratePanelFilterExpression (context, false);
+
+    }
+
+
+
+    /*
+  * @function GeneratePageSpecificPanelFilterExpression
+  * @description function to generate custom filter expression for the 'FilterPanel' filter.
+  * Filter script is applied only to pages which have a custom property Source and page specific filters
+  * Filter parameters can be both single and multi selects
+  * @param {Object} context
+  * @return {String} filter script expression
+  */
+
+    static function GeneratePageSpecificPanelFilterExpression (context) {
+
+        return GeneratePanelFilterExpression (context, true);
+
+    }
+
+
 
     /*
    * @function GetFilterValues
@@ -152,9 +272,7 @@ class Filters {
         var log = context.log;
 
         var filterValues = [];
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        var filters = filterFromRespondentData.concat(filterFromSurveyData);
+        var filters = GetGlobalFilterList (context);
 
         for (var i=0; i<filters.length; i++) {
 
@@ -184,6 +302,11 @@ class Filters {
         var report = context.report;
         var log = context.log;
 
+        if(!answerCodes instanceof Array) {
+            throw new Error('Filters.getFilterExpressionByAnswerRange: answerCodes is not an array; filter for '+qId);
+        }
+
+
         qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(qId);
 
         if (answerCodes.length) {
@@ -199,8 +322,21 @@ class Filters {
     */
     static function isTimePeriodFilterHidden(context) {
 
-        return !DataSourceUtil.isProjectSelectorNeeded(context) // date period filter is hidden in pulse programs
+        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden')
     }
+
+    /*
+    * @description function indicationg if the wave filter is needed or not
+    * @param {Object} context
+    * @return {Boolean} true or false
+    */
+    static function isWaveFilterHidden(context) {
+        var log = context.log;
+        return (Boolean)(!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion'));
+    }
+
+
+
 
     /*
     * @description function to generate a script expression to filter by selected time period
@@ -234,6 +370,37 @@ class Filters {
         return expression.join(' AND ');
     }
 
+
+
+    /*
+   * @description function to generate a script expression to filter by selected time period
+   * @param {Object} context
+   * @return {String} filter script expression
+   */
+    static function getCurrentWaveExpression (context) {
+
+
+
+        var log = context.log;
+
+        if(isWaveFilterHidden(context)) {
+            return '';
+        }
+
+        var qId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+        var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+
+
+        if (selectedCodes.length) {
+            return getFilterExpressionByAnswerRange(context, qId, [selectedCodes[0]]);  // wave filter shouldn't support multiple selection
+
+        }
+
+        return '';
+
+    }
+
+
     /*
       * not empty comments filter
       * @param {context}
@@ -263,13 +430,22 @@ class Filters {
 
     static function filterByKPIGroup(context, KPIGroupName) {
 
-        var kpiQid = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
-        var qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(kpiQid);
+        var kpiQids = ParamUtil.GetSelectedCodes(context, 'p_QsToFilterBy');
+        var kpiQidsConfig = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var qId;
+
+
+        if (kpiQidsConfig.length == 1) {
+            qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(kpiQidsConfig[0]);
+        } else {
+            qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(kpiQids[0]);
+        }
         var answerCodes = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', KPIGroupName);
 
         return getFilterExpressionByAnswerRange(context, qId, answerCodes);
 
     }
+
 
     /*
 	* filter by particular project in pulse program
@@ -288,6 +464,35 @@ class Filters {
 
         return '';
 
+    }
+
+    /**
+     * benchmark table may have references to previous wave and to upper hierarchy levels so they are excluded from the table,
+     * but for base clac we still need them
+     * @param {context} {state: state, report: report}
+     * @param {string} hierLevel
+     * @param {string} waveId
+     * @return {string} filter expression
+     */
+
+    static function getHierarchyAndWaveFilter(context, hierLevel, waveId) {
+
+        var log = context.log;
+
+        var excludedFilters = [];
+        var hierFilter = hierLevel ? HierarchyUtil.getHierarchyFilterExpressionForNode (context, hierLevel) : HierarchyUtil.getHierarchyFilterExpressionForCurrentRB (context); // '' if hierarchy is not defined
+        var waveQId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+        var waveFilter = waveId ? getFilterExpressionByAnswerRange(context, waveQId, [waveId]) : getCurrentWaveExpression (context);
+
+        if(hierFilter) {
+            excludedFilters.push(hierFilter);
+        }
+
+        if(waveFilter) {
+            excludedFilters.push(waveFilter);
+        }
+
+        return excludedFilters.join(' AND ');
     }
 
 }

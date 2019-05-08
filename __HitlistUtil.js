@@ -63,4 +63,28 @@ class Hitlist {
 
     }
 
+
+
+
+    /**
+     * @memberof Hitlist
+     * @instance
+     * @function AddColumn
+     * @description function to add a variable to the hitlist
+     * @param {Object} context
+     */
+    static function AddSurveyLink(context) {
+
+        var hitlist = context.hitlist;
+        var log = context.log;
+
+        var slink = new Confirmit.Reportal.Scripting.VisualComponents.SurveyLinkModel.SurveyLink();
+        slink.Name = 'surveylink';
+        slink.SurveyLinkType = Confirmit.Reportal.Scripting.VisualComponents.SurveyLinkModel.SurveyLinkType.Encrypted;
+        slink.UrlParameters = "userid=^userid^;role=^role^";
+
+        var slinkColumn : HitListColumn = new Confirmit.Reportal.Scripting.VisualComponents.HitListModel.HitListColumn(slink);
+        hitlist.Columns.Add(slinkColumn);
+    }
+
 }
