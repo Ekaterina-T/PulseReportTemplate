@@ -230,7 +230,7 @@ class PageResults {
                 table.ColumnHeaders.Add(avg);
                 table.ColumnHeaders.Add(score);
             }
-            return [score];
+            return [avg, score];
         }
 
         var bcCategories: HeaderCategories = new HeaderCategories();
