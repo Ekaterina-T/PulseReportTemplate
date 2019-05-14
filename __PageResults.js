@@ -296,28 +296,6 @@ class PageResults {
     }
 
     /*
-  *  add base column
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-    static function addResponsesColumn(context) {
-
-        var table = context.table;
-
-        // add Responses Column
-        var responses: HeaderBase = new HeaderBase();
-        var catForNAMask: HeaderCategories = new HeaderCategories(); // a way to exclude NA from base calculation
-
-        TableUtil.maskOutNA(context, catForNAMask); // exclude NA code
-        catForNAMask.HideHeader = true;
-        catForNAMask.Mask.Type = MaskType.ShowCodes;
-        catForNAMask.Mask.Codes = ''; // do not show any codes but Total
-        responses.SubHeaders.Add(catForNAMask);
-
-        table.ColumnHeaders.Add(responses);
-    }
-
-
-    /*
   *  add distribution bar chart
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   */
@@ -359,13 +337,12 @@ class PageResults {
             barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
             table.ColumnHeaders.Add(barChart);
         }
-
     }
 
     /*
-  *  add scale distribution columns
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     *  add scale distribution columns
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function addScaleDistributionColumns(context) {
 
         var state = context.state;
@@ -401,6 +378,28 @@ class PageResults {
     }
 
     /*
+    *  add base column
+    *  @param {object} context: {state: state, report: report, log: log, table: table}
+    */
+    static function addResponsesColumn(context) {
+
+        var table = context.table;
+
+        // add Responses Column
+        var responses: HeaderBase = new HeaderBase();
+        var catForNAMask: HeaderCategories = new HeaderCategories(); // a way to exclude NA from base calculation
+
+        TableUtil.maskOutNA(context, catForNAMask); // exclude NA code
+        catForNAMask.HideHeader = true;
+        catForNAMask.Mask.Type = MaskType.ShowCodes;
+        catForNAMask.Mask.Codes = ''; // do not show any codes but Total
+        responses.SubHeaders.Add(catForNAMask);
+
+        table.ColumnHeaders.Add(responses);
+    }
+
+
+    /*
   * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
   * @param {object} context: {state: state, report: report, log: log, table: table}
   */
@@ -433,7 +432,6 @@ class PageResults {
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
 
             waveHeader.HideData = true;
-            //waveHeader.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn-1]);
 
             for(var j=0; j<preWaveVals.length; j++) {
 
@@ -448,19 +446,7 @@ class PageResults {
             }
 
             table.ColumnHeaders.Add(waveHeader);
-
-            var formula_ScoreVsPrevWave: HeaderFormula = new HeaderFormula();
-            formula_ScoreVsPrevWave.Type = FormulaType.Expression;
-            formula_ScoreVsPrevWave.Expression = 'if((cellv(1,row)-cellv(col-1,row) < 1 AND (cellv(1,row)-cellv(col-1,row) > -1)), 0, cellv(1,row)-cellv(col-1,row))'; // the 1st column in the table is score
-            table.ColumnHeaders.Add(formula_ScoreVsPrevWave);
-
-            // add formula to calculate score vs. benchmark
-            if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
-                table.ColumnHeaders.Add(getScoreVsBenchmarkChart(context, 'cellv(col-1,row)', 'ScoreVsPrevWave'));//'cellv(col+1,row)', 'ScoreVsNormValue'));
-            } else {
-                formula_ScoreVsPrevWave.Title = TextAndParameterUtil.getLabelByKey(context, 'ScoreVsPrevWave');
-            }
-
+            addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsPrevWave');
             bmColumn+=1;
         }
 
@@ -482,22 +468,9 @@ class PageResults {
 
             benchmarkContent.HideData = true;
             table.ColumnHeaders.Add(benchmarkContent);
-
-            var formula_ScoreVsNorm: HeaderFormula = new HeaderFormula();
-            formula_ScoreVsNorm.Type = FormulaType.Expression;
-            formula_ScoreVsNorm.Expression = 'if((cellv(1,row)-cellv(col-1,row) < 1 AND (cellv(1,row)-cellv(col-1,row) > -1)), 0, cellv(1,row)-cellv(col-1,row))'; // the 1st column in the table is score
-            table.ColumnHeaders.Add(formula_ScoreVsNorm);
-
-            // add formula to calculate score vs. benchmark
-            if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
-                table.ColumnHeaders.Add(getScoreVsBenchmarkChart(context, 'cellv(col-1,row)', 'ScoreVsNormValue'));//'cellv(col+1,row)', 'ScoreVsNormValue'));
-            } else {
-                formula_ScoreVsNorm.Title = TextAndParameterUtil.getLabelByKey(context, 'ScoreVsNormValue');
-            }
-
+            addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
             bmColumn+=1;
         }
-
 
         //add hierarchy comparison benchmarks
         var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
@@ -519,6 +492,7 @@ class PageResults {
             }
 
             table.ColumnHeaders.Add(hierCompContent);
+            //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
             bmColumn +=1;
         }
     }
@@ -530,34 +504,50 @@ class PageResults {
      * @param {string} labelKey - defines chart label
      */
 
-    static function getScoreVsBenchmarkChart(context, expression, labelKey) {
+    static function addScoreVsBenchmarkChart(context, normColPosition, labelKey) {
 
         var report = context.report;
+        var state = context.state;
+        var table = context.table;
         var barChart_ScoreVsNorm: HeaderChartCombo = new HeaderChartCombo();
         var chartValue_ScoreVsNorm = [];
         var barChart_ScoreVsNormColors = Config.barChartColors_NormVsScore;
 
-        barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
-        barChart_ScoreVsNorm.Thickness = '100%';
-        barChart_ScoreVsNorm.Size = 200;
-        barChart_ScoreVsNorm.HideHeader = true;
 
-        var chartValue_Main: ChartComboValue = new ChartComboValue();
-        chartValue_Main.Expression = expression; // diff between score and norm value
-        chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
-        chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
+        // add formula to calculate score vs. prev wave
+        var formula_ScoreVsPrevNorm: HeaderFormula = new HeaderFormula();
+        formula_ScoreVsPrevNorm.Type = FormulaType.Expression;
+        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv('+normColPosition+',row) < 1 AND (cellv(1,row)-cellv('+normColPosition+',row) > -1)), 0, cellv(1,row)-cellv('+normColPosition+',row))'; // the 1st column in the table is score
+        table.ColumnHeaders.Add(formula_ScoreVsPrevNorm);
 
-        var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
-        chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
-        chartValue_Alternative.Threshold = 0; // If greater than 0
+        // add barchart
+        if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
-        chartValue_Main.AltColors = [chartValue_Alternative];
-        chartValue_ScoreVsNorm.push(chartValue_Main);
+            barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
+            barChart_ScoreVsNorm.Thickness = '100%';
+            barChart_ScoreVsNorm.Size = 200;
+            barChart_ScoreVsNorm.HideHeader = true;
 
-        barChart_ScoreVsNorm.Values = chartValue_ScoreVsNorm;
-        barChart_ScoreVsNorm.Title = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, labelKey));
+            var chartValue_Main: ChartComboValue = new ChartComboValue();
+            chartValue_Main.Expression = 'cellv(col-1,row)'; // diff between score and norm value, always previous column (formula)
+            chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
+            chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
 
-        return barChart_ScoreVsNorm;
+            var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
+            chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
+            chartValue_Alternative.Threshold = 0; // If greater than 0
+
+            chartValue_Main.AltColors = [chartValue_Alternative];
+            chartValue_ScoreVsNorm.push(chartValue_Main);
+
+            barChart_ScoreVsNorm.Values = chartValue_ScoreVsNorm;
+            barChart_ScoreVsNorm.Title = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, labelKey));
+
+            table.ColumnHeaders.Add(barChart_ScoreVsNorm);
+
+        } else {
+            formula_ScoreVsPrevNorm.Title = TextAndParameterUtil.getLabelByKey(context, labelKey);
+        }
 
     }
 
@@ -634,7 +624,6 @@ class PageResults {
             table.RowNesting = TableRowNestingType.Nesting;
             table.RemoveEmptyHeaders.Rows = false;
         }
-
     }
 
     /*
@@ -662,10 +651,8 @@ class PageResults {
         table.ColumnHeaders.Add(excludedFiltersForN);
 
         //add previous wave column
-        var prevWave = getPreviousWave(context);
-
-        if(prevWave) {
-            tableBenchmarks_addWaveScoreColumn(context, prevWave);
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
+            tableBenchmarks_addWaveScoreColumn(context);
         }
 
         //add Benchmarks from benchmark project
@@ -739,17 +726,23 @@ class PageResults {
         var report = context.report;
         var table = context.table;
         var log = context.log;
+        var prevWave = getPreviousWave(context);
+        var newHeaders = addScore(context); // score cols
 
         var currentHierarchyAndWaveId: HeaderSegment = new HeaderSegment();
         currentHierarchyAndWaveId.DataSourceNodeId = DataSourceUtil.getDsId(context);
         currentHierarchyAndWaveId.SegmentType = HeaderSegmentType.Expression;
-        currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
         currentHierarchyAndWaveId.HideData = true;
 
-        var newHeaders = addScore(context);
-        newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
-        newHeaders[1].SubHeaders.Add(currentHierarchyAndWaveId);
+        if(prevWave) { // current wave is not the 1st wave ever
+            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
+            newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
+        } else {
+            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, 'noPrevWave');
+            newHeaders[0].Title = TextAndParameterUtil.getLabelByKey(context, 'noPrevWave');
+        }
 
+        newHeaders[1].SubHeaders.Add(currentHierarchyAndWaveId);
     }
 
     /*
@@ -797,9 +790,9 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-        var previousWave = getPreviousWave(context);
+        var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
 
-        if(benchmarkProject || previousWave || (hierarchyLevels && hierarchyLevels.length>0)) {
+        if(benchmarkProject || showPrevWave || (hierarchyLevels && hierarchyLevels.length>0)) {
             return true;
         }
         return false;
@@ -814,6 +807,5 @@ class PageResults {
     static function table_Benchmarks_hide(context) {
         return !isBenchmarkAvailable(context);
     }
-
 
 }

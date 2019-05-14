@@ -129,14 +129,18 @@ public class Config {
 
       Page_Results: {
         isHidden: false,
-        BenchmarkProject: null,// 'p1869664629',
-        BenchmarkSet: [], // {Code: 'Norm_Well', Label: { 9: 'The Well total', 20: 'The Well total'}}, {Code: 'None', Label: { 9:'Show no benchmark', 20: 'Show no benchmark'}}
-        HierarchyBasedComparisons: ['parent','1'], // parent - 1 level up, top - top hierarchy level, number - is specific level
+        //row settings
         Dimensions: ['eNPS','Myself', 'My_team', 'My_manager', 'About_guests', 'My_hotel', 'Improvements', 'Comments'],
         ResultStatements: null,
         BreakVariables : ['hierarchy'],
         BreakByTimeUnits: false,
-        ScoreType: '%Fav-%Unfav'
+        ScoreType: '%Fav-%Unfav',
+
+        //col settings
+        showPrevWave: true,
+        BenchmarkProject: null,//'p1869664629',
+        BenchmarkSet: [/*{Code: 'Norm_Well', Label: { 9: 'The Well total', 20: 'The Well total'}}, ...}],
+        HierarchyBasedComparisons: ['parent','1'] // parent - 1 level up, top - top hierarchy level, number - is specific level
       },
 
 
