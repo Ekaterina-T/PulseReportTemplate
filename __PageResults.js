@@ -575,6 +575,21 @@ class PageResults {
         area.AddCondition(condition);
 
         table.ConditionalFormatting.AddArea(area);
+
+        // N value for dimension level should be hidden, so add special class
+
+        var responses: Area = new Area();
+        var responsesCol: Condition = new Condition();
+        responsesCol.Expression = 'true';
+        responsesCol.Style = 'responses-column cf-responses-column';
+
+        responses.Name = 'Responses';
+        responses.FromStart = true;
+        responses.Indexes = '3';
+        responses.RowFormatting = false;
+        responses.AddCondition(condition);
+
+        table.ConditionalFormatting.AddArea(responses);
     }
 
 
