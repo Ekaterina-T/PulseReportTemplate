@@ -183,6 +183,33 @@ class PageActions {
     }
 
 
+    /**
+     * @memberof PageActions
+     * @function tableQuestionsByDimension_Render
+     * @description function to render the QuestionsByDimension table. It's a hidden table used to filter the list of statements by the selected dimension
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     */
+
+    static function tableQuestionsByDimension_Render(context){
+
+        var log = context.log;
+        var table = context.table;
+
+        var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
+        var categorization : HeaderCategorization = new HeaderCategorization();
+        categorization.CategorizationId = dimension;
+        categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        categorization.DefaultStatistic = StatisticsType.Average;
+        categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+        categorization.Preaggregation = PreaggregationType.Average;
+        categorization.SampleRule = SampleEvaluationRule.Max;
+        categorization.Collapsed = false;
+        categorization.Totals = false;
+        table.RowHeaders.Add(categorization);
+
+    }
+
+
 
     /**
      * @memberof PageActions
