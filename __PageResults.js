@@ -564,15 +564,15 @@ class PageResults {
 
         // Score column is bold and has bigger font-size
         var area: Area = new Area();
-        var condition: Condition = new Condition();
-        condition.Expression = 'true';
-        condition.Style = 'score-column cf-score-column';
+        var score: Condition = new Condition();
+        score.Expression = 'col==1';
+        score.Style = 'score-column cf-score-column';
 
         area.Name = 'Score';
         area.FromStart = true;
         area.Indexes = '1';
         area.RowFormatting = false;
-        area.AddCondition(condition);
+        area.AddCondition(score);
 
         table.ConditionalFormatting.AddArea(area);
 
@@ -587,7 +587,7 @@ class PageResults {
         responses.FromStart = true;
         responses.Indexes = '3';
         responses.RowFormatting = false;
-        responses.AddCondition(condition);
+        responses.AddCondition(responses);
 
         table.ConditionalFormatting.AddArea(responses);
     }
