@@ -1,4 +1,4 @@
-class ParamUtil {
+class ParamUtil_DisabledForDevelopment {
 
     /*
   * Object with resources (values) for parameters.
