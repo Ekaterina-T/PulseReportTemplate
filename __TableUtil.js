@@ -366,5 +366,30 @@ class TableUtil {
 
         return row;
     }
+    
+      
+  /**
+*@param {object} context
+*@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
+*/
+  
+  static function getHeaderDescriptorObject(context, configItem) {
+    
+    var header = {}; // prepare param for getTrendHeader
+    
+    if(typeof configItem === 'string') {
+      header.Code = configItem;
+      header.Type = 'Question';
+    } else {
+      header = configItem;
+    }
+    
+    if(!header || !header.Type || !header.Code) {
+      throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
+    }
+    
+    return header;
+  }
+
 
 }
