@@ -1,4 +1,4 @@
-class PageKPI {
+class PageKPI_disabledForDevelopment {
 
     /**
      * @memberof PageKPI
