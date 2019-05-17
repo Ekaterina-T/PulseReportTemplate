@@ -1,4 +1,4 @@
-class ParamUtil_DisabledForDevelopment {
+class ParamUtil {
 
     /*
   * Object with resources (values) for parameters.
@@ -27,9 +27,14 @@ class ParamUtil_DisabledForDevelopment {
         'p_OpenTextQs':           { propertyName: 'Comments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
         'p_ScoreQs':              { propertyName: 'ScoresForComments',     type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
         'p_TagQs':                { propertyName: 'TagsForComments',       type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_TrendQs':              { propertyName: 'TrendQuestions',        type: 'QuestionList', locationType: 'Page', page: 'Page_Trends'},
         'p_QsToFilterBy':         { propertyName: 'KPI',                   type: 'QuestionList', locationType: 'Page', page: 'Page_KPI'},
 
+        'p_TrendQs': {
+            propertyName: 'TrendQuestions',
+            type: 'QuestionAndCategoriesList',
+            locationType: 'Page',
+            page: 'Page_Trends'
+        },
 
         'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'},
         'p_Wave':         { propertyName: 'WaveQuestion', type: 'QuestionId',           locationType: 'Survey', isInReverseOrder: true},
@@ -447,6 +452,10 @@ class ParamUtil_DisabledForDevelopment {
             return getOptions_CombinationOfQuestionsSelector(context, resource);
         }
 
+        if (type === 'QuestionAndCategoriesList') {
+            return getOptions_QuestionAndCategoriesList(context, resource);
+        }
+
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
     }
 
@@ -508,6 +517,7 @@ class ParamUtil_DisabledForDevelopment {
 
         return options;
     }
+
 
     /**
      *@param {object} context
@@ -576,6 +586,43 @@ class ParamUtil_DisabledForDevelopment {
             var option = {};
             option.Code = qList[i]; // propertyValue[i] is qid in this case
             option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
+            parameterOptions.push(option);
+        }
+
+        return parameterOptions;
+    }
+
+    /**
+     *@param {object} context
+     *@param {array} arary of questions
+     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+
+    static function
+
+    getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
+
+        var report = context.report;
+        var parameterOptions = [];
+
+        if (!qIdsAndCatList instanceof Array) {
+            throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
+        }
+
+        for (var i = 0; i < qIdsAndCatList.length; i++) {
+            var option = {};
+
+            if (typeof qIdsAndCatList[i] === 'object' && qIdsAndCatList[i].Type === 'Dimension') { // options is a dimension
+
+                option.Code = qIdsAndCatList[i].Code;
+                option.Label = TextAndParameterUtil.getTextTranslationByKey(context, qIdsAndCatList[i].Code);// perfect case: categories are in parameters block not just translations
+                option.Type = 'Dimension';
+            } else {
+
+                option.Code = qIdsAndCatList[i]; // propertyValue[i] is qid in this case
+                option.Label = QuestionUtil.getQuestionTitle(context, qIdsAndCatList[i]);
+                option.Type = 'Question';
+            }
             parameterOptions.push(option);
         }
 

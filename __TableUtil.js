@@ -1,4 +1,4 @@
-class TableUtil_develpementStage{
+class TableUtil {
 
     /**
      * @memberof TableUtil
@@ -287,6 +287,38 @@ class TableUtil_develpementStage{
     /**
      *Function adds AVG and Base subheader to a
      *@param {object} context
+     *@param {object} selected option from
+     */
+
+    static function
+
+    getTrendHeader(context, header) {
+
+        var report = context.report;
+        var log = context.log;
+
+        // header is question from parameter
+        if (header.Type && header.Type === 'Question') {
+            return getTrendQuestionHeader(context, header.Code);
+        }
+
+        // header is question from config
+        if (typeof header === 'string') {
+            return getTrendQuestionHeader(context, header);
+        }
+
+        //header is dimension
+        if (header.Type && header.Type === 'Dimension') {
+            return getTrendCategorizationHeader(context, header.Code);
+        }
+
+        throw new Error('TableUtil.getTrendHeader: cannot process header ' + JSON.stringify(header));
+
+    }
+
+    /**
+     *Function adds AVG and Base subheader to a
+     *@param {object} context
      *@param {Header} parent header
      */
 
@@ -313,5 +345,30 @@ class TableUtil_develpementStage{
         return row;
     }
 
+    /**
+     *Function adds AVG and Base subheader to a
+     *@param {object} context
+     *@param {string} categorization id
+     */
+
+    static function
+
+    getTrendCategorizationHeader(context, catId) {
+
+        var report = context.report;
+        var row: HeaderCategorization = new HeaderCategorization();
+
+        row.CategorizationId = String(catId).replace(/[ ,&]/g, '');
+        row.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        row.DefaultStatistic = StatisticsType.Average;
+        row.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+        row.Preaggregation = PreaggregationType.Average;
+        row.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/browse/TQA-4116
+        row.Collapsed = true;
+        row.Totals = true;
+        maskOutNA(context, row);
+
+        return row;
+    }
 
 }

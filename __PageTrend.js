@@ -42,7 +42,9 @@ class PageTrend {
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function tableTrend_Render(context){
+    static function
+
+    tableTrend_Render(context) {
 
         var report = context.report;
         var state = context.state;
@@ -51,10 +53,10 @@ class PageTrend {
         var log = context.log;
 
         // add rows (1 or more KPI questions)
-        var Qs = ParamUtil.GetSelectedCodes (context, "p_TrendQs");
+        var headers = ParamUtil.GetSelectedOptions(context, "p_TrendQs");
 
-        for (var i=0; i<Qs.length; i++) {
-            table.RowHeaders.Add(TableUtil.getTrendQuestionHeader(context, Qs[i]));
+        for (var i = 0; i < headers.length; i++) {
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
         }
 
         // add column - trending by Date variable
@@ -65,8 +67,6 @@ class PageTrend {
         table.Caching.Enabled = false;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
-
-
 
     /**
      * @memberof PageKPI
