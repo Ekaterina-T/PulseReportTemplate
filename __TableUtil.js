@@ -287,12 +287,10 @@ class TableUtil {
     /**
      *Function adds AVG and Base subheader to a
      *@param {object} context
-     *@param {object} selected option from
+     *@param {object} header {Type: "Question"|"Dimension", Code: "qid"|"catId"}
      */
 
-    static function
-
-    getTrendHeader(context, header) {
+    static function getTrendHeader(context, header) {
 
         var report = context.report;
         var log = context.log;
@@ -351,9 +349,7 @@ class TableUtil {
      *@param {string} categorization id
      */
 
-    static function
-
-    getTrendCategorizationHeader(context, catId) {
+    static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
         var row: HeaderCategorization = new HeaderCategorization();
