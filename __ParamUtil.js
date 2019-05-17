@@ -20,21 +20,16 @@ class ParamUtil {
         'p_CatDD_TimeUnitNoDefault':  { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_DisplayMode':              { propertyName: 'DisplayMode',               type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
 
-        'p_Results_BreakBy':      { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
-        'p_CategoricalDD_BreakBy':{ propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown'},
-        'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
-        'p_Demographics':         { propertyName: 'DemographicsQuestions', type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
-        'p_OpenTextQs':           { propertyName: 'Comments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_ScoreQs':              { propertyName: 'ScoresForComments',     type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_TagQs':                { propertyName: 'TagsForComments',       type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_QsToFilterBy':         { propertyName: 'KPI',                   type: 'QuestionList', locationType: 'Page', page: 'Page_KPI'},
-
-        'p_TrendQs': {
-            propertyName: 'TrendQuestions',
-            type: 'QuestionAndCategoriesList',
-            locationType: 'Page',
-            page: 'Page_Trends'
-        },
+        'p_Results_BreakBy':      { propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
+        'p_CategoricalDD_BreakBy':{ propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown'},
+        'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
+        'p_Demographics':         { propertyName: 'DemographicsQuestions',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
+        'p_OpenTextQs':           { propertyName: 'Comments',                     type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_ScoreQs':              { propertyName: 'ScoresForComments',            type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_TagQs':                { propertyName: 'TagsForComments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
+        'p_QsToFilterBy':         { propertyName: 'KPIQuestionsToFilterVerbatim', type: 'QuestionList', locationType: 'Page', page: 'Page_KPI'},
+        
+        'p_TrendQs':              { propertyName: 'TrendQuestions',        type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends' },
 
         'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'},
         'p_Wave':         { propertyName: 'WaveQuestion', type: 'QuestionId',           locationType: 'Survey', isInReverseOrder: true},
