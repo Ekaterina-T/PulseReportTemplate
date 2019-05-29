@@ -143,12 +143,14 @@ class TableUtil{
      */
 
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
+        
+        if(Filters.isTimePeriodFilterHidden(context)) {
+            var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
 
-        var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
-
-        if(dateRange) {
-            headerDateQuestion.TimeSeries.StartDate = dateRange.startDate;
-            headerDateQuestion.TimeSeries.EndDate = dateRange.endDate;
+            if(dateRange) {
+                headerDateQuestion.TimeSeries.StartDate = dateRange.startDate;
+                headerDateQuestion.TimeSeries.EndDate = dateRange.endDate;
+            }
         }
 
         return;
