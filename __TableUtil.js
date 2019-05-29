@@ -144,7 +144,7 @@ class TableUtil{
 
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
         
-        if(Filters.isTimePeriodFilterHidden(context)) {
+        if(!Filters.isTimePeriodFilterHidden(context)) {
             var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
 
             if(dateRange) {
