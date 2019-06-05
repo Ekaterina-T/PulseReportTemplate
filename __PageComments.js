@@ -45,7 +45,7 @@ class PageComments {
             var counts : Datapoint[] = report.TableUtils.GetColumnValues("Base", k+1);
             for (var i=0; i<counts.Length; i++) {
                 var base = parseInt(counts[i].Value);
-                if (base < Config.SuppressSettings.CommentSuppressValue) {
+                if (base < SuppressConfig.CommentSuppressValue) {
                     return true;
                 }
             }

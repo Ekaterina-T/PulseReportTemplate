@@ -36,7 +36,7 @@ class SuppressUtil {
         var type = suppressSettings.type;
         var displayBaseOption = suppressSettings.displayBaseOption;
         var displayCellOption = suppressSettings.displayCellOption;
-        var suppressValue = suppressSettings.minBase || Config.SuppressSettings.TableSuppressValue;
+        var suppressValue = suppressSettings.minBase || SuppressConfig.TableSuppressValue;
         var cellValue = suppressSettings.cellLimit || suppressValue;
 
         table.SuppressData.SuppressData = true;
@@ -159,7 +159,7 @@ class SuppressUtil {
         var log = context.log;
 
         var N_of_participants = report.TableUtils.GetCellValue('Confidentiality:ReportBase',1, 1).Value;
-        if (N_of_participants.Equals(Double.NaN) || (N_of_participants < Config.SuppressSettings.ReportBaseSuppressValue)) {
+        if (N_of_participants.Equals(Double.NaN) || (N_of_participants < SuppressConfig.ReportBaseSuppressValue)) {
             return true;
         }
         return false;
@@ -182,11 +182,11 @@ class SuppressUtil {
 
 
         // 1. If a node has <unitSufficientBase> answers or more (e.g. > 100) it should always be shown
-        if (selfUnitBase >= Config.SuppressSettings.HierarchySuppress.unitSufficientBase) {
+        if (selfUnitBase >= SuppressConfig.HierarchySuppress.unitSufficientBase) {
             return false;
         }
 
-        var delta = Config.SuppressSettings.HierarchySuppress.minGap;
+        var delta = SuppressConfig.HierarchySuppress.minGap;
         var parentBase = (bases.Length > 1) ? bases[1].Value : selfUnitBase;
         var allSiblingsBase = 0;
         for (var i=2; i<bases.Length; i++) {

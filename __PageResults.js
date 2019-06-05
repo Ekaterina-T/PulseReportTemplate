@@ -418,7 +418,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
-        var suppressValue = Config.SuppressSettings.TableSuppressValue;
+        var suppressValue = SuppressConfig.TableSuppressValue;
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
         var base: Datapoint;
 

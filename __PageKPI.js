@@ -184,7 +184,7 @@ class PageKPI {
     
     for (var i=0; i<counts.Length; i++) {
       var base = parseInt(counts[i].Value);
-      if (base < Config.SuppressSettings.VerbatimSuppressValue) {
+      if (base < SuppressConfig.VerbatimSuppressValue) {
         return true;
       }
     }
