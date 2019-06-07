@@ -84,6 +84,12 @@ class ParamUtil {
             var pid : Answer[] = (Question(project.GetQuestion('pid'))).GetAnswers();
             var pname : Answer[] = (Question(project.GetQuestion('pname'))).GetAnswers();
 
+            //add configurable empty value for pulse babe survey selector
+            var emptyValue = new ParameterValueResponse();
+            emptyValue.StringValue = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
+            emptyValue.StringKeyValue = 'none';
+            parameter.Items.Add(emptyValue);
+
             for(var i=0; i<pid.length; i++) {
                 var val = new ParameterValueResponse();
                 val.StringValue = pname[i].Precode;
