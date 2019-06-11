@@ -44,8 +44,11 @@ class FilterSummary {
         if(pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage') || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
 
             // data source
-            str += Export.displayDataSourceInfo(context);
-            str += System.Environment.NewLine;
+            if(Config.Surveys.length>1) {
+
+                str += Export.displayDataSourceInfo(context);
+                str += System.Environment.NewLine; // for Excel export
+            }
 
             //hierarchy
             str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
