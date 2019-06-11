@@ -47,8 +47,10 @@ class Export {
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
             var selectedSurvey: ParameterValueResponse = state.Parameters['p_projectSelector'];
-            str+= 'Survey Name: '+selectedSurvey.DisplayValue+' ';
-            str = '<div class="data-source-info">'+str+'</div>';
+            if(selectedSurvey.StringKeyValue!=='none') {
+                str+= 'Survey Name: '+selectedSurvey.DisplayValue+' ';
+                str = '<div class="data-source-info">'+str+'</div>';
+            }
         }
 
         return str;
