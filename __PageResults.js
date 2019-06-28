@@ -425,8 +425,8 @@ class PageResults {
         // !!!order of how bm cols are added must comply with bm table column order!!!
 
         // previous wave benchmark
-        var prevWave = getPreviousWave(context);
-        if(prevWave) {
+        var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
+        if(showPrevWave) {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);

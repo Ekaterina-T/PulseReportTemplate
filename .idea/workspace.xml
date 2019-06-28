@@ -4,7 +4,6 @@
     <list default="true" id="324ac458-298b-4764-b5dc-0d9c815c092e" name="Default Changelist" comment="DB version 0">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__PageResults.js" beforeDir="false" afterPath="$PROJECT_DIR$/__PageResults.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/gitignore" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -16,21 +15,21 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/__TextAndParameterUtil.js">
+        <entry file="file://$PROJECT_DIR$/__CardUtil.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="133" column="1" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="1" />
+            <state relative-caret-position="612">
+              <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/__User.js">
+        <entry file="file://$PROJECT_DIR$/__PageResults.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="31" column="1" selection-start-line="31" selection-start-column="1" selection-end-line="31" selection-end-column="1" />
+            <state relative-caret-position="234">
+              <caret line="420" column="30" selection-end-line="811" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -50,6 +49,11 @@
       <find>seg</find>
       <find>cellv</find>
       <find>geta</find>
+      <find>SuppressSett</find>
+      <find>config</find>
+      <find>getpre</find>
+      <find>getprev</find>
+      <find>showp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -72,31 +76,31 @@
         <option value="$PROJECT_DIR$/_EXAMPLE_TextAndParameterLibrary.js" />
         <option value="$PROJECT_DIR$/gitignore" />
         <option value="$PROJECT_DIR$/_EXAMPLE_Config.js" />
-        <option value="$PROJECT_DIR$/__PageResults.js" />
         <option value="$PROJECT_DIR$/__CardUtil.js" />
         <option value="$PROJECT_DIR$/__DataSourceUtil.js" />
         <option value="$PROJECT_DIR$/__DateUtil.js" />
-        <option value="$PROJECT_DIR$/__Export.js" />
         <option value="$PROJECT_DIR$/__Filters.js" />
-        <option value="$PROJECT_DIR$/__FilterSummary.js" />
         <option value="$PROJECT_DIR$/__HierarchyUtil.js" />
         <option value="$PROJECT_DIR$/__HitlistUtil.js" />
         <option value="$PROJECT_DIR$/__ListControlUtil.js" />
         <option value="$PROJECT_DIR$/__PageActions.js" />
         <option value="$PROJECT_DIR$/__PageCategorical.js" />
         <option value="$PROJECT_DIR$/__PageCategoricalDrilldown.js" />
-        <option value="$PROJECT_DIR$/__PageComments.js" />
-        <option value="$PROJECT_DIR$/__PageKPI.js" />
         <option value="$PROJECT_DIR$/__PageResponseRate.js" />
-        <option value="$PROJECT_DIR$/__PageTrend.js" />
         <option value="$PROJECT_DIR$/__PageUtil.js" />
-        <option value="$PROJECT_DIR$/__ParamUtil.js" />
         <option value="$PROJECT_DIR$/__QuestionUtil.js" />
         <option value="$PROJECT_DIR$/__StyleAndJavaScriptUtil.js" />
-        <option value="$PROJECT_DIR$/__SuppressUtil.js" />
-        <option value="$PROJECT_DIR$/__TableUtil.js" />
         <option value="$PROJECT_DIR$/__TextAndParameterUtil.js" />
         <option value="$PROJECT_DIR$/__User.js" />
+        <option value="$PROJECT_DIR$/__PageTrend.js" />
+        <option value="$PROJECT_DIR$/__TableUtil.js" />
+        <option value="$PROJECT_DIR$/__SuppressUtil.js" />
+        <option value="$PROJECT_DIR$/__PageComments.js" />
+        <option value="$PROJECT_DIR$/__PageKPI.js" />
+        <option value="$PROJECT_DIR$/__ParamUtil.js" />
+        <option value="$PROJECT_DIR$/__FilterSummary.js" />
+        <option value="$PROJECT_DIR$/__Export.js" />
+        <option value="$PROJECT_DIR$/__PageResults.js" />
       </list>
     </option>
   </component>
@@ -107,10 +111,10 @@
     <other-services-enabled>false</other-services-enabled>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2350" />
-    <option name="y" value="-81" />
-    <option name="width" value="1043" />
-    <option name="height" value="684" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1176" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -188,7 +192,15 @@
       <workItem from="1556208862142" duration="2872000" />
       <workItem from="1556211789278" duration="5687000" />
       <workItem from="1557303811986" duration="4942000" />
-      <workItem from="1557840330337" duration="4314000" />
+      <workItem from="1557840330337" duration="5197000" />
+      <workItem from="1558000807900" duration="7111000" />
+      <workItem from="1559656808012" duration="6822000" />
+      <workItem from="1559914950816" duration="2347000" />
+      <workItem from="1560259708903" duration="1839000" />
+      <workItem from="1560437679487" duration="3569000" />
+      <workItem from="1560517996616" duration="776000" />
+      <workItem from="1561723978959" duration="748000" />
+      <workItem from="1561736995859" duration="1475000" />
     </task>
     <task id="LOCAL-00001" summary="version 0">
       <created>1552897088368</created>
@@ -281,17 +293,23 @@
       <option name="project" value="LOCAL" />
       <updated>1556211017589</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="DB version 0">
+      <created>1557992757395</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1557992757395</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50909000" />
+    <option name="totallyTimeSpent" value="76479000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1912" y="-139" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20126449" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20126449" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -303,7 +321,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3288889" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.28444445" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.39117646" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.3362745" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32941177" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -439,55 +457,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__PageResults.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="574" column="33" lean-forward="true" selection-end-line="825" selection-end-column="1" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__DataSourceUtil.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="215" column="1" selection-start-line="215" selection-start-column="1" selection-end-line="215" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__DateUtil.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="559">
           <caret line="93" column="1" selection-start-line="93" selection-start-column="1" selection-end-line="93" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__CardUtil.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="36" column="1" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__Export.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="57" column="1" selection-start-line="57" selection-start-column="1" selection-end-line="57" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__Filters.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="497" column="1" selection-start-line="497" selection-start-column="1" selection-end-line="497" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__FilterSummary.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="90" column="1" selection-start-line="90" selection-start-column="1" selection-end-line="90" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -498,24 +471,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__PageComments.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2431">
-          <caret line="143" column="1" selection-start-line="143" selection-start-column="1" selection-end-line="143" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__PageCategoricalDrilldown.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1649">
           <caret line="97" column="1" selection-start-line="97" selection-start-column="1" selection-end-line="97" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__PageCategorical.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6290">
-          <caret line="370" column="1" selection-start-line="370" selection-start-column="1" selection-end-line="370" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -540,13 +499,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__PageTrend.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1411">
-          <caret line="83" column="1" selection-start-line="83" selection-start-column="1" selection-end-line="83" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__PageResponseRate.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6358">
@@ -554,24 +506,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__PageKPI.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="279" column="1" selection-start-line="279" selection-start-column="1" selection-end-line="279" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__PageUtil.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="559">
           <caret line="130" column="1" selection-start-line="130" selection-start-column="1" selection-end-line="130" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__ParamUtil.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="523">
-          <caret line="601" column="1" selection-start-line="601" selection-start-column="1" selection-end-line="601" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -589,34 +527,236 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__TableUtil.js">
+    <entry file="file://$PROJECT_DIR$/__User.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="316" column="1" selection-start-line="316" selection-start-column="1" selection-end-line="316" selection-end-column="1" />
+        <state relative-caret-position="527">
+          <caret line="31" column="1" selection-start-line="31" selection-start-column="1" selection-end-line="31" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__PageTrend.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1377">
+          <caret line="81" column="1" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/__SuppressUtil.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="271" column="1" selection-start-line="271" selection-start-column="1" selection-end-line="271" selection-end-column="1" />
+        <state relative-caret-position="214">
+          <caret line="34" column="56" selection-start-line="34" selection-start-column="44" selection-end-line="34" selection-end-column="56" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/__PageComments.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="105" column="183" selection-start-line="105" selection-start-column="171" selection-end-line="105" selection-end-column="183" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__PageKPI.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="39" column="165" selection-start-line="39" selection-start-column="153" selection-end-line="39" selection-end-column="165" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__PageCategorical.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="45" column="54" selection-start-line="45" selection-start-column="48" selection-end-line="45" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__Filters.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7820">
+          <caret line="460" column="45" selection-start-line="460" selection-start-column="45" selection-end-line="460" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__Export.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="51" column="51" selection-start-line="51" selection-start-column="51" selection-end-line="51" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__FilterSummary.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__DataSourceUtil.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="489">
+          <caret line="83" column="34" selection-start-line="83" selection-start-column="22" selection-end-line="83" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JavaScript-modules-diagram/C:/Users/EkaterinaT/WebstormProjects/EnnovaReportTemplate/__ParamUtil.js">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/__ParamUtil.js</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="758.0" y="483.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+          <VISIBILITY>Overview</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__TableUtil.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="305" column="41" selection-start-line="305" selection-start-column="41" selection-end-line="305" selection-end-column="41" />
+          <folding>
+            <element signature="n#!!block;n#getTrendQuestionHeader#0;n#TableUtil#0" />
+            <element signature="n#!!block;n#getTrendCategorizationHeader#0;n#TableUtil#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/__TextAndParameterUtil.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
+        <state relative-caret-position="867">
           <caret line="133" column="1" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__User.js">
+    <entry file="file://$PROJECT_DIR$/__ParamUtil.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="1" selection-start-line="31" selection-start-column="1" selection-end-line="31" selection-end-column="1" />
+        <state relative-caret-position="221">
+          <caret line="19" column="8" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
+          <folding>
+            <element signature="e#23#610#0" />
+            <element signature="e#4339#4515#0" />
+            <element signature="n#!!block;n#LoadParameter_SurveysSelector_ConfigList#0;n#ParamUtil#0" />
+            <element signature="e#4748#5118#0" />
+            <element signature="e#4862#5108#0" />
+            <element signature="e#5147#5316#0" />
+            <element signature="n#!!block;n#LoadParameter_SurveysSelector_PidPname#0;n#ParamUtil#0" />
+            <element signature="e#5579#6377#0" />
+            <element signature="e#6149#6367#0" />
+            <element signature="n#!!block;n#MaskParameter#0;n#ParamUtil#0" />
+            <element signature="e#6679#7025#0" />
+            <element signature="e#6959#7014#0" />
+            <element signature="e#7039#7249#0" />
+            <element signature="n#!!block;n#isParameterToBeLoaded#0;n#ParamUtil#0" />
+            <element signature="e#7562#7676#0" />
+            <element signature="e#7728#7922#0" />
+            <element signature="e#7976#8166#0" />
+            <element signature="e#8224#8431#0" />
+            <element signature="e#8491#8694#0" />
+            <element signature="e#8743#8876#0" />
+            <element signature="e#8912#9045#0" />
+            <element signature="n#!!block;n#ResetParameters#0;n#ParamUtil#0" />
+            <element signature="e#9208#9274#0" />
+            <element signature="e#9304#9529#0" />
+            <element signature="n#!!block;n#Initialise#0;n#ParamUtil#0" />
+            <element signature="e#9854#10005#0" />
+            <element signature="e#10150#10217#0" />
+            <element signature="e#10310#10545#0" />
+            <element signature="e#10663#11874#0" />
+            <element signature="e#10734#11864#0" />
+            <element signature="e#10807#11100#0" />
+            <element signature="e#10968#11082#0" />
+            <element signature="e#11140#11222#0" />
+            <element signature="e#11328#11622#0" />
+            <element signature="e#11713#11850#0" />
+            <element signature="e#11992#12265#0" />
+            <element signature="n#!!block;n#GetSelectedCodes#0;n#ParamUtil#0" />
+            <element signature="e#12486#13312#0" />
+            <element signature="e#12642#12749#0" />
+            <element signature="e#12848#13301#0" />
+            <element signature="e#12940#13248#0" />
+            <element signature="e#13331#13461#0" />
+            <element signature="e#13474#13802#0" />
+            <element signature="n#!!block;n#GetSelectedOptions#0;n#ParamUtil#0" />
+            <element signature="e#14136#14398#0" />
+            <element signature="e#14196#14388#0" />
+            <element signature="e#14265#14374#0" />
+            <element signature="e#14445#14662#0" />
+            <element signature="e#14973#15123#0" />
+            <element signature="n#!!block;n#LoadParameter#0;n#ParamUtil#0" />
+            <element signature="e#15291#15354#0" />
+            <element signature="e#15486#15726#0" />
+            <element signature="e#15840#16200#0" />
+            <element signature="n#!!block;n#GetParameterOptions#0;n#ParamUtil#0" />
+            <element signature="e#16625#16733#0" />
+            <element signature="e#16739#16817#0" />
+            <element signature="e#16846#16994#0" />
+            <element signature="e#17104#17138#0" />
+            <element signature="e#17296#17599#0" />
+            <element signature="n#!!block;n#modifyOptionsOrder#0;n#ParamUtil#0" />
+            <element signature="e#17719#17902#0" />
+            <element signature="e#17804#17862#0" />
+            <element signature="e#17940#18229#0" />
+            <element signature="n#!!block;n#getRawOptions#0;n#ParamUtil#0" />
+            <element signature="e#18402#18487#0" />
+            <element signature="e#18600#18691#0" />
+            <element signature="e#18813#18888#0" />
+            <element signature="e#18936#19028#0" />
+            <element signature="e#19080#19167#0" />
+            <element signature="e#19276#19518#0" />
+            <element signature="n#!!block;n#getParameterValuesResourceByLocation#0;n#ParamUtil#0" />
+            <element signature="e#19612#19672#0" />
+            <element signature="e#19803#19931#0" />
+            <element signature="e#19983#20149#0" />
+            <element signature="e#20203#20351#0" />
+            <element signature="e#20421#20517#0" />
+            <element signature="e#20576#20631#0" />
+            <element signature="e#20768#21022#0" />
+            <element signature="n#!!block;n#getOptions_CombinationOfQuestionsSelector#0;n#ParamUtil#0" />
+            <element signature="e#21403#21567#0" />
+            <element signature="e#21606#21763#0" />
+            <element signature="n#!!block;n#getOptions_QuestionAnswersSelector#0;n#ParamUtil#0" />
+            <element signature="e#21996#22169#0" />
+            <element signature="e#22215#22400#0" />
+            <element signature="n#!!block;n#getOptions_StaticArrayOfObjectsSelector#0;n#ParamUtil#0" />
+            <element signature="e#22614#22988#0" />
+            <element signature="e#22694#22935#0" />
+            <element signature="e#22733#22812#0" />
+            <element signature="e#22818#22921#0" />
+            <element signature="e#23033#23202#0" />
+            <element signature="n#!!block;n#getOptions_QuestionList#0;n#ParamUtil#0" />
+            <element signature="e#23340#23485#0" />
+            <element signature="e#23529#23765#0" />
+            <element signature="e#23811#23980#0" />
+            <element signature="n#!!block;n#getOptions_QuestionAndCategoriesList#0;n#ParamUtil#0" />
+            <element signature="e#24191#24336#0" />
+            <element signature="e#24394#25141#0" />
+            <element signature="e#24523#24845#0" />
+            <element signature="e#24851#25088#0" />
+            <element signature="n#!!block;n#generateResourceObjectForFilterPanelParameter#0;n#ParamUtil#0" />
+            <element signature="e#25625#25700#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__CardUtil.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__PageResults.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="420" column="30" selection-end-line="811" selection-end-column="1" />
         </state>
       </provider>
     </entry>
