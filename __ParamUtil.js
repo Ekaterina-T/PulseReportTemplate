@@ -77,6 +77,7 @@ class ParamUtil {
 
         var log = context.log;
         var parameter = context.parameter;
+        var report = context.report;
         var project : Project = DataSourceUtil.getProject(context);
     
         //add configurable empty value for pulse babe survey selector
