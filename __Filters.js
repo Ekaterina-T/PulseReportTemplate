@@ -301,7 +301,7 @@ class Filters {
         var state = context.state;
         var report = context.report;
         var log = context.log;
-
+log.LogDebug(answerCodes instanceof Array);
         if(!answerCodes instanceof Array) {
             throw new Error('Filters.getFilterExpressionByAnswerRange: answerCodes is not an array; filter for '+qId);
         }
