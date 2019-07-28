@@ -15,20 +15,22 @@ class DataSourceUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        // Wrapped in try/catch to avoid throwing errors when retrieving pageContext.Items['Source'] when it doesn't exist
-        try {
-            if (context.isCustomSource && pageContext.Items['Source']!==undefined) {
-                return pageContext.Items['Source'];
-            }
+        //ds is defined for particular element (table for instance)
+        if(context['Source']) { 
+            return context['Source'];
         }
-        catch (e) { }
-
+        
+        //ds is defined page-wide
+        if (context.isCustomSource && !!pageContext.Items['Source']) {
+            return pageContext.Items['Source'];
+        }
+        
+        //ds is defined report-wide
         if (!state.Parameters.IsNull('p_SurveyType')) {
             return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey
         }
 
         return getDefaultDSFromConfig(context);
-
     }
 
 
