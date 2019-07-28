@@ -78,24 +78,20 @@ class ParamUtil {
         var log = context.log;
         var parameter = context.parameter;
         var project : Project = DataSourceUtil.getProject(context);
-
-        if(project.GetQuestion('pid') != null) {
-
-            var pid : Answer[] = (Question(project.GetQuestion('pid'))).GetAnswers();
-            var pname : Answer[] = (Question(project.GetQuestion('pname'))).GetAnswers();
-
-            //add configurable empty value for pulse babe survey selector
-            var emptyValue = new ParameterValueResponse();
-            emptyValue.StringValue = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
-            emptyValue.StringKeyValue = 'none';
-            parameter.Items.Add(emptyValue);
-
-            for(var i=0; i<pid.length; i++) {
-                var val = new ParameterValueResponse();
-                val.StringValue = pname.length < pid.length && i>=pname.length ? TextAndParameterUtil.getTextTranslationByKey(context, 'NoSurveyNameProvided') : pname[i].Precode;
-                val.StringKeyValue = pid[i].Precode;
-                parameter.Items.Add(val);
-            }
+    
+        //add configurable empty value for pulse babe survey selector
+        var emptyValue = new ParameterValueResponse();        
+        emptyValue.StringValue = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
+        emptyValue.StringKeyValue = 'none';
+        parameter.Items.Add(emptyValue);        
+        
+        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:VisibleSurveys');
+        
+        for(var i=0; i<rawInfo.length; ) {
+            var val = new ParameterValueResponse();            
+            val.StringValue = rawInfo[i++];
+            val.StringKeyValue = rawInfo[i++];
+            parameter.Items.Add(val);
         }
 
         return;
