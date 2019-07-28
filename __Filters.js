@@ -303,8 +303,8 @@ class Filters {
         var log = context.log;
 	    
 log.LogDebug(qId);
-log.LogDebug(!answerCodes instanceof Array);
-        if(!answerCodes instanceof Array) {
+log.LogDebug(!(answerCodes instanceof Array));
+        if(!(answerCodes instanceof Array)) {
 		log.LogDebug('here');
             throw new Error('Filters.getFilterExpressionByAnswerRange: answerCodes is not an array; filter for '+qId);
         }
