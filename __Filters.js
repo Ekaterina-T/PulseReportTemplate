@@ -494,5 +494,10 @@ class Filters {
 
         return excludedFilters.join(' AND ');
     }
+	
+static function getPulseSurveyData_FilterByHierarchy(context) {
+	var showEndUsersSurveys = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'PulseSurveyData')['showEndUsersSurveys'];
+	return showEndUsersSurveys ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]) : '';
+}
 
 }
