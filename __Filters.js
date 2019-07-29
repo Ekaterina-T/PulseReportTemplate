@@ -497,7 +497,7 @@ class Filters {
 	
 static function getPulseSurveyData_FilterByHierarchy(context) {
 	var showEndUsersSurveys = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'PulseSurveyData')['showEndUsersSurveys'];
-	return showEndUsersSurveys ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase]) : '';
+	return showEndUsersSurveys ? HierarchyUtil.getHierarchyFilterExpressionForCurrentRB (context)/*Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase])*/ : '';
 }
 
 }
