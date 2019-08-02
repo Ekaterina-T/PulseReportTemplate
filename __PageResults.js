@@ -234,7 +234,8 @@ class PageResults {
         }
 
         var bcCategories: HeaderCategories = new HeaderCategories();
-
+        bcCategories.RecodingShowOriginal = true;
+        bcCategories.RecodingPosition = RecodingPositionType.OnStart;
         if(scoreType === '%fav') {
 
             // add Score column
@@ -312,6 +313,9 @@ class PageResults {
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
         bcCategories.HideData = false;
+        bcCategories.RecodingShowOriginal = true;
+        bcCategories.RecodingPosition = RecodingPositionType.OnEnd;
+
         table.ColumnHeaders.Add(bcCategories);
 
         if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
