@@ -19,6 +19,7 @@ class ParamUtil {
         'p_TimeUnitNoDefault':        { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_CatDD_TimeUnitNoDefault':  { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_DisplayMode':              { propertyName: 'DisplayMode',               type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_ShowAllPulseSurveys':      { propertyName: 'ShowAllPulseSurveys',       type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
 
         'p_Results_BreakBy':      { propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
         'p_CategoricalDD_BreakBy':{ propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown'},
