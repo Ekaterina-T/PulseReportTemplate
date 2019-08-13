@@ -88,7 +88,7 @@ class ParamUtil {
         
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:VisibleSurveys');
         
-        for(var i=0; i<rawInfo.length; i++) {
+        for(var i=rawInfo.length-1; i>=0; i--) { // reverse order
             var val = new ParameterValueResponse();            
             val.StringValue = rawInfo[i][0]; //label - inner header
             val.StringKeyValue = rawInfo[i][1]; // pid - outer header
