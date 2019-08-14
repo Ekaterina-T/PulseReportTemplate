@@ -210,7 +210,7 @@ class DataSourceUtil {
         var project : Project = getProject(context);
         var ifHide = false;
 
-        if (report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:VisibleSurveys').length === 0) { // not pulse program -> hide baby survey selector
+        if (report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:PulseSurveys').length === 0) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
 
