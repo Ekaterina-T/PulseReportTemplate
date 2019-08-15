@@ -73,24 +73,9 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     }
 }
 
-public class PulseSurveysInfoFabric {
+class PulseSurveysInfoFabric {
 
     static function getPulseSurveysInfo(storageInfo) : IPulseSurveys {
         PulseSurveys_ReportalTable.getInstance();
     }
 }
-
-/*
-public class PulseSurveys_DBDesignerTable implements IPulseSurveysInfo {
-
-    private var _table : DBDesignerTable;
-
-    function PulseInfoUtil_DBDesignerTable(context, schemaId, tableName) {
-
-        var confirmit = context.confirmit;
-        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
-        _table = schema.GetDBDesignerTable(tableName);
-    }
-
-}
-*/
