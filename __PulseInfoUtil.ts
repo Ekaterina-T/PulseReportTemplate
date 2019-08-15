@@ -75,7 +75,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
 class PulseSurveysInfoFabric {
 
-    static function getPulseSurveysInfo(storageInfo) : IPulseSurveys {
+    static function getPulseSurveysInfo(storageInfo) {
         PulseSurveys_ReportalTable.getInstance();
     }
 }
