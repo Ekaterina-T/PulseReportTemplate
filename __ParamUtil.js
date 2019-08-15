@@ -10,32 +10,33 @@ class ParamUtil {
 
     static var reportParameterValuesMap = {
 
-        //'p_projectSelector': { type: 'CombinationOfQuestions', locationType: 'CombinationOfQuestions', qIdCodes: 'pid', qIdLabels: 'pname'},
+        //'p_projectSelector': { type: 'StaticArrayofObjects', locationType: 'PulseSurveyCustomTable'},
 
-        'p_Results_CountsPercents':   { propertyName: 'Distribution',              type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_Results_TableTabSwitcher': { propertyName: 'ResultsTabSwitcher',        type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_TimePeriod':               { propertyName: 'TimePeriods',               type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_TimeUnitWithDefault':      { propertyName: 'TimeUnitsWithDefaultValue', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_TimeUnitNoDefault':        { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_CatDD_TimeUnitNoDefault':  { propertyName: 'TimeUnitsNoDefaultValue',   type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_DisplayMode':              { propertyName: 'DisplayMode',               type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
-        'p_ShowAllPulseSurveys':      { propertyName: 'ShowAllPulseSurveys',       type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution'},
+        'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
+        'p_TimePeriod':               { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimePeriods'},
+        'p_TimeUnitWithDefault':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsWithDefaultValue'},
+        'p_TimeUnitNoDefault':        { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
+        'p_CatDD_TimeUnitNoDefault':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
+        'p_DisplayMode':              { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DisplayMode'},
+        'p_ShowAllPulseSurveys':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ShowAllPulseSurveys'},
 
-        'p_Results_BreakBy':      { propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_Results'},
-        'p_CategoricalDD_BreakBy':{ propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown'},
-        'p_ResponseRate_BreakBy': { propertyName: 'BreakVariables',               type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
-        'p_Demographics':         { propertyName: 'DemographicsQuestions',        type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate'},
-        'p_OpenTextQs':           { propertyName: 'Comments',                     type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_ScoreQs':              { propertyName: 'ScoresForComments',            type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_TagQs':                { propertyName: 'TagsForComments',              type: 'QuestionList', locationType: 'Page', page: 'Page_Comments'},
-        'p_QsToFilterBy':         { propertyName: 'KPIQuestionsToFilterVerbatim', type: 'QuestionList', locationType: 'Page', page: 'Page_KPI'},
+        'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables'},
+        'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables'},
+        'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables'},
+        'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions'},
+        'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments'},
+        'p_ScoreQs':              { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'ScoresForComments'},
+        'p_TagQs':                { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'TagsForComments'},
+        'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim'},
+        'p_Statements':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Actions',              propertyName: 'Statements'},
         
-        'p_TrendQs':              { propertyName: 'TrendQuestions',        type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends' },
+        'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
+        'p_Dimensions':   { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
+        
+        'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions' },
 
-        'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'},
-        'p_Wave':         { propertyName: 'WaveQuestion', type: 'QuestionId',           locationType: 'Survey', isInReverseOrder: true},
-        'p_Dimensions':   { propertyName: 'Dimensions', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions'},
-        'p_Statements':   { propertyName: 'Statements', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'}
+        'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true}
 
     };
 
@@ -87,12 +88,13 @@ class ParamUtil {
         emptyValue.StringKeyValue = 'none';
         parameter.Items.Add(emptyValue);        
         
-        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:VisibleSurveys');
+        var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
+        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(storageInfo);
         
-        for(var i=rawInfo.length-1; i>=0; i--) { // reverse order
+        for(var i=0; i< pulseSurveysInfo.length; i++) { // reverse order
             var val = new ParameterValueResponse();            
-            val.StringValue = rawInfo[i][0]; //label - inner header
-            val.StringKeyValue = rawInfo[i][1]; // pid - outer header
+            val.StringValue = pulseSurveysInfo[i].Label; //label - inner header
+            val.StringKeyValue = pulseSurveysInfo[i].Code; // pid - outer header
             parameter.Items.Add(val);
         }
 
@@ -120,7 +122,6 @@ class ParamUtil {
         }
 
     }
-
 
     /*
   * Check if parameter needed to be loaded with values, i.e. relevant for the survey
@@ -165,8 +166,6 @@ class ParamUtil {
         return true;
     }
 
-
-
     /*
   * Reset parametrs according to the list.
   * @param {object} context object {state: state}
@@ -184,7 +183,6 @@ class ParamUtil {
 
         return;
     }
-
 
     /*
   * Initialise parametrs on page.
@@ -250,7 +248,6 @@ class ParamUtil {
     }
 
 
-
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
 
     /*
@@ -291,7 +288,6 @@ class ParamUtil {
             throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
         }
     }
-
 
     /*
   * Get full info about selected answers of the report parameter (single or multi response)
@@ -489,6 +485,8 @@ class ParamUtil {
         if(parameterInfo.locationType === 'FilterPanel') {
             return parameterInfo.FilterQid;
         }
+
+        if(parameterInfo.locationType === '')
 
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }

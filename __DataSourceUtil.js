@@ -207,10 +207,10 @@ class DataSourceUtil {
         var report = context.report;
 
         context.isCustomSource = false;  // here always use the global source, so reset the custom source property for safety reasons
-        var project : Project = getProject(context);
+        var surveyConfig = getSurveyConfig(context);
         var ifHide = false;
 
-        if (report.TableUtils.GetRowHeaderCategoryTitles('PulseSurveyData:PulseSurveys').length === 0) { // not pulse program -> hide baby survey selector
+        if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
 
