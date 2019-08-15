@@ -25,7 +25,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {Object} context {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log, confirmit: confirmit}
      * @returns {Array} array of objects {Code: pid, Label: pname} for all existings pulse surveys
      */
-    public function getAllPulseSurveys(context) {
+    public function getAllPulseSurveys(context) : Object[] {
 
         var report = context.report;
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_allPulseSurveysTablePath);
@@ -38,7 +38,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {Object} context {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log, confirmit: confirmit}
      * @returns {Array} array of objects {Code: pid, Label: pname} for user's pulse surveys
      */
-    public function getVisiblePulseSurveys(context) {
+    public function getVisiblePulseSurveys(context) : Object[] {
 
         var report = context.report;
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
