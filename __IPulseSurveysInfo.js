@@ -1,6 +1,6 @@
 public interface IPulseSurveysInfo {
 
-    function getAllPulseSurveys ();
+    function getAllPulseSurveys (context);
 
-    function getVisiblePulseSurveys ();
+    function getVisiblePulseSurveys (context);
 }
