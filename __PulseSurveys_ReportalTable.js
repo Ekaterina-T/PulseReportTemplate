@@ -27,8 +27,11 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     public function getVisiblePulseSurveys(context) : Object[] {
 
         var report = context.report;
+        var log = context.log;
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
         var surveyList = [];
+
+        log.LogDebug('_isEmptyOptionNeeded='+_isEmptyOptionNeeded)
 
         if(_isEmptyOptionNeeded) {
             var emptyOption = {};
@@ -36,6 +39,10 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             emptyOption.Code = 'none';
             surveyList[0] = emptyOption;
         }
+
+        log.LogDebug(JSON.stringify(surveyList));
+        log.LogDebug(JSON.stringify(transformTableHeaderTitlesIntoObj(rawInfo)));
+        log.LogDebug(JSON.stringify(surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo))))
 
         return surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo));
     }
