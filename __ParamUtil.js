@@ -80,15 +80,9 @@ class ParamUtil {
         var log = context.log;
         var parameter = context.parameter;
         var report = context.report;
-    
-        //add configurable empty value for pulse babe survey selector
-        var emptyValue = new ParameterValueResponse();        
-        emptyValue.StringValue = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
-        emptyValue.StringKeyValue = 'none';
-        parameter.Items.Add(emptyValue);        
 
         var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
-        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(storageInfo).getVisiblePulseSurveys(context);
+        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
 
         for(var i=0; i< pulseSurveysInfo.length; i++) { // reverse order
             var val = new ParameterValueResponse();            

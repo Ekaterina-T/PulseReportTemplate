@@ -1,21 +1,22 @@
 public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
     private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
+    private var _isEmptyOptionNeeded: Boolean;
 
     /**
      * constructor
-     * @param {String} allSurveysReportalTablePath - path to table that lists all existing pulse surveys (not filtered by userid)
-     * @param {String} allSurveysReportalTablePath - path to table that lists all available for the user pulse surveys (filtered by userid)
+     * @param {Object} storageInfo - path to table that lists all existing pulse surveys (not filtered by userid)
      */
-    private function PulseSurveys_ReportalTable(allPulseSurveysTablePath, visiblePulseSurveysTablePath) {
-        _visiblePulseSurveysTablePath = visiblePulseSurveysTablePath ? visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
+    private function PulseSurveys_ReportalTable(storageInfo) {
+        _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
+        _visiblePulseSurveysTablePath = storageInfo.visiblePulseSurveysTablePath ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
     }
 
     /**
      * creates instance of PulseSurveys_ReportalTable class, should have check if instance is created already (singleton)
      */
-    public static function getInstance(){
-        return new PulseSurveys_ReportalTable();
+    public static function getInstance(context, storageInfo){
+        return new PulseSurveys_ReportalTable(storageInfo);
     }
 
     /**
@@ -27,8 +28,16 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
         var report = context.report;
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
+        var surveyList = [];
 
-        return transformTableHeaderTitlesIntoObj(rawInfo);
+        if(_isEmptyOptionNeeded) {
+            var emptyOption = {};
+            emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
+            emptyOption.Code = 'none';
+            surveyList[0] = emptyOption;
+        }
+
+        return surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo));
     }
 
     /**
