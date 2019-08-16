@@ -447,7 +447,7 @@ class Filters {
     }
 
 
-    /*
+    /**
 	* filter by particular project in pulse program
 	* @param {context} {state: state, report: report}
 	* @param {string}
@@ -505,7 +505,6 @@ class Filters {
 
         var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys').length; // there's only one answer showAll (len=1) or not (len =0)
         return !showAll ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase]) : '';
-
     }
 
 }

@@ -1,6 +1,5 @@
 public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
-    private var _allPulseSurveysTablePath : String; // "PulseSurveyData:PulseSurveys" = "pageId:tableName"
     private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
 
     /**
@@ -9,7 +8,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {String} allSurveysReportalTablePath - path to table that lists all available for the user pulse surveys (filtered by userid)
      */
     private function PulseSurveys_ReportalTable(allPulseSurveysTablePath, visiblePulseSurveysTablePath) {
-        _allPulseSurveysTablePath = allPulseSurveysTablePath ? allPulseSurveysTablePath : "PulseSurveyData:PulseSurveys";
         _visiblePulseSurveysTablePath = visiblePulseSurveysTablePath ? visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
     }
 
@@ -18,19 +16,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      */
     public static function getInstance(){
         return new PulseSurveys_ReportalTable();
-    }
-
-    /**
-     * implements interface
-     * @param {Object} context {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log, confirmit: confirmit}
-     * @returns {Array} array of objects {Code: pid, Label: pname} for all existings pulse surveys
-     */
-    public function getAllPulseSurveys(context) : Object[] {
-
-        var report = context.report;
-        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_allPulseSurveysTablePath);
-
-        return transformTableHeaderTitlesIntoObj(rawInfo);
     }
 
     /**
