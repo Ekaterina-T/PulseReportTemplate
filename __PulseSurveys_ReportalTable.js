@@ -9,7 +9,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      */
     private function PulseSurveys_ReportalTable(storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
-        _visiblePulseSurveysTablePath = storageInfo.visiblePulseSurveysTablePath ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
+        _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
     }
 
     /**
@@ -31,18 +31,12 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
         var surveyList = [];
 
-        log.LogDebug('_isEmptyOptionNeeded='+_isEmptyOptionNeeded)
-
         if(_isEmptyOptionNeeded) {
             var emptyOption = {};
             emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
             emptyOption.Code = 'none';
             surveyList[0] = emptyOption;
         }
-
-        log.LogDebug(JSON.stringify(surveyList));
-        log.LogDebug(JSON.stringify(transformTableHeaderTitlesIntoObj(rawInfo)));
-        log.LogDebug(JSON.stringify(surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo))))
 
         return surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo));
     }
