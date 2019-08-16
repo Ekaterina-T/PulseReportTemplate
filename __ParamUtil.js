@@ -87,10 +87,13 @@ class ParamUtil {
         emptyValue.StringValue = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
         emptyValue.StringKeyValue = 'none';
         parameter.Items.Add(emptyValue);        
-        
+
+        log.LogDebug('1');
         var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
+        log.LogDebug('2');
         var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(storageInfo);
-        
+        log.LogDebug('3');
+        log.Logdebug(JSON.stringify(pulseSurveysInfo))
         for(var i=0; i< pulseSurveysInfo.length; i++) { // reverse order
             var val = new ParameterValueResponse();            
             val.StringValue = pulseSurveysInfo[i].Label; //label - inner header
