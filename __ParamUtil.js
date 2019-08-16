@@ -80,7 +80,6 @@ class ParamUtil {
         var log = context.log;
         var parameter = context.parameter;
         var report = context.report;
-        var project : Project = DataSourceUtil.getProject(context);
     
         //add configurable empty value for pulse babe survey selector
         var emptyValue = new ParameterValueResponse();        
@@ -88,12 +87,9 @@ class ParamUtil {
         emptyValue.StringKeyValue = 'none';
         parameter.Items.Add(emptyValue);        
 
-        log.LogDebug('1');
         var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
-        log.LogDebug('2');
-        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(storageInfo);
-        log.LogDebug('3');
-        log.Logdebug(JSON.stringify(pulseSurveysInfo))
+        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(storageInfo).getVisiblePulseSurveys(context);
+
         for(var i=0; i< pulseSurveysInfo.length; i++) { // reverse order
             var val = new ParameterValueResponse();            
             val.StringValue = pulseSurveysInfo[i].Label; //label - inner header

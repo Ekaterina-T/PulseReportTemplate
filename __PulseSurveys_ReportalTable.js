@@ -16,7 +16,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     /**
      * creates instance of PulseSurveys_ReportalTable class, should have check if instance is created already (singleton)
      */
-    public static function getInstance(){        
+    public static function getInstance(){
         return new PulseSurveys_ReportalTable();
     }
 
