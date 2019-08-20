@@ -127,6 +127,26 @@ class ParamUtil {
         var parameterName = parameter.ParameterId;
         var log = context.log;
 
+        if(parameterName === 'p_Results_CountsPercents') {
+            var user = context.user;
+
+            if (user.UserType != ReportUserType.Enduser) {
+                return true;
+            }
+
+            var isDetailedView = false;
+            var detailedViewRoles = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DetailedViewRoles');
+
+            for (var i = 0; i < detailedViewRoles.length; i++) {
+                if (user.HasRole(detailedViewRoles[i])) {
+                    isDetailedView = true;
+                    break;
+                }
+            }
+
+            return isDetailedView;
+        }
+
         // TO DO: pageNames are specified explicitly - this is very bad
         if(parameterName === 'p_Results_TableTabSwitcher') {
             return !DataSourceUtil.isProjectSelectorNeeded(context); // only needed for pulse programs
