@@ -137,6 +137,10 @@ class ParamUtil {
             var isDetailedView = false;
             var detailedViewRoles = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DetailedViewRoles');
 
+            if (!detailedViewRoles || detailedViewRoles.length <= 0) {
+                return true;
+            }
+
             for (var i = 0; i < detailedViewRoles.length; i++) {
                 if (user.HasRole(detailedViewRoles[i])) {
                     isDetailedView = true;
