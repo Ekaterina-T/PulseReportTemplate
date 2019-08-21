@@ -67,6 +67,9 @@ class StyleAndJavaScriptUtil {
 
         properties.push('CollapseExpand: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'CollapseExpand')));
 
+        properties.push('Apply: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
+        properties.push('Reset: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
+
         if (pageContext.Items['CurrentPageId'] === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(PageComments.getTagColumnNumbers (context)));
             properties.push('score_columns: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_ScoreQs')));
