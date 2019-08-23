@@ -1,10 +1,7 @@
-class SpecificPulseSuveyData {
+class __SpecificPulseSurveyData {
 
-    /**
-     * Lists properties that contain pulse survey dependent items.
-     * I.e. variable can be available in MAster, but for particular survey it's not relevant.
-     */
-    private static var resourcesDependentOnSpecificSurvey = {
+    static var resourcesDependentOnSpecificSurvey = {
+
         Survey: ['FiltersFromSurveyData'],
         Page_KPI: ['KPI', 'KPIComment', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
