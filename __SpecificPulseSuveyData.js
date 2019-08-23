@@ -41,4 +41,57 @@ class __SpecificPulseSurveyData {
 
     }
 
+    /**
+     * @param{Object} context
+     */
+    static function tablePulseProgramSpecificItems_Render(context) {
+
+        var log = context.log;
+        var report = context.report;
+        var table = context.table;
+        var items = getListOfResourcesForCurrentPage(context);
+        var i;
+
+
+        for(var i=0; i<items.length; i++) {
+
+            var item = items[i];
+
+            if(typeof item === 'object' and item.Type === 'Dimension') { //category id
+
+            } else if (typeof item === 'string') {  // question id
+
+                var questionInfo = QuestionUtil.getQuestionInfo(context, item);
+                var qe: QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, item);
+                var header: Header;
+                var questionType;
+
+                //define question type to set correct header properties later
+                (questionInfo.hasOwnProperty(standardType)) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
+
+                if(questionType.indexOf('single')>=0) {
+
+                    header = new HeaderQuestion(qe);
+                    header.IsCollapsed = true;
+                    header.ShowTotals = false;
+
+                } else if(questionType.indexOf('multi')>=0) {
+
+                    header = new HeaderQuestion(qe);
+
+                    var mask : MaskFlat = new MaskFlat();
+                    mask.IsInclusive = true;
+                    header.AnswerMask = mask;
+
+                    header.IsCollapsed = true;
+                    header.ShowTotals = true;
+                } else if (questionType.indexOf('open')) {
+
+                }
+            }
+        }
+
+
+    }
+
 }
