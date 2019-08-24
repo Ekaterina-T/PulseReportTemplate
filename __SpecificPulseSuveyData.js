@@ -1,6 +1,6 @@
-class __SpecificPulseSurveyData {
+class SpecificPulseSurveyData {
 
-    static var resourcesDependentOnSpecificSurvey = {
+    static private var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
         Page_KPI: ['KPI', 'KPIComment', 'KPIQuestionsToFilterVerbatim'],
@@ -13,18 +13,19 @@ class __SpecificPulseSurveyData {
     }
 
     /**
-     *@param {Object} context
-     * @returns {Array} array of strings and objects listing questions and dimensions used on the page and dependent on selected pulse survey
+     * @param {Object} context
+     * @param {string} pageId - not mandatory
+     * @returns {Object} object where property is resourceId (question or dimension) and value is its type
      */
-    static function getListOfResourcesForCurrentPage (context) {
+    static function getResourcesForCurrentPage (context, pageId) {
 
-        var currentPage = 'Page_'+context.pageContext.Items['CurrentPageId'];
+        var currentPage = pageId ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         var listOfResources = [];
+        var resources = {};
 
         //var take survey level resources
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
         var pageProperties = resourcesDependentOnSpecificSurvey[currentPage];
-
         var i;
 
         // push survey level variables
@@ -37,43 +38,60 @@ class __SpecificPulseSurveyData {
             listOfResources=listOfResources.concat(DataSourceUtil.getPagePropertyValueFromConfig (context, currentPage, pageProperties[i]));
         }
 
-        return listOfResources;
+        //remove duplicates and format
+        for(i=0; i<listOfResources.length; i++) {
+            var item = listOfResources[i];
 
+            if(typeof item === 'string') {
+                resources[item] = 'QuestionId';
+            } else {
+                resources[item.Code] = item.Type; //dimension
+            }
+        }
+
+        return resources;
     }
 
     /**
-     * @param{Object} context
+     * @param {Object} context
+     * @param {string} pageId - not mandatory
      */
-    static function tablePulseProgramSpecificItems_Render(context) {
+    static function tablePulseProgramSpecificItems_Render(context, pageId) {
 
         var log = context.log;
         var report = context.report;
         var table = context.table;
-        var items = getListOfResourcesForCurrentPage(context);
-        var i;
+        var resources = getResourcesForCurrentPage(context, pageId);
 
+        for(var resourceID in resources) {
 
-        for(var i=0; i<items.length; i++) {
+            var base: HeaderBase = new HeaderBase();
+            var header;
 
-            var item = items[i];
+            if(resources[resourceID] === 'Dimension') { //category id log.LogDebug(item.Code);            
+              
+                header = new HeaderCategorization();
+                header.CategorizationId = resourceID;
+                header.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                header.Collapsed = true;
+                header.Totals = true;
+                table.RowHeaders.Add(header); // to avoid case when previous header is added if troubles 
 
-            if(typeof item === 'object' and item.Type === 'Dimension') { //category id
+            } else if (resources[resourceID] === 'QuestionId') {  // question id
 
-            } else if (typeof item === 'string') {  // question id
-
-                var questionInfo = QuestionUtil.getQuestionInfo(context, item);
-                var qe: QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, item);
-                var header: Header;
+                var questionInfo = QuestionUtil.getQuestionInfo(context, resourceID);
+                var qe: QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, resourceID);
                 var questionType;
 
-                //define question type to set correct header properties later
-                (questionInfo.hasOwnProperty(standardType)) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
+                //define question type to apply correct header properties later
+                (questionInfo.hasOwnProperty('standardType')) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
 
                 if(questionType.indexOf('single')>=0) {
 
                     header = new HeaderQuestion(qe);
                     header.IsCollapsed = true;
                     header.ShowTotals = false;
+                    table.RowHeaders.Add(header); 
 
                 } else if(questionType.indexOf('multi')>=0) {
 
@@ -82,16 +100,22 @@ class __SpecificPulseSurveyData {
                     var mask : MaskFlat = new MaskFlat();
                     mask.IsInclusive = true;
                     header.AnswerMask = mask;
-
                     header.IsCollapsed = true;
                     header.ShowTotals = true;
-                } else if (questionType.indexOf('open')) {
+                    table.RowHeaders.Add(header);
+                  
+                } else if(questionType.indexOf('open')>=0) {
 
-                }
+                    header = new HeaderQuestion(qe);
+                    header.IsCollapsed = true;
+                    table.RowHeaders.Add(header);
+                }                     
             }
+            
         }
 
-
+        table.ColumnHeaders.Add(base);
+        table.Caching.Enabled = false;
     }
 
 }
