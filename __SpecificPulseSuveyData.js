@@ -66,7 +66,9 @@ class SpecificPulseSurveyData {
         
         setResourcesInfoForCurrentPage(context, pageId);
 
-        for(var resourceID in resourcesInfo) {
+        var resources = resourcesInfo;
+
+        for(var resourceID in resources) {
 
             var base: HeaderBase = new HeaderBase();
             var header;
