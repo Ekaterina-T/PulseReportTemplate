@@ -22,9 +22,9 @@ class SpecificPulseSurveyData {
         var listOfResources = [];
         var resources = [];
         var resourcesLog = {};
-        
+        log.LogDebug('getResourcesList 0')
         pageId = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
-        
+        log.LogDebug(pageId)
         var i;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
