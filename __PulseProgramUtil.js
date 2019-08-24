@@ -66,7 +66,7 @@ class PulseProgramUtil {
      */
     static private function setPulseSurveyContentInfo (context, pageId) {
               
-        var selectedProject : ParameterValueResponse = state.Parameters['p_projectSelector'];
+        var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
         pulseSurveyContentInfo[key] = getResourcesList (context, pageId);      
@@ -77,7 +77,7 @@ class PulseProgramUtil {
      */
     static public function getPulseSurveyContentInfo(context, pageId) {
 
-        var selectedProject : ParameterValueResponse = state.Parameters['p_projectSelector'];
+        var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
         if(!pulseSurveyContentInfo.hasOwnProperty(key)) {
