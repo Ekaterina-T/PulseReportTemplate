@@ -10,7 +10,7 @@ class PagePulseSurveyData {
         var report = context.report;
         var table = context.table;
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
-        var resources = PulseProgramUtil.getPulseSurveyContentInfo(context, currentPage);
+        var resources = PulseProgramUtil.getPulseSurveyContentInfo_Items(context, currentPage);
 
         for(var i=0; i< resources.length; i++) {
 

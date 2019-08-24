@@ -69,7 +69,8 @@ class PulseProgramUtil {
         var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
-        pulseSurveyContentInfo[key] = getResourcesList (context, pageId);      
+        pulseSurveyContentInfo[key] = {}; 
+        pulseSurveyContentInfo[key]['Items'] = getResourcesList (context, pageId);      
     }
 
     /**
@@ -82,11 +83,17 @@ class PulseProgramUtil {
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
         if(!pulseSurveyContentInfo.hasOwnProperty(key)) {
-            setPulseSurveyContentInfo (context, pageId)
-            log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]));
+            setPulseSurveyContentInfo (context, pageId);
         } 
 
         return pulseSurveyContentInfo[key];
+    }
+
+    /**
+     * 
+     */
+    static public function getPulseSurveyContentInfo_Items(context, pageId) {
+        return getPulseSurveyContentInfo(context, pageId)['Items'];
     }
 
 }
