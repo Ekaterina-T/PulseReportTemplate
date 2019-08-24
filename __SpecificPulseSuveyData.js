@@ -23,9 +23,9 @@ class SpecificPulseSurveyData {
         var listOfResources = [];
         var resources = [];
         var resourcesLog = {};
-        log.LogDebug('getResourcesList 0')
+  
         pageId = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
-        log.LogDebug(pageId)
+
         var i;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
@@ -72,15 +72,14 @@ class SpecificPulseSurveyData {
         var report = context.report;
         var table = context.table;
         log.LogDebug('0')
-        var resources = getResourcesList(context);
+        var resources = getResourcesList(context, pageId);
 log.LogDebug(JSON.stringify(resources))
         for(var i=0; i< resources.length; i++) {
-log.LogDebug(i)
-            var resource = resources[i];
 
+            var resource = resources[i];
             var base: HeaderBase = new HeaderBase();
             var header;
-            log.LogDebug(resource.Code)
+            
             if(resource.Type === 'Dimension') { //category;            
               
                 header = new HeaderCategorization();
