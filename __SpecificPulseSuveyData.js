@@ -1,5 +1,7 @@
 class SpecificPulseSurveyData {
 
+    static public var resourcesInfo = {};
+
     static private var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
@@ -17,7 +19,7 @@ class SpecificPulseSurveyData {
      * @param {string} pageId - not mandatory
      * @returns {Object} object where property is resourceId (question or dimension) and value is its type
      */
-    static function getResourcesForCurrentPage (context, pageId) {
+    static private function setResourcesInfoForCurrentPage (context, pageId) {
 
         var currentPage = pageId ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         var listOfResources = [];
@@ -49,26 +51,27 @@ class SpecificPulseSurveyData {
             }
         }
 
-        return resources;
+        resourcesInfo = resources;
     }
 
     /**
      * @param {Object} context
      * @param {string} pageId - not mandatory
      */
-    static function tablePulseProgramSpecificItems_Render(context, pageId) {
+    static public function tablePulseProgramSpecificItems_Render(context, pageId) {
 
         var log = context.log;
         var report = context.report;
         var table = context.table;
-        var resources = getResourcesForCurrentPage(context, pageId);
+        
+        setResourcesInfoForCurrentPage(context, pageId);
 
-        for(var resourceID in resources) {
+        for(var resourceID in resourcesInfo) {
 
             var base: HeaderBase = new HeaderBase();
             var header;
 
-            if(resources[resourceID] === 'Dimension') { //category id log.LogDebug(item.Code);            
+            if(resources[resourceID] === 'Dimension') { //category;            
               
                 header = new HeaderCategorization();
                 header.CategorizationId = resourceID;
