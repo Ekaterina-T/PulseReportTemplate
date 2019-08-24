@@ -19,6 +19,7 @@ class SpecificPulseSurveyData {
      */
     static private function getResourcesList (context, pageId) {
 
+        var log = context.log;
         var listOfResources = [];
         var resources = [];
         var resourcesLog = {};
