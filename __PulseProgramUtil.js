@@ -77,6 +77,7 @@ class PulseProgramUtil {
      */
     static public function getPulseSurveyContentInfo(context, pageId) {
 
+        var log = context.log;
         var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
