@@ -49,8 +49,8 @@ class SpecificPulseSurveyData {
                 code = item;
                 type = 'QuestionId';
             } else { //dimension
-                //code = item.Code;
-                //type = item.Type; 
+                code = item.Code;
+                type = item.Type; 
             }
 
             if(code && !resourcesLog.hasOwnProperty(code)) {
@@ -71,7 +71,6 @@ class SpecificPulseSurveyData {
         var log = context.log;
         var report = context.report;
         var table = context.table;
-        log.LogDebug('0')
         var resources = getResourcesList(context, pageId);
 log.LogDebug(JSON.stringify(resources))
         for(var i=0; i< resources.length; i++) {
@@ -101,7 +100,7 @@ log.LogDebug(JSON.stringify(resources))
                 if(questionType.indexOf('single')>=0) {
 
                     header = new HeaderQuestion(qe);
-                    header.IsCollapsed = true;
+                    header.IsCollapsed = false;
                     header.ShowTotals = false;
                     table.RowHeaders.Add(header); 
 
