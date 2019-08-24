@@ -70,15 +70,16 @@ class SpecificPulseSurveyData {
         var log = context.log;
         var report = context.report;
         var table = context.table;
+        log.LogDebug('0')
         var resources = getResourcesList(context);
-
+log.LogDebug(JSON.stringify(resources))
         for(var i=0; i< resources.length; i++) {
-
+log.LogDebug(i)
             var resource = resources[i];
 
             var base: HeaderBase = new HeaderBase();
             var header;
-
+            log.LogDebug(resource.Code)
             if(resource.Type === 'Dimension') { //category;            
               
                 header = new HeaderCategorization();
@@ -89,7 +90,7 @@ class SpecificPulseSurveyData {
                 table.RowHeaders.Add(header); // to avoid case when previous header is added if troubles 
 
             } else if (resource.Type === 'QuestionId') {  // question id
-
+                
                 var questionInfo = QuestionUtil.getQuestionInfo(context, resource.Code);
                 var qe: QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, resource.Code);
                 var questionType;
