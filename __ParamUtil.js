@@ -361,12 +361,11 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
-log.LogDebug('LoadParameter1');
+
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
 
-        log.LogDebug('LoadParameter2');
         var parameterOptions = GetParameterOptions(context); // get options
 
         log.LogDebug('LoadParameter3');
@@ -409,7 +408,7 @@ log.LogDebug('LoadParameter1');
         }
 
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-log.LogDebug(JSON.stringify(resource))
+
         if(!resource) {
             return [];
         }
@@ -451,7 +450,7 @@ log.LogDebug(JSON.stringify(resource))
      */
 
     static function getRawOptions(context, resource, type) {
-
+context.log.LogDebug('type='+type)
         // propertyValue is a questionId; question answer list are options
         if(type === 'QuestionId') {
             return getOptions_QuestionAnswersSelector(context, resource);
@@ -476,6 +475,7 @@ log.LogDebug(JSON.stringify(resource))
         }
 
         if(type === 'PulseSurveyInfo') {
+            context.log.LogDebug('PulseSurveyInfo get options')
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
         }
 
@@ -521,7 +521,8 @@ log.LogDebug(JSON.stringify(resource))
      * 
      */
     static function getOptions_PulseSurveyInfo(context, storageInfo) {
-        PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
+        context.log.LogDebug('getOptions_PulseSurveyInfo')
+        return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
     }
 
     /*
