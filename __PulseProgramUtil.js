@@ -81,7 +81,14 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo(context, pageId) {
 
         var log = context.log;
-        var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
+        var state = context.state;
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
+        log.LogDebug('getPulseSurveyContentInfo1')
+        var selectedProject : ParameterValueResponse = state.Parameters['p_projectSelector'];
+        
+        log.LogDebug('getPulseSurveyContentInfo2')
+        
+        log.LogDebug('getPulseSurveyContentInfo3'+selectedProject.StringKeyValue)
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
         log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
         log.LogDebug('key='+key);
@@ -94,9 +101,7 @@ class PulseProgramUtil {
      static public function getPulseSurveyContentInfo_WithData (context, pageId) {
 
         var log = context.log;
-        log.LogDebug('getPulseSurveyContentInfo_WithData 1');
         var resourcesBase : Datapoint[] = context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        log.LogDebug('getPulseSurveyContentInfo_WithData 2');
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         log.LogDebug('getPulseSurveyContentInfo_WithData 3: '+currentPage);
         var resources = getPulseSurveyContentInfo(context, currentPage);
