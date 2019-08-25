@@ -361,13 +361,15 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
-
+log.LogDebug('LoadParameter1');
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
 
+        log.LogDebug('LoadParameter2');
         var parameterOptions = GetParameterOptions(context); // get options
 
+        log.LogDebug('LoadParameter3');
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
             var val = new ParameterValueResponse();
@@ -407,12 +409,13 @@ class ParamUtil {
         }
 
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-
+log.LogDebug(JSON.stringify(resource))
         if(!resource) {
             return [];
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
+        log.LogDebug(JSON.stringify(options))
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }

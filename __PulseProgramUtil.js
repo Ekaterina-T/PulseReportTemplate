@@ -83,8 +83,7 @@ class PulseProgramUtil {
         var log = context.log;
         var state = context.state;        
         var selectedProject : ParameterValueResponse = state.Parameters['p_projectSelector'];
-        log.LogDebug(context.user.Email);
-        log.LogDebug(pageId);     
+           
         log.LogDebug(selectedProject.StringKeyValue);     
         
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
