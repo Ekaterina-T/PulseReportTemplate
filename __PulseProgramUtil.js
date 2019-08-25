@@ -93,11 +93,15 @@ class PulseProgramUtil {
      static public function getPulseSurveyContentInfo_WithData (context, pageId) {
 
         var log = context.log;
+        log.LogDebug('getPulseSurveyContentInfo_WithData 1');
         var resourcesBase : Datapoint[] = context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        log.LogDebug('getPulseSurveyContentInfo_WithData 2');
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
+        log.LogDebug('getPulseSurveyContentInfo_WithData 3');
         var resources = getPulseSurveyContentInfo(context, currentPage);
+        log.LogDebug('getPulseSurveyContentInfo_WithData 4');
         var resourcesWithData = [];
-
+        log.LogDebug('getPulseSurveyContentInfo_WithData 5');
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
@@ -105,7 +109,7 @@ class PulseProgramUtil {
                 resourcesWithData.push(resources[i]);
             }
         }
-
+        log.LogDebug('getPulseSurveyContentInfo_WithData 6');
         return resourcesWithData;
      }
 

@@ -9,6 +9,7 @@ class PagePulseSurveyData {
         var log = context.log;
         var report = context.report;
         var table = context.table;
+        log.LogDebug(context.pageContext.Items['CurrentPageId'])
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         var resources = PulseProgramUtil.setPulseSurveyContentInfo(context, currentPage);
 
