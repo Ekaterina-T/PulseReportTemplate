@@ -64,7 +64,7 @@ class PulseProgramUtil {
     /**
      * 
      */
-    static private function setPulseSurveyContentInfo (context, pageId) {
+    static public function setPulseSurveyContentInfo (context, pageId) {
               
         var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
@@ -92,20 +92,21 @@ class PulseProgramUtil {
      */
      static public function getPulseSurveyContentInfo_WithData (context, pageId) {
 
-         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
-         var resources = getPulseSurveyContentInfo(context, currentPage);
-         var resourcesWithData = [];
+        var log = context.log;
+        var resourcesBase : Datapoint[] = context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
+        var resources = getPulseSurveyContentInfo(context, currentPage);
+        var resourcesWithData = [];
 
-         for(var i=0; i< resources.length; i++) {
+        for(var i=0; i< resources.length; i++) {
 
-            var baseVal: DataPoint = resourcesBase[i];
+            var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
                 resourcesWithData.push(resources[i]);
             }
-         }
+        }
 
-         return resourcesWithData;
+        return resourcesWithData;
      }
 
 }
