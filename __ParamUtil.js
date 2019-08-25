@@ -10,7 +10,7 @@ class ParamUtil {
 
     static var reportParameterValuesMap = {
 
-        //'p_projectSelector': { type: 'StaticArrayofObjects', locationType: 'PulseSurveyCustomTable'},
+        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: 'PulseSurveyData'},
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution'},
         'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
@@ -41,7 +41,7 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -76,7 +76,7 @@ class ParamUtil {
   */
 
     static function LoadParameter_SurveysSelector_PidPname(context) {
-
+/*
         var log = context.log;
         var parameter = context.parameter;
         var report = context.report;
@@ -84,14 +84,14 @@ class ParamUtil {
         var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
         var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
 
-        for(var i=0; i< pulseSurveysInfo.length; i++) { // reverse order
+        for(var i=0; i< pulseSurveysInfo.length; i++) {
             var val = new ParameterValueResponse();            
             val.StringValue = pulseSurveysInfo[i].Label; //label - inner header
             val.StringKeyValue = pulseSurveysInfo[i].Code; // pid - outer header
             parameter.Items.Add(val);
         }
 
-        return;
+        return;*/
     }
 
 
@@ -126,6 +126,10 @@ class ParamUtil {
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
+
+        if(parameterName === 'p_projectSelector') {
+            return DataSourceUtil.isProjectSelectorNeeded (context);
+        }
 
         if(parameterName === 'p_Results_CountsPercents') {
             var user = context.user;
@@ -468,6 +472,10 @@ class ParamUtil {
             return getOptions_QuestionAndCategoriesList(context, resource);
         }
 
+        if(type === 'PulseSurveyInfo') {
+            return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
+        }
+
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
     }
 
@@ -506,6 +514,13 @@ class ParamUtil {
         if(parameterInfo.locationType === '')
 
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
+    }
+
+    /**
+     * 
+     */
+    static function getOptions_PulseSurveyInfo(context, storageInfo) {
+        PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
     }
 
     /*
