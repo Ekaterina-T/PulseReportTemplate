@@ -75,26 +75,6 @@ class ParamUtil {
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   */
 
-    static function LoadParameter_SurveysSelector_PidPname(context) {
-/*
-        var log = context.log;
-        var parameter = context.parameter;
-        var report = context.report;
-
-        var storageInfo = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'PulseSurveyData')['storageInfo'];
-        var pulseSurveysInfo = PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
-
-        for(var i=0; i< pulseSurveysInfo.length; i++) {
-            var val = new ParameterValueResponse();            
-            val.StringValue = pulseSurveysInfo[i].Label; //label - inner header
-            val.StringKeyValue = pulseSurveysInfo[i].Code; // pid - outer header
-            parameter.Items.Add(val);
-        }
-
-        return;*/
-    }
-
-
     static function  MaskParameter (context) {
 
         var parameterId = context.parameterId;
@@ -368,7 +348,6 @@ class ParamUtil {
 
         var parameterOptions = GetParameterOptions(context); // get options
 
-        log.LogDebug('LoadParameter3');
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
             var val = new ParameterValueResponse();
@@ -414,7 +393,6 @@ class ParamUtil {
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
-        log.LogDebug(JSON.stringify(options))
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
@@ -450,7 +428,6 @@ class ParamUtil {
      */
 
     static function getRawOptions(context, resource, type) {
-context.log.LogDebug('type='+type)
         // propertyValue is a questionId; question answer list are options
         if(type === 'QuestionId') {
             return getOptions_QuestionAnswersSelector(context, resource);
@@ -475,7 +452,6 @@ context.log.LogDebug('type='+type)
         }
 
         if(type === 'PulseSurveyInfo') {
-            context.log.LogDebug('PulseSurveyInfo get options')
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
         }
 
@@ -521,7 +497,6 @@ context.log.LogDebug('type='+type)
      * 
      */
     static function getOptions_PulseSurveyInfo(context, storageInfo) {
-        context.log.LogDebug('getOptions_PulseSurveyInfo')
         return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
     }
 
