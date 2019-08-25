@@ -70,7 +70,9 @@ class PulseProgramUtil {
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
         pulseSurveyContentInfo[key] = {}; 
-        pulseSurveyContentInfo[key]['Items'] = getResourcesList (context, pageId);      
+        pulseSurveyContentInfo[key] = getResourcesList (context, pageId);      
+
+        return pulseSurveyContentInfo[key]; //??? if correct
     }
 
     /**
@@ -82,18 +84,28 @@ class PulseProgramUtil {
         var selectedProject : ParameterValueResponse = context.state.Parameters['p_projectSelector'];
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
 
-        if(!pulseSurveyContentInfo.hasOwnProperty(key)) {
-            setPulseSurveyContentInfo (context, pageId);
-        } 
-
         return pulseSurveyContentInfo[key];
     }
 
     /**
      * 
      */
-    static public function getPulseSurveyContentInfo_Items(context, pageId) {
-        return getPulseSurveyContentInfo(context, pageId)['Items'];
-    }
+     static public function getPulseSurveyContentInfo_WithData (context, pageId) {
+
+         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
+         var resources = getPulseSurveyContentInfo(context, currentPage);
+         var resourcesWithData = [];
+
+         for(var i=0; i< resources.length; i++) {
+
+            var baseVal: DataPoint = resourcesBase[i];
+            if(baseVal.Value>0) {
+                resourcesWithData.push(resources[i]);
+            }
+         }
+
+         return resourcesWithData;
+     }
 
 }
