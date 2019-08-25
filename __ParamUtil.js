@@ -514,8 +514,6 @@ log.LogDebug(JSON.stringify(resource))
             return parameterInfo.FilterQid;
         }
 
-        if(parameterInfo.locationType === '')
-
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }
 
@@ -630,9 +628,7 @@ log.LogDebug(JSON.stringify(resource))
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
 
-    static function
-
-    getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
+    static function getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
 
         var report = context.report;
         var parameterOptions = [];
