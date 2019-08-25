@@ -81,14 +81,12 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo(context, pageId) {
 
         var log = context.log;
-        var state = context.state;
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
-        log.LogDebug('getPulseSurveyContentInfo1')
+        var state = context.state;        
         var selectedProject : ParameterValueResponse = state.Parameters['p_projectSelector'];
+        log.LogDebug(context.user.Email);
+        log.LogDebug(pageId);     
+        log.LogDebug(selectedProject.StringKeyValue);     
         
-        log.LogDebug('getPulseSurveyContentInfo2')
-        
-        log.LogDebug('getPulseSurveyContentInfo3'+selectedProject.StringKeyValue)
         var key = context.user.Email+'_'+pageId+'_'+selectedProject.StringKeyValue;
         log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
         log.LogDebug('key='+key);
