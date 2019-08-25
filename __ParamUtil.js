@@ -128,7 +128,7 @@ class ParamUtil {
         var log = context.log;
 
         if(parameterName === 'p_projectSelector') {
-            return DataSourceUtil.isProjectSelectorNeeded (context);
+            return !DataSourceUtil.isProjectSelectorNeeded (context);
         }
 
         if(parameterName === 'p_Results_CountsPercents') {
