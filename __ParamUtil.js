@@ -393,12 +393,12 @@ class ParamUtil {
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
-
+/*
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             var currentPage = context.pageContext.Items['CurrentPageId'];
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
         }
-
+*/
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
