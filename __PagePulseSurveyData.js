@@ -12,6 +12,8 @@ class PagePulseSurveyData {
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         var resources = PulseProgramUtil.setPulseSurveyContentInfo(context, currentPage);
 
+        log.LogDebug('from table: '+JSON.stringify(resources));
+
         for(var i=0; i< resources.length; i++) {
 
             var resource = resources[i];

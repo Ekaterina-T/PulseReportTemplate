@@ -90,6 +90,9 @@ class PulseProgramUtil {
         var selectedProject = pSelectedProject.StringValue || pSelectedProject.StringKeyValue;
         
         var key = user.Email+'_'+pageId+'_'+selectedProject;
+
+        log.LogDebug('key');
+        log.LogDebug('obj='+JSON.stringify(pulseSurveyContentInfo));
         return pulseSurveyContentInfo[key];
     }
 
@@ -106,7 +109,7 @@ class PulseProgramUtil {
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
         var resources = getPulseSurveyContentInfo(context, currentPage);
         var resourcesWithData = {};
-
+        log.LogDebug('1')
         log.LogDebug(JSON.stringify(resources))
 
         for(var i=0; i< resources.length; i++) {
