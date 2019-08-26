@@ -349,9 +349,9 @@ class ParamUtil {
         }
 
         var parameterOptions = GetParameterOptions(context); // get options
-
+  log.LogDebug('here');
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
-
+log.LogDebug(i);
                 var val = new ParameterValueResponse();
                 val.StringKeyValue = parameterOptions[i].Code;
                 val.StringValue = parameterOptions[i].Label;
@@ -398,11 +398,10 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             var currentPage = context.pageContext.Items['CurrentPageId'];
-            log.LogDebug('1')
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
-            log.LogDebug('2')
-            log.LogDebug(JSON.stringify(availableCodes))
         }
+
+        log.LogDebug('GetParameterOptions='parameterName)
 
         return modifyOptionsOrder(context, options, parameterInfo);
 
