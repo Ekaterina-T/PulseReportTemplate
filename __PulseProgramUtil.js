@@ -88,15 +88,17 @@ class PulseProgramUtil {
         var pageContext = context.pageContext;
         var user = context.user;
 
+        log.LogDebug('1')
+
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
-
+        log.LogDebug('2')
         //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         var key = user.Email+'_'+pageId;//+'_'+selectedProject;
         var resources = pulseSurveyContentInfo[key];
         var resourcesWithData = {};
-
+        log.LogDebug('3')
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
@@ -104,7 +106,7 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-
+        log.LogDebug('4')
         log.LogDebug(JSON.stringify(resourcesWithData));
 
         return resourcesWithData;
