@@ -351,8 +351,8 @@ class ParamUtil {
         var parameterOptions = GetParameterOptions(context); // get options
         var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
 
-        log.LogDebug('parameterOptions='+JSON.stringify(parameterOptions));
-        log.LogDebug('availableCodes='+JSON.stringify(availableCodes));
+        //log.LogDebug('parameterOptions='+JSON.stringify(parameterOptions));
+        //log.LogDebug('availableCodes='+JSON.stringify(availableCodes));
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
