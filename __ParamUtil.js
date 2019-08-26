@@ -343,7 +343,7 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        log.LogDebug(JSON.stringify(pageContext/*.Items['CurrentPageId']*/));
+        log.LogDebug(pageContext/*.Items['CurrentPageId']*/);
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
