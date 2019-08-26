@@ -356,12 +356,12 @@ class ParamUtil {
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
-            if(availableCodes.hasOwnProperty(parameterOptions[i].Code)) {
+            //if(availableCodes.hasOwnProperty(parameterOptions[i].Code)) {
                 var val = new ParameterValueResponse();
                 val.StringKeyValue = parameterOptions[i].Code;
                 val.StringValue = parameterOptions[i].Label;
                 parameter.Items.Add(val);
-            }
+            //}
         }
 
         return;
