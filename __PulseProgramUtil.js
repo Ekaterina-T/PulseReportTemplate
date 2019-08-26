@@ -80,23 +80,6 @@ class PulseProgramUtil {
     /**
      * 
      */
-    static public function getPulseSurveyContentInfo(context, pageId) {
-
-        var log = context.log;
-        var state = context.state;
-        var user = context.user;
-
-        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
-        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
-        var key = user.Email+'_'+pageId;//+'_'+selectedProject;
-
-log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
-        return pulseSurveyContentInfo[key];
-    }
-
-    /**
-     * 
-     */
      static public function getPulseSurveyContentInfo_ItemsWithData (context, pageId) {
 
         var log = context.log;
@@ -106,7 +89,11 @@ log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
-        var resources = getPulseSurveyContentInfo(context, currentPage);
+
+        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
+        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
+        var key = user.Email+'_'+pageId;//+'_'+selectedProject;
+        var resources = pulseSurveyContentInfo[key];
         var resourcesWithData = {};
 
         for(var i=0; i< resources.length; i++) {
@@ -116,7 +103,9 @@ log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        
+
+        log.LogDebug(JSON.stringify(resourcesWithData));
+
         return resourcesWithData;
      }
 
