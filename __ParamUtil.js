@@ -375,6 +375,8 @@ class ParamUtil {
         var state = context.state;
         var report = context.report;
         var log = context.log;
+        var user = context.user;
+        var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
 
@@ -397,11 +399,13 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            var currentPage = context.pageContext.Items['CurrentPageId'];
-           // var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
+            var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
+            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context2);
+
+            log.LogDebug('here');
         }
 
-        return options;//modifyOptionsOrder(context, options, parameterInfo);
+        return modifyOptionsOrder(context, options, parameterInfo);
 
     }
 
