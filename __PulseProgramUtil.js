@@ -114,7 +114,7 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        return resourcesWithData;
+        return {};//resourcesWithData;
      }
 
 }
