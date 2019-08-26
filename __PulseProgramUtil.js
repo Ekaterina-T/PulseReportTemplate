@@ -91,18 +91,19 @@ class PulseProgramUtil {
     /**
      * 
      */
-     static public function getPulseSurveyContentInfo_WithData (context, pageId) {
+     static public function getPulseSurveyContentInfo_ItemsWithData (context, pageId) {
 
         var log = context.log;
         var resourcesBase : Datapoint[] = context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
         var resources = getPulseSurveyContentInfo(context, currentPage);
-        var resourcesWithData = [];
+        var resourcesWithData = {};
+
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
-                resourcesWithData.push(resources[i].Code);
+                resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
         return resourcesWithData;

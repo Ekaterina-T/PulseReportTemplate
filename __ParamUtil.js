@@ -341,22 +341,27 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
-        var pageContext = context.pageContext;
+        var currentPage = context.pageContext.Items['CurrentPageId'];
 
-        log.LogDebug(pageContext/*.Items['CurrentPageId']*/);
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
 
         var parameterOptions = GetParameterOptions(context); // get options
+        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
+
+        log.LogDebug('parameterOptions='+JSON.stringify(parameterOptions));
+        log.LogDebug('availableCodes='+JSON.stringify(availableCodes));
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
-            var val = new ParameterValueResponse();
-            val.StringKeyValue = parameterOptions[i].Code;
-            val.StringValue = parameterOptions[i].Label;
-            parameter.Items.Add(val);
+            if(availableCodes.hasOwnProperty(parameterOptions[i].Code)) {
+                var val = new ParameterValueResponse();
+                val.StringKeyValue = parameterOptions[i].Code;
+                val.StringValue = parameterOptions[i].Label;
+                parameter.Items.Add(val);
+            }
         }
 
         return;
