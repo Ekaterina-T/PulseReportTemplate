@@ -65,12 +65,14 @@ class PulseProgramUtil {
      * 
      */
     static public function setPulseSurveyContentInfo (context, pageId) {
-              
-        var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')[0]; 
-        var key = context.user.Email+'_'+pageId+'_'+selectedProject;
+
+        var state = context.state;
+        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
+        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
+        var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
 
         pulseSurveyContentInfo[key] = {}; 
-        pulseSurveyContentInfo[key] = getResourcesList (context, pageId);      
+        pulseSurveyContentInfo[key] = getResourcesList(context, pageId);
 
         return pulseSurveyContentInfo[key]; //??? if correct
     }
@@ -81,31 +83,40 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo(context, pageId) {
 
         var log = context.log;
-        var state = context.state;        
-        var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')[0];  
-        
-        var key = context.user.Email+'_'+pageId+'_'+selectedProject;
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
+        var state = context.state;
+        var user = context.user;
+
+        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
+        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
+        var key = user.Email+'_'+pageId;//+'_'+selectedProject;
+
+log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
         return pulseSurveyContentInfo[key];
     }
 
     /**
      * 
      */
-     static public function getPulseSurveyContentInfo_WithData (context, pageId) {
+     static public function getPulseSurveyContentInfo_ItemsWithData (context, pageId) {
 
         var log = context.log;
-        var resourcesBase : Datapoint[] = context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
+
+        var report = context.report;
+        var pageContext = context.pageContext;
+
+        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
         var resources = getPulseSurveyContentInfo(context, currentPage);
-        var resourcesWithData = [];
+        var resourcesWithData = {};
+
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
-                resourcesWithData.push(resources[i]);
+                resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
+        
         return resourcesWithData;
      }
 

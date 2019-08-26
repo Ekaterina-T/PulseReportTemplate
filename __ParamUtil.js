@@ -342,6 +342,8 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
@@ -350,10 +352,10 @@ class ParamUtil {
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
-            var val = new ParameterValueResponse();
-            val.StringKeyValue = parameterOptions[i].Code;
-            val.StringValue = parameterOptions[i].Label;
-            parameter.Items.Add(val);
+                var val = new ParameterValueResponse();
+                val.StringKeyValue = parameterOptions[i].Code;
+                val.StringValue = parameterOptions[i].Label;
+                parameter.Items.Add(val);
         }
 
         return;
@@ -373,6 +375,8 @@ class ParamUtil {
         var state = context.state;
         var report = context.report;
         var log = context.log;
+        var user = context.user;
+        var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
 
@@ -393,6 +397,13 @@ class ParamUtil {
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
+
+        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            log.LogDebug(parameterId)
+            //var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
+                // var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        }
+
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
