@@ -74,7 +74,7 @@ class PulseProgramUtil {
         pulseSurveyContentInfo[key] = {}; 
         pulseSurveyContentInfo[key] = getResourcesList(context, pageId);
 
-        return pulseSurveyContentInfo[key]; //??? if correct
+        return {};//pulseSurveyContentInfo[key]; //??? if correct
     }
 
     /**
@@ -106,15 +106,16 @@ class PulseProgramUtil {
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
         var resources = getPulseSurveyContentInfo(context, currentPage);
         var resourcesWithData = {};
-        /*
-                for(var i=0; i< resources.length; i++) {
 
-                    var baseVal: Datapoint = resourcesBase[i];
-                    if(baseVal.Value>0) {
-                        resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
-                    }
-                }*/
-        return resourcesWithData;
+        for(var i=0; i< resources.length; i++) {
+
+            var baseVal: Datapoint = resourcesBase[i];
+            if(baseVal.Value>0) {
+                resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
+            }
+        }
+
+        return {};//resourcesWithData;
      }
 
 }
