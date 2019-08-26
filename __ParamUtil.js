@@ -341,15 +341,19 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
-        var currentPage = context.pageContext.Items['CurrentPageId'];
+        var state = context.state;
+        var user = context.user;
+        var pageContext = context.pageContext;
 
+        var currentPage = context.pageContext.Items['CurrentPageId'];
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
 
         var parameterOptions = GetParameterOptions(context); // get options
-        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
+        var context2 = {log: log, state: state, user: user, report: report, pageContext: pageContext};
+        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context2, currentPage);
 
         //log.LogDebug('parameterOptions='+JSON.stringify(parameterOptions));
         //log.LogDebug('availableCodes='+JSON.stringify(availableCodes));
