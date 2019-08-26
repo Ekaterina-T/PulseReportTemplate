@@ -301,7 +301,7 @@ class ParamUtil {
 
         var log = context.log;
         var selectedCodes = GetSelectedCodes (context, parameterName);
-        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected opt');
+        var parameterOptions = GetParameterOptions( context, parameterName);
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -328,7 +328,7 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
-        var parameterOptions = GetParameterOptions(context, parameterName, 'get default val'); // get all options
+        var parameterOptions = GetParameterOptions(context, parameterName); // get all options
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
 
@@ -348,7 +348,7 @@ class ParamUtil {
             return [];
         }
 
-        var parameterOptions = GetParameterOptions(context, null,'Load'); // get options
+        var parameterOptions = GetParameterOptions(context); // get options
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
                 var val = new ParameterValueResponse();
@@ -369,7 +369,7 @@ class ParamUtil {
   * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
   */
 
-    static function GetParameterOptions (context, parameterName, from) {
+    static function GetParameterOptions (context, parameterName) {
 
         var state = context.state;
         var report = context.report;
@@ -398,11 +398,16 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            log.LogDebug(parameterId)
-            log.LogDebug('from: '+from)
-            //var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
-            log.LogDebug('after getPulseSurveyContentInfo_ItemsWithData call')
+            var optionsWithData = [];
+
+            for(var i=0; i<options.length; i++) {
+                if(availableCodes.hasOwnProperty(options[i].Code)) {
+                    optionsWithData.options[i];
+                }
+            }
+
+            options = optionsWithData;
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);

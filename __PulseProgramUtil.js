@@ -105,7 +105,6 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        log.LogDebug(JSON.stringify(resourcesWithData));
 
         return resourcesWithData;
      }
