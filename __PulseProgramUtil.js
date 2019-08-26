@@ -27,7 +27,7 @@ class PulseProgramUtil {
         var resourcesLog = {};
         var i;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
-        var pageId = 'Page_'+ pageContext.Items['CurrentPageId'];
+        var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
 
         // keep property values in array
@@ -70,6 +70,7 @@ class PulseProgramUtil {
         //var state = context.state;
         //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
+        var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
 
         pulseSurveyContentInfo[key] = {}; 
