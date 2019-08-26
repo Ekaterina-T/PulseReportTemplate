@@ -394,17 +394,12 @@ class ParamUtil {
             return [];
         }
 
-        log.LogDebug('GetParameterOptions='+parameterName)
         var options = getRawOptions(context, resource, parameterInfo.type);
-
-        log.LogDebug('opt: '+JSON.stringify(options))
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             var currentPage = context.pageContext.Items['CurrentPageId'];
-            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
-            log.LogDebug('availableCodes='+JSON.stringify(availableCodes))
+           // var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
         }
-
 
         return options;//modifyOptionsOrder(context, options, parameterInfo);
 
