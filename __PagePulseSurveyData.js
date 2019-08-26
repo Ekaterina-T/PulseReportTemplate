@@ -4,12 +4,12 @@ class PagePulseSurveyData {
      * @param {Object} context
      * @param {string} pageId - not mandatory
      */
-    static public function tablePulseSurveyContentInfo_Render(context, pageId) {
+    static public function tablePulseSurveyContentInfo_Render(context) {
 
         var log = context.log;
         var report = context.report;
         var table = context.table;
-        var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+context.pageContext.Items['CurrentPageId'];
+        var currentPage = 'Page_'+context.pageContext.Items['CurrentPageId'];
         var resources = PulseProgramUtil.setPulseSurveyContentInfo(context, currentPage);
 
         for(var i=0; i< resources.length; i++) {

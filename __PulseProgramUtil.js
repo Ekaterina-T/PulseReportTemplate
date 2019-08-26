@@ -19,7 +19,7 @@ class PulseProgramUtil {
      * @param {string} pageId - not mandatory
      * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
-    static private function getResourcesList (context, pageId) {
+    static private function getResourcesList (context) {
 
         var log = context.log;
         var listOfResources = [];
@@ -27,6 +27,7 @@ class PulseProgramUtil {
         var resourcesLog = {};
         var i;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+        var pageId = 'Page_'+ pageContext.Items['CurrentPageId'];
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
 
         // keep property values in array
@@ -64,15 +65,15 @@ class PulseProgramUtil {
     /**
      * 
      */
-    static public function setPulseSurveyContentInfo (context, pageId) {
+    static public function setPulseSurveyContentInfo (context) {
 
-        var state = context.state;
+        //var state = context.state;
         //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
 
         pulseSurveyContentInfo[key] = {}; 
-        pulseSurveyContentInfo[key] = getResourcesList(context, pageId);
+        pulseSurveyContentInfo[key] = getResourcesList(context);
 
         return pulseSurveyContentInfo[key]; //??? if correct
     }
@@ -80,7 +81,7 @@ class PulseProgramUtil {
     /**
      * 
      */
-     static public function getPulseSurveyContentInfo_ItemsWithData (context, pageId) {
+     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
 
@@ -90,7 +91,7 @@ class PulseProgramUtil {
 
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
+        var currentPage = 'Page_'+ pageContext.Items['CurrentPageId'];
     
         //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
@@ -99,7 +100,6 @@ class PulseProgramUtil {
         var resourcesWithData = {};
       
         for(var i=0; i< resources.length; i++) {
-
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
@@ -108,5 +108,25 @@ class PulseProgramUtil {
 
         return resourcesWithData;
      }
+
+     /**
+      * 
+      */
+     static function excludeItemsWithoutData(context, allOptions) {
+
+        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var optionsWithData = [];
+
+        for(var i=0; i<allOptions.length; i++) {            
+            if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
+                optionsWithData.push(allOptions[i]);
+            } else if (typeof allOptions[i] === 'string' && availableCodes.hasOwnProperty(allOptions[i])) {
+                optionsWithData.push(allOptions[i]);
+            }
+        }
+
+        return optionsWithData;         
+     }
+     
 
 }
