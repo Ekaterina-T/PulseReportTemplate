@@ -342,6 +342,8 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
@@ -393,20 +395,10 @@ class ParamUtil {
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
-/*
-        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            var currentPage = context.pageContext.Items['CurrentPageId'];
-            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
-        }
-*/
+
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
-
-    /**
-     *
-     */
-    static
 
     /**
      *@param {Object} context
