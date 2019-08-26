@@ -116,7 +116,7 @@ log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
             }
         }
 
-        return {};//resourcesWithData;
+        return resourcesWithData;
      }
 
 }
