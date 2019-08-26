@@ -102,7 +102,7 @@ class PulseProgramUtil {
 
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
-                resourcesWithData.push(resources[i]);
+                resourcesWithData.push(resources[i].Code);
             }
         }
         return resourcesWithData;
