@@ -104,17 +104,17 @@ class PulseProgramUtil {
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
-        /*var resources = getPulseSurveyContentInfo(context, currentPage);
+        var resources = getPulseSurveyContentInfo(context, currentPage);
         var resourcesWithData = {};
+        /*
+                for(var i=0; i< resources.length; i++) {
 
-        for(var i=0; i< resources.length; i++) {
-
-            var baseVal: Datapoint = resourcesBase[i];
-            if(baseVal.Value>0) {
-                resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
-            }
-        }*/
-        return {};//resourcesWithData;
+                    var baseVal: Datapoint = resourcesBase[i];
+                    if(baseVal.Value>0) {
+                        resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
+                    }
+                }*/
+        return resourcesWithData;
      }
 
 }
