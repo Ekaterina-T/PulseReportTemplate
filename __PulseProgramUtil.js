@@ -114,8 +114,6 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-
-        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData: '+JSON.stringify(resourcesWithData))
         return resourcesWithData;
      }
 
