@@ -401,7 +401,7 @@ log.LogDebug(i);
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
         }
 
-        log.LogDebug('GetParameterOptions='parameterName)
+        log.LogDebug('GetParameterOptions='+parameterName)
 
         return modifyOptionsOrder(context, options, parameterInfo);
 
