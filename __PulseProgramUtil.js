@@ -85,7 +85,6 @@ class PulseProgramUtil {
         var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')[0];  
         
         var key = context.user.Email+'_'+pageId+'_'+selectedProject;
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
         return pulseSurveyContentInfo[key];
     }
 
@@ -103,7 +102,7 @@ class PulseProgramUtil {
 
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
-                resourcesWithData.push(resources[i].Code);
+                resourcesWithData.push(resources[i]);
             }
         }
         return resourcesWithData;
