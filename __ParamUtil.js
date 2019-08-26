@@ -398,7 +398,10 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             var currentPage = context.pageContext.Items['CurrentPageId'];
+            log.LogDebug('1')
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
+            log.LogDebug('2')
+            log.LogDebug(JSON.stringify(availableCodes))
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);

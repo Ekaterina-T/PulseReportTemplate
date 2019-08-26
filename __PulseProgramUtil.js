@@ -88,12 +88,8 @@ class PulseProgramUtil {
 
         var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
-        
         var key = user.Email+'_'+pageId+'_'+selectedProject;
 
-        log.LogDebug('key'+key);
-        log.LogDebug('obj='+JSON.stringify(pulseSurveyContentInfo));
-        log.LogDebug('obj='+JSON.stringify(pulseSurveyContentInfo[key]));
         return pulseSurveyContentInfo[key];
     }
 
@@ -110,8 +106,6 @@ class PulseProgramUtil {
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
         var resources = getPulseSurveyContentInfo(context, currentPage);
         var resourcesWithData = {};
-        log.LogDebug('1')
-        log.LogDebug(JSON.stringify(resources))
 
         for(var i=0; i< resources.length; i++) {
 
@@ -121,7 +115,7 @@ class PulseProgramUtil {
             }
         }
 
-        log.LogDebug(JSON.stringify(resourcesWithData))
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData: '+JSON.stringify(resourcesWithData))
         return resourcesWithData;
      }
 
