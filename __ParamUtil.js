@@ -401,7 +401,7 @@ class ParamUtil {
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             log.LogDebug(parameterId)
             //var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
-            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+                // var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
