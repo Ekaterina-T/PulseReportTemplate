@@ -341,31 +341,19 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
-        var state = context.state;
-        var user = context.user;
-        var pageContext = context.pageContext;
-
-        var currentPage = context.pageContext.Items['CurrentPageId'];
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
 
         var parameterOptions = GetParameterOptions(context); // get options
-        var context2 = {log: log, state: state, user: user, report: report, pageContext: pageContext};
-        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context2, currentPage);
-
-        //log.LogDebug('parameterOptions='+JSON.stringify(parameterOptions));
-        //log.LogDebug('availableCodes='+JSON.stringify(availableCodes));
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
 
-            //if(availableCodes.hasOwnProperty(parameterOptions[i].Code)) {
                 var val = new ParameterValueResponse();
                 val.StringKeyValue = parameterOptions[i].Code;
                 val.StringValue = parameterOptions[i].Label;
                 parameter.Items.Add(val);
-            //}
         }
 
         return;
@@ -405,9 +393,20 @@ class ParamUtil {
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
+
+        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            var currentPage = context.pageContext.Items['CurrentPageId'];
+            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, currentPage);
+        }
+
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
+
+    /**
+     *
+     */
+    static
 
     /**
      *@param {Object} context
