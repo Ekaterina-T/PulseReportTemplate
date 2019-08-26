@@ -86,6 +86,7 @@ class PulseProgramUtil {
 
         var report = context.report;
         var pageContext = context.pageContext;
+        var user = context.user;
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var currentPage = (pageId) ? 'Page_'+pageId : 'Page_'+ pageContext.Items['CurrentPageId'];
