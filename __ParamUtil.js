@@ -342,6 +342,8 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
+        log.LogDebug(JSON.stringify(context.pageContext));
+
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
             return [];
         }
