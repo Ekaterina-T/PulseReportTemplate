@@ -398,13 +398,9 @@ class ParamUtil {
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
             var optionsWithData = [];
 
-            log.LogDebug('availableCodes:  '+JSON.stringify(availableCodes));
-            log.LogDebug('options:  '+JSON.stringify(options));
-
             for(var i=0; i<options.length; i++) {
-                log.LogDebug(i)
                 if(availableCodes.hasOwnProperty(options[i].Code)) {
-                    optionsWithData.options[i];
+                    optionsWithData.push(options[i]);
                 }
             }
 
