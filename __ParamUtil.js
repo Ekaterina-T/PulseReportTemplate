@@ -399,10 +399,8 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
-            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context2);
-
-            log.LogDebug('here');
+            //var context2 = {state: state, report: report, log:log, user: user, pageContext: pageContext};
+            var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
