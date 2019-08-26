@@ -98,7 +98,8 @@ class PulseProgramUtil {
         var key = user.Email+'_'+pageId;//+'_'+selectedProject;
         var resources = pulseSurveyContentInfo[key];
         var resourcesWithData = {};
-        log.LogDebug('3')
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
+        log.LogDebug(key)
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
