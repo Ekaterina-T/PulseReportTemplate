@@ -74,7 +74,7 @@ class PulseProgramUtil {
         pulseSurveyContentInfo[key] = {}; 
         pulseSurveyContentInfo[key] = getResourcesList(context, pageId);
 
-        return {};//pulseSurveyContentInfo[key]; //??? if correct
+        return pulseSurveyContentInfo[key]; //??? if correct
     }
 
     /**
@@ -89,7 +89,7 @@ class PulseProgramUtil {
         //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
         //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         var key = user.Email+'_'+pageId;//+'_'+selectedProject;
-
+log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]))
         return pulseSurveyContentInfo[key];
     }
 
