@@ -371,10 +371,7 @@ class ParamUtil {
 
     static function GetParameterOptions (context, parameterName) {
 
-        var state = context.state;
-        var report = context.report;
         var log = context.log;
-        var user = context.user;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
@@ -401,7 +398,11 @@ class ParamUtil {
             var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
             var optionsWithData = [];
 
+            log.LogDebug('availableCodes:  '+JSON.stringify(availableCodes));
+            log.LogDebug('options:  '+JSON.stringify(options));
+
             for(var i=0; i<options.length; i++) {
+                log.LogDebug(i)
                 if(availableCodes.hasOwnProperty(options[i].Code)) {
                     optionsWithData.options[i];
                 }
