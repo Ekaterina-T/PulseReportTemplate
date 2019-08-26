@@ -68,7 +68,7 @@ class PulseProgramUtil {
 
         var state = context.state;
         var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
-        var selectedProject = pSelectedProject.StringValue || pSelectedProject.StringKeyValue;
+        var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         var key = context.user.Email+'_'+pageId+'_'+selectedProject;
 
         pulseSurveyContentInfo[key] = {}; 
@@ -87,12 +87,13 @@ class PulseProgramUtil {
         var user = context.user;
 
         var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
-        var selectedProject = pSelectedProject.StringValue || pSelectedProject.StringKeyValue;
+        var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         
         var key = user.Email+'_'+pageId+'_'+selectedProject;
 
-        log.LogDebug('key');
+        log.LogDebug('key'+key);
         log.LogDebug('obj='+JSON.stringify(pulseSurveyContentInfo));
+        log.LogDebug('obj='+JSON.stringify(pulseSurveyContentInfo[key]));
         return pulseSurveyContentInfo[key];
     }
 
