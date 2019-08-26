@@ -341,6 +341,7 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
+        var pageContext = context.pageContext;
 
         log.LogDebug(JSON.stringify('hjhjhj'));
 
