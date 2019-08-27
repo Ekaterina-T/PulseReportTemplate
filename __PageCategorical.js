@@ -90,11 +90,12 @@ class PageCategorical {
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
 
-
+log.LogDebug('here2')
         log.LogDebug(JSON.stringify(Qs));
 
-        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
-
+        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs, 'cat');
+        log.LogDebug(JSON.stringify(Qs));
+        log.LogDebug('here2')
         for (var i=0; i<Qs.length; i++) {
 
             var question : Question = project.GetQuestion(Qs[i]);

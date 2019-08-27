@@ -396,6 +396,7 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            log.LogDebug('from p: '+from)
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
