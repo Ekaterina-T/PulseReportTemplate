@@ -91,6 +91,9 @@ class PulseProgramUtil {
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
+
+        log.LogDebug('resourcesBase.length='+resourcesBase.length)
+
         for(var i=0; i< resources.length; i++) {
 
             var baseVal: Datapoint = resourcesBase[i];
