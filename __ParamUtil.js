@@ -396,10 +396,7 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            log.LogDebug('parameterId='+parameterId+' from '+from);
-            log.LogDebug('before exclude: '+JSON.stringify(options));
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('after exclude: '+JSON.stringify(options));
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);

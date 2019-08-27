@@ -68,16 +68,11 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentInfo (context) {
 
         var log = context.log;
-        log.LogDebug('setPulseSurveyContentInfo1')
-        log.LogDebug('is pagecontext: '+context.hasOwnProperty('pageContext'))
         var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
-        log.LogDebug('setPulseSurveyContentInfo2')
-        var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
-        log.LogDebug('setPulseSurveyContentInfo3')
+        var key = getKeyForPulseSurveyContentInfo(context);
 
         pulseSurveyContentInfo[key] = {}; 
         pulseSurveyContentInfo[key] = getResourcesList(context);
-        log.LogDebug('setPulseSurveyContentInfo4')
 
         return pulseSurveyContentInfo[key]; //??? if correct
     }
@@ -124,14 +119,9 @@ class PulseProgramUtil {
      static function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
-        log.LogDebug('excludeItemsWithoutData1')
         var resources = setPulseSurveyContentInfo(context);
-        log.LogDebug('excludeItemsWithoutData2')
-
-        log.LogDebug('res '+resources);
 
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
-            log.LogDebug('all opt')
             return allOptions;
         }
 
