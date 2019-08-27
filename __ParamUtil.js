@@ -329,6 +329,9 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName); // get all options
+
+        log.LogDebug('default='+JSON.stringify(parameterOptions.length>0 ? parameterOptions[0].Code : ''));
+
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
 
@@ -395,9 +398,9 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            log.LogDebug('parameterId='+parameterId)
+            log.LogDebug('parameterId='+parameterId+' before exclude: '+JSON.stringify(options))
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('after exclude');
+            log.LogDebug('after exclude: '+JSON.stringify(options));
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
