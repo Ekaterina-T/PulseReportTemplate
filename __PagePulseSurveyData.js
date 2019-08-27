@@ -10,7 +10,7 @@ class PagePulseSurveyData {
         var report = context.report;
         var table = context.table;
         log.LogDebug('table 1')
-        var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo();
+        var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
         log.LogDebug('table 2')
 
         log.LogDebug('key in table='+key)
