@@ -1,6 +1,5 @@
 class PageCategorical {
 
-
     /**
      * @memberof PageCategorical
      * @function Hide
@@ -26,7 +25,6 @@ class PageCategorical {
     }
 
 
-
     /**
      * @memberof PageCategorical
      * @function tableCategorical_Hide
@@ -46,6 +44,8 @@ class PageCategorical {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var questionConfigParamName = type === 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
+
+        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
 
         if (!Qs || Qs.length === 0) {
             return true;
@@ -90,12 +90,10 @@ class PageCategorical {
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
 
-log.LogDebug('here1')
         log.LogDebug('before excl: '+JSON.stringify(Qs));
-
         Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs, 'cat');
         log.LogDebug('after exclude'+JSON.stringify(Qs));
-        log.LogDebug('here2')
+
         for (var i=0; i<Qs.length; i++) {
 
             var question : Question = project.GetQuestion(Qs[i]);
@@ -144,7 +142,6 @@ log.LogDebug('here1')
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
         SuppressUtil.setTableSuppress(table, suppressSettings);
-        log.LogDebug('end')
     }
 
 
@@ -209,6 +206,9 @@ log.LogDebug('here1')
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
+
+        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs, 'cat');
+
         for (var i=0; i<Qs.length; i++) {
 
             var question : Question = project.GetQuestion(Qs[i]);
@@ -313,14 +313,12 @@ log.LogDebug('here1')
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function buildCategoricalTiles
      * @description function to generate material cards with categories
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-
 
     static function buildCategoricalTiles (context) {
 
