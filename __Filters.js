@@ -134,8 +134,8 @@ class Filters {
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
-                }
-                filterExpr.push(individualFilterExpr.join(' OR '));
+                }               
+		filterExpr.push('('+individualFilterExpr.join(' OR ')+')'); 
             }
 
         }
