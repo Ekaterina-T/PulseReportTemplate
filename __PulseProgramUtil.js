@@ -87,6 +87,7 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
 
+        log.LogDebug(JSON.stringify(resources))
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
 
@@ -120,9 +121,8 @@ class PulseProgramUtil {
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
 
-        log.LogDebug(JSON.stringify(resources));
-
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
+            log.LogDebug('return all options')
             return allOptions;
         }
 
