@@ -93,14 +93,14 @@ class PulseProgramUtil {
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
-
+log.LogDebug('1')
         for(var i=0; i< resources.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-
+        log.LogDebug(JSON.stringify(resourcesWithData))
         return resourcesWithData;
      }
 
@@ -123,14 +123,14 @@ class PulseProgramUtil {
 
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
-
+log.LogDebug('start')
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
             return allOptions;
         }
 
         var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
         var optionsWithData = [];
-
+log.LogDebug('middle')
         for(var i=0; i<allOptions.length; i++) {
             if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
                 optionsWithData.push(allOptions[i]);
@@ -138,7 +138,7 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
-
+log.LogDebug('end')
         return optionsWithData;
      }
      
