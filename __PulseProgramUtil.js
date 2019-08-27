@@ -79,7 +79,7 @@ class PulseProgramUtil {
     /**
      * 
      */
-     static public function getPulseSurveyContentInfo_ItemsWithData (context, pulseSurveyContentInfoKey) {
+     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
         var report = context.report;
@@ -126,7 +126,7 @@ class PulseProgramUtil {
             return allOptions;
         }
 
-        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, key);
+        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {
