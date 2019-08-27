@@ -106,6 +106,7 @@ class PulseProgramUtil {
       */
      static function excludeItemsWithoutData(context, allOptions) {
 
+         var log = context.log;
         var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
 
