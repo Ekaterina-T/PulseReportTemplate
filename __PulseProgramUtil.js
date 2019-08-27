@@ -120,7 +120,7 @@ class PulseProgramUtil {
 
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
-//log.LogDebug('from '+from)
+
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
             return allOptions;
         }
@@ -135,7 +135,6 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
-        //log.LogDebug(JSON.stringify(optionsWithData))
 
         return optionsWithData;
      }

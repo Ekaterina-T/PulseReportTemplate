@@ -79,20 +79,20 @@ class PageCategorical {
         var state = context.state;
         var table = context.table;
         var log = context.log;
+
+        log.LogDebug(tableType+'1')
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var project : Project = DataSourceUtil.getProject(context);
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-
+        log.LogDebug(tableType+'2')
         // add rows (single or multi questions)
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-
-        log.LogDebug('before excl: '+JSON.stringify(Qs));
-        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs, 'cat');
-        log.LogDebug('after exclude'+JSON.stringify(Qs));
+        log.LogDebug(tableType+'3')
+        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
 
         for (var i=0; i<Qs.length; i++) {
 
@@ -123,7 +123,7 @@ class PageCategorical {
         }
 
         // add 2 Base columns
-
+        log.LogDebug(tableType+'4')
         var baseVP : HeaderBase = new HeaderBase();
         baseVP.Distributions.Enabled = true;
         baseVP.Distributions.VerticalPercents = true;
@@ -135,13 +135,14 @@ class PageCategorical {
         baseC.Distributions.Count = true;
         table.ColumnHeaders.Add(baseC);
 
-
+        log.LogDebug(tableType+'5')
         // global table settings
 
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
         SuppressUtil.setTableSuppress(table, suppressSettings);
+        log.LogDebug(tableType+'6')
     }
 
 
