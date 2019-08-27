@@ -106,8 +106,8 @@ class PulseProgramUtil {
       */
      static function excludeItemsWithoutData(context, allOptions) {
 
-        var currentPage = 'Page_'+ pageContext.Items['CurrentPageId'];
-        var key = user.Email+'_'+currentPage;//+'_'+selectedProject;
+        var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
+        var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
 
         if(!pulseSurveyContentInfo[key] || pulseSurveyContentInfo[key].length === 0) {
             return allOptions; //there's nothing to exclude
