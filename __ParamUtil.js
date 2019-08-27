@@ -396,7 +396,7 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             log.LogDebug('parameterId='+parameterId)
-            options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+           // options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
