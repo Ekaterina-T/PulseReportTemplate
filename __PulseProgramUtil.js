@@ -69,6 +69,7 @@ class PulseProgramUtil {
 
         var log = context.log;
         log.LogDebug('setPulseSurveyContentInfo1')
+        log.LogDebug('is pagecontext: '+context.hasOwnProperty('pageContext'))
         var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         log.LogDebug('setPulseSurveyContentInfo2')
         var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
