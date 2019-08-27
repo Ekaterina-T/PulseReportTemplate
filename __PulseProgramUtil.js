@@ -119,13 +119,19 @@ class PulseProgramUtil {
      static function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
+        log.LogDebug('1')
         var resources = setPulseSurveyContentInfo(context);
+        log.LogDebug('2')
 
+        log.LogDebug(JSON.stringify(resources))
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
             return allOptions;
         }
+        log.LogDebug('3')
 
         var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        log.LogDebug('4')
+        log.LogDebug(JSON.stringify(availableCodes))
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {
@@ -135,6 +141,7 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
+        log.LogDebug('5')
 
         return optionsWithData;
      }
