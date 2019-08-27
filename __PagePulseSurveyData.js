@@ -41,6 +41,7 @@ class PagePulseSurveyData {
                     header.ReferenceGroup.Enabled = true;
                     header.ReferenceGroup.Self = true;
                     header.ShowTotals = false;
+                    table.RowHeaders.Add(header);
 
                 } else if(questionType.indexOf('multi')>=0) {
 
