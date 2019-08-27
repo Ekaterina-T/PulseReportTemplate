@@ -109,6 +109,9 @@ class PulseProgramUtil {
         var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
 
+        log.LogDebug('key='+key);
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]));
+
         if(!pulseSurveyContentInfo[key] || pulseSurveyContentInfo[key].length === 0) {
             return allOptions; //there's nothing to exclude
         }
