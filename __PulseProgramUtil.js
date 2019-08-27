@@ -67,9 +67,6 @@ class PulseProgramUtil {
      */
     static public function setPulseSurveyContentInfo (context) {
 
-        //var state = context.state;
-        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
-        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
         var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = context.user.Email+'_'+pageId;//+'_'+selectedProject;
 
@@ -82,22 +79,16 @@ class PulseProgramUtil {
     /**
      * 
      */
-     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
+     static public function getPulseSurveyContentInfo_ItemsWithData (context, pulseSurveyContentInfoKey) {
 
         var log = context.log;
-
         var report = context.report;
-        var pageContext = context.pageContext;
         var user = context.user;
+        var pageContext = context.pageContext;
 
+        var resources = pulseSurveyContentInfo[pulseSurveyContentInfoKey];
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        var currentPage = 'Page_'+ pageContext.Items['CurrentPageId'];
-    
-        //var pSelectedProject: ParameterValueResponse = state.Parameters['p_projectSelector'];
-        //var selectedProject = pSelectedProject.StringKeyValue || pSelectedProject.StringValue;
-        var key = user.Email+'_'+currentPage;//+'_'+selectedProject;
-        var resources = pulseSurveyContentInfo[key];
         var resourcesWithData = {};
       
         for(var i=0; i< resources.length; i++) {
@@ -115,7 +106,14 @@ class PulseProgramUtil {
       */
      static function excludeItemsWithoutData(context, allOptions) {
 
-        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var currentPage = 'Page_'+ pageContext.Items['CurrentPageId'];
+        var key = user.Email+'_'+currentPage;//+'_'+selectedProject;
+
+        if(!pulseSurveyContentInfo[key] || pulseSurveyContentInfo[key].length === 0) {
+            return allOptions; //there's nothing to exclude
+        }
+
+        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, key);
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {            

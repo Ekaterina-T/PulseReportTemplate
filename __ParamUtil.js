@@ -395,16 +395,8 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            /*var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
-            var optionsWithData = [];
-
-            for(var i=0; i<options.length; i++) {
-                if(availableCodes.hasOwnProperty(options[i].Code)) {
-                    optionsWithData.push(options[i]);
-                }
-            }*/
-
-            options = PulseProgramUtil.excludeItemsWithoutData(context, options);//optionsWithData;
+            log.LogDebug('parameterId='+parameterId)
+            options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
