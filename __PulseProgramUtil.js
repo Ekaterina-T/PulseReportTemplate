@@ -83,19 +83,12 @@ class PulseProgramUtil {
 
         var log = context.log;
         var report = context.report;
-        var user = context.user;
-        var pageContext = context.pageContext;
 
-        var resources = pulseSurveyContentInfo[pulseSurveyContentInfoKey];
-
-        log.LogDebug('resources befor request to table: '+JSON.stringify(resources))
+        var key = getKeyForPulseSurveyContentInfo(context);
+        var resources = pulseSurveyContentInfo[key];
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
-
-        resources = pulseSurveyContentInfo[pulseSurveyContentInfoKey];
-
-        log.LogDebug('resources after request to table: '+JSON.stringify(resources))
 
         for(var i=0; i< resources.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
@@ -107,26 +100,36 @@ class PulseProgramUtil {
         return resourcesWithData;
      }
 
-     /**
+    /**
+     *
+     */
+    static public function getKeyForPulseSurveyContentInfo(context) {
+
+        var log = context.log;
+        var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
+        var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
+
+        return key;
+    }
+
+    /**
       * 
       */
      static function excludeItemsWithoutData(context, allOptions) {
 
-         var log = context.log;
-        var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
-        var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
+        var log = context.log;
+        var resources = setPulseSurveyContentInfo(context);
 
-        log.LogDebug('key='+key);
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
+        log.LogDebug(JSON.stringify(resources));
 
-        if(false/*!pulseSurveyContentInfo[key] || pulseSurveyContentInfo[key].length === 0*/) {
-            return allOptions; //there's nothing to exclude
+        if(!resources || resources.length === 0) { //there's nothing to exclude on this page
+            return allOptions;
         }
 
         var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context, key);
         var optionsWithData = [];
 
-        for(var i=0; i<allOptions.length; i++) {            
+        for(var i=0; i<allOptions.length; i++) {
             if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
                 optionsWithData.push(allOptions[i]);
             } else if (typeof allOptions[i] === 'string' && availableCodes.hasOwnProperty(allOptions[i])) {
@@ -134,7 +137,7 @@ class PulseProgramUtil {
             }
         }
 
-        return optionsWithData;         
+        return optionsWithData;
      }
      
 
