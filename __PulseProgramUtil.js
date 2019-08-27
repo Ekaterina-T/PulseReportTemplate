@@ -121,7 +121,6 @@ class PulseProgramUtil {
         var resources = setPulseSurveyContentInfo(context);
 
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
-            log.LogDebug('all options')
             return allOptions;
         }
 
