@@ -301,7 +301,7 @@ class ParamUtil {
 
         var log = context.log;
         var selectedCodes = GetSelectedCodes (context, parameterName);
-        var parameterOptions = GetParameterOptions( context, parameterName);
+        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -328,7 +328,7 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
-        var parameterOptions = GetParameterOptions(context, parameterName); // get all options
+        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
 
         log.LogDebug('default='+JSON.stringify(parameterOptions.length>0 ? parameterOptions[0].Code : ''));
 
@@ -351,7 +351,7 @@ class ParamUtil {
             return [];
         }
 
-        var parameterOptions = GetParameterOptions(context); // get options
+        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
                 var val = new ParameterValueResponse();
@@ -372,7 +372,7 @@ class ParamUtil {
   * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
   */
 
-    static function GetParameterOptions (context, parameterName) {
+    static function GetParameterOptions (context, parameterName, from) {
 
         var log = context.log;
         var pageContext = context.pageContext;
@@ -398,7 +398,8 @@ class ParamUtil {
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            log.LogDebug('parameterId='+parameterId+' before exclude: '+JSON.stringify(options))
+            log.LogDebug('parameterId='+parameterId+' from '+from);
+            log.LogDebug(' before exclude: '+JSON.stringify(options))
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
             log.LogDebug('after exclude: '+JSON.stringify(options));
         }
