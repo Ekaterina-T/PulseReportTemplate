@@ -35,6 +35,7 @@ class PageCategorical {
      */
     static function tableCategorical_Hide(context, type){
 
+        var log = context.log;
         var state = context.state;
 
         if (state.ReportExecutionMode == ReportExecutionMode.PdfExport) {
@@ -44,8 +45,9 @@ class PageCategorical {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var questionConfigParamName = type === 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
-
+log.LogDebug('before '+JSON.stringify(Qs))
         Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
+        log.LogDebug('after '+JSON.stringify(Qs))
 
         if (!Qs || Qs.length === 0) {
             return true;
