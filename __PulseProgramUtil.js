@@ -122,7 +122,10 @@ class PulseProgramUtil {
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
 
+        log.LogDebug('key='+getKeyForPulseSurveyContentInfo(context))
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo));
         if(!resources || resources.length === 0) { //there's nothing to exclude on this page
+            log.LogDebug('all options')
             return allOptions;
         }
 
