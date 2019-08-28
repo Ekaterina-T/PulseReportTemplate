@@ -129,7 +129,7 @@ class PulseProgramUtil {
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
 
-        if(!resources || resources.length === 0) { //there's nothing to exclude on this page
+        if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
             return allOptions;
         }
 

@@ -49,11 +49,10 @@ class PageKPI {
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
     // add row = KPI question
-    var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
-    
-    if (Qs.length == 0) {
-      throw new Error('PageKPI.tableKPI_Render: KPI questions are not specified.');
-    }
+    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
+    //Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
+
+    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
     
     for (var i=0; i < Qs.length; i++) {
       
@@ -140,7 +139,8 @@ class PageKPI {
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
     // add row = KPI question
-    var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
+    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
+    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
     
     for (var i=0; i<Qs.length; i++) {     
       table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
@@ -224,7 +224,8 @@ class PageKPI {
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
     // add row = KPI question
-    var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');    
+    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
+    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI');
     var titles = report.TableUtils.GetRowHeaderCategoryTitles('KPI:KPI');
     
     var results = [];

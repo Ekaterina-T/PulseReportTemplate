@@ -393,5 +393,19 @@ class TableUtil {
     return header;
   }
 
+    /**
+     *
+     */
+
+    static function getActiveQuestionsListFromPageConfig (context, pageId, propertyName, doPreCheck) {
+
+        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, propertyName);
+
+        if (doPreCheck && Qs.length == 0) {
+            throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page='+pageId+', property='+propertyName+' are not specified.');
+        }
+
+        return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
+    }
 
 }

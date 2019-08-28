@@ -44,9 +44,7 @@ class PageCategorical {
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var questionConfigParamName = type === 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
-
-        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
 
         if (!Qs || Qs.length === 0) {
             return true;
@@ -87,12 +85,10 @@ class PageCategorical {
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-
-        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
 
         for (var i=0; i<Qs.length; i++) {
 
@@ -202,11 +198,9 @@ class PageCategorical {
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
         var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-        var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, questionConfigParamName);
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
-
-        Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs, 'cat');
 
         for (var i=0; i<Qs.length; i++) {
 
