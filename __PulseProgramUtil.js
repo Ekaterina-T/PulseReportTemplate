@@ -105,7 +105,9 @@ class PulseProgramUtil {
      }
 
     /**
-     *
+     * create key for 'cache', need because static vars are shared among end users
+     * @param {Object} context
+     * @returns {string} key
      */
     static public function getKeyForPulseSurveyContentInfo(context) {
 
@@ -166,6 +168,5 @@ class PulseProgramUtil {
 
         log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData))
     }
-
 
 }
