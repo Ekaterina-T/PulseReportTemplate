@@ -218,8 +218,13 @@ class PageKPI {
     
     // add row = KPI question
     var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI');
+
+    if(Qs.length === 0) {
+        return [];
+    }
+
     var titles = report.TableUtils.GetRowHeaderCategoryTitles('KPI:KPI');
-    
+
     var results = [];
     for (var i=0; i < Qs.length; i++) {
       
