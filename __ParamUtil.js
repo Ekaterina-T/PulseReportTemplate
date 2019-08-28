@@ -218,6 +218,24 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
+        //user unchecked show all pulse surveys checkbox
+        if(page.SubmitSource === 'p_ShowAllPulseSurveys' && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
+            var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
+            var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
+            var doReset = true;
+
+            for(var i=0; i<availableProjects.length; i++) {
+                if(selectedProject === availableProjects[i].Code) {
+                    doReset = false;
+                    break;
+                }
+            }
+
+            if(doReset) {
+                ParamUtil.ResetParameters(context, ['p_projectSelector']);
+            }
+        }
+
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 

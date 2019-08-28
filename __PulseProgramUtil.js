@@ -5,7 +5,7 @@ class PulseProgramUtil {
     static private var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
-        Page_KPI: ['KPI', 'KPIComment', 'KPIQuestionsToFilterVerbatim'],
+        Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables'],

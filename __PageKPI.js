@@ -47,10 +47,6 @@ class PageKPI {
     var log = context.log;
     var suppressSettings = context.suppressSettings;
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
-    
-    // add row = KPI question
-    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
-    //Qs = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
 
     var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
     
@@ -89,7 +85,6 @@ class PageKPI {
     
     // global table settings
     table.Caching.Enabled = false;
-    //table.RemoveEmptyHeaders.Columns = true;
     SuppressUtil.setTableSuppress(table, suppressSettings);
     
   }
@@ -138,8 +133,6 @@ class PageKPI {
     var suppressSettings = context.suppressSettings;
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
-    // add row = KPI question
-    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
     var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
     
     for (var i=0; i<Qs.length; i++) {     
@@ -224,7 +217,6 @@ class PageKPI {
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
     // add row = KPI question
-    //var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
     var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI');
     var titles = report.TableUtils.GetRowHeaderCategoryTitles('KPI:KPI');
     
