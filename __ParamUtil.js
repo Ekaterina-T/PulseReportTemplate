@@ -10,7 +10,7 @@ class ParamUtil {
 
     static var reportParameterValuesMap = {
 
-        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: 'PulseSurveyData'},
+        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: 'PulseSurveyData', isInReverseOrder: true},
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution'},
         'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
