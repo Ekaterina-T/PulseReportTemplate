@@ -456,7 +456,7 @@ class Filters {
 
     static function projectSelectorInPulseProgram(context) {
 
-        if(!DataSourceUtil.isProjectSelectorNeeded) {
+        if(!DataSourceUtil.isProjectSelectorNeeded(context)) {
             return !context.state.Parameters.IsNull('p_projectSelector') ? 'IN(pid, PValStr("p_projectSelector"))' : 'pid = "none"';
         }
 
