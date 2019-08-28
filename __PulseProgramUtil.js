@@ -15,8 +15,8 @@ class PulseProgramUtil {
     }
 
     /**
+     * creates array of qids and category ids that need to be checked against pulse
      * @param {Object} context
-     * @param {string} pageId - not mandatory
      * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
     static private function getResourcesList (context) {
@@ -63,7 +63,9 @@ class PulseProgramUtil {
     }
 
     /**
-     * 
+     * pushes resources list into 'cache' (static var) with key = enduserEmail_pageId (to avoid end user data conflicts)
+     * @param {Object} context
+     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
     static public function setPulseSurveyContentInfo (context) {
 
@@ -78,7 +80,8 @@ class PulseProgramUtil {
     }
 
     /**
-     * 
+     * @param {Object} context
+     * @returns {Object} key - qid or category id that has >0 answers
      */
      static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
@@ -114,9 +117,12 @@ class PulseProgramUtil {
     }
 
     /**
-      * 
+      * Recieves full list of options and exclude from it those without answers
+     * @param {Object} context
+     * @param {Array} list of options
+     * @returns {Array} options with answers
       */
-     static function excludeItemsWithoutData(context, allOptions, from) {
+    static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
         var resources = setPulseSurveyContentInfo(context);
@@ -137,6 +143,29 @@ class PulseProgramUtil {
         }
         return optionsWithData;
      }
-     
+
+    /**
+     * Debug function that prints PulseSurveyContentInfo into log
+     * @param {Object} context
+     */
+     static public function printPulseSurveyContentInfoTable (context) {
+
+        var log = context.log;
+        var report = context.report;
+
+        var key = getKeyForPulseSurveyContentInfo(context);
+        var resources = pulseSurveyContentInfo[key];
+        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var resourcesData = {};
+
+        for(var i=0; i< resources.length; i++) {
+
+            var baseVal: Datapoint = resourcesBase[i];
+            resourcesData[resources[i].Code] = { Value: baseVal.Value};
+        }
+
+        log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData))
+    }
+
 
 }
