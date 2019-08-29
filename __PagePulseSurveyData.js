@@ -7,11 +7,13 @@ class PagePulseSurveyData {
     static public function tablePulseSurveyContentInfo_Render(context) {
 
         var log = context.log;
+        log.LogDebug('tablePulseSurveyContentInfo_Render')
         var table = context.table;
         var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
         log.LogDebug('key='+key)
         var resources = PulseProgramUtil.pulseSurveyContentInfo[key];
-        log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo))
+        log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
+        log.LogDebug(resources.length);
         for(var i=0; i< resources.length; i++) {
 
             var resource = resources[i];
@@ -73,8 +75,9 @@ class PagePulseSurveyData {
             }
             
         }
-
+log.LogDebug('here1')
         table.ColumnHeaders.Add(base);
         table.Caching.Enabled = false;
+        log.LogDebug('here2')
     }
 }
