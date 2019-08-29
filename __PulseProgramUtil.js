@@ -112,7 +112,7 @@ class PulseProgramUtil {
     static public function getKeyForPulseSurveyContentInfo(context) {
 
         var log = context.log;
-        var currentPage = 'Page_'+ context.pageContext.Items['CurrentPageId'];
+        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
         var key = context.user.Email+'_'+currentPage;//+'_'+selectedProject;
 
         return key;
@@ -154,19 +154,24 @@ class PulseProgramUtil {
 
         var log = context.log;
         var report = context.report;
+        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
 
-        var key = getKeyForPulseSurveyContentInfo(context);
-        var resources = pulseSurveyContentInfo[key];
-        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        var resourcesData = {};
 
-        for(var i=0; i< resources.length; i++) {
+        if(resourcesDependentOnSpecificSurvey[currentPage] && resourcesDependentOnSpecificSurvey[currentPage].length>0) {
 
-            var baseVal: Datapoint = resourcesBase[i];
-            resourcesData[resources[i].Code] = { Value: baseVal.Value};
+            var key = getKeyForPulseSurveyContentInfo(context);
+            var resources = pulseSurveyContentInfo[key];
+            var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            var resourcesData = {};
+
+            for(var i=0; i< resources.length; i++) {
+
+                var baseVal: Datapoint = resourcesBase[i];
+                resourcesData[resources[i].Code] = { Value: baseVal.Value};
+            }
+
+            log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData))
         }
-
-        log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData))
     }
 
 }
