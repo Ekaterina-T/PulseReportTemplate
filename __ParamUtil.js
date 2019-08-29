@@ -477,7 +477,6 @@ class ParamUtil {
         }
 
         if(type === 'PulseSurveyInfo') {
-            context.log.LogDebug(JSON.stringify(getOptions_PulseSurveyInfo(context, resource['storageInfo'])))
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
         }
 
