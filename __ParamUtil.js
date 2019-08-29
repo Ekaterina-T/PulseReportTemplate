@@ -219,6 +219,8 @@ class ParamUtil {
         }
 
         //user unchecked show all pulse surveys checkbox
+        log.LogDebug('page.SubmitSource='+page.SubmitSource);
+        log.LogDebug(ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0])
         if((page.SubmitSource === 'p_ShowAllPulseSurveys' || page.SubmitSource === 'Hierarchy (1)')&& ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
