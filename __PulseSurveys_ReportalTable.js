@@ -38,7 +38,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyList[0] = emptyOption;
         }
 
-        return surveyList.concat(transformTableHeaderTitlesIntoObj(rawInfo));
+        return surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
     }
 
     /**
@@ -46,8 +46,9 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {String[][]} string[][] array of row headers
      * @returns {Array} array of objects {Code: pid, Label: pname} for user's pulse surveys
      */
-    private function transformTableHeaderTitlesIntoObj(HeaderCategoryTitles) {
+    private function transformTableHeaderTitlesIntoObj(context, HeaderCategoryTitles) {
 
+        var log = context.log;
         var surveyList = [];
 
         for(var i=0; i<HeaderCategoryTitles.length; i++) { // reverse order
@@ -57,6 +58,8 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList[i] = surveyInfo;
         }
+        log.LogDebug(JSON.stringify(surveyList))
+
 
         return surveyList;
     }
