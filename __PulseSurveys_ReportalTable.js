@@ -31,6 +31,8 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
         var surveyList = [];
 
+        log.LogDebug(JSON.stringify(rawInfo));
+
         if(_isEmptyOptionNeeded) {
             var emptyOption = {};
             emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
