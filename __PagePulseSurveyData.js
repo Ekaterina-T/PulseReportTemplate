@@ -7,11 +7,11 @@ class PagePulseSurveyData {
     static public function tablePulseSurveyContentInfo_Render(context) {
 
         var log = context.log;
-        var report = context.report;
         var table = context.table;
         var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('key='+key)
         var resources = PulseProgramUtil.pulseSurveyContentInfo[key];
-
+        log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo))
         for(var i=0; i< resources.length; i++) {
 
             var resource = resources[i];

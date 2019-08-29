@@ -159,8 +159,9 @@ class PulseProgramUtil {
         log.LogDebug(key)
         log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
         if(true/*pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0*/) {
-
+            log.LogDebug('before table')
             var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            log.LogDebug('after table')
             var resources = pulseSurveyContentInfo[key];
             var resourcesData = {};
 
