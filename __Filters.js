@@ -145,7 +145,7 @@ class Filters {
      */
 
     static function hideScriptedFilterByOrder(context, paramNum) {
-
+/*
         var pageContext = context.pageContext;
         var log = context.log;
         var isPageSpecific = context.pageSpecific;
@@ -158,7 +158,7 @@ class Filters {
         if(paramNum > filterList.length || (pageContext.Items['CurrentPageId'] === 'Response_Rate' && paramNum >filterFromRespondentData.length)) {
             return true;    // hide
         }
-
+*/
         return false; // don't hide
     }
 
