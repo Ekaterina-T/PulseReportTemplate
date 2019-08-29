@@ -60,8 +60,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList[i] = surveyInfo;
         }
-        //log.LogDebug(JSON.stringify(surveyList))
-
 
         return surveyList;
     }

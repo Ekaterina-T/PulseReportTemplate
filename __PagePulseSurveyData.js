@@ -36,14 +36,14 @@ class PagePulseSurveyData {
                 //define question type to apply correct header properties later
                 (questionInfo.hasOwnProperty('standardType')) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
 
-                if(questionType.indexOf('hierarchy')>=0) {
+                /*if(questionType.indexOf('hierarchy')>=0) {
                     header = new HeaderQuestion(qe);
                     header.ReferenceGroup.Enabled = true;
                     header.ReferenceGroup.Self = true;
                     header.ShowTotals = false;
                     table.RowHeaders.Add(header);
 
-                } else if(questionType.indexOf('multi')>=0) {
+                } else */if(questionType.indexOf('multi')>=0) {
 
                     header = new HeaderQuestion(qe);
 
