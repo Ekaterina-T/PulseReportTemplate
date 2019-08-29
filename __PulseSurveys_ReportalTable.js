@@ -40,9 +40,9 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyList[0] = emptyOption;
         }
 
-        log.LogDebug(JSON.stringify(rawInfo))
+        log.LogDebug(JSON.stringify(rawInfo));
 
-        return surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
+        return transformTableHeaderTitlesIntoObj(context, rawInfo); //surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
     }
 
     /**
@@ -61,6 +61,8 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Label = HeaderCategoryTitles[i][0]; //label - inner header
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList[i] = surveyInfo;
+            log.LogDebug(surveyList[i].Code)
+
         }
 
         return surveyList;
