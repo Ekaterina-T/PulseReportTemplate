@@ -2,8 +2,6 @@ class Filters {
 
     /*
     * Get the list of all filters defined on the survey level (including background and survey data variables)
-
-
     * @param {object} context object {state: state, report: report, log: log}
     */
 
@@ -25,7 +23,8 @@ class Filters {
             return [];  // page with custom source => only page specific filters, no global ones
 
         } catch (e) {  // i.e. not a page with custom source
-            return filterFromRespondentData.concat(filterFromSurveyData);
+            var allFilters = filterFromRespondentData.concat(filterFromSurveyData);
+            return PulseProgramUtil.excludeItemsWithoutData(context, allFilters);
         }
     }
 
@@ -84,10 +83,10 @@ class Filters {
         var report = context.report;
         var log = context.log;
 
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+        //var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        //var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
 
-        var filterLevelParameters = filterFromRespondentData.concat(filterFromSurveyData); //GetFullFilterList (context);
+        var filterLevelParameters = GetGlobalFilterList(context); //filterFromRespondentData.concat(filterFromSurveyData); //GetFullFilterList (context);
         var filterNames = [];
         var i;
 
@@ -124,8 +123,6 @@ class Filters {
         var filterList = GetFilterListByType (context, isPageSpecific);
         if (filterList.length >= paramNum) {
 
-
-
             var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum-1]);
 
             for(var i=0; i<answers.length; i++) {
@@ -152,7 +149,7 @@ class Filters {
         var pageContext = context.pageContext;
         var log = context.log;
         var isPageSpecific = context.pageSpecific;
-        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+        var filterFromRespondentData = PulseProgramUtil.excludeItemsWithoutData(context, DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters'));
         var filterList = GetFilterListByType (context, isPageSpecific);
 
 
