@@ -157,7 +157,7 @@ class PulseProgramUtil {
         var currentPage = PageUtil.getCurrentPageIdInConfig (context);
 log.LogDebug('1')
 log.LogDebug(JSON.stringify(resourcesDependentOnSpecificSurvey))
-        if(resourcesDependentOnSpecificSurvey.has(currentPage) && resourcesDependentOnSpecificSurvey[currentPage].length>0) {
+        if(resourcesDependentOnSpecificSurvey.hasOwnProperty(currentPage) && resourcesDependentOnSpecificSurvey[currentPage].length>0) {
             log.LogDebug('2')
             var key = getKeyForPulseSurveyContentInfo(context);log.LogDebug('3');
             var resources = pulseSurveyContentInfo[key];log.LogDebug('4');
