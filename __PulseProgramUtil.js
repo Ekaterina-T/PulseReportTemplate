@@ -154,12 +154,12 @@ class PulseProgramUtil {
 
         var log = context.log;
         var report = context.report;
-        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
-log.LogDebug('1')
-log.LogDebug(JSON.stringify(resourcesDependentOnSpecificSurvey))
-        if(resourcesDependentOnSpecificSurvey.hasOwnProperty(currentPage) && resourcesDependentOnSpecificSurvey[currentPage].length>0) {
-            log.LogDebug('2')
-            var key = getKeyForPulseSurveyContentInfo(context);log.LogDebug('3');
+        var key = getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('3');
+
+        if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
+            log.LogDebug(key)
+log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
             var resources = pulseSurveyContentInfo[key];log.LogDebug('4');
             var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);log.LogDebug('5');
             var resourcesData = {};
@@ -170,8 +170,10 @@ log.LogDebug(JSON.stringify(resourcesDependentOnSpecificSurvey))
                 resourcesData[resources[i].Code] = { Value: baseVal.Value};
             }
             log.LogDebug('7');
-            log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData))
+            log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
         }
+
+
     }
 
 }
