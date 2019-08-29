@@ -53,18 +53,22 @@ class PagePulseSurveyData {
                     header.IsCollapsed = true;
                     header.ShowTotals = true;
                     table.RowHeaders.Add(header);
-                  
+
                 } else if(questionType.indexOf('open')>=0) {
 
                     header = new HeaderQuestion(qe);
                     header.IsCollapsed = true;
                     table.RowHeaders.Add(header);
-                } else { // for singles ...
+
+                } else if(questionType.indexOf('single')>=0) { // for singles ...
 
                     header = new HeaderQuestion(qe);
                     header.IsCollapsed = true;
                     header.ShowTotals = false;
                     table.RowHeaders.Add(header);
+
+                } else {
+                    throw new Error('PagePulseSurveyData.tablePulseSurveyContentInfo_Render: question type "'+questionType+'" is not supported');
                 }
             }
             
