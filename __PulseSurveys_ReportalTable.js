@@ -61,8 +61,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Label = HeaderCategoryTitles[i][0]; //label - inner header
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList[i] = surveyInfo;
-            log.LogDebug(surveyList[i].Code)
-
+            log.LogDebug(surveyList[i].Label)
         }
 
         return surveyList;
