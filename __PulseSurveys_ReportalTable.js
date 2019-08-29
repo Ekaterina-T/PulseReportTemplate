@@ -40,6 +40,8 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyList[0] = emptyOption;
         }
 
+        log.LogDebug(JSON.stringify(rawInfo))
+
         return surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
     }
 
