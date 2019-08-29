@@ -156,8 +156,6 @@ class PulseProgramUtil {
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
 
-        log.LogDebug(key)
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
             var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
@@ -165,7 +163,6 @@ class PulseProgramUtil {
             var resourcesData = {};
 
             for(var i=0; i< resources.length; i++) {
-
                 var baseVal: Datapoint = resourcesBase[i];
                 resourcesData[resources[i].Code] = { Value: baseVal.Value};
             }
