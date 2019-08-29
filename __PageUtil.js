@@ -12,24 +12,24 @@ class PageUtil {
         var page = context.page;
         var log = context.log;
         var pageContext = context.pageContext;
-
+log.LogDebug('1')
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-
+        log.LogDebug('2')
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
             pageContext.Items.Add('Source', add_in_source);
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
-
+        log.LogDebug('3')
         ParamUtil.Initialise(context); // initialise parameters
-
+        log.LogDebug('4')
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
         if(!isPageVisible(context)) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
-
+        log.LogDebug('5')
         // reset not bg var based filters on response rate page
         if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
 
@@ -40,15 +40,15 @@ class PageUtil {
                 state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
             }
         }
-
+        log.LogDebug('6')
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-
+        log.LogDebug('7')
         //for tests
-        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        PulseProgramUtil.printPulseSurveyContentInfoTable(context);log.LogDebug('8')
     }
 
     /*
