@@ -395,7 +395,7 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
-        log.LogDebug('-------------------- START ----------------------- \n'+parameterId+' '+from)
+
         if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
@@ -408,19 +408,14 @@ class ParamUtil {
 
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         if(!resource) {
-            log.LogDebug('-------------------- END NO RESOURCE ----------------------- \n'+parameterId+' '+from)
             return [];
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-
-            log.LogDebug('1')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('2')
         }
-        log.LogDebug('-------------------- END ----------------------- \n'+parameterId+' '+from)
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }

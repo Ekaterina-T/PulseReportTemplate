@@ -11,12 +11,8 @@ class FilterSummary {
 
         var text = context.text;
         var log = context.log;
-
-        log.LogDebug('filter summary: start')
-
         var filterName = TextAndParameterUtil.getTextTranslationByKey(context, filterText);
         var filterValues = ParamUtil.GetSelectedOptions(context, paramName);
-        log.LogDebug('filter summary: middle')
 
         if(filterValues.length>0) { // do not print anything if parameter is empty
 
@@ -27,7 +23,6 @@ class FilterSummary {
             }
             text.Output.Append(filterName+" "+filterLabels.join(', ')+"<br>"+System.Environment.NewLine);
         }
-        log.LogDebug('filter summary: end')
     }
 
 
