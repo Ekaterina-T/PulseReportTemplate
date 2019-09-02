@@ -396,6 +396,11 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var key = pageContext.Items['userEmail']+'_'+parameterId;
+
+        if(cachedParameterOptions.hasOwnProperty(key)) {
+            options = cachedParameterOptions[key];
+        }
 
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
 
