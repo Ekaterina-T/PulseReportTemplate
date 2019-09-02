@@ -11,11 +11,11 @@ class FilterSummary {
 
         var text = context.text;
         var log = context.log;
-        log.LogDebug('fs: 1 ')
+        //log.LogDebug('fs: 1 ')
         var filterName = TextAndParameterUtil.getTextTranslationByKey(context, filterText);
-        log.LogDebug('fs: 2 '+filterName)
+        //log.LogDebug('fs: 2 '+filterName)
         var filterValues = ParamUtil.GetSelectedOptions(context, paramName);
-        log.LogDebug('fs: 3 '+filterValues)
+        //log.LogDebug('fs: 3 '+filterValues)
 
         if(filterValues.length>0) { // do not print anything if parameter is empty
 
