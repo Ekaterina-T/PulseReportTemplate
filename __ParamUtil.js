@@ -46,6 +46,8 @@ class ParamUtil {
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
 
+    static public var cachedParameterOptions = {};
+
 
     /*
   * Populates p_SurveyType parameter based on surveys from Config.
@@ -394,17 +396,8 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        var parameterInfo = {}; //where to take parameter values from
 
-        if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
-            parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
-        } else {
-            parameterInfo = reportParameterValuesMap[parameterId];
-        }
-
-        if(!parameterInfo) {
-            throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
-        }
+        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
 
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         if(!resource) {
@@ -418,6 +411,26 @@ class ParamUtil {
         }
         return modifyOptionsOrder(context, options, parameterInfo);
 
+    }
+
+    /**
+     *
+     */
+    static function GetParameterInfoObject(context, parameterId) {
+
+        var parameterInfo = {};
+
+        if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
+            parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
+        } else {
+            parameterInfo = reportParameterValuesMap[parameterId];
+        }
+
+        if(!parameterInfo) {
+            throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
+        }
+
+        return parameterInfo;
     }
 
     /**
