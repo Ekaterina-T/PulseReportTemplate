@@ -32,9 +32,11 @@ class PageComments {
     static function hitlistComments_Hide(context){
 
         if (SuppressUtil.isGloballyHidden(context)) {
-
             return true;
+        }
 
+        if(ParamUtil.GetSelectedCodes (context, "p_OpenTextQs").length === 0) {
+            return true;
         }
 
         var log = context.log;
