@@ -88,7 +88,9 @@ class PulseProgramUtil {
         var log = context.log;
         var report = context.report;
 
+
         var key = getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('key='+key)
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
@@ -173,5 +175,4 @@ class PulseProgramUtil {
 
 
     }
-
 }
