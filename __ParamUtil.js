@@ -395,7 +395,7 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
-        log.LogDebug('START -----------------------  GetParameterOptions: '+parameterId+' '+from)
+        log.LogDebug('-------------------- START ----------------------- \n'+parameterId+' '+from)
         if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
@@ -408,6 +408,7 @@ class ParamUtil {
 
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         if(!resource) {
+            log.LogDebug('-------------------- END NO RESOURCE ----------------------- \n'+parameterId+' '+from)
             return [];
         }
 
@@ -419,7 +420,7 @@ class ParamUtil {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
             log.LogDebug('2')
         }
-        log.LogDebug('END -----------------------   GetParameterOptions: '+parameterId+' '+from)
+        log.LogDebug('-------------------- END ----------------------- \n'+parameterId+' '+from)
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }

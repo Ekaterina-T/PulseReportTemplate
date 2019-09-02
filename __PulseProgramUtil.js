@@ -128,7 +128,6 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
-        log.LogDebug('excludeItemsWithoutData start')
         var resources = setPulseSurveyContentInfo(context);
 
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
@@ -145,7 +144,6 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
-        log.LogDebug('excludeItemsWithoutData finish')
         return optionsWithData;
      }
 
