@@ -42,7 +42,7 @@ class FilterSummary {
         var pageContext = context.pageContext;
         var str = '';
 
-        if(true/*pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage') || state.ReportExecutionMode === ReportExecutionMode.ExcelExport*/) {
+        if(pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage') || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
 
             // data source
             if(Config.Surveys.length>1) {
