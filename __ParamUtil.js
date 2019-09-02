@@ -396,41 +396,22 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        var key = pageContext.Items['userEmail']+'_'+parameterId;
         var options = [];
 
-        //log.LogDebug('------------ '+parameterId+' START --------------')
+        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
-        if(cachedParameterOptions.hasOwnProperty(key)) {
-            options = cachedParameterOptions[key];
-            //log.LogDebug('cache')
-        } //else {
-            
-            var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-            var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-
-            if(!resource) {
-                return [];
-            }
-
-            options = getRawOptions(context, resource, parameterInfo.type);
-
-            if(parameterId !== 'p_projectSelector') {
-                cachedParameterOptions[key] = options;
-            }
-            //log.LogDebug('1st enter')
-       // }
-        //log.LogDebug('middle');
-
-        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-           // log.LogDebug('before exclude')
-            options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-           // log.LogDebug('after exclude')
+        if(!resource) {
+            return [];
         }
 
-       // log.LogDebug('------------ '+parameterId+' END --------------')
-        return modifyOptionsOrder(context, options, parameterInfo);
+        options = getRawOptions(context, resource, parameterInfo.type);
 
+        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+        }
+
+        return modifyOptionsOrder(context, options, parameterInfo);
     }
 
     /**
