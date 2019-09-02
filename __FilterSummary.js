@@ -27,7 +27,6 @@ class FilterSummary {
             }
             text.Output.Append(filterName+" "+filterLabels.join(', ')+"<br>"+System.Environment.NewLine);
         }
-        log.LogDebug('filter summary: 3')
     }
 
 

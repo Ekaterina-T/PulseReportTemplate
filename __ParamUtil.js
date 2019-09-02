@@ -395,30 +395,30 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
-        log.LogDebug('GetParameterOptions: '+parameterId+' '+from)
 
         if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
             parameterInfo = reportParameterValuesMap[parameterId];
         }
-        log.LogDebug('1')
+
         if(!parameterInfo) {
             throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
         }
-        log.LogDebug('2')
+
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        log.LogDebug('3')
         if(!resource) {
+            log.LogDebug('resource is empty')
             return [];
         }
-        log.LogDebug('4')
+
         var options = getRawOptions(context, resource, parameterInfo.type);
-        log.LogDebug('5')
+
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            log.LogDebug('GetParameterOptions: '+parameterId+' '+from)
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+            log.LogDebug('6')
         }
-        log.LogDebug('6')
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }

@@ -87,11 +87,15 @@ class PulseProgramUtil {
 
         var log = context.log;
         var report = context.report;
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData 1')
 
 
         var key = getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('key='+key)
         var resources = pulseSurveyContentInfo[key];
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData 2')
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData 3')
         var resourcesWithData = {};
 
         for(var i=0; i< resources.length; i++) {
@@ -129,14 +133,18 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
+        log.LogDebug('excludeItemsWithoutData 1')
         var resources = setPulseSurveyContentInfo(context);
+        log.LogDebug('excludeItemsWithoutData 2')
 
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
             return allOptions;
         }
+        log.LogDebug('excludeItemsWithoutData 3')
 
         var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
         var optionsWithData = [];
+        log.LogDebug('excludeItemsWithoutData 4')
 
         for(var i=0; i<allOptions.length; i++) {
             if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
