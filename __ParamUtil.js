@@ -399,7 +399,7 @@ class ParamUtil {
         var key = pageContext.Items['userEmail']+'_'+parameterId;
         var options = [];
 
-        log.LogDebug('------------ '+parameterId+' START --------------')
+        //log.LogDebug('------------ '+parameterId+' START --------------')
 
         if(cachedParameterOptions.hasOwnProperty(key)) {
             options = cachedParameterOptions[key];
@@ -428,7 +428,7 @@ class ParamUtil {
            // log.LogDebug('after exclude')
         }
 
-        log.LogDebug('------------ '+parameterId+' END --------------')
+       // log.LogDebug('------------ '+parameterId+' END --------------')
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
