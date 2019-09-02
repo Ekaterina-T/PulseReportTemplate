@@ -406,6 +406,10 @@ class ParamUtil {
 
         var options = getRawOptions(context, resource, parameterInfo.type);
 
+        if(parameterId !== 'p_projectSelector') {
+            cachedParameterOptions[key] = options;
+        }
+
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
