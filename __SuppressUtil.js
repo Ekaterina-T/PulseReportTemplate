@@ -159,7 +159,7 @@ class SuppressUtil {
         var log = context.log;
 
         var N_of_participants = report.TableUtils.GetCellValue('Confidentiality:ReportBase',1, 1).Value;
-        log.LogDebug('N_of_participants='+N_of_participants)
+
         if (N_of_participants.Equals(Double.NaN) || (N_of_participants < SuppressConfig.ReportBaseSuppressValue)) {
             return true;
         }
