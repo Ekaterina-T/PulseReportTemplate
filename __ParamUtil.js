@@ -404,7 +404,7 @@ class ParamUtil {
         if(cachedParameterOptions.hasOwnProperty(key)) {
             options = cachedParameterOptions[key];
             //log.LogDebug('cache')
-        } else {
+        } //else {
             
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
@@ -419,7 +419,7 @@ class ParamUtil {
                 cachedParameterOptions[key] = options;
             }
             //log.LogDebug('1st enter')
-        }
+       // }
         //log.LogDebug('middle');
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
