@@ -323,6 +323,7 @@ class ParamUtil {
         var log = context.log;
         var selectedCodes = GetSelectedCodes (context, parameterName);
         log.LogDebug('1) GetSelectedOptions for '+parameterName)
+        log.LogDebug(JSON.stringify(selectedCodes))
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         log.LogDebug('2) GetSelectedOptions for '+parameterName)
         var selectedOptions = [];
