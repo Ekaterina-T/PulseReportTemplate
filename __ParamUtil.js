@@ -403,7 +403,7 @@ class ParamUtil {
 
         if(cachedParameterOptions.hasOwnProperty(key)) {
             options = cachedParameterOptions[key];
-            log.LogDebug('cache')
+            //log.LogDebug('cache')
         } else {
             
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
@@ -418,14 +418,14 @@ class ParamUtil {
             if(parameterId !== 'p_projectSelector') {
                 cachedParameterOptions[key] = options;
             }
-            log.LogDebug('1st enter')
+            //log.LogDebug('1st enter')
         }
-        log.LogDebug('middle');
+        //log.LogDebug('middle');
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
-            log.LogDebug('before exclude')
+           // log.LogDebug('before exclude')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('after exclude')
+           // log.LogDebug('after exclude')
         }
 
         log.LogDebug('------------ '+parameterId+' END --------------')
