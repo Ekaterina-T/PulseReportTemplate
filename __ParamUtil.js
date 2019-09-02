@@ -397,22 +397,24 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var key = pageContext.Items['userEmail']+'_'+parameterId;
+        var options = [];
 
         if(cachedParameterOptions.hasOwnProperty(key)) {
             options = cachedParameterOptions[key];
-        }
+        } else {
 
-        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+            var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+            var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
-        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        if(!resource) {
-            return [];
-        }
+            if(!resource) {
+                return [];
+            }
 
-        var options = getRawOptions(context, resource, parameterInfo.type);
+            options = getRawOptions(context, resource, parameterInfo.type);
 
-        if(parameterId !== 'p_projectSelector') {
-            cachedParameterOptions[key] = options;
+            if(parameterId !== 'p_projectSelector') {
+                cachedParameterOptions[key] = options;
+            }
         }
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
