@@ -13,6 +13,7 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
+        pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         try {
