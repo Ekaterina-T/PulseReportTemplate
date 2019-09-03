@@ -14,10 +14,15 @@ class PageResults {
         var log = context.log;
         var suppressSettings = context.suppressSettings;
 
+        log.LogDebug('1')
         tableStatements_AddColumns(context, bannerId);
+        log.LogDebug('2')
         tableStatements_AddRows(context);
+        log.LogDebug('3')
         tableStatements_ApplyConditionalFormatting(context);
+        log.LogDebug('4')
         SuppressUtil.setTableSuppress(table, suppressSettings);
+        log.LogDebug('5')
 
         table.Decimals = 0;
         table.RowNesting = TableRowNestingType.Nesting;
