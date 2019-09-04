@@ -256,19 +256,19 @@ class ParamUtil {
                     }
                 } catch (e) {continue;}
 
+                log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                 // We can't get the type of parameter (single or multi) before its initialisation.
                 // So firstly check if it supports ParameterValueMultiSelect options
                 try {
-                    log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                     var valArr = [new ParameterValueResponse(defaultParameterValue)];
                     var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
                     state.Parameters[mandatoryPageParameters[i]] = multiResponse;
+                    log.LogDebug('set multi')
                 }
                     //if not, set it as single select parameter
                 catch (e) {
-                    log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
-                    log.LogDebug('here')
+                    log.LogDebug('set single')
                 }
             }
         }
@@ -415,7 +415,6 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug(parameterId+': '+JSON.stringify(options))
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
