@@ -247,6 +247,10 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
+            log.LogDebug(mandatoryPageParameters[i])
+            log.LogDebug(state.Parameters.IsNull(mandatoryPageParameters[i]))
+            log.LogDebug(getDefaultParameterValue(context, mandatoryPageParameters[i]));
+
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
                 try {
