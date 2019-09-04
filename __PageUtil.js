@@ -25,7 +25,7 @@ class PageUtil {
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
         //set up object holding questions available on current page
-        setPulseSurveyContentInfo (context);
+        PulseProgramUtil.setPulseSurveyContentInfo (context);
 
         ParamUtil.Initialise(context); // initialise parameters
 
