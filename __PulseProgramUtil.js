@@ -172,7 +172,6 @@ class PulseProgramUtil {
 
             log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
         }
-
-
+        
     }
 }

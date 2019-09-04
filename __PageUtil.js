@@ -22,11 +22,11 @@ class PageUtil {
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
+        ParamUtil.Initialise(context); // initialise parameters
+
         log.LogDebug(page.CurrentPageId);
         log.LogDebug(JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData (context, 'page')));
         log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
-
-        ParamUtil.Initialise(context); // initialise parameters
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
