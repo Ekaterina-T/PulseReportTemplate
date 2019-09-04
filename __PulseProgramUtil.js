@@ -201,8 +201,7 @@ class PulseProgramUtil {
             log.LogDebug('resourcesBase.len='+resourcesBase.length);
 
             for(var i=0; i< resources.length; i++) {
-                var baseVal = resourcesBase[i];
-                resourcesData[resources[i].Code] = { Value: baseVal.Value};
+                resourcesData[resources[i].Code] = { Value: resourcesBase[i]};
             }
 
             log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
