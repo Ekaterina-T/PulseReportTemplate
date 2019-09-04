@@ -41,7 +41,7 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = [/*'p_projectSelector', */'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -218,10 +218,6 @@ class ParamUtil {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        
-        //set up object holding questions available on current page
-        PulseProgramUtil.setPulseSurveyContentInfo (context);
-        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
         //user unchecked show all pulse surveys checkbox or changed report base
         if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
@@ -239,7 +235,14 @@ class ParamUtil {
             if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
+        } else if(state.Parameters.IsNull('p_projectSelector')) {
+            state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
+
+        
+        //set up object holding questions available on current page
+        PulseProgramUtil.setPulseSurveyContentInfo (context);
+        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
