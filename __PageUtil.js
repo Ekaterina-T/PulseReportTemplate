@@ -26,11 +26,8 @@ class PageUtil {
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo (context);
-        log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
 
         ParamUtil.Initialise(context); // initialise parameters
-
-        log.LogDebug('after param util init');
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -38,7 +35,6 @@ class PageUtil {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
-        log.LogDebug('after redirect');
 
         // reset not bg var based filters on response rate page
         if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
@@ -50,8 +46,6 @@ class PageUtil {
                 state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
             }
         }
-        
-        log.LogDebug('after reset bg');
 
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
@@ -62,7 +56,7 @@ class PageUtil {
         log.LogDebug('after hier');
         //for tests
         log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
-        //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
 
         log.LogDebug('--- END '+page.CurrentPageId+' ---')
     }

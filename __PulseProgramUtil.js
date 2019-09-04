@@ -164,11 +164,17 @@ class PulseProgramUtil {
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
 
+        log.LogDebug('printPulseSurveyContentInfoTable');
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]));
+
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
             var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
             var resources = pulseSurveyContentInfo[key];
             var resourcesData = {};
+
+            log.LogDebug('resources.len='+resources.length);
+            log.LogDebug('resourcesBase.len='+resourcesBase.length);
 
             for(var i=0; i< resources.length; i++) {
                 var baseVal: Datapoint = resourcesBase[i];
