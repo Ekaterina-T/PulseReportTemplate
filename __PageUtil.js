@@ -58,7 +58,7 @@ class PageUtil {
 
         //for tests
         log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
-        //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
 
         log.LogDebug('--- END '+page.CurrentPageId+' ---')
     }

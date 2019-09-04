@@ -114,7 +114,7 @@ class PulseProgramUtil {
         var log = context.log;
         var currentPage = PageUtil.getCurrentPageIdInConfig (context);
         var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+currentPage;//+'_'+selectedProject;
+        var key = pageContext.Items['userEmail'];//+'_'+currentPage;//+'_'+selectedProject;
 
         return key;
     }
