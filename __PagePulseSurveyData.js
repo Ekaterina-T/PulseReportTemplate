@@ -75,8 +75,5 @@ class PagePulseSurveyData {
 
         table.ColumnHeaders.Add(base);
         table.Caching.Enabled = false;
-
-        log.LogDebug('table is built')
-
     }
 }

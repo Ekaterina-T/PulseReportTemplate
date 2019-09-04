@@ -73,8 +73,10 @@ class PulseProgramUtil {
         var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = getKeyForPulseSurveyContentInfo(context);
 
-        pulseSurveyContentInfo[key] = {}; 
+        pulseSurveyContentInfo[key] = {};
+        log.LogDebug('setPulseSurveyContentInfo start')
         pulseSurveyContentInfo[key] = getResourcesList(context);
+        log.LogDebug('setPulseSurveyContentInfo end')
 
         return pulseSurveyContentInfo[key]; //??? if correct
     }
@@ -88,6 +90,8 @@ class PulseProgramUtil {
         var log = context.log;
         var report = context.report;
 
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
+
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
@@ -100,6 +104,9 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
+
+
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
 
         return resourcesWithData;
      }
@@ -135,6 +142,7 @@ class PulseProgramUtil {
         log.LogDebug('exclude start')
 
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
+            log.LogDebug('all options')
             return allOptions;
         }
 
@@ -162,9 +170,6 @@ class PulseProgramUtil {
         var log = context.log;
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
-
-        log.LogDebug('key = '+key);
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
