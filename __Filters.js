@@ -13,11 +13,10 @@ class Filters {
         var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
 
+        filterFromSurveyData = PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+
         if (!pageContext.Items['Source']) {  // i.e. not a page with custom source
-            var allFilters = filterFromRespondentData.concat(filterFromSurveyData);
-            log.LogDebug(JSON.stringify(allFilters));
-            log.LogDebug(JSON.stringify(PulseProgramUtil.excludeItemsWithoutData(context, allFilters)));
-            return PulseProgramUtil.excludeItemsWithoutData(context, allFilters);
+            return filterFromRespondentData.concat(filterFromSurveyData);
         }
         return [];  // page with custom source => only page specific filters, no global ones    
         
@@ -145,7 +144,7 @@ class Filters {
         var pageContext = context.pageContext;
         var log = context.log;
         var isPageSpecific = context.pageSpecific;
-        var filterFromRespondentData = PulseProgramUtil.excludeItemsWithoutData(context, DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters'));
+        var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
         var filterList = GetFilterListByType (context, isPageSpecific);
 
 
