@@ -49,9 +49,8 @@ class PageUtil {
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-        
+
         //for tests
-        log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
         PulseProgramUtil.printPulseSurveyContentInfoTable(context);
 
         log.LogDebug('--- END '+page.CurrentPageId+' ---')
