@@ -230,7 +230,6 @@ class ParamUtil {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
-            log.LogDebug('1')
 
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
@@ -238,9 +237,9 @@ class ParamUtil {
                     break;
                 }
             }
-            log.LogDebug('2')
+            log.LogDebug('2 '+doReset)
 
-            if(doReset) {
+            if(false/*doReset*/) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
         }
