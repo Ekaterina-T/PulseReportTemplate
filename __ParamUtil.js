@@ -212,24 +212,25 @@ class ParamUtil {
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init 3 '+context.hasOwnProperty('state'))
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-
-        log.LogDebug('here1')
         
+        //set up object holding questions available on current page
+        PulseProgramUtil.setPulseSurveyContentInfo (context);
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
-        log.LogDebug('here2')
+
+        log.LogDebug('after pulse table')
         //user unchecked show all pulse surveys checkbox
         // or changed report base
         if(ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
+            log.LogDebug('1')
 
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
@@ -237,15 +238,19 @@ class ParamUtil {
                     break;
                 }
             }
+            log.LogDebug('2')
 
             if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
         }
 
+        log.LogDebug('3')
+
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
+            log.LogDebug(mandatoryPageParameters[i]+': start')
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
                 try {
@@ -269,6 +274,8 @@ class ParamUtil {
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
                 }
             }
+            
+            log.LogDebug(mandatoryPageParameters[i]+': end')
         }
 
     }
