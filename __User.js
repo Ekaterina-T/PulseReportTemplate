@@ -5,12 +5,12 @@ class User {
      * @param {Array} list of valid roles (from Config)
      * @return {boolean}
      */
-    static function isUserValidForSurveybyRole(context, validRoles) {
+    static function isUserValidForSurveybyRole(context, validRoles, from) {
 
         var log = context.log;
         var user = context.user;
 
-        log.LogDebug('1')
+        log.LogDebug('1 '+from)
         log.LogDebug('validRoles'+JSON.stringify(validRoles))
         log.LogDebug('11')
         log.LogDebug('user'+context.hasOwnProperty('user'))
