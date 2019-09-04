@@ -75,6 +75,8 @@ class PulseProgramUtil {
 
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
+        
+        log.LogDebug('setPulseSurveyContentInfo'+JSON.stringify(pulseSurveyContentInfo))
 
         return; 
     }
@@ -89,7 +91,7 @@ class PulseProgramUtil {
         var log = context.log;
         var currentPage = PageUtil.getCurrentPageIdInConfig (context);
         var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+currentPage;//+'_'+selectedProject;
+        var key = pageContext.Items['userEmail']+'_'+currentPage;//+'_'+DataSourceUtil.getDsId(context);
 
         return key;
     }
