@@ -226,7 +226,7 @@ class ParamUtil {
         log.LogDebug('after pulse table')
         //user unchecked show all pulse surveys checkbox
         // or changed report base
-        if(ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
+        if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
