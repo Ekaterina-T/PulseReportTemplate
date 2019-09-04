@@ -220,8 +220,10 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
+        log.LogDebug('here1')
         
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        log.LogDebug('here2')
         //user unchecked show all pulse surveys checkbox
         // or changed report base
         if(ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
