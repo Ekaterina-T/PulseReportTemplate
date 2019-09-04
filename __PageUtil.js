@@ -25,7 +25,7 @@ class PageUtil {
         ParamUtil.Initialise(context); // initialise parameters
 
         log.LogDebug(page.CurrentPageId);
-        log.LogDebug(JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData (context, 'page')));
+        //log.LogDebug(JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData (context, 'page')));
         log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
 
         // if in current DS a page shouldn't be visible, than redirect to default page
@@ -45,6 +45,7 @@ class PageUtil {
                 state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
             }
         }
+
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
             // for now it's only needed for results page hierarchy benchamrks
