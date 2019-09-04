@@ -25,15 +25,13 @@ class PageUtil {
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
         ParamUtil.Initialise(context); // initialise parameters
-        log.LogDebug('after param init')
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
         if(state.ReportExecutionMode = ReportExecutionMode.Web && !isPageVisible(context) ) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
-        }
-        log.LogDebug('after redirect')        
+        }      
 
         // reset not bg var based filters on response rate page
         if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
@@ -51,8 +49,7 @@ class PageUtil {
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-
-        log.LogDebug('after hier');
+        
         //for tests
         log.LogDebug(JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo));
         PulseProgramUtil.printPulseSurveyContentInfoTable(context);

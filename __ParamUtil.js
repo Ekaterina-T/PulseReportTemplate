@@ -41,7 +41,7 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = [/*'p_projectSelector', */'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -247,7 +247,6 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
-            log.LogDebug(mandatoryPageParameters[i]+': start')
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
                 try {
@@ -271,8 +270,6 @@ class ParamUtil {
                     log.LogDebug('here')
                 }
             }
-            
-            log.LogDebug(mandatoryPageParameters[i]+': end')
         }
 
     }
