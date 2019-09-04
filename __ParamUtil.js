@@ -249,12 +249,8 @@ class ParamUtil {
 
                 try {
                     var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
-                    
-            log.LogDebug('default'+JSON.stringify(defaultParameterValue))
-
                     if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                         continue;
-
                     }
                 } catch (e) {continue;}
 
@@ -267,7 +263,9 @@ class ParamUtil {
                 }
                     //if not, set it as single select parameter
                 catch (e) {
+                    log.LogDebug('def='+defaultParameterValue)
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
+                    log.LogDebug('here')
                 }
             }
             
