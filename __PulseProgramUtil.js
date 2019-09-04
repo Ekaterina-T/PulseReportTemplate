@@ -90,7 +90,7 @@ class PulseProgramUtil {
 
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
-        log.LogDebug('before table request');
+        log.LogDebug('before table request: '+key);
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         log.LogDebug('after table request '+resourcesBase.length);
         var resourcesWithData = {};
