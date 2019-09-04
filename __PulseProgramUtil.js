@@ -2,6 +2,8 @@ class PulseProgramUtil {
 
     static public var pulseSurveyContentInfo = {};
 
+    static public var pulseSurveyContentBaseValues = {};
+
     static private var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
@@ -70,7 +72,6 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentInfo (context) {
 
         var log = context.log;
-        var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = getKeyForPulseSurveyContentInfo(context);
 
         delete pulseSurveyContentInfo.key;
@@ -79,6 +80,30 @@ class PulseProgramUtil {
         log.LogDebug('setPulseSurveyContentInfo'+JSON.stringify(pulseSurveyContentInfo))
 
         return; 
+    }
+
+    /**
+     * 
+     */
+    static public function setPulseSurveyContentBaseValues (context) {
+
+        var log = context.log;
+        var key = getKeyForPulseSurveyContentInfo(context);
+
+        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var baseValues = [];
+
+        for(var i=0; i< resources.length; i++) {
+            var baseVal: Datapoint = resourcesBase[i];
+            baseValues.push(baseVal[i].Value);
+        }
+
+        delete pulseSurveyContentBaseValues.key;
+        pulseSurveyContentBaseValues[key] = baseValues;
+        
+        log.LogDebug('setPulseSurveyContentBaseValues'+JSON.stringify(pulseSurveyContentBaseValues))
+
+        return;
     }
 
     /**
@@ -107,14 +132,14 @@ class PulseProgramUtil {
 
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
-        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
 
         log.LogDebug('table col len = '+resourcesBase.length)
 
         for(var i=0; i< resources.length; i++) {
-            var baseVal: Datapoint = resourcesBase[i];
-            if(baseVal.Value>0) {
+            var baseVal resourcesBase[i];
+            if(baseVal>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
@@ -169,7 +194,7 @@ class PulseProgramUtil {
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
-            var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            var resourcesBase = pulseSurveyContentBaseValues[key];
             var resources = pulseSurveyContentInfo[key];
             var resourcesData = {};
 
@@ -177,7 +202,7 @@ class PulseProgramUtil {
             log.LogDebug('resourcesBase.len='+resourcesBase.length);
 
             for(var i=0; i< resources.length; i++) {
-                var baseVal: Datapoint = resourcesBase[i];
+                var baseVal = resourcesBase[i];
                 resourcesData[resources[i].Code] = { Value: baseVal.Value};
             }
 

@@ -26,6 +26,7 @@ class PageUtil {
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo (context);
+        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
         ParamUtil.Initialise(context); // initialise parameters
 
