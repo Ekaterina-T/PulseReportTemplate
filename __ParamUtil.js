@@ -198,28 +198,29 @@ class ParamUtil {
     static function Initialise (context) {
 
         var state = context.state;
-        var report = context.report;
         var page = context.page;
         var log = context.log;
         var i;
-log.LogDebug('param init 1')
+        
         // reset all parameters if a page refreshes when switching the surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 2')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init 3')
+        log.LogDebug('param init 3 '+context.hasOwnProperty('state'))
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
+            log.LogDebug('here 1')
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
+            log.LogDebug('here 2')
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
+            log.LogDebug('here 3')
         }
         log.LogDebug('param init 4')
 

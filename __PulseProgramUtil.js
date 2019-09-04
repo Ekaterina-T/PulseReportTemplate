@@ -134,11 +134,8 @@ class PulseProgramUtil {
         var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
 
-        log.LogDebug('table col len = '+resourcesBase.length)
-
         for(var i=0; i< resources.length; i++) {
-            var baseVal = resourcesBase[i];
-            if(baseVal>0) {
+            if(resourcesBase[i]>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
@@ -188,8 +185,7 @@ class PulseProgramUtil {
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
 
-        log.LogDebug('printPulseSurveyContentInfoTable');
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo[key]));
+        //log.LogDebug('printPulseSurveyContentInfoTable');
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
