@@ -231,15 +231,17 @@ class ParamUtil {
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
 
+            log.LogDebug(JSON.stringify(selectedProject))
+            log.LogDebug(JSON.stringify(availableProjects))
+
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
                     doReset = false;
                     break;
                 }
             }
-            log.LogDebug('2 '+doReset)
 
-            if(false/*doReset*/) {
+            if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
         }
