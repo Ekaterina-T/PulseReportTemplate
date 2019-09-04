@@ -76,7 +76,22 @@ class PulseProgramUtil {
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
 
-        return; //pulseSurveyContentInfo[key]; //??? if correct
+        return; 
+    }
+
+    /**
+     * create key for 'cache', need because static vars are shared among end users
+     * @param {Object} context
+     * @returns {string} key
+     */
+    static public function getKeyForPulseSurveyContentInfo(context) {
+
+        var log = context.log;
+        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
+        var pageContext = context.pageContext;
+        var key = pageContext.Items['userEmail']+'_'+currentPage;//+'_'+selectedProject;
+
+        return key;
     }
 
     /**
@@ -93,8 +108,9 @@ class PulseProgramUtil {
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var resourcesWithData = {};
 
-        for(var i=0; i< resources.length; i++) {
+        log.LogDebug('table col len = '+resourcesBase.length)
 
+        for(var i=0; i< resources.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             if(baseVal.Value>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
@@ -103,21 +119,6 @@ class PulseProgramUtil {
 
         return resourcesWithData;
      }
-
-    /**
-     * create key for 'cache', need because static vars are shared among end users
-     * @param {Object} context
-     * @returns {string} key
-     */
-    static public function getKeyForPulseSurveyContentInfo(context) {
-
-        var log = context.log;
-        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
-        var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail'];//+'_'+currentPage;//+'_'+selectedProject;
-
-        return key;
-    }
 
     /**
       * Recieves full list of options and exclude from it those without answers
@@ -129,16 +130,18 @@ class PulseProgramUtil {
 
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
-        var resources = pulseSurveyContentInfo[key];//setPulseSurveyContentInfo(context);
+        var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
-        if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
+        //not pulse program or there's nothing to exclude on this page
+        if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { 
             return allOptions;
         }
 
-        var availableCodes = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var availableCodes = getPulseSurveyContentInfo_ItemsWithData(context);
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {
+            // options can be a list of objects with code property or just a list of codes
             if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
                 optionsWithData.push(allOptions[i]);
             } else if (typeof allOptions[i] === 'string' && availableCodes.hasOwnProperty(allOptions[i])) {
@@ -171,6 +174,8 @@ class PulseProgramUtil {
             }
 
             log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
+        } else {
+            log.LogDebug('Data from PulseSurveyContentInfo table: no data');
         }
 
     }

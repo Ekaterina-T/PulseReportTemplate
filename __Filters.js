@@ -57,7 +57,6 @@ class Filters {
         var log = context.log;
 
         if (!isPageSpecificType) {
-            log.LogDebug('not page spec')
             return GetGlobalFilterList (context);
         }
 

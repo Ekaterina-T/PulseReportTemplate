@@ -30,8 +30,6 @@ class PageUtil {
 
         ParamUtil.Initialise(context); // initialise parameters
 
-        //log.LogDebug(JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData (context, 'page')));
-
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
         if(!isPageVisible(context)) {
