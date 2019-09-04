@@ -157,7 +157,9 @@ class PulseProgramUtil {
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
 
-        log.LogDebug('key = '+key)
+        log.LogDebug('key = '+key);
+
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
