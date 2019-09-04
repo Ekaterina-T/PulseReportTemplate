@@ -89,11 +89,12 @@ class PulseProgramUtil {
 
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
+        var report = context.report;
 
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         var baseValues = [];
 
-        for(var i=0; i< resources.length; i++) {
+        for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             baseValues.push(baseVal[i].Value);
         }
