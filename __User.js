@@ -11,8 +11,12 @@ class User {
         var user = context.user;
 
         log.LogDebug('1')
+        log.LogDebug('validRoles'+JSON.stringify(validRoles))
+        log.LogDebug('11')
+        log.LogDebug('user'+context.hasOwnProperty('user'))
         //confirmit user (has access to all surveys for QA) or survey is available for all end users (validRoles is null)
         if(user.UserType === ReportUserType.Confirmit || !validRoles) {
+            log.LogDebug('111')
             return true;
         }
 
