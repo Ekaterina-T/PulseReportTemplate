@@ -223,16 +223,11 @@ class ParamUtil {
         PulseProgramUtil.setPulseSurveyContentInfo (context);
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
-        log.LogDebug('after pulse table')
-        //user unchecked show all pulse surveys checkbox
-        // or changed report base
+        //user unchecked show all pulse surveys checkbox or changed report base
         if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
-
-            log.LogDebug(JSON.stringify(selectedProject))
-            log.LogDebug(JSON.stringify(availableProjects))
 
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
@@ -246,8 +241,6 @@ class ParamUtil {
             }
         }
 
-        log.LogDebug('3')
-
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
@@ -256,6 +249,8 @@ class ParamUtil {
 
                 try {
                     var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
+                    
+            log.LogDebug('default'+JSON.stringify(defaultParameterValue))
 
                     if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                         continue;

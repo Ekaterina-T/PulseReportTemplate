@@ -24,7 +24,6 @@ class PageUtil {
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
-        log.LogDebug('after set data')
         ParamUtil.Initialise(context); // initialise parameters
         log.LogDebug('after param init')
 
