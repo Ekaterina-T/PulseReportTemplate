@@ -62,7 +62,7 @@ class ParamUtil {
 
         for (var i=0; i<surveys.length; i++) {
 
-            if(!surveys[i].isHidden /*&& User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'load param')*/) {
+            if(!surveys[i].isHidden && User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'load param')) {
                 var val : ParameterValueProject = new ParameterValueProject();
                 val.ProjectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, surveys[i].Source);
                 parameter.Items.Add(val);
