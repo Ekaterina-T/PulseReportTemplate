@@ -73,10 +73,10 @@ class PulseProgramUtil {
         var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
         var key = getKeyForPulseSurveyContentInfo(context);
 
-        pulseSurveyContentInfo[key] = {};
+        delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
 
-        return pulseSurveyContentInfo[key]; //??? if correct
+        return; //pulseSurveyContentInfo[key]; //??? if correct
     }
 
     /**
@@ -92,6 +92,7 @@ class PulseProgramUtil {
         var resources = pulseSurveyContentInfo[key];
         log.LogDebug('before table request: '+key);
         var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        log.LogDebug()
         log.LogDebug('after table request '+resourcesBase.length);
         var resourcesWithData = {};
 
@@ -130,8 +131,8 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
-
-        var resources = setPulseSurveyContentInfo(context);
+        var key = getKeyForPulseSurveyContentInfo(context);
+        var resources = pulseSurveyContentInfo[key];//setPulseSurveyContentInfo(context);
 
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
             return allOptions;
