@@ -28,7 +28,9 @@ class PageUtil {
         PulseProgramUtil.setPulseSurveyContentInfo (context);
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
+        log.LogDebug('after set data')
         ParamUtil.Initialise(context); // initialise parameters
+        log.LogDebug('after param init')
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -36,6 +38,7 @@ class PageUtil {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
+        log.LogDebug('after redirect')        
 
         // reset not bg var based filters on response rate page
         if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {

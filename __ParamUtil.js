@@ -408,7 +408,9 @@ class ParamUtil {
         options = getRawOptions(context, resource, parameterInfo.type);
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+            log.LogDebug('parameterId: before excl')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+            log.LogDebug('parameterId: after excl')
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);

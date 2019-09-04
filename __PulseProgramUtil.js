@@ -129,8 +129,6 @@ class PulseProgramUtil {
      static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
-        var report = context.report;
-
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
