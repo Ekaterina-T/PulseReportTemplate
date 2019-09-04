@@ -138,7 +138,7 @@ class PulseProgramUtil {
         log.LogDebug('table col len = '+resourcesBase.length)
 
         for(var i=0; i< resources.length; i++) {
-            var baseVal resourcesBase[i];
+            var baseVal = resourcesBase[i];
             if(baseVal>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
