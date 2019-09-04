@@ -13,21 +13,14 @@ class Filters {
         var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
 
-        // Wrapped in try/catch to avoid throwing errors when retrieving pageContext.Items['Source'] when it doesn't exist
-        // If the custom source is defined => the global filters cannot be applied
-        try {
-
-            if (pageContext.Items['Source'] === undefined) {  // i.e. not a page with custom source
-                return filterFromRespondentData.concat(filterFromSurveyData);
-            }
-            return [];  // page with custom source => only page specific filters, no global ones
-
-        } catch (e) {  // i.e. not a page with custom source
+        if (!pageContext.Items['Source']) {  // i.e. not a page with custom source
             var allFilters = filterFromRespondentData.concat(filterFromSurveyData);
             log.LogDebug(JSON.stringify(allFilters));
             log.LogDebug(JSON.stringify(PulseProgramUtil.excludeItemsWithoutData(context, allFilters)));
             return PulseProgramUtil.excludeItemsWithoutData(context, allFilters);
         }
+        return [];  // page with custom source => only page specific filters, no global ones    
+        
     }
 
 
@@ -65,6 +58,7 @@ class Filters {
         var log = context.log;
 
         if (!isPageSpecificType) {
+            log.LogDebug('not page spec')
             return GetGlobalFilterList (context);
         }
 
