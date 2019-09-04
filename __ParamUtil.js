@@ -216,14 +216,12 @@ class ParamUtil {
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
-            log.LogDebug('here 1')
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
-            log.LogDebug('here 2')
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
-            log.LogDebug('here 3')
         }
-        log.LogDebug('param init 4')
 
+        
+        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         //user unchecked show all pulse surveys checkbox
         // or changed report base
         if(ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
@@ -242,7 +240,6 @@ class ParamUtil {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
         }
-        log.LogDebug('param init 5')
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -271,7 +268,6 @@ class ParamUtil {
                 }
             }
         }
-        log.LogDebug('param init 6')
 
     }
 

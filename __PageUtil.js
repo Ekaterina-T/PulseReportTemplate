@@ -30,7 +30,6 @@ class PageUtil {
         log.LogDebug('after set data')
         ParamUtil.Initialise(context); // initialise parameters
         log.LogDebug('after param init')
-        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible

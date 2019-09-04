@@ -9,7 +9,7 @@ class DataSourceUtil {
       */
 
     static function getDsId (context) {
-
+        
         var state = context.state;
         var report = context.report;
         var log = context.log;
