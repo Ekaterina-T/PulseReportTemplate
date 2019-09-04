@@ -96,7 +96,7 @@ class PulseProgramUtil {
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
-            baseValues.push(baseVal[i].Value);
+            baseValues.push(baseVal.Value);
         }
 
         delete pulseSurveyContentBaseValues.key;
