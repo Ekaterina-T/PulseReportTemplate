@@ -259,6 +259,7 @@ class ParamUtil {
                 // We can't get the type of parameter (single or multi) before its initialisation.
                 // So firstly check if it supports ParameterValueMultiSelect options
                 try {
+                    log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                     var valArr = [new ParameterValueResponse(defaultParameterValue)];
                     var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
                     state.Parameters[mandatoryPageParameters[i]] = multiResponse;
