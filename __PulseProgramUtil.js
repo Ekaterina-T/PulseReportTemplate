@@ -128,7 +128,11 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
+
+        log.LogDebug('before setPulseSurveyContentInfo')
         var resources = setPulseSurveyContentInfo(context);
+
+        log.LogDebug('exclude start')
 
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { //not pulse program or there's nothing to exclude on this page
             return allOptions;
@@ -144,6 +148,8 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
+
+        log.LogDebug('exclude end')
         return optionsWithData;
      }
 
@@ -158,7 +164,6 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
 
         log.LogDebug('key = '+key);
-
         log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
@@ -166,9 +171,6 @@ class PulseProgramUtil {
             var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
             var resources = pulseSurveyContentInfo[key];
             var resourcesData = {};
-
-            log.LogDebug(resourcesBase.length);
-            log.LogDebug(JSON.stringify(resources));
 
             for(var i=0; i< resources.length; i++) {
                 var baseVal: Datapoint = resourcesBase[i];
