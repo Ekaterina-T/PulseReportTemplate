@@ -193,9 +193,6 @@ class PulseProgramUtil {
             var resources = pulseSurveyContentInfo[key];
             var resourcesData = {};
 
-            log.LogDebug('resources.len='+resources.length);
-            log.LogDebug('resourcesBase.len='+resourcesBase.length);
-
             for(var i=0; i< resources.length; i++) {
                 resourcesData[resources[i].Code] = { Value: resourcesBase[i]};
             }

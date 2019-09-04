@@ -265,7 +265,7 @@ class ParamUtil {
                 }
                     //if not, set it as single select parameter
                 catch (e) {
-                    log.LogDebug('def='+defaultParameterValue)
+                    log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
                     log.LogDebug('here')
                 }
