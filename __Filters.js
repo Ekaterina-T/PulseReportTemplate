@@ -24,6 +24,8 @@ class Filters {
 
         } catch (e) {  // i.e. not a page with custom source
             var allFilters = filterFromRespondentData.concat(filterFromSurveyData);
+            log.LogDebug(JSON.stringify(allFilters));
+            log.LogDebug(JSON.stringify(PulseProgramUtil.excludeItemsWithoutData(context, allFilters)));
             return PulseProgramUtil.excludeItemsWithoutData(context, allFilters);
         }
     }
