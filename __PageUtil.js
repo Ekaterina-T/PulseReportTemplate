@@ -16,8 +16,6 @@ class PageUtil {
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
-        log.LogDebug('--- START '+page.CurrentPageId+' ---')
-
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
             pageContext.Items.Add('Source', add_in_source);
@@ -53,7 +51,6 @@ class PageUtil {
         //for tests
         PulseProgramUtil.printPulseSurveyContentInfoTable(context);
 
-        log.LogDebug('--- END '+page.CurrentPageId+' ---')
     }
 
     /*
