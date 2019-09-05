@@ -246,31 +246,30 @@ class ParamUtil {
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
-
-            log.LogDebug('set default values start '+mandatoryPageParameters[i]);
-
-            if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
-                log.LogDebug('is null')
-                try {
-                    var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
-                    if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
-                        continue;
-                    }
-                } catch (e) {continue;}
-
-                // We can't get the type of parameter (single or multi) before its initialisation.
-                // So firstly check if it supports ParameterValueMultiSelect options
-                try {
-                    var valArr = [new ParameterValueResponse(defaultParameterValue)];
-                    var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
-                    state.Parameters[mandatoryPageParameters[i]] = multiResponse;
-                }
-                    //if not, set it as single select parameter
-                catch (e) {
-                    state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
-                }
+            // safety check: set default value if not defined or pulse program changed
+            if (!state.Parameters.IsNull(mandatoryPageParameters[i]) && page.SubmitSource !== 'projectSelector') {
+                continue;
             }
-            log.LogDebug('set default values end');
+
+            try {
+                var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
+                if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
+                    continue;
+                }
+            } catch (e) {continue;}
+
+            // We can't get the type of parameter (single or multi) before its initialisation.
+            // So firstly check if it supports ParameterValueMultiSelect options
+            try {
+                var valArr = [new ParameterValueResponse(defaultParameterValue)];
+                var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+                state.Parameters[mandatoryPageParameters[i]] = multiResponse;
+            }
+                //if not, set it as single select parameter
+            catch (e) {
+                state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
+            }
+
         }
 
     }
@@ -417,7 +416,6 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('OPTIONS after exclude'+parameterId+': '+JSON.stringify(options))
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
