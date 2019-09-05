@@ -203,4 +203,23 @@ class PulseProgramUtil {
         }
 
     }
+
+    /**
+     *
+     */
+    static public function isShowAllVisible(context) {
+
+        if(!DataSourceUtil.isProjectSelectorNeeded(context)) {
+            return true;
+        }
+
+        var PulseSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'PulseSurveyData');
+        var roles = PulseSurveyData.hasOwnProperty('showAllVisibleForRoles') && PulseSurveyData['showAllVisibleForRoles'];
+        var user = context.user;
+
+        if(!roles) {
+            return true;
+        }
+
+    }
 }
