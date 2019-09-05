@@ -76,8 +76,6 @@ class PulseProgramUtil {
 
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
-        
-        //log.LogDebug('setPulseSurveyContentInfo'+JSON.stringify(pulseSurveyContentInfo))
 
         return; 
     }
@@ -101,8 +99,6 @@ class PulseProgramUtil {
 
         delete pulseSurveyContentBaseValues.key;
         pulseSurveyContentBaseValues[key] = baseValues;
-        
-        //log.LogDebug('setPulseSurveyContentBaseValues'+JSON.stringify(pulseSurveyContentBaseValues))
 
         return;
     }

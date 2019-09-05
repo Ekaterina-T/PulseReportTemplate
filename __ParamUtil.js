@@ -274,7 +274,6 @@ class ParamUtil {
 
     }
 
-
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
 
     /*
@@ -355,11 +354,9 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
-        log.LogDebug('getDefaultParameterValue for '+parameterName+': '+JSON.stringify(parameterOptions))
 
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
-
 
     /*
   * Adding values to single response parameter
@@ -403,15 +400,24 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var options = [];
+        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        if(cachedParameterOptions.hasOwnProperty(key)) {
+            options = cachedParameterOptions[key];
+        } else {
 
-        if(!resource) {
-            return [];
+            var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+            var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+
+            if(!resource) {
+                return [];
+            }
+
+            options = getRawOptions(context, resource, parameterInfo.type);
+            cachedParameterOptions[key] = options;
         }
 
-        options = getRawOptions(context, resource, parameterInfo.type);
+        log.LogDebug(JSON.stringify(cachedParameterOptions));
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
