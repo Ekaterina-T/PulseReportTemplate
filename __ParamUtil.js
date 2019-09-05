@@ -402,9 +402,9 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        if(cachedParameterOptions.hasOwnProperty(key)) {
-            options = cachedParameterOptions[key];
-        } else {
+        //if(cachedParameterOptions.hasOwnProperty(key)) {
+        //    options = cachedParameterOptions[key];
+        //} else {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
@@ -415,9 +415,8 @@ class ParamUtil {
 
             options = getRawOptions(context, resource, parameterInfo.type);
             cachedParameterOptions[key] = options;
-        }
+        //}
 
-        log.LogDebug(JSON.stringify(cachedParameterOptions));
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
