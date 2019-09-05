@@ -247,7 +247,7 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
-            log.LogDebug('se default values start');
+            log.LogDebug('set default values start');
 
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
@@ -270,7 +270,7 @@ class ParamUtil {
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
                 }
             }
-            log.LogDebug('se default values end');
+            log.LogDebug('set default values end');
         }
 
     }
@@ -356,7 +356,7 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
-        log.LogDebug('options for '+parameterName+': '+JSON.stringify(parameterOptions))
+        log.LogDebug('getDefaultParameterValue for '+parameterName+': '+JSON.stringify(parameterOptions))
 
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
@@ -416,7 +416,7 @@ class ParamUtil {
 
         if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('OPTIONS '+parameterId+': '+JSON.stringify(options))
+            log.LogDebug('OPTIONS after exclude'+parameterId+': '+JSON.stringify(options))
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
