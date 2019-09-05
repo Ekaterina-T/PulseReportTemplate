@@ -247,10 +247,10 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
-            log.LogDebug('set default values start');
+            log.LogDebug('set default values start '+mandatoryPageParameters[i]);
 
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
-
+                log.LogDebug('is null')
                 try {
                     var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
                     if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
@@ -378,6 +378,7 @@ class ParamUtil {
         }
 
         var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
+        log.LogDebug('load '+parameter.parameterId+': '+JSON.stringify(parameterOptions))
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
                 var val = new ParameterValueResponse();
