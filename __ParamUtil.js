@@ -247,9 +247,7 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
-            log.LogDebug(mandatoryPageParameters[i])
-            log.LogDebug(state.Parameters.IsNull(mandatoryPageParameters[i]))
-            log.LogDebug(getDefaultParameterValue(context, mandatoryPageParameters[i]));
+            log.LogDebug('se default values start');
 
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
@@ -260,21 +258,19 @@ class ParamUtil {
                     }
                 } catch (e) {continue;}
 
-                log.LogDebug(mandatoryPageParameters[i]+' def='+defaultParameterValue)
                 // We can't get the type of parameter (single or multi) before its initialisation.
                 // So firstly check if it supports ParameterValueMultiSelect options
                 try {
                     var valArr = [new ParameterValueResponse(defaultParameterValue)];
                     var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
                     state.Parameters[mandatoryPageParameters[i]] = multiResponse;
-                    log.LogDebug('set multi')
                 }
                     //if not, set it as single select parameter
                 catch (e) {
                     state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
-                    log.LogDebug('set single')
                 }
             }
+            log.LogDebug('se default values end');
         }
 
     }
@@ -360,6 +356,7 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
+        log.LogDebug('options for '+parameterName+': '+JSON.stringify(parameterOptions))
 
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
