@@ -377,7 +377,6 @@ class ParamUtil {
         }
 
         var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
-        log.LogDebug('load '+parameter.parameterId+': '+JSON.stringify(parameterOptions))
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
                 var val = new ParameterValueResponse();
