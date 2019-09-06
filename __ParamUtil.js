@@ -202,8 +202,8 @@ class ParamUtil {
         var log = context.log;
         var i;
         
-        // reset all parameters if a page refreshes when switching the surveys
-        if (page.SubmitSource === 'surveyType') {
+        // reset all parameters if a page refreshes when switching surveys
+        if (page.SubmitSource === 'surveyType' || page.SubmitSource === 'projectSelector') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
@@ -247,7 +247,7 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
-            if (!state.Parameters.IsNull(mandatoryPageParameters[i]) && page.SubmitSource !== 'projectSelector') {
+            if (!state.Parameters.IsNull(mandatoryPageParameters[i])) {
                 continue;
             }
 
