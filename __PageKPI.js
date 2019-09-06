@@ -251,6 +251,14 @@ class PageKPI {
   }
 
     /**
+     *
+     */
+
+    static function tableVerbatimBase_Hide(context) {
+        return true;
+    }
+
+    /**
      * @memberof PageKPI
      * @function tableVerbatimBase_Render
      * @description function to render the Verbatim Base table. It is used for suppressing Verbatim Tables to check base
