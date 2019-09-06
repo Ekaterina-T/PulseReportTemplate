@@ -372,4 +372,11 @@ class PageResponseRate {
         }
     }
 
+    /**
+     *
+     */
+    static function chartByTime_Hide(context) {
+        return Export.isExcelExportMode(context);
+    }
+
 }

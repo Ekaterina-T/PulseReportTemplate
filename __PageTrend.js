@@ -77,7 +77,7 @@ class PageTrend {
      */
     static function chartTrend_Hide(context){
 
-        return SuppressUtil.isGloballyHidden(context);
+        return SuppressUtil.isGloballyHidden(context) || Export.isExcelExportMode(context);
 
     }
 

@@ -6,6 +6,12 @@ class Export {
         return (state.ReportExecutionMode === ReportExecutionMode.PdfExport || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) ? true : false;
     }
 
+    static function isExcelExportMode (context) {
+
+        var state = context.state;
+        return state.ReportExecutionMode === ReportExecutionMode.ExcelExport ? true : false;
+    }
+
     /*
      * Show Break By parameter value in pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} context

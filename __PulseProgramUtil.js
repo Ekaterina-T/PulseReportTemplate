@@ -29,7 +29,7 @@ class PulseProgramUtil {
         var resourcesLog = {};
         var i;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
-        var pageId = 'Page_'+ context.pageContext.Items['CurrentPageId'];
+        var pageId = PageUtil.getCurrentPageIdInConfig (context);
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
 
         // keep property values in array
