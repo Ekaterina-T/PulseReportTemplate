@@ -49,6 +49,8 @@ class StyleAndJavaScriptUtil {
         // examples
         // pagesToHide: [\'page1\', \'page2\']
         // logo: \'some url\';
+        properties.push('executionMode: '+JSON.stringify(state.ReportExecutionMode));
+
         properties.push('pagesToShow: '+JSON.stringify(PageUtil.getPageNamesToShow(context).join(';').toLowerCase()+';'));
 
         properties.push('pageHasViewSwitch: '+JSON.stringify(PageUtil.isViewSwitchAvailable(context)));
