@@ -188,6 +188,27 @@ class ParamUtil {
     }
 
     /*
+    * Reset parametrs according to the list.
+    * @param {object} context object {state: state}
+    * @param {array} parameterList
+    */
+
+    static function ResetQuestionBasedParameters (context, parameterList) {
+
+        var state = context.state;
+        var i;
+
+        for(i=0; i<parameterList.length; i++) {
+            var paramType = reportParameterValuesMap[parameterList[i]].type;
+            if(paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')
+            state.Parameters[parameterList[i]] = null;
+        }
+
+        return;
+    }
+
+
+    /*
   * Initialise parametrs on page.
   * Steps to do:
   * - clear all params if new data source is selected
@@ -203,8 +224,13 @@ class ParamUtil {
         var i;
         
         // reset all parameters if a page refreshes when switching surveys
-        if (page.SubmitSource === 'surveyType' || page.SubmitSource === 'projectSelector') {
+        if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+            Filters.ResetAllFilters(context);
+        }
+
+        if(page.SubmitSource === 'projectSelector') {
+            ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
 
