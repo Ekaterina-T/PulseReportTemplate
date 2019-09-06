@@ -271,7 +271,6 @@ class Filters {
     }
 
 
-
     /*
   * @function GeneratePageSpecificPanelFilterExpression
   * @description function to generate custom filter expression for the 'FilterPanel' filter.
@@ -283,7 +282,7 @@ class Filters {
 
     static function GeneratePageSpecificPanelFilterExpression (context) {
 
-        return GeneratePanelFilterExpression (context, true);
+        return GeneratePanelFilterExpression (context, 'pageSpecific');
 
     }
 
