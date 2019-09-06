@@ -113,6 +113,7 @@ class PageResponseRate {
         table.UseRespondentData = true;
     }
 
+
     /**
      * @memberof PageResponseRate
      * @function tableCollectionPeriod_Render
@@ -145,6 +146,12 @@ class PageResponseRate {
     }
 
 
+    /**
+     *
+     */
+    static function tableCollectionPeriod_Hide(context) {
+        return true;
+    }
 
     /**
      * @memberof PageResponseRate
@@ -242,6 +249,12 @@ class PageResponseRate {
     }
 
 
+    /**
+     *
+     */
+    static function tableNumberOfResponses_Hide(context) {
+        return true;
+    }
 
     /**
      * @memberof PageResponseRate
@@ -275,7 +288,6 @@ class PageResponseRate {
         table.RemoveEmptyHeaders.Rows = false;
         table.UseRespondentData = true;
     }
-
 
 
     /**
