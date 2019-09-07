@@ -1,40 +1,22 @@
 class Export {
 
     static function isExportMode (context) {
-
         var state = context.state;
-        return (state.ReportExecutionMode === ReportExecutionMode.PdfExport || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) ? true : false;
+        return (state.ReportExecutionMode === ReportExecutionMode.PdfExport || state.ReportExecutionMode === ReportExecutionMode.ExcelExport);
     }
 
     static function isExcelExportMode (context) {
 
         var state = context.state;
-        return state.ReportExecutionMode === ReportExecutionMode.ExcelExport ? true : false;
+        return state.ReportExecutionMode === ReportExecutionMode.ExcelExport;
     }
 
-    /*
-     * Show Break By parameter value in pdf export (dropdowns are not rendered in pdf exports)
-     * @param {object} context
-     * @param {string} parameterName
-  *@returns {}
-     */
-    /*
-    static function breakByLabelForPdfExport (context, parameterName){
+    static function isPDFExportMode (context) {
 
       var state = context.state;
-      var breakBy = 'Break by: ';
+      return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
+  }
 
-      if (state.ReportExecutionMode === ReportExecutionMode.PdfExport) {
-
-        if (state.Parameters.IsNull(parameterName)) {
-          return breakBy+='none';
-        }
-        var selectedOption : ParameterValueResponse = state.Parameters[parameterName];
-        return breakBy+= selectedOption.DisplayValue;
-      }
-
-    }
-    */
     /*
      * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} {state: state, report: report, text: text, log: log}

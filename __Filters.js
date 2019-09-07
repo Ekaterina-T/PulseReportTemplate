@@ -216,15 +216,17 @@ class Filters {
 
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
 
-        for (var i=startNum; i<startNum+filters.length; i++) {
+        for (var i=0; i<filters.length; i++) {
 
-            if(!state.Parameters.IsNull(paramName+(i+1))) {
+            var paramId = paramName+(i+startNum);
+
+            if(!state.Parameters.IsNull(paramId)) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
-                var responses = ParamUtil.GetSelectedCodes(context, paramName+(i+1));
+                var responses = ParamUtil.GetSelectedCodes(context, paramId);
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
-                    individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i-startNum]+', "'+responses[j]+'")');
+                    individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
                 }               
 		        filterExpr.push('('+individualFilterExpr.join(' OR ')+')');
             }

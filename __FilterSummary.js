@@ -1,6 +1,6 @@
 class FilterSummary {
 
-    /*
+    /**
     * Get string "parameter label: parameter value" instead of drop downs for PDF export.
     * @param {object} context object {state: state, report: report, log: log}
     * @param {paramName} parameter name
@@ -24,6 +24,15 @@ class FilterSummary {
         }
     }
 
+    /**
+     * indicates if filter summary for a card should be hidden or not
+     * @param {object} context
+     * @returns {Boolean} - if hide card's filter summary or not
+     */
+    static function filterSummaryText_Hide(context) {
+        return !Export.isExportMode(context);
+    }
+
 
     /*
     * Get string "parameter label: parameter value" instead of drop downs for PDF export.
@@ -38,54 +47,65 @@ class FilterSummary {
         var pageContext = context.pageContext;
         var str = '';
 
-        if(pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage') || state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
-
-            // data source
-            if(Config.Surveys.length>1) {
-
-                str += Export.displayDataSourceInfo(context);
-                str += System.Environment.NewLine; // for Excel export
-            }
-
-            //hierarchy
-            str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
-            str += System.Environment.NewLine;
-
-            //selected date period
-            if(DataSourceUtil.isProjectSelectorNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
-                var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
-                var start: DateTime = datePeriod.startDate;
-                var end: DateTime = datePeriod.endDate;
-
-                str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
-                str += System.Environment.NewLine;
-            }
-
-            if(DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'WaveQuestion')) {
-
-                str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'Waves')+' '+ParamUtil.GetSelectedOptions(context, 'p_Wave')[0].Label+'</div>';
-                str += System.Environment.NewLine;
-            }
-
-            //filter panel filters
-            var filterOptions = Filters.GetFiltersValues(context, 'global');
-
-            if(filterOptions) {
-                for(var i=0; i<filterOptions.length; i++) {
-
-                    var options = [];
-                    for(var j=0; j<filterOptions[i].selectedOptions.length; j++) {
-                        var option = filterOptions[i].selectedOptions[j];
-                        options.push(option.Label);
-                    }
-                    str += '<div>'+filterOptions[i].Label+': '+options.join(', ')+'</div>';
-                    str += System.Environment.NewLine;
-                }
-            }
-
-            str = '<div class="material-card material-card_global-filter-summary">'+str+'</div>'
+        // data source
+        if(Config.Surveys.length>1) {
+            str += Export.displayDataSourceInfo(context);
+            str += System.Environment.NewLine; // for Excel export
         }
-        return str;
+
+        //hierarchy
+        str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
+        str += System.Environment.NewLine;
+
+        //selected date period
+        if(DataSourceUtil.isProjectSelectorNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
+            var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
+            var start: DateTime = datePeriod.startDate;
+            var end: DateTime = datePeriod.endDate;
+
+            str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
+            str += System.Environment.NewLine;
+        }
+
+        //selected wave
+        if(DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'WaveQuestion')) {
+
+            str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'Waves')+' '+ParamUtil.GetSelectedOptions(context, 'p_Wave')[0].Label+'</div>';
+            str += System.Environment.NewLine;
+        }
+
+        //filter panel filters
+        var filterOptions = Filters.GetFiltersValues(context, 'global');
+
+        for(var i=0; i<filterOptions.length; i++) {
+
+            var options = [];
+            for(var j=0; j<filterOptions[i].selectedOptions.length; j++) {
+                var option = filterOptions[i].selectedOptions[j];
+                options.push(option.Label);
+            }
+            str += '<div>'+filterOptions[i].Label+': '+options.join(', ')+'</div>';
+            str += System.Environment.NewLine;
+        }
+
+        return '<div class="material-card material-card_global-filter-summary">'+str+'</div>'
+
+    }
+
+    /**
+     * indicates if filter summary for a card should be hidden or not
+     * @param {object} context
+     * @returns {Boolean} - if hide card's filter summary or not
+     */
+    static function globalReportFilterSummaryText_Hide(context) {
+
+        var log = context.log;
+        var state = context.state;
+        var pageContext = context.pageContext;
+        var isDefaultPage = pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
+        var str = '';
+
+        return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context));
     }
 
 }
