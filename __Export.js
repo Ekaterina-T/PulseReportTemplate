@@ -6,30 +6,26 @@ class Export {
     }
 
     static function isExcelExportMode (context) {
-
         var state = context.state;
         return state.ReportExecutionMode === ReportExecutionMode.ExcelExport;
     }
 
-    static function isPDFExportMode (context) {
-
+    static function isPdfExportMode (context) {
       var state = context.state;
       return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
-  }
+    }
 
-    /*
+    /**
      * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} {state: state, report: report, text: text, log: log}
      * @return {paramName} str to append to text component
      */
-
     static function displayDataSourceInfo(context) {
 
         var state = context.state;
         var log = context.log;
         var str = '';
-
-
+        
         var selectedProject: Project = DataSourceUtil.getProject(context);
         str+='Program Name: '+selectedProject.ProjectName+' ';
 
