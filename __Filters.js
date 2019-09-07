@@ -214,16 +214,10 @@ class Filters {
         var startNum = (filtersType==='background') ? 0 : bgFilters.length;
         var filterExpr = [];
 
-        log.LogDebug('filtersType='+filtersType);
-        log.LogDebug('filters='+JSON.stringify(filters));
-        log.LogDebug('startNum'+startNum)
-
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
 
         for (var i=startNum; i<startNum+filters.length; i++) {
 
-            log.LogDebug('filters='+filters[i-startNum])
-            log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
             if(!state.Parameters.IsNull(paramName+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
