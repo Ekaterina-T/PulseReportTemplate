@@ -222,7 +222,7 @@ class Filters {
 
         for (var i=startNum; i<startNum+filters.length; i++) {
 
-            log.LogDebug('filters='+filters[i])
+            log.LogDebug('filters='+filters[i-startNum])
             log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
             if(!state.Parameters.IsNull(paramName+(i+1))) {
 
@@ -230,7 +230,7 @@ class Filters {
                 var responses = ParamUtil.GetSelectedCodes(context, paramName+(i+1));
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
-                    individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
+                    individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i-startNum]+', "'+responses[j]+'")');
                 }               
 		        filterExpr.push('('+individualFilterExpr.join(' OR ')+')');
             }
