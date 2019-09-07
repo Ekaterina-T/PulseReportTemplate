@@ -225,10 +225,12 @@ class Filters {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
                 var responses = ParamUtil.GetSelectedCodes(context, paramName+(i+1));
+                log.LogDebug(filters[i]+': '+JSON.stringify(responses))
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
-                }                
+                }  
+                log.LogDebug(individualFilterExpr)              
 		        filterExpr.push('('+individualFilterExpr.join(' OR ')+')');
             }
 
