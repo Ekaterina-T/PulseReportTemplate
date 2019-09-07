@@ -210,13 +210,12 @@ class Filters {
 
         var paramName = GetPanelFilterPrefixByType (context, filtersType);
         var filters = GetFilterListByType(context, filtersType);
-
-        log.LogDebug('filtersType='+filtersType)
+        var startNum = ( filtersType==='background') ? 0 : GetFilterListByType(context, 'background').length;
         var filterExpr = [];
 
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
 
-        for (var i=0; i<filters.length; i++) {
+        for (var i=startNum; i<filters.length; i++) {
 
             log.LogDebug('filters='+filters[i])
             log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
