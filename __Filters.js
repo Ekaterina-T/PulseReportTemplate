@@ -211,6 +211,7 @@ class Filters {
         var paramName = GetPanelFilterPrefixByType (context, filtersType);
         var filters = GetFilterListByType(context, filtersType);
 
+        log.LogDebug('filtersType='+filtersType)
         log.LogDebug('filters='+JSON.stringify(filters))
         log.LogDebug('paramName='+paramName)
         var filterExpr = [];
@@ -232,6 +233,8 @@ class Filters {
             }
 
         }
+
+        log.LogDebug(filterExpr.join(' AND '));
         return filterExpr.join(' AND ');
     }
 
