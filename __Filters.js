@@ -222,8 +222,8 @@ class Filters {
 
         for (var i=startNum; i<startNum+filters.length; i++) {
 
-            //log.LogDebug('filters='+filters[i])
-            //log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
+            log.LogDebug('filters='+filters[i])
+            log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
             if(!state.Parameters.IsNull(paramName+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
