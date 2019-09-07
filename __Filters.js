@@ -212,31 +212,27 @@ class Filters {
         var filters = GetFilterListByType(context, filtersType);
 
         log.LogDebug('filtersType='+filtersType)
-        log.LogDebug('filters='+JSON.stringify(filters))
-        log.LogDebug('paramName='+paramName)
         var filterExpr = [];
 
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
 
         for (var i=0; i<filters.length; i++) {
 
-            log.LogDebug('is null='+state.Parameters.IsNull(paramName+(i+1)))
+            log.LogDebug('filters='+filters[i])
+            log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
             if(!state.Parameters.IsNull(paramName+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
                 var responses = ParamUtil.GetSelectedCodes(context, paramName+(i+1));
-                log.LogDebug(filters[i]+': '+JSON.stringify(responses))
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
-                }  
-                log.LogDebug(individualFilterExpr)              
+                }               
 		        filterExpr.push('('+individualFilterExpr.join(' OR ')+')');
             }
 
         }
 
-        log.LogDebug(filterExpr.join(' AND '));
         return filterExpr.join(' AND ');
     }
 
