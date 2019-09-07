@@ -11,16 +11,12 @@ class FilterSummary {
 
         var text = context.text;
         var log = context.log;
-        //log.LogDebug('fs: 1 ')
         var filterName = TextAndParameterUtil.getTextTranslationByKey(context, filterText);
-        //log.LogDebug('fs: 2 '+filterName)
         var filterValues = ParamUtil.GetSelectedOptions(context, paramName);
-        //log.LogDebug('fs: 3 '+filterValues)
 
         if(filterValues.length>0) { // do not print anything if parameter is empty
 
             var filterLabels = [];
-
             for(var i=0; i<filterValues.length; i++) {
                 filterLabels.push(filterValues[i].Label);
             }
@@ -72,7 +68,7 @@ class FilterSummary {
             }
 
             //filter panel filters
-            var filterOptions = Filters.GetFiltersValues(context);
+            var filterOptions = Filters.GetFiltersValues(context, 'global');
 
             if(filterOptions) {
                 for(var i=0; i<filterOptions.length; i++) {
