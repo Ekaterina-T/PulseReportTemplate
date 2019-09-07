@@ -133,7 +133,7 @@ class Filters {
 
         // no question for this parameter placeholder
         if (filterList.length < paramNum) {
-            this.return;
+            return;
         }
 
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum-1]);
