@@ -220,7 +220,7 @@ class Filters {
 
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
 
-        for (var i=startNum; i<filters.length; i++) {
+        for (var i=startNum; i<startNum+filters.length; i++) {
 
             //log.LogDebug('filters='+filters[i])
             //log.LogDebug(paramName+(i+1)+' is null='+state.Parameters.IsNull(paramName+(i+1)))
