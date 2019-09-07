@@ -9,8 +9,7 @@ class Filters {
 
         var log = context.log;
 
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData'); 
-        log.LogDebug(JSON.stringify(filterFromSurveyData))   
+        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');  
         return !filterFromSurveyData? [] : PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
     }
 
@@ -22,7 +21,6 @@ class Filters {
     static function GetBackgroundDataFilterList (context) {
 
         var log = context.log;
-
         return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');        
     }
 
@@ -69,8 +67,6 @@ class Filters {
     static function GetFilterListByType (context, filtersType) {
 
         var log = context.log;
-
-        log.LogDebug('filtersType='+filtersType)
 
         //if filter type is not set it is either global or pageSpecific 
         //page specificness can be defined by context
@@ -215,7 +211,7 @@ class Filters {
         var paramName = GetPanelFilterPrefixByType (context, filtersType);
         var filters = GetFilterListByType(context, filtersType);
 
-        log.LogDebug('filters='+filters)
+        log.LogDebug('filters='+JSON.stringify(filters))
         log.LogDebug('paramName='+paramName)
         var filterExpr = [];
 
@@ -223,7 +219,7 @@ class Filters {
 
         for (var i=0; i<filters.length; i++) {
 
-            log.LogDebug(+'is null='+state.Parameters.IsNull(paramName+(i+1)))
+            log.LogDebug('is null='+state.Parameters.IsNull(paramName+(i+1)))
             if(!state.Parameters.IsNull(paramName+(i+1))) {
 
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
