@@ -209,8 +209,9 @@ class Filters {
         var log = context.log;
 
         var paramName = GetPanelFilterPrefixByType (context, filtersType);
-        var filters = GetFilterListByType(context, filtersType);
-        var startNum = ( filtersType==='background') ? 0 : GetFilterListByType(context, 'background').length;
+        var bgFilters = GetFilterListByType(context, 'background');
+        var filters = (filtersType==='background') ? bgFilters : GetFilterListByType(context, filtersType);
+        var startNum = (filtersType==='background' || bgFilters.length === 0) ? 0 : bgFilters.length+1;
         var filterExpr = [];
 
         context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
