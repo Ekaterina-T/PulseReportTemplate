@@ -211,7 +211,7 @@ class Filters {
         var paramName = GetPanelFilterPrefixByType (context, filtersType);
         var bgFilters = GetFilterListByType(context, 'background');
         var filters = (filtersType==='background') ? bgFilters : GetFilterListByType(context, filtersType);
-        var startNum = (filtersType==='background' || bgFilters.length === 0) ? 0 : bgFilters.length+1;
+        var startNum = (filtersType==='background') ? 0 : bgFilters.length;
         var filterExpr = [];
 
         log.LogDebug('filtersType='+filtersType);
