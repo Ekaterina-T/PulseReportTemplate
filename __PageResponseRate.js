@@ -1,7 +1,5 @@
 class PageResponseRate {
 
-
-
     /**
      * @memberof PageResponseRate
      * @function Hide
@@ -12,17 +10,6 @@ class PageResponseRate {
     static function Hide(context){
 
         return false;
-    }
-
-    /**
-     * @memberof PageResponseRate
-     * @function Render
-     * @description function to render the page
-     * @param {Object} context - {component: page, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-
-    static function Render(context){
-
     }
 
     /**
@@ -113,7 +100,6 @@ class PageResponseRate {
         table.UseRespondentData = true;
     }
 
-
     /**
      * @memberof PageResponseRate
      * @function tableCollectionPeriod_Render
@@ -144,7 +130,6 @@ class PageResponseRate {
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = true;
     }
-
 
     /**
      *
@@ -248,7 +233,6 @@ class PageResponseRate {
         table.RemoveEmptyHeaders.Rows = false;
     }
 
-
     /**
      *
      */
@@ -269,19 +253,12 @@ class PageResponseRate {
         var log = context.log;
         var table = context.table;
 
-
         // add rows - standard set of headers for response rate calculation
         tableResponseRate_AddBanner(context, 'row');
-        /*table.RowHeaders[0].HideData = true;
-          table.RowHeaders[0].SubHeaders[0].HideData = true;
-          table.RowHeaders[1].HideData = true;
-          table.RowHeaders[1].SubHeaders[0].HideData = true;*/
-
 
         // add column - trending by Date variable
         var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'MailingDateQuestion');
         TableUtil.addTrending(context, dateQId);
-
 
         // global table settings
         table.Caching.Enabled = false;
@@ -312,7 +289,6 @@ class PageResponseRate {
         if (demographics.length) {
 
             // break by question
-
             var qId = demographics[0].Code;
             var questionInfo = QuestionUtil.getQuestionInfo(context, qId);
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
@@ -360,7 +336,6 @@ class PageResponseRate {
             }
         }
         return result;
-
     }
 
 
@@ -385,7 +360,9 @@ class PageResponseRate {
     }
 
     /**
-     *
+     * @description shows or hide chart
+     * @param {Object} context
+     * @returns {Boolean} true - if hide
      */
     static function chartByTime_Hide(context) {
         return Export.isExcelExportMode(context);
