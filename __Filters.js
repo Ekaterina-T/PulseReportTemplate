@@ -218,7 +218,7 @@ class Filters {
 
         for (var i=0; i<filters.length; i++) {
 
-            var paramId = paramName+(i+startNum);
+            var paramId = paramName+(i+startNum+1);
 
             if(!state.Parameters.IsNull(paramId)) {
 
