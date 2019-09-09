@@ -267,8 +267,10 @@ class ParamUtil {
 
         
         //set up object holding questions available on current page
-        PulseProgramUtil.setPulseSurveyContentInfo (context);
-        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        if(!DataSourceUtil.isProjectSelectorNeeded(context)) {
+            PulseProgramUtil.setPulseSurveyContentInfo(context);
+            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        }
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -444,7 +446,7 @@ class ParamUtil {
         //}
 
 
-        if(parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList') {
+        if(!DataSourceUtil.isProjectSelectorNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
