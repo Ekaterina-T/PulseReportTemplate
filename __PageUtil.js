@@ -26,7 +26,7 @@ class PageUtil {
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
-        if(state.ReportExecutionMode = ReportExecutionMode.Web && !isPageVisible(context) ) {
+        if(state.ReportExecutionMode === ReportExecutionMode.Web && !isPageVisible(context) ) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }      
