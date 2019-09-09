@@ -32,7 +32,7 @@ class PageUtil {
         }      
 
         // reset not bg var based filters on response rate page
-        if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
+        /*if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
 
             var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
             var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
@@ -40,7 +40,7 @@ class PageUtil {
             for(var i=0; i<filterFromSurveyData.length; i++) {
                 state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
             }
-        }
+        }*/
 
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
