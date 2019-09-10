@@ -85,8 +85,6 @@ class PageResponseRate {
      */
     static function tableResponseRate_Render(context){
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
 
@@ -164,8 +162,6 @@ class PageResponseRate {
         }
         return period;
     }
-
-
 
     /**
      * @memberof PageResponseRate
@@ -276,7 +272,6 @@ class PageResponseRate {
 
     static function tableByDemographics_Render (context) {
 
-        var report = context.report;
         var state = context.state;
         var log = context.log;
         var table = context.table;
@@ -286,6 +281,7 @@ class PageResponseRate {
 
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
+        log.LogDebug(JSON.stringify(demographics))
         if (demographics.length) {
 
             // break by question
