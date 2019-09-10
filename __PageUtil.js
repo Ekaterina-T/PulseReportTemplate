@@ -123,17 +123,21 @@ class PageUtil {
     static function getCurrentPageIdInConfig (context) {
 
         var log = context.log;
-        log.LogDebug('page id 1 '+context.hasOwnProperty('pageContext'));
 
         var pageContext = context.pageContext;
-        log.LogDebug('page id 2 '+!!pageContext.Items['CurrentPageId']);
-        var pageId = pageContext.Items['CurrentPageId'];
-        log.LogDebug('page id 3 '+pageId);
+        var pageId;
+
+        if(!!pageContext.Items['CurrentPageId']) {
+            pageId = pageContext.Items['CurrentPageId'];
+        } else if(context.hasOwnProperty('CurrentPageId') && context.CurrentPageId) {
+            pageId = context.CurrentPageId;
+        } else {
+            throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')
+        }
 
         if(pageId.indexOf('_ExcelExport')>0) {
             pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
         }
-        log.LogDebug('page id 4 '+pageId);
 
         return 'Page_'+pageId;
     }
