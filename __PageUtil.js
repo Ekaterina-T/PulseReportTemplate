@@ -126,7 +126,7 @@ class PageUtil {
         log.LogDebug('page id 1 '+context.hasOwnProperty('pageContext'));
 
         var pageContext = context.pageContext;
-        log.LogDebug('page id 2 '+pageContext.Items.Contains('CurrentPageId'));
+        log.LogDebug('page id 2 ');
         var pageId = pageContext.Items['CurrentPageId'];
         log.LogDebug('page id 3 '+pageId);
 
