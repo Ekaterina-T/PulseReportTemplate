@@ -13,7 +13,7 @@ class PulseProgramUtil {
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables'],
         Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
         Page_CategoricalDrilldown: ['BreakVariables'],
-        Page_Response_Rate: []
+        Page_Response_Rate: ['p_Demographics']
     }
 
     /**
@@ -21,7 +21,7 @@ class PulseProgramUtil {
      * @param {Object} context
      * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
-    static private function getResourcesList (context) {
+    static private function getResourcesList (context, includePageResultsOnly) {
 
         var log = context.log;
         var listOfResources = [];
@@ -152,8 +152,6 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
-        log.LogDebug(JSON.stringify(allOptions))
-        log.LogDebug('key='+key+' '+JSON.stringify(resources))
         //not pulse program or there's nothing to exclude on this page
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { 
             return allOptions;
