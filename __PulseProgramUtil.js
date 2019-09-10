@@ -152,6 +152,8 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
+        log.LogDebug(JSON.stringify(allOptions))
+        log.LogDebug('key='+key+' '+JSON.stringify(resources))
         //not pulse program or there's nothing to exclude on this page
         if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { 
             return allOptions;
