@@ -30,7 +30,7 @@ class PageKPI {
      * @returns {Boolean}
      */
     static function tableKPI_Hide(context){
-        return false;
+        return true;
     }
 
     /**
