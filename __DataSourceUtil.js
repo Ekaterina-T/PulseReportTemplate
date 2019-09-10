@@ -11,7 +11,6 @@ class DataSourceUtil {
     static function getDsId (context) {
         
         var state = context.state;
-        var report = context.report;
         var log = context.log;
         var pageContext = context.pageContext;
 
@@ -66,9 +65,7 @@ class DataSourceUtil {
 
     static function getProject (context) {
 
-        var state = context.state;
         var report = context.report;
-
         return report.DataSource.GetProject(getDsId(context));
     }
 

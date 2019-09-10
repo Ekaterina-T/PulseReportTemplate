@@ -148,6 +148,7 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
+
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 

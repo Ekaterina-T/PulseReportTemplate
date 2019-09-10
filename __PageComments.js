@@ -64,24 +64,17 @@ class PageComments {
     static function hitlistComments_Render(context){
 
         var log = context.log;
-        log.LogDebug('hl start');
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        log.LogDebug('hl 2');
 
         Hitlist.AddColumnsByParameter(context, "p_OpenTextQs", {sortable: true, searchable: false});
-        log.LogDebug('hl 3');
         Hitlist.AddColumnsByParameter(context, "p_ScoreQs", {sortable: true, searchable: false});
-        log.LogDebug('hl 4');
         Hitlist.AddColumnsByParameter(context, "p_TagQs", {sortable: false, searchable: false});
-        log.LogDebug('hl 5');
 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
-        log.LogDebug('hl 6');
+
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }
-        log.LogDebug('hl end');
-
     }
 
 
@@ -117,8 +110,6 @@ class PageComments {
     static function tableBase_Render(context){
 
         var log = context.log;
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
 
         // add rows = open text questions
