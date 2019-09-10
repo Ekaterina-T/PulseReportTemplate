@@ -281,7 +281,7 @@ class PageResponseRate {
 
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
-        log.LogDebug(JSON.stringify(demographics))
+
         if (demographics.length) {
 
             // break by question
@@ -297,9 +297,6 @@ class PageResponseRate {
                 hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
             }
 
-            if(state.ReportExecutionMode !== ReportExecutionMode.Web) {
-                hq.ShowTitle = true;
-            }
             table.RowHeaders.Add(hq);
 
             // global table settings
