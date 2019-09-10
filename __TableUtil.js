@@ -399,15 +399,12 @@ class TableUtil {
 
     static function getActiveQuestionsListFromPageConfig (context, pageId, propertyName, doPreCheck) {
 
+        var log = context.log;
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, propertyName);
 
         if (doPreCheck && Qs.length == 0) {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page='+pageId+', property='+propertyName+' are not specified.');
         }
-
-        var log = context.log;
-        log.LogDebug(JSON.stringify(Qs))
-        log.LogDebug(JSON.stringify(PulseProgramUtil.excludeItemsWithoutData(context, Qs)))
 
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
