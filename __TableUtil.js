@@ -405,6 +405,10 @@ class TableUtil {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page='+pageId+', property='+propertyName+' are not specified.');
         }
 
+        var log = context.log;
+        log.LogDebug(JSON.stringify(Qs))
+        log.LogDebug(JSON.stringify(PulseProgramUtil.excludeItemsWithoutData(context, Qs)))
+
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
 
