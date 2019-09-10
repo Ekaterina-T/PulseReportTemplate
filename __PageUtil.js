@@ -122,13 +122,18 @@ class PageUtil {
      */
     static function getCurrentPageIdInConfig (context) {
 
-        var pageContext = context.pageContext;
         var log = context.log;
+        log.LogDebug('page id 1');
+
+        var pageContext = context.pageContext;
+        log.LogDebug('page id 2');
         var pageId = pageContext.Items['CurrentPageId'];
+        log.LogDebug('page id 3');
 
         if(pageId.indexOf('_ExcelExport')>0) {
             pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
         }
+        log.LogDebug('page id 4 '+pageId);
 
         return 'Page_'+pageId;
     }
