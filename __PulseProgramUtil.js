@@ -13,7 +13,7 @@ class PulseProgramUtil {
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables'],
         Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
         Page_CategoricalDrilldown: ['BreakVariables'],
-        Page_Response_Rate: ['p_Demographics']
+        Page_Response_Rate: ['DemographicsQuestions']
     }
 
     /**
