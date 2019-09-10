@@ -126,9 +126,9 @@ class PageUtil {
         log.LogDebug('page id 1');
 
         var pageContext = context.pageContext;
-        log.LogDebug('page id 2');
+        log.LogDebug('page id 2 '+pageContext.hasOwnProperty('CurrentPageId'));
         var pageId = pageContext.Items['CurrentPageId'];
-        log.LogDebug('page id 3');
+        log.LogDebug('page id 3 '+pageId);
 
         if(pageId.indexOf('_ExcelExport')>0) {
             pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
