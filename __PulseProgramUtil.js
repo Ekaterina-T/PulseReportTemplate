@@ -204,12 +204,12 @@ class PulseProgramUtil {
     /**
      *
      */
-    static public function isShowAllVisible(context) {
+    static public function isShowAllNotVisible(context) {
 
         var log = context.log;
 
         log.LogDebug('isShowAllVisible2: '+!DataSourceUtil.isProjectSelectorNotNeeded(context))
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return true;
         }
         log.LogDebug('isShowAllVisible2: here')

@@ -210,8 +210,6 @@ class DataSourceUtil {
         if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
-
-        log.LogDebug('isProjectSelectorNotNeeded: '+ifHide)
         return ifHide;
     }
 }
