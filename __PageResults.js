@@ -119,7 +119,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        log.LogDEbug(JSON.stringify(categorizations))
+        log.LogDebug(JSON.stringify(categorizations))
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
