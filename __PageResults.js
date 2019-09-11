@@ -150,6 +150,7 @@ class PageResults {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
@@ -163,11 +164,17 @@ class PageResults {
             var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
 
             if(dimensions && dimensions.Count>0) {
-                return dimensions[0].split(',');
+                var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
+                for(var i=0; i<dimensionsInConfig.length; i++) {
+                    if(dimensions.indexOf(dimensionsInConfig[i])>-1) {
+                        activeDimesions.push(dimensionsInConfig[i]);
+                    }
+                }
+                return activeDimesions;
             }
         }
 
-        return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+        return dimensionsInConfig;
     }
 
 
