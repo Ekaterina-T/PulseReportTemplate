@@ -172,7 +172,7 @@ class PageResults {
                         activeDimesions.push(dimensions[i]);
                     }
                 }
-                return activeDimesions;
+                return activeDimesions.length >0 ? activeDimesions : dimensionsInConfig;
             }
         }
 
