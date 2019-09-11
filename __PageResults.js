@@ -161,15 +161,13 @@ class PageResults {
             var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
             var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]); //only one or none
 
-            log.LogDebug('dimensions.Count='+dimensions.Count)
             if(dimensions && dimensions.Count>0) {
-                log.LogDebug('inside dims check ')
+
                 var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
                 var configDimensionsStr = dimensionsInConfig.join('$')+'$';
                 configDimensionsStr = configDimensionsStr.toLowerCase();
 
                 for(var i=0; i<dimensions.Count; i++) {
-                    log.LogDebug('dimensions['+i+']='+dimensions[i])
                     if(dimensions[i]!=='' && configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
                         activeDimesions.push(dimensions[i]);
                     }
