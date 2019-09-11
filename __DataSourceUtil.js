@@ -207,10 +207,15 @@ class DataSourceUtil {
         var surveyConfig = getSurveyConfig(context);
         var ifHide = false;
 
+        log.LogDebug('here')
+
         if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
+
+            log.LogDebug('true')
             ifHide = true;
         }
 
+        log.LogDebug('not true')
         return ifHide;
     }
 }
