@@ -58,7 +58,7 @@ class FilterSummary {
         str += System.Environment.NewLine;
 
         //selected date period
-        if(DataSourceUtil.isProjectSelectorNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
             var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
             var start: DateTime = datePeriod.startDate;
             var end: DateTime = datePeriod.endDate;

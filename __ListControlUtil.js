@@ -17,7 +17,7 @@ class ListControlUtil {
 
         if(parameterName === 'p_Results_TableTabSwitcher') {
 
-            return DataSourceUtil.isProjectSelectorNeeded(context); // only needed for pulse programs
+            return DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
         }
 
         var kpiQids = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');

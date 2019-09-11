@@ -110,7 +110,7 @@ class ParamUtil {
         var log = context.log;
 
         if(parameterName === 'p_projectSelector') {
-            return !DataSourceUtil.isProjectSelectorNeeded (context);
+            return !DataSourceUtil.isProjectSelectorNotNeeded (context);
         }
 
         if(parameterName === 'p_Results_CountsPercents') {
@@ -139,7 +139,7 @@ class ParamUtil {
 
         // TO DO: pageNames are specified explicitly - this is very bad
         if(parameterName === 'p_Results_TableTabSwitcher') {
-            return !DataSourceUtil.isProjectSelectorNeeded(context); // only needed for pulse programs
+            return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
         }
 
         if(parameterName === 'p_Results_BreakBy') {
@@ -267,7 +267,7 @@ class ParamUtil {
 
         
         //set up object holding questions available on current page
-        if(!DataSourceUtil.isProjectSelectorNeeded(context)) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
@@ -446,7 +446,7 @@ class ParamUtil {
         //}
 
 
-        if(!DataSourceUtil.isProjectSelectorNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 

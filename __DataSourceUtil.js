@@ -198,7 +198,7 @@ class DataSourceUtil {
      * @returns {bool} ifHide gives false if Config contains more than one data source.
      */
 
-    static function isProjectSelectorNeeded (context) {
+    static function isProjectSelectorNotNeeded (context) {
 
         var log = context.log;
         var report = context.report;

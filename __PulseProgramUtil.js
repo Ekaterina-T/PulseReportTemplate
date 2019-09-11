@@ -153,7 +153,7 @@ class PulseProgramUtil {
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
         //not pulse program or there's nothing to exclude on this page
-        if(DataSourceUtil.isProjectSelectorNeeded(context) || !resources || resources.length === 0) { 
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !resources || resources.length === 0) {
             return allOptions;
         }
 
@@ -206,7 +206,7 @@ class PulseProgramUtil {
      */
     static public function isShowAllVisible(context) {
 
-        if(!DataSourceUtil.isProjectSelectorNeeded(context)) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return true;
         }
 
