@@ -173,7 +173,7 @@ class PageResults {
                         activeDimesions.push(dimensions[i]);
                     }
                 }
-                return activeDimesions.length >0 ? activeDimesions : dimensionsInConfig;
+                return activeDimesions.length >0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
             }
         }
 
