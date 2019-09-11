@@ -119,7 +119,6 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        log.LogDebug(JSON.stringify(categorizations))
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
@@ -153,6 +152,9 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
+        log.LogDebug(JSON.stringify(dimensionsInConfig))
+        log.LogDebug(JSON.stringify([dimensionsInConfig[0]]))
+
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
 
@@ -164,12 +166,15 @@ class PageResults {
             var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
             var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
 
+            log.LogDebug('dimensions.Count='+dimensions.Count)
             if(dimensions && dimensions.Count>0) {
+                log.LogDebug('inside dims check ')
                 var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
                 var configDimensionsStr = dimensionsInConfig.join('$')+'$';
                 configDimensionsStr = configDimensionsStr.toLowerCase();
 
                 for(var i=0; i<dimensions.Count; i++) {
+                    log.LogDebug('idimensions['+i+']='+dimensions)
                     if(configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
                         activeDimesions.push(dimensions[i]);
                     }
