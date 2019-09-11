@@ -151,20 +151,15 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-
-        log.LogDebug(JSON.stringify(dimensionsInConfig))
-        log.LogDebug(JSON.stringify([dimensionsInConfig[0]]))
-
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
 
         if(schemaId && tableName) { // there is storage for baby survey dimensions
 
-            var confirmit = context.confirmit;
-            var schema: DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
+            var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-            var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]);
+            var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]); //only one or none
 
             log.LogDebug('dimensions.Count='+dimensions.Count)
             if(dimensions && dimensions.Count>0) {
@@ -174,8 +169,8 @@ class PageResults {
                 configDimensionsStr = configDimensionsStr.toLowerCase();
 
                 for(var i=0; i<dimensions.Count; i++) {
-                    log.LogDebug('idimensions['+i+']='+dimensions)
-                    if(configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
+                    log.LogDebug('dimensions['+i+']='+dimensions[i])
+                    if(dimensions[i]!=='' && configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
                         activeDimesions.push(dimensions[i]);
                     }
                 }
