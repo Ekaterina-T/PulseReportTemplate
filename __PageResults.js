@@ -165,9 +165,10 @@ class PageResults {
 
             if(dimensions && dimensions.Count>0) {
                 var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
-                for(var i=0; i<dimensionsInConfig.length; i++) {
-                    if(dimensions.indexOf(dimensionsInConfig[i])>-1) {
-                        activeDimesions.push(dimensionsInConfig[i]);
+                var configDimensionsStr = dimensionsInConfig.join('$')+'$';
+                for(var i=0; i<dimensions.length; i++) {
+                    if(configDimensionsStr.indexOf(dimensions[i]+'$')>-1) {
+                        activeDimesions.push(dimensions[i]);
                     }
                 }
                 return activeDimesions;
