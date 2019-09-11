@@ -208,11 +208,11 @@ class PulseProgramUtil {
 
         var log = context.log;
 
-        log.LogDebug(!DataSourceUtil.isProjectSelectorNotNeeded(context))
+        log.LogDebug('isShowAllVisible2: '+!DataSourceUtil.isProjectSelectorNotNeeded(context))
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return true;
         }
-        log.LogDebug('here')
+        log.LogDebug('isShowAllVisible2: here')
 
         var PulseSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'PulseSurveyData');
         var roles = PulseSurveyData.hasOwnProperty('showAllVisibleForRoles') && PulseSurveyData['showAllVisibleForRoles'];

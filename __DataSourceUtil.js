@@ -207,15 +207,15 @@ class DataSourceUtil {
         var surveyConfig = getSurveyConfig(context);
         var ifHide = false;
 
-        log.LogDebug('here')
+        log.LogDebug('isProjectSelectorNotNeeded start'+surveyConfig.hasOwnProperty('PulseSurveyData'))
 
         if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
 
-            log.LogDebug('true')
+            log.LogDebug('isProjectSelectorNotNeeded: true')
             ifHide = true;
         }
 
-        log.LogDebug('not true')
+        log.LogDebug('isProjectSelectorNotNeeded: not true')
         return ifHide;
     }
 }
