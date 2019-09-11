@@ -221,6 +221,7 @@ class ParamUtil {
         var state = context.state;
         var page = context.page;
         var log = context.log;
+        var projectSelectorNeeded = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var i;
         
         // reset all parameters if a page refreshes when switching surveys
@@ -245,7 +246,7 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        //user unchecked show all pulse surveys checkbox or changed report base
+        //user unchecked "show all pulse surveys" checkbox or changed report base
         if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
@@ -261,13 +262,13 @@ class ParamUtil {
             if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
-        } else if(state.Parameters.IsNull('p_projectSelector')) {
+        } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
 
         
         //set up object holding questions available on current page
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
