@@ -172,7 +172,7 @@ class PageResults {
                         activeDimesions.push(dimensions[i]);
                     }
                 }
-                return activeDimesions.length >0 ? activeDimesions : [dimensionsInConfig[0]]; //return something to avoid table crush
+                return activeDimesions.length >0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
             }
         }
 
