@@ -119,7 +119,6 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        log.LogDebug(JSON.stringify(categorizations))
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
 
         for (var i=0; i<categorizations.length; i++) {
@@ -169,10 +168,7 @@ class PageResults {
                 var configDimensionsStr = dimensionsInConfig.join('$')+'$';
                 configDimensionsStr = configDimensionsStr.toLowerCase();
 
-                log.LogDebug(configDimensionsStr);
-
                 for(var i=0; i<dimensions.Count; i++) {
-                    log.LogDebug(dimensions[i]);
                     if(configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
                         activeDimesions.push(dimensions[i]);
                     }
