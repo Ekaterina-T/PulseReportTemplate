@@ -68,7 +68,7 @@ class FilterSummary {
             }
 
             //filter panel filters
-            var filterOptions = Filters.GetFiltersValues(context);
+            var filterOptions = Filters.GetFiltersValues(context, 'global');
 
             if(filterOptions) {
                 for(var i=0; i<filterOptions.length; i++) {
