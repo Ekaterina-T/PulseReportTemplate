@@ -9,8 +9,7 @@ class Filters {
 
         var log = context.log;
 
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-        return !filterFromSurveyData? [] : PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
     }
 
     /**
