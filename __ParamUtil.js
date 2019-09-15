@@ -286,11 +286,6 @@ class ParamUtil {
                 }
             } catch (e) {continue;}
 
-            if(mandatoryPageParameters[i]==='p_TrendQs') {
-                log.LogDebug(JSON.stringify(ParamUtil.cachedParameterOptions))
-                log.LogDebug(JSON.stringify(defaultParameterValue))
-            }
-
             // We can't get the type of parameter (single or multi) before its initialisation.
             // So firstly check if it supports ParameterValueMultiSelect options
             try {
@@ -435,7 +430,11 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
+        if(parameterId==='p_TrendQs') {
+            log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
+            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
+            log.LogDebug('1')
+        }
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
@@ -448,16 +447,31 @@ class ParamUtil {
             cachedParameterOptions[key] = paramOptionsObj;          
         }
 
+        if(parameterId==='p_TrendQs') {
+            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
+            log.LogDebug('2')
+        }
+
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
+        }
+
+        if(parameterId==='p_TrendQs') {
+            log.LogDebug(JSON.stringify(options));
+            log.LogDebug('3')
         }
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
-        log.LogDebug('------------------- '+parameterId+' FROM '+from+' END -------------------------')
+        if(parameterId==='p_TrendQs') {
+            log.LogDebug(JSON.stringify(options));
+            log.LogDebug('4')
+            log.LogDebug('------------------- '+parameterId+' FROM '+from+' END -------------------------')
+        }
+
         return modifyOptionsOrder(context, options, parameterInfo);
     }
 

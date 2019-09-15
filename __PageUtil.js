@@ -13,8 +13,6 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        log.LogDebug('page script: start')
-
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
@@ -24,9 +22,7 @@ class PageUtil {
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
-        log.LogDebug('page script: param init start')
         ParamUtil.Initialise(context); // initialise parameters
-        log.LogDebug('page script: param init end')
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -41,11 +37,8 @@ class PageUtil {
             HierarchyUtil.setDataTable(context);
         }
 
-        log.LogDebug(JSON.stringify(ParamUtil.cachedParameterOptions))
-        log.LogDebug('page script: end')
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
-
     }
 
     /*
