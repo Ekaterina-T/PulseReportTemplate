@@ -304,6 +304,34 @@ class ParamUtil {
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
 
+
+     /**
+     * Adding values to single response parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     */
+    static function LoadParameter (context) {
+
+        var parameter = context.parameter;
+        var log = context.log;
+
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
+        if(!isParameterToBeLoaded (context)) { // no need to load parameter
+            return; 
+        }
+
+        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
+
+        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
+                var val = new ParameterValueResponse();
+                val.StringKeyValue = parameterOptions[i].Code;
+                val.StringValue = parameterOptions[i].Label;
+                parameter.Items.Add(val);
+        }
+
+        return;
+    }
+
     /*
   * Get selected answer codes of the report parameter (single or multi response)
   * @param {Object} context  - object {state: state, log: log}
@@ -384,34 +412,6 @@ class ParamUtil {
 
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
-
-     /**
-     * Adding values to single response parameter
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     */
-    static function LoadParameter (context) {
-
-        var parameter = context.parameter;
-        var log = context.log;
-
-        var currentPage = context.pageContext.Items['CurrentPageId'];
-
-        if(!isParameterToBeLoaded (context)) { // no need to load parameter
-            return; 
-        }
-
-        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
-
-        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
-                var val = new ParameterValueResponse();
-                val.StringKeyValue = parameterOptions[i].Code;
-                val.StringValue = parameterOptions[i].Label;
-                parameter.Items.Add(val);
-        }
-
-        return;
-    }
-
     //-----------------------------------------------------------------------------
 
     /*
@@ -430,7 +430,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('----- get options for '+parameterId+' from '+from+ ' START -----');
+        log.LogDebug('----- get options for '+parameterId+' from '+from.toUpperCase()+ ' START -----');
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
