@@ -429,7 +429,7 @@ class ParamUtil {
         var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
-
+/*
         log.LogDebug('----- START get options for '+parameterId+' from '+from.toUpperCase()+ ' -----');
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
@@ -454,6 +454,7 @@ class ParamUtil {
         log.LogDebug('----- END get options for '+parameterId+' from '+from+ ' END -----');
 
         return options;
+*/
     }
 
     /**
