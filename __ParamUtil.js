@@ -452,7 +452,7 @@ class ParamUtil {
             var paramOptionsObj = {};
 
             paramOptionsObj['type'] = parameterInfo.type;
-            paramOptionsObj['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);  
+            paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);  
             cachedParameterOptions[key] = paramOptionsObj;          
         }
 
@@ -467,7 +467,7 @@ class ParamUtil {
         }
         log.LogDebug('---------------- END GetParameterOptions for '+parameterId+ ' from '+from+' ---------')
 
-        return modifyOptionsOrder(context, options, parameterInfo);
+        return options;//modifyOptionsOrder(context, options, parameterInfo);
     }
 
     /**
