@@ -385,7 +385,6 @@ class ParamUtil {
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
 
-    
      /**
      * Adding values to single response parameter
      * @param {object} context - contains Reportal scripting state, log, report, parameter objects
@@ -431,6 +430,8 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
+        log.LogDebug('----- get options for '+parameterId+' from '+from+ ' START -----');
+
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
@@ -450,6 +451,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
+        log.LogDebug('----- get options for '+parameterId+' from '+from+ ' END -----');
 
         return options;
     }
@@ -600,7 +602,6 @@ class ParamUtil {
 
         return options;
     }
-
 
     /**
      *@param {object} context
