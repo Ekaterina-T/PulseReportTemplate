@@ -265,8 +265,7 @@ class ParamUtil {
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
-
-        
+  
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
@@ -354,11 +353,8 @@ class ParamUtil {
     static function GetSelectedOptions (context, parameterName) {
 
         var log = context.log;
-        log.LogDebug('----- GET SELECTED OPT START -----')
         var selectedCodes = GetSelectedCodes (context, parameterName);
-        log.LogDebug('selected codes: '+JSON.stringify(selectedCodes))
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
-        log.LogDebug('param options: '+JSON.stringify(parameterOptions))
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
