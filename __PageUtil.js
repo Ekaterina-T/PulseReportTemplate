@@ -41,6 +41,7 @@ class PageUtil {
             HierarchyUtil.setDataTable(context);
         }
 
+        log.LogDebug(JSON.stringify(ParamUtil.cachedParameterOptions))
         log.LogDebug('page script: end')
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);

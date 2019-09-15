@@ -354,8 +354,11 @@ class ParamUtil {
     static function GetSelectedOptions (context, parameterName) {
 
         var log = context.log;
+        log.LogDebug('----- GET SELECTED OPT START -----')
         var selectedCodes = GetSelectedCodes (context, parameterName);
+        log.LogDebug('selected codes: '+JSON.stringify(selectedCodes))
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
+        log.LogDebug('param options: '+JSON.stringify(parameterOptions))
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -366,6 +369,7 @@ class ParamUtil {
                 }
             }
         }
+        log.LogDebug('----- GET SELECTED OPT END -----')
 
         return selectedOptions;
     }
@@ -444,7 +448,7 @@ class ParamUtil {
 
             if(!resource) {
                 cachedParameterOptions[key] = [];
-              //  log.LogDebug('no resource end');
+                log.LogDebug('------------------- '+parameterId+' FROM '+from+' END [] -------------------------')
                 return [];
             }
 
