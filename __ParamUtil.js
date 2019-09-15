@@ -353,17 +353,8 @@ class ParamUtil {
     static function GetSelectedOptions (context, parameterName) {
 
         var log = context.log;
-        if(parameterName==='p_TrendQs') {
-            log.LogDebug('START get selected options for '+parameterName);
-        }
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
-        if(parameterName==='p_TrendQs') {
-            log.LogDebug(JSON.stringify(parameterOptions));
-        }
         var selectedCodes = GetSelectedCodes (context, parameterName);
-        if(parameterName==='p_TrendQs') {
-            log.LogDebug(JSON.stringify(selectedCodes));
-        }
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -375,9 +366,6 @@ class ParamUtil {
             }
         }
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
-        if(parameterName==='p_TrendQs') {
-            log.LogDebug('END get selected options for '+parameterName);
-        }
 
         return selectedOptions;
     }
@@ -442,8 +430,6 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('---------------- START GetParameterOptions for '+parameterId+ ' from '+from+' ---------')
-
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
@@ -459,14 +445,12 @@ class ParamUtil {
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
-        
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug('---------------- END GetParameterOptions for '+parameterId+ ' from '+from+' ---------')
 
-        return options;//modifyOptionsOrder(context, options, parameterInfo);
+        return options;
     }
 
     /**
