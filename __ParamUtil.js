@@ -265,7 +265,8 @@ class ParamUtil {
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
-  
+
+        
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
@@ -303,34 +304,6 @@ class ParamUtil {
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
-
-
-     /**
-     * Adding values to single response parameter
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     */
-    static function LoadParameter (context) {
-
-        var parameter = context.parameter;
-        var log = context.log;
-
-        var currentPage = context.pageContext.Items['CurrentPageId'];
-
-        if(!isParameterToBeLoaded (context)) { // no need to load parameter
-            return; 
-        }
-
-        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
-
-        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
-                var val = new ParameterValueResponse();
-                val.StringKeyValue = parameterOptions[i].Code;
-                val.StringValue = parameterOptions[i].Label;
-                parameter.Items.Add(val);
-        }
-
-        return;
-    }
 
     /*
   * Get selected answer codes of the report parameter (single or multi response)
@@ -381,8 +354,8 @@ class ParamUtil {
     static function GetSelectedOptions (context, parameterName) {
 
         var log = context.log;
-        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         var selectedCodes = GetSelectedCodes (context, parameterName);
+        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -393,7 +366,6 @@ class ParamUtil {
                 }
             }
         }
-        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
 
         return selectedOptions;
     }
@@ -412,6 +384,34 @@ class ParamUtil {
 
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
+
+    /*
+  * Adding values to single response parameter
+  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+  */
+    static function LoadParameter (context) {
+
+        var parameter = context.parameter;
+        var log = context.log;
+
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
+        if(!isParameterToBeLoaded (context)) { // no need to load parameter
+            return; 
+        }
+
+        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
+
+        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
+                var val = new ParameterValueResponse();
+                val.StringKeyValue = parameterOptions[i].Code;
+                val.StringValue = parameterOptions[i].Label;
+                parameter.Items.Add(val);
+        }
+
+        return;
+    }
+
     //-----------------------------------------------------------------------------
 
     /*
@@ -426,35 +426,30 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
-/*
-        log.LogDebug('----- START get options for '+parameterId+' from '+from.toUpperCase()+ ' -----');
 
-        if(!cachedParameterOptions.hasOwnProperty(key)) {
+        //if(cachedParameterOptions.hasOwnProperty(key)) {
+        //    options = cachedParameterOptions[key];
+        //} else {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-            var paramOptionsObj = {};
 
-            paramOptionsObj['type'] = parameterInfo.type;
-            paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);  
-            cachedParameterOptions[key] = paramOptionsObj;          
-        }
+            if(!resource) {
+                return [];
+            }
 
-        paramType = cachedParameterOptions[key]['type'];
-        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
-            options.push(cachedParameterOptions[key]['options'][i]);
-        }
+            options = getRawOptions(context, resource, parameterInfo.type);
+            cachedParameterOptions[key] = options;
+        //}
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
+
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug('----- END get options for '+parameterId+' from '+from+ ' END -----');
 
-        return options;
-*/
+        return modifyOptionsOrder(context, options, parameterInfo);
     }
 
     /**
@@ -603,6 +598,7 @@ class ParamUtil {
 
         return options;
     }
+
 
     /**
      *@param {object} context
