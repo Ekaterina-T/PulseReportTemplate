@@ -435,8 +435,8 @@ class ParamUtil {
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
-        log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
-        log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
+        //log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
+        //log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
             log.LogDebug('save options into cache start')
@@ -449,17 +449,16 @@ class ParamUtil {
             log.LogDebug('save options into cache end')
         }
 
-        log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
+        //log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
-            
-           // log.LogDebug('exclude extra start')
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
+            log.LogDebug('exclude extra start')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-           // log.LogDebug('exclude extra end')
+            log.LogDebug('exclude extra end')
         }
 
         log.LogDebug('------------------- '+parameterId+' FROM '+from+' END -------------------------')
