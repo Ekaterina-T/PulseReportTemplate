@@ -435,19 +435,20 @@ class ParamUtil {
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
-       // log.LogDebug('key='+key+': '+JSON.stringify(cachedParameterOptions))
-        //log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
+        log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
+        log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
-           // log.LogDebug('save options into cache start')
+            log.LogDebug('save options into cache start')
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
             cachedParameterOptions[key]['type'] = parameterInfo.type;
             cachedParameterOptions[key]['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);
-           // log.LogDebug('save options into cache end')
+            log.LogDebug('save options into cache end')
         }
 
+        log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
