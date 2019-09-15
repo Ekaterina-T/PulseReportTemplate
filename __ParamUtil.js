@@ -368,8 +368,6 @@ class ParamUtil {
         }
 
         return selectedOptions;
-
-
     }
 
     /*
@@ -399,7 +397,7 @@ class ParamUtil {
         var currentPage = context.pageContext.Items['CurrentPageId'];
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
-            return [];
+            return; 
         }
 
         var parameterOptions = GetParameterOptions(context, null, 'load'); // get options

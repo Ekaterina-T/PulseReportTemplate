@@ -31,17 +31,6 @@ class PageUtil {
             return;
         }      
 
-        // reset not bg var based filters on response rate page
-        /*if(pageContext.Items['CurrentPageId'] === 'Response_Rate') {
-
-            var filterFromRespondentData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-            var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-
-            for(var i=0; i<filterFromSurveyData.length; i++) {
-                state.Parameters['p_ScriptedFilterPanelParameter'+(filterFromRespondentData.length+i+1)] = null;
-            }
-        }*/
-
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
             // for now it's only needed for results page hierarchy benchamrks
