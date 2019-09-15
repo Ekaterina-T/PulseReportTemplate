@@ -286,6 +286,11 @@ class ParamUtil {
                 }
             } catch (e) {continue;}
 
+            if(mandatoryPageParameters[i]==='p_TrendQs') {
+                log.LogDebug(JSON.stringify(ParamUtil.cachedParameterOptions))
+                log.LogDebug(JSON.stringify(defaultParameterValue))
+            }
+
             // We can't get the type of parameter (single or multi) before its initialisation.
             // So firstly check if it supports ParameterValueMultiSelect options
             try {
@@ -434,31 +439,22 @@ class ParamUtil {
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
-            log.LogDebug('save options into cache start for '+parameterId+' from '+from)
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-            log.LogDebug('1'+parameterId+' from '+from)
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-            log.LogDebug('2'+parameterId+' from '+from)
 
             var paramOptionsObj = {};
             paramOptionsObj['type'] = parameterInfo.type;
-            log.LogDebug('3'+parameterId+' from '+from)
             paramOptionsObj['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);  
             cachedParameterOptions[key] = paramOptionsObj;          
-            log.LogDebug('4'+parameterId+' from '+from)
-            log.LogDebug('save options into cache end for '+parameterId+' from '+from)
         }
 
-        //log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
-            log.LogDebug('exclude extra start')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('exclude extra end')
         }
 
         log.LogDebug('------------------- '+parameterId+' FROM '+from+' END -------------------------')
