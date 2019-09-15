@@ -430,7 +430,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('----- get options for '+parameterId+' from '+from.toUpperCase()+ ' START -----');
+        log.LogDebug('----- START get options for '+parameterId+' from '+from.toUpperCase()+ ' -----');
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
@@ -451,7 +451,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug('----- get options for '+parameterId+' from '+from+ ' END -----');
+        log.LogDebug('----- END get options for '+parameterId+' from '+from+ ' END -----');
 
         return options;
     }
