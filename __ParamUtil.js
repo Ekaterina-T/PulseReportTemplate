@@ -440,10 +440,11 @@ class ParamUtil {
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
             log.LogDebug('2'+parameterId+' from '+from)
 
-            cachedParameterOptions[key] = {};
-            cachedParameterOptions[key]['type'] = parameterInfo.type;
+            var paramOptionsObj = {};
+            paramOptionsObj['type'] = parameterInfo.type;
             log.LogDebug('3'+parameterId+' from '+from)
-            cachedParameterOptions[key]['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);            
+            paramOptionsObj['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);  
+            cachedParameterOptions[key] = paramOptionsObj;          
             log.LogDebug('4'+parameterId+' from '+from)
             log.LogDebug('save options into cache end for '+parameterId+' from '+from)
         }
