@@ -355,6 +355,7 @@ class ParamUtil {
         var log = context.log;
         if(parameterName==='p_TrendQs') {
             log.LogDebug('START get selected options for '+parameterName);
+            log.LogDebug(JSON.stringify(GetParameterOptions( context, parameterName, 'get selected options');))
         }
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         if(parameterName==='p_TrendQs') {
@@ -443,7 +444,6 @@ class ParamUtil {
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         log.LogDebug('---------------- START GetParameterOptions for '+parameterId+ ' from '+from+' ---------')
-        log.LogDebug(JSON.stringify(cachedParameterOptions[key]))
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
@@ -456,20 +456,15 @@ class ParamUtil {
             cachedParameterOptions[key] = paramOptionsObj;          
         }
 
-        log.LogDebug('after caching '+JSON.stringify(cachedParameterOptions[key]))
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
         
-        log.LogDebug('before filtering: '+JSON.stringify(options))
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug('after filtering: '+JSON.stringify(options))
-
-        
         log.LogDebug('---------------- END GetParameterOptions for '+parameterId+ ' from '+from+' ---------')
 
         return modifyOptionsOrder(context, options, parameterInfo);
