@@ -429,7 +429,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('------------------- '+ParameterId+' -------------------------')
+        log.LogDebug('------------------- '+parameterId+' -------------------------')
         log.LogDebug('key='+key+': '+JSON.stringify(cachedParameterOptions))
         log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
         if(cachedParameterOptions.hasOwnProperty(key)) {
