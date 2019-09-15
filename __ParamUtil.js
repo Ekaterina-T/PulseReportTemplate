@@ -439,14 +439,14 @@ class ParamUtil {
         //log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
-            log.LogDebug('save options into cache start')
+            log.LogDebug('save options into cache start '+from)
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
             cachedParameterOptions[key] = {};
             cachedParameterOptions[key]['type'] = parameterInfo.type;
             cachedParameterOptions[key]['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);
-            log.LogDebug('save options into cache end')
+            log.LogDebug('save options into cache end '+from)
         }
 
         //log.LogDebug('chached: '+JSON.stringify(cachedParameterOptions))
