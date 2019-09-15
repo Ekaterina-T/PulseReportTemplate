@@ -443,6 +443,7 @@ class ParamUtil {
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
             if(!resource) {
+                cachedParameterOptions[key] = [];
                 log.LogDebug('no resource end');
                 return [];
             }
