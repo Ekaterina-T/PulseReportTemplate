@@ -355,7 +355,6 @@ class ParamUtil {
         var log = context.log;
         if(parameterName==='p_TrendQs') {
             log.LogDebug('START get selected options for '+parameterName);
-            log.LogDebug(JSON.stringify(GetParameterOptions( context, parameterName, 'get selected options');))
         }
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
         if(parameterName==='p_TrendQs') {
