@@ -430,34 +430,30 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
        // log.LogDebug('key='+key+': '+JSON.stringify(cachedParameterOptions))
         //log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
-        if(cachedParameterOptions.hasOwnProperty(key)) {
-          //  log.LogDebug('take options from cache start')
-            options = cachedParameterOptions[key];
-           // log.LogDebug('take options from cache end')
-        } else {
+        if(!cachedParameterOptions.hasOwnProperty(key)) {
 
            // log.LogDebug('save options into cache start')
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
-            if(!resource) {
-                cachedParameterOptions[key] = [];
-                log.LogDebug('------------------- '+parameterId+' FROM '+from+' END [] -------------------------')
-                return [];
-            }
-
-            options = getRawOptions(context, resource, parameterInfo.type);
-            cachedParameterOptions[key] = options;
+            cachedParameterOptions[key]['type'] = parameterInfo.type;
+            cachedParameterOptions[key]['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);
            // log.LogDebug('save options into cache end')
         }
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
+        paramType = cachedParameterOptions[key]['type'];
+        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
+            options.push(cachedParameterOptions[key]['options'][i]);
+        }
+
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             
            // log.LogDebug('exclude extra start')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
