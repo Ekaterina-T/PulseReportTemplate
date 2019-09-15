@@ -304,49 +304,6 @@ class ParamUtil {
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
 
-     /**
-     * Adding values to single response parameter
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     */
-    static function LoadParameter (context) {
-
-        var parameter = context.parameter;
-        var log = context.log;
-
-        var currentPage = context.pageContext.Items['CurrentPageId'];
-
-        if(!isParameterToBeLoaded (context)) { // no need to load parameter
-            return; 
-        }
-
-        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
-
-        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
-                var val = new ParameterValueResponse();
-                val.StringKeyValue = parameterOptions[i].Code;
-                val.StringValue = parameterOptions[i].Label;
-                parameter.Items.Add(val);
-        }
-
-        return;
-    }
-
-    /*
-  * Get defaultParameterValue for parameter
-  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-  * @param {string} parameterName
-  * @returns {string} default value
-  */
-
-    static function getDefaultParameterValue(context, parameterName) {
-
-        var log = context.log;
-        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
-
-        return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
-    }
-
-
     /*
   * Get selected answer codes of the report parameter (single or multi response)
   * @param {Object} context  - object {state: state, log: log}
@@ -411,6 +368,49 @@ class ParamUtil {
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
 
         return selectedOptions;
+    }
+
+    /*
+  * Get defaultParameterValue for parameter
+  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+  * @param {string} parameterName
+  * @returns {string} default value
+  */
+
+    static function getDefaultParameterValue(context, parameterName) {
+
+        var log = context.log;
+        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
+
+        return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
+    }
+
+    
+     /**
+     * Adding values to single response parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     */
+    static function LoadParameter (context) {
+
+        var parameter = context.parameter;
+        var log = context.log;
+
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
+        if(!isParameterToBeLoaded (context)) { // no need to load parameter
+            return; 
+        }
+
+        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
+
+        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
+                var val = new ParameterValueResponse();
+                val.StringKeyValue = parameterOptions[i].Code;
+                val.StringValue = parameterOptions[i].Label;
+                parameter.Items.Add(val);
+        }
+
+        return;
     }
 
     //-----------------------------------------------------------------------------
