@@ -429,11 +429,16 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key))
+        log.LogDebug('------------------- '+ParameterId+' -------------------------')
+        log.LogDebug('key='+key+': '+JSON.stringify(cachedParameterOptions))
+        log.LogDebug('key='+key+': '+cachedParameterOptions.hasOwnProperty(key));
         if(cachedParameterOptions.hasOwnProperty(key)) {
+            log.LogDebug('take options from cache start')
             options = cachedParameterOptions[key];
+            log.LogDebug('take options from cache end')
         } else {
 
+            log.LogDebug('save options into cache start')
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
@@ -443,10 +448,14 @@ class ParamUtil {
 
             options = getRawOptions(context, resource, parameterInfo.type);
             cachedParameterOptions[key] = options;
+            log.LogDebug('save options into cache end')
         }
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
+            
+            log.LogDebug('exclude extra start')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+            log.LogDebug('exclude extra end')
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
