@@ -353,8 +353,17 @@ class ParamUtil {
     static function GetSelectedOptions (context, parameterName) {
 
         var log = context.log;
-        var selectedCodes = GetSelectedCodes (context, parameterName);
+        if(parameterName==='p_TrendQs') {
+            log.LogDebug('START get selected options for '+parameterName);
+        }
         var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
+        if(parameterName==='p_TrendQs') {
+            log.LogDebug(JSON.stringify(parameterOptions));
+        }
+        var selectedCodes = GetSelectedCodes (context, parameterName);
+        if(parameterName==='p_TrendQs') {
+            log.LogDebug(JSON.stringify(selectedCodes));
+        }
         var selectedOptions = [];
 
         for (var i=0; i<selectedCodes.length; i++) {
@@ -365,7 +374,10 @@ class ParamUtil {
                 }
             }
         }
-        log.LogDebug('----- GET SELECTED OPT END -----')
+        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
+        if(parameterName==='p_TrendQs') {
+            log.LogDebug('END get selected options for '+parameterName);
+        }
 
         return selectedOptions;
     }
@@ -430,26 +442,15 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        if(parameterId==='p_TrendQs') {
-            log.LogDebug('------------------- '+parameterId+' FROM '+from+' START -------------------------')
-            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
-            log.LogDebug('1')
-        }
-
         if(!cachedParameterOptions.hasOwnProperty(key)) {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-
             var paramOptionsObj = {};
+
             paramOptionsObj['type'] = parameterInfo.type;
             paramOptionsObj['options'] = !resource ? [] : getRawOptions(context, resource, parameterInfo.type);  
             cachedParameterOptions[key] = paramOptionsObj;          
-        }
-
-        if(parameterId==='p_TrendQs') {
-            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
-            log.LogDebug('2')
         }
 
         paramType = cachedParameterOptions[key]['type'];
@@ -457,19 +458,8 @@ class ParamUtil {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
-        if(parameterId==='p_TrendQs') {
-            log.LogDebug(JSON.stringify(options));
-            log.LogDebug('3')
-        }
-
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {           
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-        }
-
-        if(parameterId==='p_TrendQs') {
-            log.LogDebug(JSON.stringify(options));
-            log.LogDebug('4')
-            log.LogDebug('------------------- '+parameterId+' FROM '+from+' END -------------------------')
         }
 
         return modifyOptionsOrder(context, options, parameterInfo);
