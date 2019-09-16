@@ -334,7 +334,7 @@ class Filters {
     */
     static function isWaveFilterHidden(context) {
         var log = context.log;
-        return (Boolean)((!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) || (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'isWaveFilterHidden')));
+        return (Boolean)(!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion'));
     }
 
 
