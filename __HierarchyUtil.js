@@ -89,7 +89,7 @@ class HierarchyUtil {
 
         if(isDataTableEmpty()) {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
-            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("nodes");
+            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("Korn Ferry Report");
             dbTable = dbTableNew.GetDataTable();
         }
     }
@@ -129,7 +129,7 @@ class HierarchyUtil {
             var row : DataRow = rows[i];
             nodeList[row['id']] = {};
             nodeList[row['id']].label = row['__l9'];
-            nodeList[row['id']].parent = !row['parent'] ? row['id'] : row['parent'];
+            nodeList[row['id']].parent = !row['Parent'] ? row['id'] : row['Parent'];
         }
 
         if(!numberOfLevelsUp) {
@@ -168,40 +168,32 @@ class HierarchyUtil {
         return getParentsForHierarchyNode(context, hierarchyNodeId, numberOfLevelsUp);
     }
 
-    /*
-      static function getLevel(user) {
-        return getParents(user).length;
-      }
+    static function setHierarchyMaskOneLevelDown (context) {
 
-      static function isLowestLevelInHierarchy(user, confirmit) {
-        var reportBase = user.PersonalizedReportBase;
-        var rows = dbTable.Rows;
-        var isLowest = true;
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("Korn Ferry Report");
+        var dataTable = HierarchyUtil.getDataTable();
+        var hierLevels = dataTable.Rows;
+        var reportBase = context.user.PersonalizedReportBase;
 
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === reportBase) {
-            isLowest = false;
-            break;
-          }
+        var currentParent = dbTableNew.GetColumnValues("parent", "id", reportBase)[0];
+
+        var parentsToMask = [];
+        var mask : MaskHierarchy = new MaskHierarchy();
+
+        for (var i = 0; i < hierLevels.Count; i++) {
+            var dRow : DataRow = hierLevels[i];
+            if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
+                parentsToMask.push(dRow['id']);
+                var hn : HierarchyNode = new HierarchyNode();
+                hn.Code = dRow['id']
+                hn.Level = new HierarchyLevel('Korn Ferry Report', 'parent');
+                mask.Nodes.Add(hn);
+            }
         }
-        return isLowest;
-      }
+        return mask;
+    }
 
-      static function isLowestLevelInHierarchyAnyUser(userID, confirmit) {
-        var rows = dbTable.Rows;
-        var isLowest = true;
-
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === userID) {
-            isLowest = false;
-            break;
-          }
-        }
-        return isLowest;
-      }
-     */
 
 
 }

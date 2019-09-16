@@ -16,7 +16,7 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         try {
-            var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
+            var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig (context), 'Source');
             pageContext.Items.Add('Source', add_in_source);
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}

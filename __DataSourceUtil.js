@@ -80,6 +80,8 @@ class DataSourceUtil {
 
         var state = context.state;
         var log = context.log;
+        var isCustomSource_copy = context.isCustomSource;
+        context.isCustomSource = false;
         var surveyType = getDsId(context);
         var surveys = Config.Surveys;
         var i = 0;
@@ -88,7 +90,7 @@ class DataSourceUtil {
         while (i<surveys.length && surveys[i].Source != surveyType) {
             i++;
         }
-
+        context.isCustomSource = isCustomSource_copy;
         return surveys[i];
     }
 

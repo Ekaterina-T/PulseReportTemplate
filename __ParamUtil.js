@@ -34,15 +34,21 @@ class ParamUtil {
         'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'},
         'p_Wave':         { propertyName: 'WaveQuestion', type: 'QuestionId',           locationType: 'Survey', isInReverseOrder: true},
         'p_Dimensions':   { propertyName: 'Dimensions', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions'},
-        'p_Statements':   { propertyName: 'Statements', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'}
+        'p_Statements':   { propertyName: 'Statements', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
+        'p_Actions_BreakBy': { propertyName: 'BreakVariables', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
+        'p_ActionCost_BreakBy': { propertyName: 'BreakVariables', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
+        'p_OnlyOwnActions':	{ propertyName: 'ShowOnlyOwnActions', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_ActionAllocation': { propertyName: 'Breakdown', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
+        'p_EndUserSelection': { propertyName: 'EndUserSelection', type: 'QuestionId', locationType: 'Page', page: 'Page_Actions'},
+        'p_SwitchHitlistMode': { propertyName: 'SwitchHitlistMode', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'}
 
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_ActionAllocation','p_Actions_BreakBy','p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_QsToFilterBy', 'p_Dimensions','p_ActionCost_BreakBy'];
 
     // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
+    static var optionalPageParameters = ['p_OnlyOwnActions','p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault','p_EndUserSelection','p_SwitchHitlistMode']; // we must add them empty option as 1st value instead
 
 
     /*
@@ -196,7 +202,10 @@ class ParamUtil {
         var report = context.report;
         var page = context.page;
         var log = context.log;
+        var pageContext = context.pageContext;
         var i;
+
+
 
         // reset all parameters if a page refreshes when switching the surveys
         if (page.SubmitSource === 'surveyType') {
@@ -215,18 +224,31 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
+        //set default value for wave from Config
+
+        if (state.Parameters.IsNull('p_Wave')) {
+
+            try {
+                var defaultWave = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'DefaultWave');
+                state.Parameters['p_Wave'] = new ParameterValueResponse(defaultWave);
+
+            } catch (e) {}
+        }
+
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
 
             if (state.Parameters.IsNull(mandatoryPageParameters[i])){ // safety check: set default value if not defined
 
                 try {
+
                     var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
 
                     if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                         continue;
 
                     }
+
                 } catch (e) {continue;}
 
                 // We can't get the type of parameter (single or multi) before its initialisation.
@@ -257,8 +279,10 @@ class ParamUtil {
   */
 
     static function GetSelectedCodes (context, parameterName) {
+
         var state = context.state;
         var log = context.log;
+
 
         if (state.Parameters.IsNull(parameterName))
             return [];
@@ -327,7 +351,10 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
+
+
         var parameterOptions = GetParameterOptions(context, parameterName); // get all options
+
         return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
     }
 
@@ -372,26 +399,34 @@ class ParamUtil {
         var state = context.state;
         var report = context.report;
         var log = context.log;
+
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var parameterInfo = {}; //where to take parameter values from
+        var isCustomSource = context.isCustomSource;
+
 
         if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
             parameterInfo = reportParameterValuesMap[parameterId];
+
         }
 
         if(!parameterInfo) {
             throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
         }
 
+        context.isCustomSource = false;
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        context.isCustomSource = isCustomSource;
 
         if(!resource) {
             return [];
         }
 
         var options = getRawOptions(context, resource, parameterInfo.type);
+
+
         return modifyOptionsOrder(context, options, parameterInfo);
 
     }
@@ -440,6 +475,7 @@ class ParamUtil {
 
         // propertyValue is a list of question ids, i.e. populate question selector
         if(type === 'QuestionList') {
+
             return getOptions_QuestionList (context, resource);
         }
 
@@ -571,6 +607,7 @@ class ParamUtil {
         if(!qList instanceof Array) {
             throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
         }
+
 
         for(var i=0; i<qList.length; i++) {
             var option = {};

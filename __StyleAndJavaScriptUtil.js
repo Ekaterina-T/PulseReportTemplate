@@ -67,28 +67,33 @@ class StyleAndJavaScriptUtil {
 
         properties.push('CollapseExpand: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'CollapseExpand')));
 
-        if (pageContext.Items['CurrentPageId'] === 'Comments') {
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        if (pageId === 'Page_Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(PageComments.getTagColumnNumbers (context)));
             properties.push('score_columns: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_ScoreQs')));
         }
 
-        if (pageContext.Items['CurrentPageId'] === 'KPI') {
+        if (pageId === 'Page_KPI') {
             properties.push('gaugeData: '+JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
-        if (pageContext.Items['CurrentPageId'] === 'Categorical_') {
+        if (pageId === 'Page_Categorical_') {
             properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context)));
             properties.push('pieColors: '+JSON.stringify(Config.pieColors));
         }
 
-        if (pageContext.Items['CurrentPageId'] === 'CategoricalDrilldown') {
+        if (pageId === 'Page_CategoricalDrilldown') {
             properties.push('isProjectSelectorDisabled: '+true);
         }
 
-        if (pageContext.Items['CurrentPageId'] === 'Actions') {
+        if (pageId === 'Page_Actions') {
             //properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('gaugeData: '+JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: '+JSON.stringify(PageActions.getTagColumnNumbers (context)));
+            properties.push('isResponsibleVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'Delegation')));
+            properties.push('isAdvancedReportingVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'AdvancedReporting')));
+            properties.push('isShowOwnActionsSelectorVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'ReportLevelAccess')));
         }
 
         globalVarScript.push('<script>');

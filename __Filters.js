@@ -216,8 +216,8 @@ class Filters {
                 var individualFilterExpr = [];
                 for (var j=0; j<responses.length; j++) {
                     individualFilterExpr.push('IN('+DataSourceUtil.getDsId(context)+':'+filters[i]+', "'+responses[j]+'")');
-                }                
-		filterExpr.push('('+individualFilterExpr.join(' OR ')+')'); 
+                }
+                filterExpr.push('('+individualFilterExpr.join(' OR ')+')');
             }
 
         }
@@ -310,7 +310,9 @@ class Filters {
         qId = QuestionUtil.getQuestionIdWithUnderscoreInsteadOfDot(qId);
 
         if (answerCodes.length) {
+
             return 'IN(' + qId + ', "'+answerCodes.join('","')+'")';
+
         }
         return '';
     }
@@ -322,7 +324,7 @@ class Filters {
     */
     static function isTimePeriodFilterHidden(context) {
 
-        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden')
+        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden');
     }
 
     /*
@@ -332,7 +334,7 @@ class Filters {
     */
     static function isWaveFilterHidden(context) {
         var log = context.log;
-        return (Boolean)(!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion'));
+        return (Boolean)((!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) || (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'isWaveFilterHidden')));
     }
 
 
@@ -421,6 +423,32 @@ class Filters {
 
     }
 
+    static function getOnlyOwnActionsExpression (context) {
+
+        var state = context.state;
+
+
+        if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
+            var userId = context.user.UserId;
+            return 'IN(actionowner, "' + userId + '")';
+
+        }
+
+        return '';
+    }
+
+    static function getOnlyOwnActionsinHitlistExpression (context) {
+
+        var state = context.state;
+
+        if(!PageActions.isFeatureAvailableForUserRole(context, "EditorDeleteOthersActions") && (!state.Parameters.IsNull("p_SwitchHitlistMode")))
+        {
+            var userId = context.user.UserId;
+            return 'IN(actionowner, "' + userId + '")';
+        }
+        return '';
+    }
+
     /*
       * not empty comments filter
       * @param {context}
@@ -445,6 +473,19 @@ class Filters {
         return getFilterExpressionByAnswerRange(context, qId, answerCodes);
 
     }
+
+    static function getSelectedEndUsersExpression (context) {
+        var log = context.log;
+        var userId = context.user.UserId;
+
+        var answerCodes = ParamUtil.GetSelectedCodes(context, 'p_EndUserSelection');
+        var qId = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_Actions', 'EndUserSelection');
+        if (answerCodes.length) {
+            return getFilterExpressionByAnswerRange(context, qId, answerCodes);
+        }
+        return 'NOT IN(' + qId +', PValStrArr("p_EndUserSelection"))';
+    }
+
 
 
     /*
