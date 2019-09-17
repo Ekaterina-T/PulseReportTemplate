@@ -89,7 +89,7 @@ class HierarchyUtil {
 
         if(isDataTableEmpty()) {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
-            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("Korn Ferry Report");
+            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
         }
     }
@@ -171,7 +171,7 @@ class HierarchyUtil {
     static function setHierarchyMaskOneLevelDown (context) {
 
         var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
-        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("Korn Ferry Report");
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
         var dataTable = HierarchyUtil.getDataTable();
         var hierLevels = dataTable.Rows;
         var reportBase = context.user.PersonalizedReportBase;
@@ -187,7 +187,7 @@ class HierarchyUtil {
                 parentsToMask.push(dRow['id']);
                 var hn : HierarchyNode = new HierarchyNode();
                 hn.Code = dRow['id']
-                hn.Level = new HierarchyLevel('Korn Ferry Report', 'parent');
+                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
                 mask.Nodes.Add(hn);
             }
         }
