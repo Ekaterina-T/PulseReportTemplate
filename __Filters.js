@@ -461,6 +461,7 @@ class Filters {
     static function getPulseSurveyData_FilterByHierarchy(context) {
 
         var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys').length; // there's only one answer showAll (len=1) or not (len =0)
-        return !showAll ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase]) : '';
+        var expr = !showAll ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase]) : '';
+        return expr;
     }
 }

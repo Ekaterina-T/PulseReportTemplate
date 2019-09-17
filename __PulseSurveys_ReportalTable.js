@@ -31,7 +31,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
         var surveyList = [];
 
-        log.LogDebug(JSON.stringify(rawInfo))
+        log.LogDebug('PulseSurveys_ReportalTable.getVisiblePulseSurveys (before sort): '+JSON.stringify(rawInfo));
 
         if(_isEmptyOptionNeeded) {
             var emptyOption = {};
@@ -60,7 +60,9 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList.push(surveyInfo);            
         }
-        
+
+        log.LogDebug('PulseSurveys_ReportalTable.transformTableHeaderTitlesIntoObj (after sort): '+JSON.stringify(surveyList));
+
         return surveyList;
     }
 }
