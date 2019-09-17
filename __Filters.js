@@ -423,6 +423,14 @@ class Filters {
 
     }
 
+    /*
+   * @function getOnlyOwnActionsExpression
+   * @description function to generate a script expression to filter Actions page to only show own actions (where actionowner = current end user viewing the report).
+   * Checkbox is available for user roles specified for "ReportLevelAccess" feature in Config (for other end users only own actions are shown on default).
+   * @param {Object} context
+   * @return {String} filter script expression
+   */
+
     static function getOnlyOwnActionsExpression (context) {
 
         var state = context.state;
@@ -436,6 +444,13 @@ class Filters {
 
         return '';
     }
+
+    /*
+    * @function getOnlyOwnActionsinHitlistExpression
+    * @description function to switch on the possibility to edit/delete comments (all comments for roles specified in 'EditorDeleteOthersActions' feature, only own for others)
+    * @param {Object} context
+    * @return {String} filter script expression
+    */
 
     static function getOnlyOwnActionsinHitlistExpression (context) {
 
@@ -473,6 +488,14 @@ class Filters {
         return getFilterExpressionByAnswerRange(context, qId, answerCodes);
 
     }
+
+    /*
+    * @function getSelectedEndUsersExpression
+    * @description function to generate a script expression to filter EndUserStatistics_Hidden and EndUserStatistics tables by end users selected from dropdown.
+    * On default all users are filtered out.
+    * @param {Object} context
+    * @return {String} filter script expression
+    */
 
     static function getSelectedEndUsersExpression (context) {
         var log = context.log;
