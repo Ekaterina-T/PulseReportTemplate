@@ -40,7 +40,9 @@ class ParamUtil {
         'p_OnlyOwnActions':	{ propertyName: 'ShowOnlyOwnActions', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
         'p_ActionAllocation': { propertyName: 'Breakdown', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
         'p_EndUserSelection': { propertyName: 'EndUserSelection', type: 'QuestionId', locationType: 'Page', page: 'Page_Actions'},
-        'p_SwitchHitlistMode': { propertyName: 'SwitchHitlistMode', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'}
+        'p_SwitchHitlistMode': { propertyName: 'SwitchHitlistMode', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
+        'p_IsOpenForFirstTime': { propertyName: 'HelpIndicator', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'}
+      
 
     };
 
@@ -205,8 +207,14 @@ class ParamUtil {
         var pageContext = context.pageContext;
         var i;
 
-
-
+        // initialising help parameter to detect if it is the first time the report loads or not
+        if (state.Parameters.IsNull('p_IsOpenForFirstTime')){
+           state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('true');
+        }
+        else {
+          state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('false');
+        }
+        
         // reset all parameters if a page refreshes when switching the surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
@@ -224,14 +232,11 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        //set default value for wave from Config
-
-        if (state.Parameters.IsNull('p_Wave')) {
-
+       // set default value for wave from Config but only if it is the first time the user open the report. If the user selects the empty row, the default value should not be set      
+       if (state.Parameters.IsNull('p_Wave') && GetSelectedCodes (context, 'p_IsOpenForFirstTime')[0] == 'true') {
             try {
                 var defaultWave = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'DefaultWave');
                 state.Parameters['p_Wave'] = new ParameterValueResponse(defaultWave);
-
             } catch (e) {}
         }
 
