@@ -31,8 +31,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
         var surveyList = [];
 
-        log.LogDebug('PulseSurveys_ReportalTable.getVisiblePulseSurveys (before sort): '+JSON.stringify(rawInfo));
-
         if(_isEmptyOptionNeeded) {
             var emptyOption = {};
             emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
@@ -41,9 +39,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         }
 
         surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
-
-
-        log.LogDebug('PulseSurveys_ReportalTable.getVisiblePulseSurveys (after concat): '+JSON.stringify(surveyList));
 
         return surveyList;//surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
     }
@@ -65,8 +60,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyInfo.Code = HeaderCategoryTitles[i][1]; // pid - outer header
             surveyList.push(surveyInfo);            
         }
-
-        log.LogDebug('PulseSurveys_ReportalTable.transformTableHeaderTitlesIntoObj (after sort): '+JSON.stringify(surveyList));
 
         return surveyList;
     }
