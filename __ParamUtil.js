@@ -438,7 +438,7 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var parameterId = parameterName || context.parameter.ParameterId; //var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
