@@ -460,8 +460,13 @@ class Filters {
      */	
     static function getPulseSurveyData_FilterByHierarchy(context) {
 
+        var user = context.user;
         var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys').length; // there's only one answer showAll (len=1) or not (len =0)
-        var expr = !showAll ? Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [context.user.PersonalizedReportBase]) : '';
+
+        if(showAll) {
+            return '';
+        }
+        var expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]) + ' OR CreatedByEndUserName = "'+user.UserId+'"';
         return expr;
     }
 }
