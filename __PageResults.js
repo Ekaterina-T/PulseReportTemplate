@@ -58,29 +58,42 @@ class PageResults {
   * @param {object} context: {state: state, report: report, log: log, table: table}
   */
 
-    static function tableStatements_AddRows(context) {
-
+  static function tableStatements_AddRows(context) {
+    
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
+        var custom_questions = QuestionUtil.getQuestionsByCategory (context, 'Custom_single');
+        
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
+        var rowsAdded = false;
         if(resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
-            return;
+
+            rowsAdded = true;
         }
 
-        if(dimensions && dimensions.length>0) {
-            tableStatements_AddRows_Banner1(context);
-            return;
+        else if (dimensions && dimensions.length>0) {
+            tableStatements_AddRows_Banner1(context);          
+
+            rowsAdded = true;
         }
 
-        throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
-    }
+        
+        if (custom_questions && custom_questions.length > 0) {
+            tableStatements_AddRows_Banner2(context);          
+            rowsAdded = true;
+        }
+        if (!rowsAdded) {        
+            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+
+        }  
+        }
 
     /*
   * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
@@ -179,6 +192,51 @@ class PageResults {
         return dimensionsInConfig;
     }
 
+       /*
+  * Add custom statement questions as table rows based on Question category
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
+ 
+  
+  static function tableStatements_AddRows_Banner2 (context) {
+    
+            var report = context.report;
+            var state = context.state;
+            var table = context.table;
+            var log = context.log;
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+            var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
+        
+            var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims'
+            // display a categorisation object as a dimension
+            if (isDimensionVisible)   {
+                var categorization : HeaderCategorization = new HeaderCategorization();
+                categorization.CategorizationId = 'Custom';
+                categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                categorization.Collapsed = true;
+                categorization.Totals = true;  
+                TableUtil.addBreakByNestedHeader(context, categorization);
+                table.RowHeaders.Add(categorization);
+            }
+            for (var i=0; i<custom_questions.length; i++) {
+              var qId = custom_questions[i].QuestionId;        
+              var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId); 
+              var headerQuestion : HeaderQuestion = new HeaderQuestion(questionnaireElement);
+              headerQuestion.IsCollapsed = true;
+              headerQuestion.HideHeader = true;
+              TableUtil.addBreakByNestedHeader(context, headerQuestion);
+              
+              var dummyHeader: HeaderSegment = new HeaderSegment();
+              dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+              dummyHeader.SegmentType = HeaderSegmentType.Expression;
+              dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
+              dummyHeader.HideData = false;
+              dummyHeader.SubHeaders.Add(headerQuestion);
+              
+              table.RowHeaders.Add(dummyHeader);
+            }
+      }
 
     /*
   * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns

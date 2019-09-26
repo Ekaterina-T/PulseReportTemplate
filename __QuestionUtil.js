@@ -1,5 +1,8 @@
 class QuestionUtil {
 
+    // cached custom question texts from DB table
+    static const customQuestionTexts = new Hashtable();
+
     /*
      * Get question info:
      * - Type: general, singleFromGrid, otherOpenText.
@@ -203,5 +206,74 @@ class QuestionUtil {
 
         return questionIdWithDot.replace(/\./g,'_');
     }
+
+
+  /*
+     * Get questions be category
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} category
+     * @returns {array} - Question[] 
+     */
+    static function getQuestionsByCategory (context, category) {
+        var state = context.state;
+        var report = context.report;
+        var log = context.log;
+      
+        var project : Project = DataSourceUtil.getProject(context);
+        var questions = project.GetQuestions({'InCategories': [category]});
+        return questions;
+    } 
+
+
+    static function getCustomQuestionTexts (context) {
+        
+        var log = context.log;
+    
+        if (customQuestionTexts.Count == 0) { // if cache is empty, look up the DB table with custom texts
+          var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
+          var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+         
+          if(schemaId && tableName) { // storage for baby survey custom questions
+         
+            var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+            var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);    
+              //var customQuestionTexts = {};
+             var dbTable = table.GetDataTable();
+             if (dbTable && dbTable.Rows.Count > 0) {
+               var rows = dbTable.Rows;
+               for (var i = 0; i < rows.Count; i++) {
+                 var row : DataRow = rows[i];              
+                 customQuestionTexts[row['id']] = row['__l9'];            
+               }            
+             }    
+          }
+        }
+        
+        return customQuestionTexts;
+      }
+     
+    /*
+    * Get custom question text / title by question id from DB table or cache
+    * @param {object} context object {state: state, report: report, log: log}
+    * @param {string} qId
+    * @returns {string} - custom question text / title
+    */
+     static function getCustomQuestionTextById(context, qId) {
+           var log = context.log;      
+        
+           if(!qId) {
+               throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
+           }
+         
+           var allCustomTexts = getCustomQuestionTexts (context);       
+           var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+         
+           if (codes.length) {
+             var baby_p_number = codes[0];
+             return allCustomTexts[baby_p_number+"_"+qId];          
+           }
+       
+           return null;
+       }
 
 }

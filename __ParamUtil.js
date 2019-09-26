@@ -26,6 +26,8 @@ class ParamUtil {
         'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables'},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions'},
         'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments'},
+        'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory'},
+        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs']},       
         'p_ScoreQs':              { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'ScoresForComments'},
         'p_TagQs':                { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'TagsForComments'},
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim'},
@@ -41,13 +43,22 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
 
     static public var cachedParameterOptions = {};
 
+    static const paramTypesToBeReset = {
+        'PulseSurveyInfo': false,
+        'QuestionId': false,
+        'StaticArrayofObjects': false,
+        'CustomQuestionList': true,
+        'ParameterOptionList': true,
+        'QuestionList': true,
+        'QuestionAndCategoriesList': true
+    };
 
     /*
   * Populates p_SurveyType parameter based on surveys from Config.
@@ -194,16 +205,18 @@ class ParamUtil {
     */
 
     static function ResetQuestionBasedParameters (context, parameterList) {
-
+        
         var state = context.state;
         var i;
 
         for(i=0; i<parameterList.length; i++) {
             var paramType = reportParameterValuesMap[parameterList[i]].type;
-            if(paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')
-            state.Parameters[parameterList[i]] = null;
+            var isTypeToReset = paramTypesToBeReset[paramType];
+            if(isTypeToReset) {
+                state.Parameters[parameterList[i]] = null;
+            }
         }
-
+        
         return;
     }
 
@@ -453,7 +466,7 @@ class ParamUtil {
     }
 
     /**
-     *
+     * 
      */
     static function GetParameterInfoObject(context, parameterId) {
 
@@ -530,6 +543,15 @@ class ParamUtil {
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
         }
 
+        if(type === 'CustomQuestionList') {
+            return getOptions_CustomQuestionList (context, resource);
+          }
+          
+          
+        if(type === 'ParameterOptionList') {
+            return getOptions_ParameterList (context, resource);
+        }
+
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
     }
 
@@ -563,6 +585,23 @@ class ParamUtil {
 
         if(parameterInfo.locationType === 'FilterPanel') {
             return parameterInfo.FilterQid;
+        }
+
+        if(parameterInfo.locationType === 'QuestionCategory') {
+            var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
+            var custom_questions = QuestionUtil.getQuestionsByCategory (context, customCategory);
+            var custom_qIds = [];
+            for (var i=0; i<custom_questions.length; i++) {
+              var custom_question : Question = custom_questions[i];
+              custom_qIds.push(custom_question.QuestionId);                
+            }                      
+            return custom_qIds;
+        }
+  
+  
+        if(parameterInfo.locationType === 'CombinationOfParameters') {
+            var paramNames = parameterInfo.parameterList;
+            return paramNames;          
         }
 
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
@@ -708,6 +747,54 @@ class ParamUtil {
         return parameterOptions;
     }
 
+
+      /**
+       *@param {object} context
+       *@param {array} array of question Ids
+       *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+       */
+      static function getOptions_CustomQuestionList(context, qList) {
+        
+        var log = context.log;
+        var parameterOptions = [];
+     
+        if(!qList instanceof Array) {
+            throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
+        }
+      
+        var allCustomTexts = QuestionUtil.getCustomQuestionTexts (context);       
+        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+      
+        if (codes.length) {
+          var baby_p_number = codes[0];
+          for(var i=0; i<qList.length; i++) {
+              var customTxt = allCustomTexts[baby_p_number+"_"+qList[i]];
+            if (customTxt) {
+                var option = {};
+                option.Code = qList[i]; // propertyValue[i] is qid in this case
+                option.Label = allCustomTexts[baby_p_number+"_"+qList[i]];                 
+                parameterOptions.push(option);
+            }
+          }
+        }
+        return parameterOptions;
+    }
+  
+   /**
+   *@param {object} context
+   *@param {array} array of parameter Ids
+   *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+   */
+    static function getOptions_ParameterList(context, parameterNameList) {
+      
+      var log = context.log;
+      var combinedOptions = [];        
+      for (var i=0; i<parameterNameList.length; i++) {
+         combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i]));
+      }        
+      return combinedOptions;
+      
+    }
 
     static function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
