@@ -466,7 +466,7 @@ class Filters {
         if(showAll) {
             return '';
         }
-        var expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]) + ' OR CreatedByEndUserName = '+user.UserId;
+        var expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]) + ' OR CreatedByEndUserName = "'+user.UserId+'"';
         return expr;
     }
 }
