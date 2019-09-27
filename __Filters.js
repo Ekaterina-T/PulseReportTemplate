@@ -467,7 +467,14 @@ class Filters {
             return '';
         }
 
-        var expr = 'CreatedByEndUserName = "'+user.UserId+'"';
+        var expr = '';
+
+        if(user.UserType === ReportUserType.Confirmit) { // for tests
+            expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]);
+        } else {
+            expr = 'CreatedByEndUserName = "'+user.UserId+'"';
+        }
+        
         return expr;
     }
 }
