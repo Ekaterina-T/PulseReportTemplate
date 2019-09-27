@@ -65,7 +65,8 @@ class PageResults {
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
-        var custom_questions = QuestionUtil.getQuestionsByCategory (context, 'Custom_single');
+        var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+        var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
