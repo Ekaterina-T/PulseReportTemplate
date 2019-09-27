@@ -218,10 +218,12 @@ class QuestionUtil {
         var state = context.state;
         var report = context.report;
         var log = context.log;
-      
-        var project : Project = DataSourceUtil.getProject(context);
-        var questions = project.GetQuestions({'InCategories': [category]});
-        return questions;
+        
+        if (category) {
+          var project : Project = DataSourceUtil.getProject(context);
+          return project.GetQuestions({'InCategories': [category]});
+        }  
+        return [];
     } 
 
 
