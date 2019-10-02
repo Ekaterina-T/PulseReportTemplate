@@ -754,31 +754,30 @@ class ParamUtil {
        *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
        */
       static function getOptions_CustomQuestionList(context, qList) {
-        
-        var log = context.log;
-        var parameterOptions = [];
-     
-        if(!qList instanceof Array) {
-            throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
-        }
-      
-        var allCustomTexts = QuestionUtil.getCustomQuestionTexts (context);       
-        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-      
-        if (codes.length) {
-          var baby_p_number = codes[0];
-          for(var i=0; i<qList.length; i++) {
-              var customTxt = allCustomTexts[baby_p_number+"_"+qList[i]];
-            if (customTxt) {
-                var option = {};
-                option.Code = qList[i]; // propertyValue[i] is qid in this case
-                option.Label = allCustomTexts[baby_p_number+"_"+qList[i]];                 
-                parameterOptions.push(option);
+            
+            var log = context.log;
+            var parameterOptions = [];
+         
+            if(!qList instanceof Array) {
+                throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
             }
-          }
+          
+            var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+          
+            if (codes.length) {
+              var baby_p_number = codes[0];
+              for(var i=0; i<qList.length; i++) {
+                var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
+                if (customTxt) {
+                    var option = {};
+                    option.Code = qList[i]; // propertyValue[i] is qid in this case
+                    option.Label = customTxt; 
+                    parameterOptions.push(option);
+                }
+              }
+            }
+            return parameterOptions;
         }
-        return parameterOptions;
-    }
   
    /**
    *@param {object} context
