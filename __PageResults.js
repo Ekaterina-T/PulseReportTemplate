@@ -248,6 +248,7 @@ class PageResults {
     static function tableStatements_AddColumns_Banner0(context) {
 
         var log = context.log;
+        var state = context.state;
 
         // add Score column
         addScore(context);
