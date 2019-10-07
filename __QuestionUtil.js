@@ -1,7 +1,5 @@
 class QuestionUtil {
-
-    // cached custom question texts from DB table
-    static const customQuestionTexts = new Hashtable();
+ 
 
     /*
      * Get question info:
@@ -218,39 +216,16 @@ class QuestionUtil {
         var state = context.state;
         var report = context.report;
         var log = context.log;
-      
-        var project : Project = DataSourceUtil.getProject(context);
-        var questions = project.GetQuestions({'InCategories': [category]});
-        return questions;
+        
+        if (category) {
+          var project : Project = DataSourceUtil.getProject(context);
+          return project.GetQuestions({'InCategories': [category]});
+        }  
+        return [];
     } 
 
 
-    static function getCustomQuestionTexts (context) {
-        
-        var log = context.log;
     
-        if (customQuestionTexts.Count == 0) { // if cache is empty, look up the DB table with custom texts
-          var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
-          var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-         
-          if(schemaId && tableName) { // storage for baby survey custom questions
-         
-            var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-            var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);    
-              //var customQuestionTexts = {};
-             var dbTable = table.GetDataTable();
-             if (dbTable && dbTable.Rows.Count > 0) {
-               var rows = dbTable.Rows;
-               for (var i = 0; i < rows.Count; i++) {
-                 var row : DataRow = rows[i];              
-                 customQuestionTexts[row['id']] = row['__l9'];            
-               }            
-             }    
-          }
-        }
-        
-        return customQuestionTexts;
-      }
      
     /*
     * Get custom question text / title by question id from DB table or cache
@@ -258,22 +233,35 @@ class QuestionUtil {
     * @param {string} qId
     * @returns {string} - custom question text / title
     */
-     static function getCustomQuestionTextById(context, qId) {
-           var log = context.log;      
+    static function getCustomQuestionTextById(context, qId) {
+        var log = context.log;      
+        var confirmit = context.confirmit;
+    
+        if(!qId) {
+            throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
+        }
         
-           if(!qId) {
-               throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
-           }
-         
-           var allCustomTexts = getCustomQuestionTexts (context);       
-           var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-         
-           if (codes.length) {
-             var baby_p_number = codes[0];
-             return allCustomTexts[baby_p_number+"_"+qId];          
-           }
-       
-           return null;
-       }
+        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        if (codes.length == 0)
+            return null;
+        
+		var baby_p_number = codes[0];
+		var cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
+		if (!cachedTxt) { // if Redis doesn't have it, look up in the DB table
+			var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
+			var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+			if(schemaId && tableName) { // storage for baby survey custom questions
+				var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+				var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+				var custom_id = baby_p_number+"_"+qId;
+				var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
+				if (custom_texts.Count) {
+					cachedTxt = custom_texts[0];
+					confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
+				} 
+			}
+		}
+		return cachedTxt;    
+    }
 
 }
