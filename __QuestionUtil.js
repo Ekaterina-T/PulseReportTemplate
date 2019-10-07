@@ -236,7 +236,8 @@ class QuestionUtil {
     static function getCustomQuestionTextById(context, qId) {
         var log = context.log;      
         var confirmit = context.confirmit;
-    
+        var state = context.state;
+
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -245,9 +246,16 @@ class QuestionUtil {
         if (codes.length == 0)
             return null;
         
-		var baby_p_number = codes[0];
-		var cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
-		if (!cachedTxt) { // if Redis doesn't have it, look up in the DB table
+        var cachedTxt;    
+        var baby_p_number = codes[0];
+        
+        // Redis is not available in Excel export
+        if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
+            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);            
+        }
+        
+        // if Redis doesn't have cached question, look it up in the DB table
+        if (!cachedTxt) { 
 			var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
 			var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
 			if(schemaId && tableName) { // storage for baby survey custom questions
