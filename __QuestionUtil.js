@@ -253,7 +253,7 @@ class QuestionUtil {
         if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);            
         }
-        
+
         // if Redis doesn't have cached question, look it up in the DB table
         if (!cachedTxt) { 
 			var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
@@ -264,9 +264,11 @@ class QuestionUtil {
 				var custom_id = baby_p_number+"_"+qId;
 				var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
 				if (custom_texts.Count) {
-					cachedTxt = custom_texts[0];
-					confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
-				} 
+                    cachedTxt = custom_texts[0];
+                    if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
+					  confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
+                    }               
+                } 
 			}
 		}
 		return cachedTxt;    
