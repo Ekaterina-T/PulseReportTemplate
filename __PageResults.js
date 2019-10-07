@@ -254,8 +254,10 @@ class PageResults {
         addDistributionBarChart(context);
         // add scale distribution
         addScaleDistributionColumns(context);
-        // add Responses Column
-        addResponsesColumn(context);
+        // add Responses Column if it's not Excel export (KN-353)
+        if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
+            addResponsesColumn(context);
+        }  
         // add Benchmark related columns
         tableStatements_AddBenchmarkColumns_Banner0(context);
     }
