@@ -25,15 +25,20 @@ class Export {
         var state = context.state;
         var log = context.log;
         var str = '';
-        
-        var selectedProject: Project = DataSourceUtil.getProject(context);
-        str+='Program Name: '+selectedProject.ProjectName+' ';
+
+        if(Config.Surveys.length>1) {
+            var selectedProject: Project = DataSourceUtil.getProject(context);
+            str+='Program Name: '+selectedProject.ProjectName+' ';
+            str += System.Environment.NewLine; // for Excel export
+        }
+
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
             var selectedSurvey: ParameterValueResponse = state.Parameters['p_projectSelector'];
             if(selectedSurvey.StringKeyValue!=='none') {
                 str+= 'Survey Name: '+selectedSurvey.DisplayValue+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
+                str += System.Environment.NewLine; // for Excel export
             }
         }
 

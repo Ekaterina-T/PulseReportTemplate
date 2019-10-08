@@ -48,10 +48,7 @@ class FilterSummary {
         var str = '';
 
         // data source
-        if(Config.Surveys.length>1) {
-            str += Export.displayDataSourceInfo(context);
-            str += System.Environment.NewLine; // for Excel export
-        }
+        str += Export.displayDataSourceInfo(context);
 
         //hierarchy
         str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
