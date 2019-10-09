@@ -224,33 +224,27 @@ class ParamUtil {
         var projectSelectorNeeded = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var i;
 
-        log.LogDebug('param init 1')
-        
         // reset all parameters if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 2')
 
         if(page.SubmitSource === 'projectSelector') {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 3')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init 4')
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        log.LogDebug('param init 5')
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
         if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
@@ -271,15 +265,18 @@ class ParamUtil {
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
-        log.LogDebug('param init 6')
+        log.LogDebug('param init 1')
 
         
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
+            log.LogDebug('setPulseSurveyContentInfo 1')
             PulseProgramUtil.setPulseSurveyContentInfo(context);
+            log.LogDebug('setPulseSurveyContentInfo 2')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+            log.LogDebug('setPulseSurveyContentInfo 3')
         }
-        log.LogDebug('param init 7')
+        log.LogDebug('param init 2')
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -308,7 +305,7 @@ class ParamUtil {
             }
 
         }
-        log.LogDebug('param init 8')
+        log.LogDebug('param init 3')
 
     }
 
