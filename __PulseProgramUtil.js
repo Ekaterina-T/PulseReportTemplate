@@ -102,7 +102,7 @@ class PulseProgramUtil {
         if(pulseSurveyContentInfo[key].length === 0) {
             resourcesBase = [];
         } else {
-            report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         }
 
         for(var i=0; i< resourcesBase.length; i++) {
