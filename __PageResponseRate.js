@@ -298,13 +298,16 @@ class PageResponseRate {
             }
 
             table.RowHeaders.Add(hq);
-
-            // global table settings
-            table.Caching.Enabled = false;
-            table.RemoveEmptyHeaders.Columns = false;
-            table.RemoveEmptyHeaders.Rows = false;
-            table.UseRespondentData = true;
+        } else {
+            var hb: HeaderBase = new HeaderBase();
+            hb.ShowTotals = false;
         }
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Columns = false;
+        table.RemoveEmptyHeaders.Rows = false;
+        table.UseRespondentData = true;
     }
 
 
