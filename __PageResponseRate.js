@@ -279,8 +279,12 @@ class PageResponseRate {
         // add columns - standard set of headers for response rate calculation
         tableResponseRate_AddBanner(context, 'column');
 
+        log.LogDebug('1')
+
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
+
+        log.LogDebug(JSON.stringify(demographics))
 
         if (demographics.length) {
             // break by question
