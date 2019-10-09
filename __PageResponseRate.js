@@ -300,7 +300,7 @@ class PageResponseRate {
             table.RowHeaders.Add(hq);
         } else {
             var hb: HeaderBase = new HeaderBase();
-            hb.ShowTotals = false;
+            table.RowHeaders.Add(hb);
         }
 
         // global table settings
