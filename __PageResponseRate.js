@@ -283,7 +283,6 @@ class PageResponseRate {
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
 
         if (demographics.length) {
-
             // break by question
             var qId = demographics[0].Code;
             var questionInfo = QuestionUtil.getQuestionInfo(context, qId);
@@ -299,6 +298,7 @@ class PageResponseRate {
 
             table.RowHeaders.Add(hq);
         } else {
+            log.LogDebug('here')
             var hb: HeaderBase = new HeaderBase();
             table.RowHeaders.Add(hb);
         }
