@@ -435,7 +435,7 @@ class ParamUtil {
 
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-log.LogDebug('parameterName='+parameterName+'; from='+from+'; resource='+JSON.stringify(resource))
+
             if(!resource) {
                 return [];
             }
