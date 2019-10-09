@@ -296,16 +296,22 @@ class PageResponseRate {
                 hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
             }
             table.RowHeaders.Add(hq);
-        } else {
+
+            // global table settings
+            table.Caching.Enabled = false;
+            table.RemoveEmptyHeaders.Columns = false;
+            table.RemoveEmptyHeaders.Rows = false;
+            table.UseRespondentData = true;
+        } /*else {
             var hb: HeaderBase = new HeaderBase();
             table.RowHeaders.Add(hb);
-        }
+        }*/
 
         // global table settings
-        table.Caching.Enabled = false;
+        /*table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
-        table.UseRespondentData = true;
+        table.UseRespondentData = true;*/
     }
 
 
