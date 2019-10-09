@@ -77,7 +77,6 @@ class PulseProgramUtil {
 
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
 
         return; 
     }
@@ -96,7 +95,15 @@ class PulseProgramUtil {
         var resourcesBase : Datapoint[];
         var baseValues = [];
 
-        resourcesBase = !pulseSurveyContentInfo[key] ? [] : report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        if(!pulseSurveyContentInfo[key]) {
+            throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
+        }
+
+        if(pulseSurveyContentInfo[key].length === 0) {
+            resourcesBase = [];
+        } else {
+            report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        }
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
