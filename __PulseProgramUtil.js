@@ -90,25 +90,21 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentBaseValues (context) {
 
         var log = context.log;
-        log.LogDebug('setPulseSurveyContentBaseValues 1');
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
-        log.LogDebug('setPulseSurveyContentBaseValues 2');
 
-        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-        log.LogDebug('setPulseSurveyContentBaseValues 3 '+resourcesBase.length);
+        var resourcesBase : Datapoint[];
         var baseValues = [];
+
+        resourcesBase = !pulseSurveyContentInfo[key] ? [] : report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             baseValues.push(baseVal.Value);
         }
-        log.LogDebug('setPulseSurveyContentBaseValues 4');
 
         delete pulseSurveyContentBaseValues.key;
-        log.LogDebug('setPulseSurveyContentBaseValues 5');
         pulseSurveyContentBaseValues[key] = baseValues;
-        log.LogDebug('setPulseSurveyContentBaseValues 6');
 
         return;
     }
