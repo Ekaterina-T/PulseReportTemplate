@@ -265,15 +265,12 @@ class ParamUtil {
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
-        log.LogDebug('param init 1')
-
         
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
-        log.LogDebug('param init 2')
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -302,8 +299,6 @@ class ParamUtil {
             }
 
         }
-        log.LogDebug('param init 3')
-
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
