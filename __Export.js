@@ -34,12 +34,23 @@ class Export {
 
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
+
+            var selectedSurvey = ParamUtil.GetSelectedOptions (context, 'p_projectSelector');
+            if(selectedSurvey.Code!=='none') {
+                str+= 'Survey Name: '+selectedSurvey.Label+' ';
+                str = '<div class="data-source-info">'+str+'</div>';
+                str += System.Environment.NewLine; // for Excel export
+            }
+
+            /*
             var selectedSurvey: ParameterValueResponse = state.Parameters['p_projectSelector'];
             if(selectedSurvey.StringKeyValue!=='none') {
                 str+= 'Survey Name: '+( selectedSurvey.DisplayValue || selectedSurvey.StringValue) +' ';
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }
+            */
+
         }
 
         return str;
