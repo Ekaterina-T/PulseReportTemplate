@@ -279,12 +279,8 @@ class PageResponseRate {
         // add columns - standard set of headers for response rate calculation
         tableResponseRate_AddBanner(context, 'column');
 
-        log.LogDebug('1')
-
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
-
-        log.LogDebug(JSON.stringify(demographics))
 
         if (demographics.length) {
             // break by question
@@ -299,10 +295,8 @@ class PageResponseRate {
                 hq.ReferenceGroup.Self = false;
                 hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
             }
-
             table.RowHeaders.Add(hq);
         } else {
-            log.LogDebug('here')
             var hb: HeaderBase = new HeaderBase();
             table.RowHeaders.Add(hb);
         }
