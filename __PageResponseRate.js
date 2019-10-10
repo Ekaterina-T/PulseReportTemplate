@@ -282,6 +282,8 @@ class PageResponseRate {
         // add row - BGV variable
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
 
+        log.LogDebug(JSON.stringify(demographics))
+
         if (demographics.length) {
             // break by question
             var qId = demographics[0].Code;
@@ -331,8 +333,6 @@ class PageResponseRate {
         }
         return result;
     }
-
-
 
     /**
      * @memberof PageResponseRate

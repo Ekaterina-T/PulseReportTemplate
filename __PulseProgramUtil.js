@@ -4,6 +4,9 @@ class PulseProgramUtil {
 
     static public var pulseSurveyContentBaseValues = {};
 
+    /**
+     * list of properties of survey or report page that are based on questions and/or categories
+     */
     static private var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
