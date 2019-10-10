@@ -261,23 +261,17 @@ class ParamUtil {
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init 3')
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
         var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
-
-        log.LogDebug('selected survey = '+JSON.stringify(selectedPulseSurvey))
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
         // need to update default pulse survey
         if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
 
             var selectedProject = selectedPulseSurvey[0];
-            log.LogDebug('2')
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
-            log.LogDebug('3')
             var doReset = true;
-            log.LogDebug('4')
 
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
@@ -285,12 +279,10 @@ class ParamUtil {
                     break;
                 }
             }
-            log.LogDebug('5')
 
             if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
-            log.LogDebug('6')
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
@@ -328,7 +320,6 @@ class ParamUtil {
             }
 
         }
-        log.LogDebug('param init end')
 
     }
 
@@ -457,12 +448,9 @@ class ParamUtil {
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var paramType;
         var options = [];
-        log.LogDebug('parameterId='+parameterId)
-        log.LogDebug('pageContext.Items[\'userEmail\']='+pageContext.Items['userEmail'])
-        log.LogDebug('DataSourceUtil.getDsId(context)='+DataSourceUtil.getDsId(context))
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
+        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
