@@ -262,15 +262,18 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
         log.LogDebug('param init 3')
-        var a = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')
 
-        log.LogDebug(JSON.stringify(a.length))
+        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
+        var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
+
+        log.LogDebug('selected survey = '+JSON.stringify(selectedPulseSurvey))
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
-        if(!state.Parameters.IsNull('p_projectSelector') && a[0] !== 'none') {
+        // need to update default pulse survey
+        if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
 
             log.LogDebug('1')
-            var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
+            var selectedProject = selectedPulseSurvey[0];
             log.LogDebug('2')
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             log.LogDebug('3')
