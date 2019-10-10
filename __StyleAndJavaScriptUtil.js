@@ -120,7 +120,7 @@ class StyleAndJavaScriptUtil {
         var pieColors = Config.pieColors;
         var barChartColors = Config.barChartColors_Distribution;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
-        var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
+        var numberOfVerbatimComments = 5; //DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
 
         var css_string = '';
 
