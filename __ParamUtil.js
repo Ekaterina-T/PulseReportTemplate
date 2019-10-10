@@ -281,7 +281,6 @@ class ParamUtil {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
 
-
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
@@ -440,10 +439,12 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var parameterId = parameterName || context.parameter.ParameterId;
         var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+
+        log.LogDebug(' ---- START '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
@@ -465,6 +466,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
+        log.LogDebug(' ---- END  '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
 
         return options;
     }
