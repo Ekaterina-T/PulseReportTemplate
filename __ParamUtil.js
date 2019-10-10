@@ -244,7 +244,6 @@ class ParamUtil {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        log.LogDebug('param init 0')
 
         // reset all parameters if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
@@ -264,16 +263,19 @@ class ParamUtil {
         }
         log.LogDebug('param init 3')
         var a = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')
-        log.LogDebug(!state.Parameters.IsNull('p_projectSelector'))
-        log.LogDebug(JSON.stringify(a))
+
+        log.LogDebug(JSON.stringify(a.length))
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
         if(!state.Parameters.IsNull('p_projectSelector') && a[0] !== 'none') {
 
-            log.LogDebug('here')
+            log.LogDebug('1')
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
+            log.LogDebug('2')
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
+            log.LogDebug('3')
             var doReset = true;
+            log.LogDebug('4')
 
             for(var i=0; i<availableProjects.length; i++) {
                 if(selectedProject === availableProjects[i].Code) {
@@ -281,10 +283,12 @@ class ParamUtil {
                     break;
                 }
             }
+            log.LogDebug('5')
 
             if(doReset) {
                 ParamUtil.ResetParameters(context, ['p_projectSelector']);
             }
+            log.LogDebug('6')
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
