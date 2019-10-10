@@ -466,7 +466,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug(' ---- END  '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
+        log.LogDebug(' ---- END   '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
 
         return options;
     }
