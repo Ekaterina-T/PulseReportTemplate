@@ -451,6 +451,7 @@ class PageResults {
     */
     static function addResponsesColumn(context) {
 
+        var state = context.state;
         // add Responses Column if it's not Excel export (KN-353)
         if (state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
             return;
