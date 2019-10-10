@@ -92,8 +92,9 @@ class PageCategorical {
 
         for (var i=0; i<Qs.length; i++) {
 
-            var question : Question = project.GetQuestion(Qs[i]);
-            var answerCount = question.AnswerCount;
+            var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
+            var answerCount = Int32.Parse(newAnswerCount.length);
+
             if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
                 answerCount--;
             }
@@ -204,12 +205,13 @@ class PageCategorical {
 
         for (var i=0; i<Qs.length; i++) {
 
-            var question : Question = project.GetQuestion(Qs[i]);
-            var answerCount = question.AnswerCount;
+            var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
+            var answerCount = Int32.Parse(newAnswerCount.length);
 
-            if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
+            if (QuestionUtil.hasAnswer(context, Qs[i], naCode)) {
                 answerCount--;
             }
+
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;

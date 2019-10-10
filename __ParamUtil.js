@@ -27,15 +27,15 @@ class ParamUtil {
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions'},
         'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments'},
         'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory'},
-        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs']},       
+        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs']},
         'p_ScoreQs':              { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'ScoresForComments'},
         'p_TagQs':                { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'TagsForComments'},
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim'},
         'p_Statements':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Actions',              propertyName: 'Statements'},
-        
+
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
         'p_Dimensions':   { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
-        
+
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions' },
 
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true}
@@ -205,7 +205,7 @@ class ParamUtil {
     */
 
     static function ResetQuestionBasedParameters (context, parameterList) {
-        
+
         var state = context.state;
         var i;
 
@@ -216,7 +216,7 @@ class ParamUtil {
                 state.Parameters[parameterList[i]] = null;
             }
         }
-        
+
         return;
     }
 
@@ -236,7 +236,7 @@ class ParamUtil {
         var log = context.log;
         var projectSelectorNeeded = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var i;
-        
+
         // reset all parameters if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
@@ -279,7 +279,7 @@ class ParamUtil {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
 
-        
+
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
@@ -410,16 +410,16 @@ class ParamUtil {
         var currentPage = context.pageContext.Items['CurrentPageId'];
 
         if(!isParameterToBeLoaded (context)) { // no need to load parameter
-            return; 
+            return;
         }
 
         var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
 
         for(var i=0; i<parameterOptions.length; i++) { // populate parameter
-                var val = new ParameterValueResponse();
-                val.StringKeyValue = parameterOptions[i].Code;
-                val.StringValue = parameterOptions[i].Label;
-                parameter.Items.Add(val);
+            var val = new ParameterValueResponse();
+            val.StringKeyValue = parameterOptions[i].Code;
+            val.StringValue = parameterOptions[i].Label;
+            parameter.Items.Add(val);
         }
 
         return;
@@ -438,35 +438,37 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        var parameterId = parameterName || context.parameter.ParameterId; //var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        //if(cachedParameterOptions.hasOwnProperty(key)) {
-        //    options = cachedParameterOptions[key];
-        //} else {
-
+        if(!cachedParameterOptions.hasOwnProperty(key)) {
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+            var paramOptionsObj = {};
 
-            if(!resource) {
-                return [];
-            }
+            paramOptionsObj['type'] = parameterInfo.type;
+            paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
+            cachedParameterOptions[key] = paramOptionsObj;
+        }
 
-            options = getRawOptions(context, resource, parameterInfo.type);
-            cachedParameterOptions[key] = options;
-        //}
+        //restored from cache options might need to be modified (exclude no data options)
+        //to avoid 'spoiling' full list its copy needed
+        paramType = cachedParameterOptions[key]['type'];
+        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
+            options.push(cachedParameterOptions[key]['options'][i]);
+        }
 
-
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (parameterInfo.type === 'QuestionList' || parameterInfo.type === 'QuestionAndCategoriesList')) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
 
-        return modifyOptionsOrder(context, options, parameterInfo);
+        return options;
     }
 
     /**
-     * 
+     *
      */
     static function GetParameterInfoObject(context, parameterId) {
 
@@ -540,14 +542,13 @@ class ParamUtil {
         }
 
         if(type === 'PulseSurveyInfo') {
-            return getOptions_PulseSurveyInfo(context, resource['storageInfo']); 
+            return getOptions_PulseSurveyInfo(context, resource['storageInfo']);
         }
 
         if(type === 'CustomQuestionList') {
             return getOptions_CustomQuestionList (context, resource);
-          }
-          
-          
+        }
+
         if(type === 'ParameterOptionList') {
             return getOptions_ParameterList (context, resource);
         }
@@ -592,23 +593,22 @@ class ParamUtil {
             var custom_questions = QuestionUtil.getQuestionsByCategory (context, customCategory);
             var custom_qIds = [];
             for (var i=0; i<custom_questions.length; i++) {
-              var custom_question : Question = custom_questions[i];
-              custom_qIds.push(custom_question.QuestionId);                
-            }                      
+                var custom_question : Question = custom_questions[i];
+                custom_qIds.push(custom_question.QuestionId);
+            }
             return custom_qIds;
         }
-  
-  
+
         if(parameterInfo.locationType === 'CombinationOfParameters') {
             var paramNames = parameterInfo.parameterList;
-            return paramNames;          
+            return paramNames;
         }
 
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }
 
     /**
-     * 
+     *
      */
     static function getOptions_PulseSurveyInfo(context, storageInfo) {
         return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
@@ -748,51 +748,51 @@ class ParamUtil {
     }
 
 
-      /**
-       *@param {object} context
-       *@param {array} array of question Ids
-       *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-       */
-      static function getOptions_CustomQuestionList(context, qList) {
-            
-            var log = context.log;
-            var parameterOptions = [];
-         
-            if(!qList instanceof Array) {
-                throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
-            }
-          
-            var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-          
-            if (codes.length) {
-              var baby_p_number = codes[0];
-              for(var i=0; i<qList.length; i++) {
+    /**
+     *@param {object} context
+     *@param {array} array of question Ids
+     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+    static function getOptions_CustomQuestionList(context, qList) {
+
+        var log = context.log;
+        var parameterOptions = [];
+
+        if(!qList instanceof Array) {
+            throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
+        }
+
+        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+        if (codes.length) {
+            var baby_p_number = codes[0];
+            for(var i=0; i<qList.length; i++) {
                 var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
                 if (customTxt) {
                     var option = {};
                     option.Code = qList[i]; // propertyValue[i] is qid in this case
-                    option.Label = customTxt; 
+                    option.Label = customTxt;
                     parameterOptions.push(option);
                 }
-              }
             }
-            return parameterOptions;
         }
-  
-   /**
-   *@param {object} context
-   *@param {array} array of parameter Ids
-   *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-   */
+        return parameterOptions;
+    }
+
+    /**
+     *@param {object} context
+     *@param {array} array of parameter Ids
+     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
     static function getOptions_ParameterList(context, parameterNameList) {
-      
-      var log = context.log;
-      var combinedOptions = [];        
-      for (var i=0; i<parameterNameList.length; i++) {
-         combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i]));
-      }        
-      return combinedOptions;
-      
+
+        var log = context.log;
+        var combinedOptions = [];
+        for (var i=0; i<parameterNameList.length; i++) {
+            combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i]));
+        }
+        return combinedOptions;
+
     }
 
     static function generateResourceObjectForFilterPanelParameter(context, parameterId) {

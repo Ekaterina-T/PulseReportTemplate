@@ -42,18 +42,19 @@ class PageCategoricalDrilldown {
 
     static function tableDrilldown_Render(context){
 
-        var report = context.report;
         var state = context.state;
         var log = context.log;
         var table = context.table;
         var suppressSettings = context.suppressSettings;
+        var project : Project = DataSourceUtil.getProject(context);
 
         // add row  = header question
         var drillDownQId = state.Parameters.GetString('p_Drilldown');
         var qe : QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, drillDownQId);
-        var project : Project = DataSourceUtil.getProject(context);
-        var question : Question = project.GetQuestion(drillDownQId);
+        var qInfo = QuestionUtil.getQuestionInfo(context, drillDownQId);
+        var question : Question = project.GetQuestion(qInfo.questionId);
         var row : HeaderQuestion = new HeaderQuestion(qe);
+
         TableUtil.maskOutNA(context, row);
         row.IsCollapsed = (question.QuestionType === QuestionType.Single) ? false : true;
         row.ShowTitle = false;
@@ -61,9 +62,7 @@ class PageCategoricalDrilldown {
         TableUtil.addBreakByNestedHeader(context, row);
         table.RowHeaders.Add(row);
 
-
         // add columns = bar chart, Count and VP
-
         var barChart: HeaderChartCombo = new HeaderChartCombo();
         var chartValue: ChartComboValue = new ChartComboValue();
         chartValue.Expression = 'cellv(col+1, row)';
@@ -93,6 +92,4 @@ class PageCategoricalDrilldown {
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
     }
-
-
 }

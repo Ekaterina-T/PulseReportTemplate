@@ -73,28 +73,24 @@ class PageResults {
         }
 
         var rowsAdded = false;
+
         if(resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
-
+            rowsAdded = true;
+        } else if (dimensions && dimensions.length>0) {
+            tableStatements_AddRows_Banner1(context);
             rowsAdded = true;
         }
 
-        else if (dimensions && dimensions.length>0) {
-            tableStatements_AddRows_Banner1(context);          
-
-            rowsAdded = true;
-        }
-
-        
         if (custom_questions && custom_questions.length > 0) {
             tableStatements_AddRows_Banner2(context);          
             rowsAdded = true;
         }
+
         if (!rowsAdded) {        
             throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
-
         }  
-        }
+  }
 
     /*
   * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
@@ -103,7 +99,6 @@ class PageResults {
 
     static function tableStatements_AddRows_Banner0(context) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'ResultStatements');
@@ -197,7 +192,6 @@ class PageResults {
   * Add custom statement questions as table rows based on Question category
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   */
- 
   
   static function tableStatements_AddRows_Banner2 (context) {
     
@@ -220,6 +214,7 @@ class PageResults {
                 TableUtil.addBreakByNestedHeader(context, categorization);
                 table.RowHeaders.Add(categorization);
             }
+
             for (var i=0; i<custom_questions.length; i++) {
               var qId = custom_questions[i].QuestionId;        
               var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId); 
@@ -256,10 +251,8 @@ class PageResults {
         addDistributionBarChart(context);
         // add scale distribution
         addScaleDistributionColumns(context);
-        // add Responses Column if it's not Excel export (KN-353)
-        if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
-            addResponsesColumn(context);
-        }  
+        // add Responses Column
+        addResponsesColumn(context);
         // add Benchmark related columns
         tableStatements_AddBenchmarkColumns_Banner0(context);
     }
@@ -458,9 +451,12 @@ class PageResults {
     */
     static function addResponsesColumn(context) {
 
-        var table = context.table;
+        // add Responses Column if it's not Excel export (KN-353)
+        if (state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
+            return;
+        }
 
-        // add Responses Column
+        var table = context.table;
         var responses: HeaderBase = new HeaderBase();
         var catForNAMask: HeaderCategories = new HeaderCategories(); // a way to exclude NA from base calculation
 

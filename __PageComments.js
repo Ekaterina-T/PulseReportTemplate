@@ -31,8 +31,7 @@ class PageComments {
          */
         static function hitlistComments_Hide(context){
            var log = context.log;
-            return Hitlist.hitlistComments_Hide(context, "Base", "p_AllOpenTextQs");
-       
+           return Hitlist.hitlistComments_Hide(context, "Base", "p_AllOpenTextQs");
         }
     
         /**
@@ -64,11 +63,9 @@ class PageComments {
          * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}     
          */
           static function tableBase_Render (context) {
-            var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
-            var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
-            SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
+              var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
+              var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
+              SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
           }
-      
-    
-    
+
     }

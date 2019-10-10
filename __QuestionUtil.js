@@ -1,5 +1,5 @@
 class QuestionUtil {
- 
+
 
     /*
      * Get question info:
@@ -169,9 +169,7 @@ class QuestionUtil {
         var report = context.report;
         var log = context.log;
 
-        var project : Project = DataSourceUtil.getProject(context);
-        var q : Question = project.GetQuestion(questionId);
-        var answers = q.GetAnswers();
+        var answers = getQuestionAnswers(context, questionId);
         for (var k=0; k<answers.length; k++) {
             if (answers[k].Precode === answerCode) {
                 return true;
@@ -206,27 +204,25 @@ class QuestionUtil {
     }
 
 
-  /*
-     * Get questions be category
-     * @param {object} context object {state: state, report: report, log: log}
-     * @param {string} category
-     * @returns {array} - Question[] 
-     */
+    /*
+       * Get questions be category
+       * @param {object} context object {state: state, report: report, log: log}
+       * @param {string} category
+       * @returns {array} - Question[]
+       */
     static function getQuestionsByCategory (context, category) {
         var state = context.state;
         var report = context.report;
         var log = context.log;
-        
+
         if (category) {
-          var project : Project = DataSourceUtil.getProject(context);
-          return project.GetQuestions({'InCategories': [category]});
-        }  
+            var project : Project = DataSourceUtil.getProject(context);
+            return project.GetQuestions({'InCategories': [category]});
+        }
         return [];
-    } 
+    }
 
 
-    
-     
     /*
     * Get custom question text / title by question id from DB table or cache
     * @param {object} context object {state: state, report: report, log: log}
@@ -234,44 +230,44 @@ class QuestionUtil {
     * @returns {string} - custom question text / title
     */
     static function getCustomQuestionTextById(context, qId) {
-        var log = context.log;      
+        var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;
 
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
-        
+
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         if (codes.length == 0)
             return null;
-        
-        var cachedTxt;    
+
+        var cachedTxt;
         var baby_p_number = codes[0];
-        
+
         // Redis is not available in Excel export
         if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
-            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);            
+            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
 
         // if Redis doesn't have cached question, look it up in the DB table
-        if (!cachedTxt) { 
-			var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
-			var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-			if(schemaId && tableName) { // storage for baby survey custom questions
-				var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-				var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-				var custom_id = baby_p_number+"_"+qId;
-				var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
-				if (custom_texts.Count) {
+        if (!cachedTxt) {
+            var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
+            var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+            if(schemaId && tableName) { // storage for baby survey custom questions
+                var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+                var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+                var custom_id = baby_p_number+"_"+qId;
+                var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
+                if (custom_texts.Count) {
                     cachedTxt = custom_texts[0];
                     if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
-					  confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
-                    }               
-                } 
-			}
-		}
-		return cachedTxt;    
+                        confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
+                    }
+                }
+            }
+        }
+        return cachedTxt;
     }
 
 }
