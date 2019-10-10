@@ -272,7 +272,6 @@ class ParamUtil {
         // need to update default pulse survey
         if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
 
-            log.LogDebug('1')
             var selectedProject = selectedPulseSurvey[0];
             log.LogDebug('2')
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
@@ -295,14 +294,12 @@ class ParamUtil {
         } else if(projectSelectorNeeded && state.Parameters.IsNull('p_projectSelector')) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
         }
-        log.LogDebug('param init 4')
 
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
-        log.LogDebug('param init 5')
 
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -457,7 +454,7 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        var parameterId = parameterName || context.parameter.ParameterId;
+        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         var paramType;
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
