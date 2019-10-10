@@ -38,7 +38,7 @@ class PageUtil {
         }
 
         //for tests
-        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
     }
 
     /*
