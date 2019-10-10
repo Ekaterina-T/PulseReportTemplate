@@ -454,13 +454,12 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        log.LogDebug('gpo 1')
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        log.LogDebug('gpo 2')
         var paramType;
-        log.LogDebug('gpo 3')
         var options = [];
-        log.LogDebug('gpo 4')
+        log.LogDebug('parameterId='+parameterId)
+        log.LogDebug('pageContext.Items[\'userEmail\']='+pageContext.Items['userEmail'])
+        log.LogDebug('DataSourceUtil.getDsId(context)='+DataSourceUtil.getDsId(context))
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         log.LogDebug(' ---- START '+parameterId+ ' from '+from.toUpperCase()+' ---- ')
