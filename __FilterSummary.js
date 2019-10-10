@@ -1,11 +1,11 @@
 class FilterSummary {
 
     /**
-    * Get string "parameter label: parameter value" instead of drop downs for PDF export.
-    * @param {object} context object {state: state, report: report, log: log}
-    * @param {paramName} parameter name
-    * @param {filterText} key word for parameter label
-    */
+     * Get string "parameter label: parameter value" instead of drop downs for PDF export.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {paramName} parameter name
+     * @param {filterText} key word for parameter label
+     */
 
     static function filterSummaryText_Render (context, paramName, filterText) {
 
@@ -33,7 +33,6 @@ class FilterSummary {
         return !Export.isExportMode(context);
     }
 
-
     /*
     * Get string "parameter label: parameter value" instead of drop downs for PDF export.
     * @param {object} context object {state: state, report: report, log: log, user: user, pageContext: pageContext}
@@ -48,10 +47,7 @@ class FilterSummary {
         var str = '';
 
         // data source
-        if(Config.Surveys.length>1) {
-            str += Export.displayDataSourceInfo(context);
-            str += System.Environment.NewLine; // for Excel export
-        }
+        str += Export.displayDataSourceInfo(context);
 
         //hierarchy
         str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
