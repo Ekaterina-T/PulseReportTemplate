@@ -245,32 +245,26 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        log.LogDebug('param init 1')
-
         // reset all parameters if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 2')
 
         //reset question and category based params when baby survey changes
         if(page.SubmitSource === 'projectSelector') {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 3')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init 4')
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
         var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
 
-        log.LogDebug('param init 5')
         //user unchecked "show all pulse surveys" checkbox or changed report base
         // need to update default pulse survey
         if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
@@ -298,8 +292,11 @@ class ParamUtil {
 
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
+            log.LogDebug('before info')
             PulseProgramUtil.setPulseSurveyContentInfo(context);
+            log.LogDebug('after info')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+            log.LogDebug('after base')
         }
 
         log.LogDebug('after pulse info updated')

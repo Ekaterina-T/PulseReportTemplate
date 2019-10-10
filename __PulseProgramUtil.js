@@ -168,9 +168,6 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
-
-        log.LogDebug('excludeItemsWithoutData 0')
-
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
@@ -178,11 +175,9 @@ class PulseProgramUtil {
         if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !resources || resources.length === 0) {
             return allOptions;
         }
-        log.LogDebug('excludeItemsWithoutData 2')
 
         var availableCodes = getPulseSurveyContentInfo_ItemsWithData(context);
         var optionsWithData = [];
-        log.LogDebug('excludeItemsWithoutData 3')
 
         for(var i=0; i<allOptions.length; i++) {
             // options can be a list of objects with code property or just a list of codes
@@ -192,7 +187,6 @@ class PulseProgramUtil {
                 optionsWithData.push(allOptions[i]);
             }
         }
-        log.LogDebug('excludeItemsWithoutData 4')
 
         return optionsWithData;
     }
