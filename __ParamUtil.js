@@ -454,24 +454,38 @@ class ParamUtil {
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         if(!cachedParameterOptions.hasOwnProperty(key)) {
+            log.LogDebug('not cached 1')
             var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+            log.LogDebug('not cached 2')
             var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+            log.LogDebug('not cached 3')
             var paramOptionsObj = {};
+            log.LogDebug('not cached 4')
 
             paramOptionsObj['type'] = parameterInfo.type;
+            log.LogDebug('not cached 5')
             paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
+            log.LogDebug('not cached 6')
             cachedParameterOptions[key] = paramOptionsObj;
+            log.LogDebug('not cached 7')
         }
+
+
+        log.LogDebug('from cache 1')
 
         //restored from cache options might need to be modified (exclude no data options)
         //to avoid 'spoiling' full list its copy needed
         paramType = cachedParameterOptions[key]['type'];
+        log.LogDebug('from cache 2')
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
+        log.LogDebug('from cache 3')
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
+            log.LogDebug('exclude 1')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+            log.LogDebug('exclude 2')
         }
         log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
