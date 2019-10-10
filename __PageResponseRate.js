@@ -283,7 +283,6 @@ class PageResponseRate {
         var demographics = ParamUtil.GetSelectedOptions (context, 'p_Demographics');
 
         if (demographics.length) {
-
             // break by question
             var qId = demographics[0].Code;
             var questionInfo = QuestionUtil.getQuestionInfo(context, qId);
@@ -296,15 +295,17 @@ class PageResponseRate {
                 hq.ReferenceGroup.Self = false;
                 hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
             }
-
             table.RowHeaders.Add(hq);
-
-            // global table settings
-            table.Caching.Enabled = false;
-            table.RemoveEmptyHeaders.Columns = false;
-            table.RemoveEmptyHeaders.Rows = false;
-            table.UseRespondentData = true;
+        } else {
+            var hb: HeaderBase = new HeaderBase();
+            table.RowHeaders.Add(hb);
         }
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Columns = false;
+        table.RemoveEmptyHeaders.Rows = false;
+        table.UseRespondentData = true;
     }
 
 

@@ -17,11 +17,12 @@ class PulseProgramUtil {
     }
 
     /**
-     * creates array of qids and category ids that need to be checked against pulse
+     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
+     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
      * @param {Object} context
      * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
-    static private function getResourcesList (context, includePageResultsOnly) {
+    static private function getResourcesList (context) {
 
         var log = context.log;
         var listOfResources = [];
@@ -52,7 +53,7 @@ class PulseProgramUtil {
                 type = 'QuestionId';
             } else { //dimension
                 code = item.Code;
-                type = item.Type; 
+                type = item.Type;
             }
 
             if(code && !resourcesLog.hasOwnProperty(code)) {
@@ -61,7 +62,7 @@ class PulseProgramUtil {
             }
         }
 
-        return resources;        
+        return resources;
     }
 
     /**
@@ -77,11 +78,13 @@ class PulseProgramUtil {
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
 
-        return; 
+        return;
     }
 
     /**
-     * 
+     * save base values of needed items in pulseSurveyContentBaseValues[key] array
+     * it matches pulseSurveyContentInfo[key] exactly
+     * @param {Object} context
      */
     static public function setPulseSurveyContentBaseValues (context) {
 
@@ -89,8 +92,18 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
 
-        var resourcesBase : Datapoint[] = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        var resourcesBase : Datapoint[];
         var baseValues = [];
+
+        if(!pulseSurveyContentInfo[key]) {
+            throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
+        }
+
+        if(pulseSurveyContentInfo[key].length === 0) {
+            resourcesBase = [];
+        } else {
+            resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+        }
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
@@ -113,16 +126,16 @@ class PulseProgramUtil {
         var log = context.log;
         var currentPage = PageUtil.getCurrentPageIdInConfig (context);
         var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+currentPage;//+'_'+DataSourceUtil.getDsId(context);
+        var key = pageContext.Items['userEmail']+'_'+currentPage;
 
         return key;
     }
 
     /**
      * @param {Object} context
-     * @returns {Object} key - qid or category id that has >0 answers
+     * @returns {Object} resourcesWithData - object {resourceId: resourceType} - only those that have data
      */
-     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
+    static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
@@ -137,14 +150,14 @@ class PulseProgramUtil {
         }
 
         return resourcesWithData;
-     }
+    }
 
     /**
-      * Recieves full list of options and exclude from it those without answers
+     * Recieves full list of options and exclude from it those without answers
      * @param {Object} context
      * @param {Array} list of options
      * @returns {Array} options with answers
-      */
+     */
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
@@ -170,19 +183,17 @@ class PulseProgramUtil {
         }
 
         return optionsWithData;
-     }
+    }
 
     /**
      * Debug function that prints PulseSurveyContentInfo into log
      * @param {Object} context
      */
-     static public function printPulseSurveyContentInfoTable (context) {
+    static public function printPulseSurveyContentInfoTable (context) {
 
         var log = context.log;
         var report = context.report;
         var key = getKeyForPulseSurveyContentInfo(context);
-
-        //log.LogDebug('printPulseSurveyContentInfoTable');
 
         if(pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key].length>0) {
 
@@ -202,7 +213,8 @@ class PulseProgramUtil {
     }
 
     /**
-     *
+     * hide script for ShowAll checkbox - ability to see not only own surveys
+     * @param {Object} context
      */
     static public function isShowAllNotVisible(context) {
 
