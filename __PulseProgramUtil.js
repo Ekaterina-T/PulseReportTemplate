@@ -92,6 +92,7 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentBaseValues (context) {
 
         var log = context.log;
+        log.LogDebug('setPulseSurveyContentBaseValues start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
 
@@ -115,6 +116,9 @@ class PulseProgramUtil {
 
         delete pulseSurveyContentBaseValues.key;
         pulseSurveyContentBaseValues[key] = baseValues;
+
+
+        log.LogDebug('setPulseSurveyContentBaseValues end')
 
         return;
     }

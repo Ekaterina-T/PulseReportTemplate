@@ -292,7 +292,6 @@ class ParamUtil {
 
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
-            log.LogDebug('before info')
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             log.LogDebug('after info')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
