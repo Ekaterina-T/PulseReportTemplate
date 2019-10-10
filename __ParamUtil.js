@@ -251,23 +251,26 @@ class ParamUtil {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 1')
 
         //reset question and category based params when baby survey changes
         if(page.SubmitSource === 'projectSelector') {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 2')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
         log.LogDebug('param init 3')
+        var a = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')
+        log.LogDebug(!state.Parameters.IsNull('p_projectSelector'))
+        log.LogDebug(JSON.stringify(a))
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
-        if(!state.Parameters.IsNull('p_projectSelector') && ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys')[0] !== 'none') {
+        if(!state.Parameters.IsNull('p_projectSelector') && a[0] !== 'none') {
+
+            log.LogDebug('here')
             var selectedProject = ParamUtil.GetSelectedCodes(context,'p_projectSelector')[0];
             var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
             var doReset = true;
