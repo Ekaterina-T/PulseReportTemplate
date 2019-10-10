@@ -237,12 +237,20 @@ class ParamUtil {
         var projectSelectorNeeded = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var i;
 
+
+        //set ds if it is not defined
+        if (state.Parameters.IsNull('p_SurveyType')) {
+            var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
+            state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
+        }
+
         // reset all parameters if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
 
+        //reset question and category based params when baby survey changes
         if(page.SubmitSource === 'projectSelector') {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
@@ -251,12 +259,6 @@ class ParamUtil {
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
-        }
-
-        //set ds if it is not defined
-        if (state.Parameters.IsNull('p_SurveyType')) {
-            var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
-            state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
         //user unchecked "show all pulse surveys" checkbox or changed report base
