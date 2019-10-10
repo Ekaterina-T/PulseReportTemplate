@@ -142,8 +142,11 @@ class PulseProgramUtil {
 
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('key='+key)
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
+        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
         var resourcesWithData = {};
 
         for(var i=0; i< resources.length; i++) {
@@ -151,6 +154,7 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
+        log.LogDebug('end')
 
         return resourcesWithData;
     }
@@ -169,7 +173,6 @@ class PulseProgramUtil {
 
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
-        log.LogDebug('excludeItemsWithoutData 1')
 
         //not pulse program or there's nothing to exclude on this page
         if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !resources || resources.length === 0) {
