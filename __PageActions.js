@@ -31,7 +31,8 @@ class PageActions {
      */
     static function hitlistActions_Hide(context){
 
-        return false;
+        var state = context.state; 
+        return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
     }
 
     /**
