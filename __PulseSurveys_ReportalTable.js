@@ -40,7 +40,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
         surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
 
-        return surveyList;//surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
+        return surveyList;
     }
 
     /**

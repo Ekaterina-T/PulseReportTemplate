@@ -293,6 +293,14 @@ class ParamUtil {
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
+            log.LogDebug('after set info')
+            var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
+
+            if(PulseProgramUtil.pulseSurveyContentInfo[key].length > 0) {
+                report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            }
+            log.LogDebug('after try and generate table')
+
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
 
