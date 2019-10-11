@@ -293,14 +293,7 @@ class ParamUtil {
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
-            log.LogDebug('after set info')
-            var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
-
-            if(PulseProgramUtil.pulseSurveyContentInfo[key].length > 0) {
-                context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-            }
-            log.LogDebug('after try and generate table')
-
+            log.LogDebug('content info is set, start building resources info')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
 
@@ -484,9 +477,7 @@ class ParamUtil {
         }
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
-            log.LogDebug('exclude 1')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-            log.LogDebug('exclude 2')
         }
         log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 

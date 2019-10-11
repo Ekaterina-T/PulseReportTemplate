@@ -148,19 +148,26 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
-        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
         var resourcesWithData = {};
 
-        for(var i=0; i< resources.length; i++) {
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
+        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
+
+        if(resources.length > resourcesBase.length) {
+            setPulseSurveyContentBaseValues(context);
+            var resourcesBase = pulseSurveyContentBaseValues[key];
+        }
+
+        for(var i=0; i< resourcesBase.length; i++) {
             if(resourcesBase[i]>0) {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        log.LogDebug('end')
+        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
 
         return resourcesWithData;
     }
@@ -174,6 +181,8 @@ class PulseProgramUtil {
     static public function excludeItemsWithoutData(context, allOptions) {
 
         var log = context.log;
+
+        log.LogDebug('excludeItemsWithoutData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
@@ -194,6 +203,7 @@ class PulseProgramUtil {
             }
         }
 
+        log.LogDebug('excludeItemsWithoutData end')
         return optionsWithData;
     }
 
