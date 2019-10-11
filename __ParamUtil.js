@@ -475,7 +475,7 @@ class ParamUtil {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
-        if(!context.hasOwnProperty('parameter') && !DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             log.LogDebug('exclude 1')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
             log.LogDebug('exclude 2')
