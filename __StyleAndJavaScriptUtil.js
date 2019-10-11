@@ -186,7 +186,11 @@ class StyleAndJavaScriptUtil {
         if(!isThreeDotsMenuNeeded) {
             css_string += '.material-card__title .kebab-menu { display: none; }';
         }
-
+        
+        // hide hitlist in PDF
+        if(PageActions.hitlistActions_Hide(context)) {
+            css_string += '.material-card.material-card--hitlist { display: none; }';
+        }
 
         //CSS to show only the latest n rows with comments
         if(numberOfVerbatimComments) {
