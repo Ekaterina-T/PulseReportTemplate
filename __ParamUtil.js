@@ -297,7 +297,7 @@ class ParamUtil {
             var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
 
             if(PulseProgramUtil.pulseSurveyContentInfo[key].length > 0) {
-                report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+                context.report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
             }
             log.LogDebug('after try and generate table')
 
