@@ -94,10 +94,13 @@ class PulseProgramUtil {
         var log = context.log;
         log.LogDebug('setPulseSurveyContentBaseValues start')
         var key = getKeyForPulseSurveyContentInfo(context);
+        log.LogDebug('key='+key)
         var report = context.report;
 
         var resourcesBase : Datapoint[];
         var baseValues = [];
+
+        log.LogDebug('setPulseSurveyContentBaseValues '+JSON.stringify(pulseSurveyContentInfo));
 
         if(!pulseSurveyContentInfo[key]) {
             throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
@@ -146,7 +149,6 @@ class PulseProgramUtil {
 
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
-        log.LogDebug('key='+key)
         log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];

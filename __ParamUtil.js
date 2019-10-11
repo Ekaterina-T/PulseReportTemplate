@@ -293,9 +293,7 @@ class ParamUtil {
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
             PulseProgramUtil.setPulseSurveyContentInfo(context);
-            log.LogDebug('after info')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
-            log.LogDebug('after base')
         }
 
         log.LogDebug('after pulse info updated')
@@ -477,7 +475,7 @@ class ParamUtil {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
+        if(!context.hasOwnProperty('parameter') && !DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             log.LogDebug('exclude 1')
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
             log.LogDebug('exclude 2')
