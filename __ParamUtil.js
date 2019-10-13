@@ -263,6 +263,7 @@ class ParamUtil {
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
             var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
 
+            log.LogDebug(JSON.stringify(selectedPulseSurvey))
             //set default pulse baby project
             if(selectedPulseSurvey.length===0) {
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
