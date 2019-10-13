@@ -92,7 +92,7 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentBaseValues (context) {
 
         var log = context.log;
-        log.LogDebug('setPulseSurveyContentBaseValues start')
+        //log.LogDebug('setPulseSurveyContentBaseValues start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
 
@@ -106,9 +106,9 @@ class PulseProgramUtil {
         if(pulseSurveyContentInfo[key].length === 0) {
             resourcesBase = [];
         } else {
-            log.LogDebug('request to pulse table start')
+            //log.LogDebug('request to pulse table start')
             resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-            log.LogDebug('request to pulse table end')
+            //log.LogDebug('request to pulse table end')
         }
 
         for(var i=0; i< resourcesBase.length; i++) {
@@ -121,7 +121,7 @@ class PulseProgramUtil {
         pulseSurveyContentBaseValues[key] = baseValues;
 
 
-        log.LogDebug('setPulseSurveyContentBaseValues end')
+        //log.LogDebug('setPulseSurveyContentBaseValues end')
 
         return;
     }
@@ -148,14 +148,14 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
-        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
+        //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
 
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
-        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
+        //log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
+        //log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
 
         if(resources.length > resourcesBase.length) {
             setPulseSurveyContentBaseValues(context);
@@ -167,7 +167,7 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
+        //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
 
         return resourcesWithData;
     }
@@ -182,7 +182,7 @@ class PulseProgramUtil {
 
         var log = context.log;
 
-        log.LogDebug('excludeItemsWithoutData start')
+        //log.LogDebug('excludeItemsWithoutData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
@@ -203,7 +203,7 @@ class PulseProgramUtil {
             }
         }
 
-        log.LogDebug('excludeItemsWithoutData end')
+        //log.LogDebug('excludeItemsWithoutData end')
         return optionsWithData;
     }
 

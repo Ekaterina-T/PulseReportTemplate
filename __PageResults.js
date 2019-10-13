@@ -376,11 +376,13 @@ class PageResults {
         bcCategories.Distributions.Enabled = true;
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
-        bcCategories.HideData = true;
+        bcCategories.HideData = false;
         
         table.ColumnHeaders.Add(bcCategories);
 
         var barChartColors = Config.barChartColors_Distribution;
+
+        log.LogDebug(JSON.stringify(barChartColors))
 
         if(state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
 
@@ -407,7 +409,7 @@ class PageResults {
 
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
-            for(i=0; i< barChartColors.length; i++) {
+            for(i=0; i< 1/*barChartColors.length*/; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Expression = 'cellv(col-'+(i+1)+', row)';
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);

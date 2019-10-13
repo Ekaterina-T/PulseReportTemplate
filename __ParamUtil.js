@@ -236,7 +236,7 @@ class ParamUtil {
         var log = context.log;
         var i;
 
-        log.LogDebug('param init start')
+        //log.LogDebug('param init start')
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
@@ -255,7 +255,7 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
-        log.LogDebug('project selector processing start')
+       // log.LogDebug('project selector processing start')
 
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
@@ -298,7 +298,7 @@ class ParamUtil {
 
             
         }
-        log.LogDebug('project selector processing end')
+        //log.LogDebug('project selector processing end')
         
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
@@ -327,7 +327,7 @@ class ParamUtil {
             }
 
         }
-        log.LogDebug('param init end')
+        //log.LogDebug('param init end')
 
     }
 
@@ -503,7 +503,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         CacheParameterOptions(context, parameterId);
 
@@ -525,7 +525,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
