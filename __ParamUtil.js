@@ -331,12 +331,12 @@ class ParamUtil {
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
 
-    /*
-  * Get selected answer codes of the report parameter (single or multi response)
-  * @param {Object} context  - object {state: state, log: log}
-  * @param {String} parameterName - the name of the report parameter
-  * @returns {Array} - list of selected answer codes
-  */
+    /**
+     * Get selected answer codes of the report parameter (single or multi response)
+     * @param {Object} context  - object {state: state, log: log}
+     * @param {String} parameterName - the name of the report parameter
+     * @returns {Array} - list of selected answer codes
+     */
 
     static function GetSelectedCodes (context, parameterName) {
         var state = context.state;
@@ -469,6 +469,8 @@ class ParamUtil {
      * get copy of parameter options from cache in
      */
     static function GetParameterOptionsFromCache(context, parameterId) {
+        //cached options might need to be modified (exclude no data options)
+        //copy needed to avoid 'spoiling' full list with exclude
 
         var log = context.log;
         var pageContext = context.pageContext;
@@ -503,10 +505,21 @@ class ParamUtil {
 
         CacheParameterOptions(context, parameterId);
 
-        //cached options might need to be modified (exclude no data options)
-        //copy needed to avoid 'spoiling' full list with exclude
+        /*
         paramType = cachedParameterOptions[key]['type'];
         options = GetParameterOptionsFromCache(context, parameterId);
+        */
+
+        //-------------------------------------------
+       var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+       var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+
+       if(!resource) {
+           return [];
+       }
+
+       options = getRawOptions(context, resource, parameterInfo.type);
+       //------------------------------------------------------------------------
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
@@ -517,7 +530,11 @@ class ParamUtil {
     }
 
     /**
-     *
+     * parameterInfo is descriptive object; stores parameter type, options order settings, location settings
+     * it is basis for building parameterResource object identifing location of options
+     *@param {Object} context
+     *@param {String} parameterId
+     *@parreturn {Object} parameterInfo - reportParameterValuesMap object
      */
     static function GetParameterInfoObject(context, parameterId) {
 
@@ -656,9 +673,12 @@ class ParamUtil {
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }
 
-    /**
-     *
-     */
+    /** 
+    *Populates p_projectSelector based on storageInfo settings from Congfig.
+    *@param {object} context - contains Reportal scripting state, log, report, parameter objects
+    *@param {object} storageInfo 
+    *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+    */
     static function getOptions_PulseSurveyInfo(context, storageInfo) {
         return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
     }

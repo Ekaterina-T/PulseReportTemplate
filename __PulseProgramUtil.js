@@ -94,13 +94,10 @@ class PulseProgramUtil {
         var log = context.log;
         log.LogDebug('setPulseSurveyContentBaseValues start')
         var key = getKeyForPulseSurveyContentInfo(context);
-        log.LogDebug('key='+key)
         var report = context.report;
 
         var resourcesBase : Datapoint[];
         var baseValues = [];
-
-        log.LogDebug('setPulseSurveyContentBaseValues '+JSON.stringify(pulseSurveyContentInfo));
 
         if(!pulseSurveyContentInfo[key]) {
             throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
@@ -109,7 +106,9 @@ class PulseProgramUtil {
         if(pulseSurveyContentInfo[key].length === 0) {
             resourcesBase = [];
         } else {
+            log.LogDebug('request to pulse table start')
             resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
+            log.LogDebug('request to pulse table end')
         }
 
         for(var i=0; i< resourcesBase.length; i++) {
@@ -117,6 +116,7 @@ class PulseProgramUtil {
             baseValues.push(baseVal.Value);
         }
 
+        // remove old value as it might have changed if new data appeared
         delete pulseSurveyContentBaseValues.key;
         pulseSurveyContentBaseValues[key] = baseValues;
 
