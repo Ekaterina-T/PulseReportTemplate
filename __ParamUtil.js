@@ -507,7 +507,7 @@ class ParamUtil {
 
         
         paramType = cachedParameterOptions[key]['type'];
-        //options = GetParameterOptionsFromCache(context, parameterId);
+        /*options = */GetParameterOptionsFromCache(context, parameterId);
         
 
         //-------------------------------------------
