@@ -505,10 +505,10 @@ class ParamUtil {
 
         CacheParameterOptions(context, parameterId);
 
-        /*
+        
         paramType = cachedParameterOptions[key]['type'];
-        options = GetParameterOptionsFromCache(context, parameterId);
-        */
+        //options = GetParameterOptionsFromCache(context, parameterId);
+        
 
         //-------------------------------------------
        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
