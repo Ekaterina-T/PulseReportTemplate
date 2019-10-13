@@ -234,7 +234,6 @@ class ParamUtil {
         var state = context.state;
         var page = context.page;
         var log = context.log;
-        var projectSelectorNeeded = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var i;
 
         log.LogDebug('param init start')
@@ -258,8 +257,8 @@ class ParamUtil {
 
         log.LogDebug('project selector processing start')
 
-        //set up object holding questions available on current page
-        if(projectSelectorNeeded) {
+        // pulse program handler
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
             var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
@@ -293,6 +292,7 @@ class ParamUtil {
                 Filters.ResetAllFilters(context);
             }
 
+            //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
@@ -465,6 +465,23 @@ class ParamUtil {
         return;
     }
 
+    /**
+     * get copy of parameter options from cache in
+     */
+    static function GetParameterOptionsFromCache(context, parameterId) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+        var options = [];
+
+        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
+            options.push(cachedParameterOptions[key]['options'][i]);
+        }
+
+        return options;
+    }
+
 
     /**
      * This function returns parameter options in standardised format.
@@ -486,12 +503,10 @@ class ParamUtil {
 
         CacheParameterOptions(context, parameterId);
 
-        //restored from cache options might need to be modified (exclude no data options)
+        //cached options might need to be modified (exclude no data options)
         //copy needed to avoid 'spoiling' full list with exclude
         paramType = cachedParameterOptions[key]['type'];
-        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
-            options.push(cachedParameterOptions[key]['options'][i]);
-        }
+        options = GetParameterOptionsFromCache(context, parameterId);
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
