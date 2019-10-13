@@ -385,7 +385,7 @@ class PageResults {
 
         log.LogDebug(JSON.stringify(barChartColors))
 
-        if(state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
+        if(false && state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
@@ -412,7 +412,7 @@ class PageResults {
             //so show formula instead of original recording
             for(i=0; i< barChartColors.length; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
-                formula.Expression = 'col'//'cellv(col-'+(i+1)+', row)';
+                formula.Expression = '1'//'cellv(col-'+(i+1)+', row)';
                 log.LogDebug('cellv(col-'+(i+1)+', row)')
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
