@@ -376,17 +376,16 @@ class PageResults {
         bcCategories.Distributions.Enabled = true;
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
-        bcCategories.HideData = false;
-        //bcCategories.RecodingShowOriginal = true;
-        //bcCategories.RecodingPosition = RecodingPositionType.OnEnd;
-
+        bcCategories.HideData = true;
+        
         table.ColumnHeaders.Add(bcCategories);
+
+        var barChartColors = Config.barChartColors_Distribution;
 
         if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
-            var barChartColors = Config.barChartColors_Distribution;
             var i;
 
             bcCategories.HideData = true;
@@ -404,6 +403,17 @@ class PageResults {
             barChart.TypeOfChart = ChartComboType.Bar100;
             barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
             table.ColumnHeaders.Add(barChart);
+        } else { 
+
+            //workaround for Excel export that shows recording (not chart) and takes translations from recording
+            //so show formula instead of original recording
+            for(i=0; i< barChartColors.length; i++) {
+                var formula: HeaderFormula = new HeaderFormula();
+                formula.Expression = 'cellv(col-'+(i+1)+', row)';
+                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
+                table.ColumnHeaders.Add(formula);
+            }
+
         }
     }
 
