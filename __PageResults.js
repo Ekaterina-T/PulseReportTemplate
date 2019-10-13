@@ -408,6 +408,8 @@ class PageResults {
             table.ColumnHeaders.Add(barChart);
         } else { 
 
+            var n = barChartColors.length;
+
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
             for(i=0; i< barChartColors.length; i++) {
@@ -415,7 +417,7 @@ class PageResults {
                 formula.Type = FormulaType.Expression;
                 formula.Expression = 'cellv(col-'+barChartColors.length+', row)/100';
                 formula.Percent = true;
-                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[barChartColors.length - i].label);
+                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[n - i - 1].label);
                 table.ColumnHeaders.Add(formula);
             }
         }
