@@ -440,12 +440,38 @@ class ParamUtil {
 
     //-----------------------------------------------------------------------------
 
-    /*
-  * This function returns parameter options in standardised format.
-  * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
-  * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
-  * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-  */
+
+    /**
+     * cache parameter values
+     */
+    static function CacheParameterOptions(context, parameterId) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+        
+        if(cachedParameterOptions.hasOwnProperty(key)) {
+            return;
+        }
+
+        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        var paramOptionsObj = {};
+
+        paramOptionsObj['type'] = parameterInfo.type;
+        paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
+        cachedParameterOptions[key] = paramOptionsObj;
+
+        return;
+    }
+
+
+    /**
+     * This function returns parameter options in standardised format.
+     * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
+     * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
+     * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
 
     static function GetParameterOptions (context, parameterName, from) {
 
@@ -458,18 +484,10 @@ class ParamUtil {
 
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
-        if(!cachedParameterOptions.hasOwnProperty(key)) {
-            var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-            var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-            var paramOptionsObj = {};
-
-            paramOptionsObj['type'] = parameterInfo.type;
-            paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
-            cachedParameterOptions[key] = paramOptionsObj;
-        }
+        CacheParameterOptions(context, parameterId);
 
         //restored from cache options might need to be modified (exclude no data options)
-        //to avoid 'spoiling' full list its copy needed
+        //copy needed to avoid 'spoiling' full list with exclude
         paramType = cachedParameterOptions[key]['type'];
         for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
