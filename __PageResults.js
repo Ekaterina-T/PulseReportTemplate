@@ -413,7 +413,7 @@ class PageResults {
             for(i=0; i< barChartColors.length; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
-                formula.Expression = 'cellv(col-'+(i+1)+', row)';
+                formula.Expression = 'cellv(col-'+barChartColors.length+', row)';
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
             }
