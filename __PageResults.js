@@ -377,15 +377,13 @@ class PageResults {
         bcCategories.Distributions.Enabled = true;
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
-        bcCategories.HideData = false;
+        bcCategories.HideData = true;
         
         table.ColumnHeaders.Add(bcCategories);
 
         var barChartColors = Config.barChartColors_Distribution;
 
-        log.LogDebug(JSON.stringify(barChartColors))
-
-        if(false && state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+        if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
@@ -406,12 +404,11 @@ class PageResults {
             barChart.TypeOfChart = ChartComboType.Bar100;
             barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
             table.ColumnHeaders.Add(barChart);
-        } else { 
-
-            var n = barChartColors.length;
-
+        } else {
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
+
+            var n = barChartColors.length;
             for(i=0; i< barChartColors.length; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
