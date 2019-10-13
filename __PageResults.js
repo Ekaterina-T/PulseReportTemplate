@@ -385,7 +385,7 @@ class PageResults {
 
         log.LogDebug(JSON.stringify(barChartColors))
 
-        if(/*false && */state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+        if(false && state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
