@@ -271,7 +271,7 @@ class ParamUtil {
                 //user checked "show all pulse surveys" checkbox or changed report base
 
                 var selectedProject = selectedPulseSurvey[0];
-                var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector');
+                var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
                 var doReset = true;
 
                 for(var i=0; i<availableProjects.length; i++) {
@@ -477,7 +477,7 @@ class ParamUtil {
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
         var options = [];
 
-        for(var i=0; i< cachedParameterOptions[key]['options'].length; i++) {
+        for(var i=0; i<cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
 
@@ -505,21 +505,8 @@ class ParamUtil {
 
         CacheParameterOptions(context, parameterId);
 
-        
         paramType = cachedParameterOptions[key]['type'];
-        /*options = */GetParameterOptionsFromCache(context, parameterId);
-        
-
-        //-------------------------------------------
-       var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-       var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-
-       if(!resource) {
-           return [];
-       }
-
-       options = getRawOptions(context, resource, parameterInfo.type);
-       //------------------------------------------------------------------------
+        options = GetParameterOptionsFromCache(context, parameterId);
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
@@ -858,7 +845,7 @@ class ParamUtil {
         var log = context.log;
         var combinedOptions = [];
         for (var i=0; i<parameterNameList.length; i++) {
-            combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i]));
+            combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i]. 'param list'));
         }
         return combinedOptions;
 
