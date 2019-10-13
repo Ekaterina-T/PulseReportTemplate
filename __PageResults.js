@@ -366,6 +366,7 @@ class PageResults {
   */
     static function addDistributionBarChart(context) {
 
+        var log = context.log;
         var table = context.table;
         var state = context.state;
 
