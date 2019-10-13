@@ -382,7 +382,7 @@ class PageResults {
 
         var barChartColors = Config.barChartColors_Distribution;
 
-        if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+        if(state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
@@ -413,7 +413,6 @@ class PageResults {
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
             }
-
         }
     }
 
