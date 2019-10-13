@@ -186,7 +186,6 @@ class PageCategorical {
     static function getCategoricalResult(context, tableType) {
 
         var report = context.report;
-        var state = context.state;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
@@ -195,7 +194,6 @@ class PageCategorical {
 
         // show topN answers in a list for questions with more than <answerLimit> options
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
-        var project : Project = DataSourceUtil.getProject(context);
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
         var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
@@ -317,8 +315,6 @@ class PageCategorical {
 
     static function buildCategoricalTiles (context) {
 
-        var report = context.report;
-        var state = context.state;
         var log = context.log;
         var text = context.text;
 
@@ -366,6 +362,11 @@ class PageCategorical {
             }
             CardUtil.RenderCard (context, content, 'material-card--categorical');
 
+        }
+
+
+        if(pies.length + lists.length === 0) {
+            text.Output.Append(TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionsToDisplay'));
         }
     }
 }

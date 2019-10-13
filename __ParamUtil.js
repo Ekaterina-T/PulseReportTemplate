@@ -263,7 +263,6 @@ class ParamUtil {
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
             var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
 
-            log.LogDebug(JSON.stringify(selectedPulseSurvey))
             //set default pulse baby project
             if(selectedPulseSurvey.length===0) {
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
@@ -286,6 +285,10 @@ class ParamUtil {
                     ParamUtil.ResetParameters(context, ['p_projectSelector']);
                 }
             }
+
+            //set up object holding questions available on current page
+            PulseProgramUtil.setPulseSurveyContentInfo(context);
+            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
     
             //reset question and category based params when baby survey changes
             if(page.SubmitSource === 'projectSelector') {
@@ -293,9 +296,7 @@ class ParamUtil {
                 Filters.ResetAllFilters(context);
             }
 
-            //set up object holding questions available on current page
-            PulseProgramUtil.setPulseSurveyContentInfo(context);
-            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+            
         }
         log.LogDebug('project selector processing end')
         
@@ -507,7 +508,19 @@ class ParamUtil {
         CacheParameterOptions(context, parameterId);
 
         paramType = cachedParameterOptions[key]['type'];
-        options = GetParameterOptionsFromCache(context, parameterId);
+        //options = GetParameterOptionsFromCache(context, parameterId);
+
+        //--------------------------------------------------
+        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+
+        if(!resource) {
+            return [];
+        }
+
+        options = getRawOptions(context, resource, parameterInfo.type);
+        options = modifyOptionsOrder(context, options, parameterInfo);
+        //--------------------------------------------------
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
