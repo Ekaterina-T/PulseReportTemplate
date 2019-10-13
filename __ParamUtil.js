@@ -43,7 +43,7 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -251,54 +251,53 @@ class ParamUtil {
             Filters.ResetAllFilters(context);
         }
 
-        //reset question and category based params when baby survey changes
-        if(page.SubmitSource === 'projectSelector') {
-            ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
-            Filters.ResetAllFilters(context);
-        }
-
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
 
-        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
-        var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
-
-        //user unchecked "show all pulse surveys" checkbox or changed report base
-        // need to update default pulse survey
-        if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
-
-            var selectedProject = selectedPulseSurvey[0];
-            var availableProjects = ParamUtil.GetParameterOptions (context, 'p_projectSelector');
-            var doReset = true;
-
-            for(var i=0; i<availableProjects.length; i++) {
-                if(selectedProject === availableProjects[i].Code) {
-                    doReset = false;
-                    break;
-                }
-            }
-
-            if(doReset) {
-                ParamUtil.ResetParameters(context, ['p_projectSelector']);
-            }
-
-        } else if(projectSelectorNeeded && selectedPulseSurvey.length===0) {
-            state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
-        }
-
-        log.LogDebug('before pulse info updated')
+        log.LogDebug('project selector processing start')
 
         //set up object holding questions available on current page
         if(projectSelectorNeeded) {
+            
+            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
+            var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
+
+            //set default pulse baby project
+            if(selectedPulseSurvey.length===0) {
+                state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
+
+            } else if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
+                //user checked "show all pulse surveys" checkbox or changed report base
+
+                var selectedProject = selectedPulseSurvey[0];
+                var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector');
+                var doReset = true;
+
+                for(var i=0; i<availableProjects.length; i++) {
+                    if(selectedProject === availableProjects[i].Code) {
+                        doReset = false;
+                        break;
+                    }
+                }
+
+                if(doReset) {
+                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                }
+            }
+    
+            //reset question and category based params when baby survey changes
+            if(page.SubmitSource === 'projectSelector') {
+                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+                Filters.ResetAllFilters(context);
+            }
+
             PulseProgramUtil.setPulseSurveyContentInfo(context);
-            log.LogDebug('content info is set, start building resources info')
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
-
-        log.LogDebug('after pulse info updated')
-
+        log.LogDebug('project selector processing end')
+        
         // set default values for mandatory page parameters
         for(i=0; i<mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
