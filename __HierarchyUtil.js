@@ -38,7 +38,12 @@ class HierarchyUtil {
         var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
 
         if(hierarchyQId && hierarchyNodeId) {
-            return 'InHierarchy('+hierarchyQId+',"' + hierarchyNodeId + '")';
+            var bases = hierarchyNodeId.split(',');
+            var expr = [];
+            for(var i = 0; i < bases.length; i++) {
+                expr.push('InHierarchy('+hierarchyQId+',"' + bases[i] + '")');
+            }
+            return expr.join(' OR ');
         }
 
         return '';

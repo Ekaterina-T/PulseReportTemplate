@@ -470,7 +470,8 @@ class Filters {
         var expr = '';
 
         if(user.UserType === ReportUserType.Confirmit) { // for tests
-            expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', [user.PersonalizedReportBase]);
+            var bases = user.PersonalizedReportBase;
+            expr = Filters.getFilterExpressionByAnswerRange(context, 'CreatedByUserHierarchyNodeId', bases.split(','));
         } else {
             expr = 'CreatedByEndUserName = "'+user.UserId+'"';
         }
