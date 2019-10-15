@@ -505,9 +505,9 @@ class ParamUtil {
 
         //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
-        CacheParameterOptions(context, parameterId);
+        //CacheParameterOptions(context, parameterId);
 
-        paramType = cachedParameterOptions[key]['type'];
+        //paramType = cachedParameterOptions[key]['type'];
         //options = GetParameterOptionsFromCache(context, parameterId);
 
         //--------------------------------------------------
