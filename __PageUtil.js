@@ -13,6 +13,7 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
+        log.LogDebug('page init start')
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
@@ -37,6 +38,7 @@ class PageUtil {
             HierarchyUtil.setDataTable(context);
         }
 
+        log.LogDebug('page init end')
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
     }
