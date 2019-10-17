@@ -518,7 +518,7 @@ class ParamUtil {
         if(parameterId == 'p_AllOpenTextQs') log.LogDebug('resource info = '+JSON.stringify(resource));
 
         if(!resource) {
-            if(parameterId == 'p_AllOpenTextQs') log.LogDebug('no resource info'));
+            if(parameterId == 'p_AllOpenTextQs') log.LogDebug('no resource info');
             return [];
         }
 
