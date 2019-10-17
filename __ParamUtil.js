@@ -518,7 +518,8 @@ class ParamUtil {
             return [];
         }
 
-        options = getRawOptions(context, resource, parameterInfo.type);
+        paramType = parameterInfo.type;
+        options = getRawOptions(context, resource, paramType);
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
