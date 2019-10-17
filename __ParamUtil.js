@@ -519,6 +519,7 @@ class ParamUtil {
         //--------------------------------------------------
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        log.LogDebug('5 ')
 
         if(parameterId == 'p_AllOpenTextQs') log.LogDebug('param info = '+JSON.stringify(parameterInfo));
         if(parameterId == 'p_AllOpenTextQs') log.LogDebug('resource info = '+JSON.stringify(resource));
