@@ -499,7 +499,7 @@ class ParamUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         log.LogDebug('parameterName='+parameterName)
-        var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        var parameterId = parameterName || context.parameter.ParameterId; //context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
         log.LogDebug('0 '+parameterId)
         var paramType;
         log.LogDebug('1')
