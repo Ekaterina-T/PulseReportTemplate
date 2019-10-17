@@ -211,7 +211,6 @@ class DataSourceUtil {
             ifHide = true;
         }
 
-        log.LogDebug('isProjectSelectorNotNeeded='+ifHide)
         return ifHide;
     }
 }
