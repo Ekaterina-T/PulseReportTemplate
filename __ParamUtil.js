@@ -498,10 +498,15 @@ class ParamUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
+        log.LogDebug('parameterName='+parameterName)
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
+        log.LogDebug('0')
         var paramType;
+        log.LogDebug('1')
         var options = [];
+        log.LogDebug('2')
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+        log.LogDebug('3')
 
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
