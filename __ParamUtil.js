@@ -514,17 +514,26 @@ class ParamUtil {
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
 
+        if(parameterId == 'p_AllOpenTextQs') log.LogDebug('param info = '+JSON.stringify(parameterInfo));
+        if(parameterId == 'p_AllOpenTextQs') log.LogDebug('resource info = '+JSON.stringify(resource));
+
         if(!resource) {
+            if(parameterId == 'p_AllOpenTextQs') log.LogDebug('no resource info'));
             return [];
         }
 
         paramType = parameterInfo.type;
+        if(parameterId == 'p_AllOpenTextQs') log.LogDebug('paramType = '+paramType);
         options = getRawOptions(context, resource, paramType);
+        if(parameterId == 'p_AllOpenTextQs') log.LogDebug('options = '+JSON.stringify(options));
         options = modifyOptionsOrder(context, options, parameterInfo);
+        if(parameterId == 'p_AllOpenTextQs') log.LogDebug('options = '+JSON.stringify(options));
         //--------------------------------------------------
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
+            if(parameterId == 'p_AllOpenTextQs') log.LogDebug('before exclude');
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
+            if(parameterId == 'p_AllOpenTextQs') log.LogDebug('after exclude');
         }
         log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
