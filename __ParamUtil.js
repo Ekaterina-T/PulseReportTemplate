@@ -500,15 +500,16 @@ class ParamUtil {
         var pageContext = context.pageContext;
         log.LogDebug('parameterName='+parameterName)
         var parameterId = context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        log.LogDebug('0')
+        log.LogDebug('0 '+parameterId)
         var paramType;
         log.LogDebug('1')
         var options = [];
         log.LogDebug('2')
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
-        log.LogDebug('3')
+        log.LogDebug('3 '+key)
 
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug('4 ')
 
         //CacheParameterOptions(context, parameterId);
 
