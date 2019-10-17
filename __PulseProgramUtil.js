@@ -223,6 +223,7 @@ class PulseProgramUtil {
         var log = context.log;
 
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            log.LogDebug('isShowAllNotVisible true')
             return true;
         }
 

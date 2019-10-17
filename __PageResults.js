@@ -426,7 +426,6 @@ class PageResults {
         }
 
         var report = context.report;
-        var state = context.state;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
