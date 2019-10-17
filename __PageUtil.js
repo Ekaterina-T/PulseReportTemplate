@@ -13,7 +13,7 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        log.LogDebug('page init start');
+        //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
@@ -40,7 +40,7 @@ class PageUtil {
 
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
-        log.LogDebug('page init end');
+        //log.LogDebug('page init end');
     }
 
     /*
