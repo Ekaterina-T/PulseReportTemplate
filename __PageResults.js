@@ -436,6 +436,7 @@ class PageResults {
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
 
+        log.LogDebug('BenchmarkColumns_Banner0 1')
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         if(showPrevWave) {
@@ -462,6 +463,7 @@ class PageResults {
             bmColumn+=1;
         }
 
+        log.LogDebug('BenchmarkColumns_Banner0 2')
         // add benchmark data based on benchmark project
         if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -484,9 +486,11 @@ class PageResults {
             bmColumn+=1;
         }
 
+        log.LogDebug('BenchmarkColumns_Banner0 3')
         //add hierarchy comparison benchmarks
         var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
+        log.LogDebug('BenchmarkColumns_Banner0 4')
         for(i=0; i<hierCompCols.length; i++) {
 
             var hierCompContent: HeaderContent = new HeaderContent();
@@ -507,6 +511,7 @@ class PageResults {
             //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
             bmColumn +=1;
         }
+        log.LogDebug('BenchmarkColumns_Banner0 5')
     }
 
     /**
@@ -629,14 +634,21 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
+        log.LogDebug('tableBenchmarks_Render start')
+
         if(isBenchmarkAvailable(context)) {
+
+            log.LogDebug('tableBenchmarks_Render 1')
             tableStatements_AddRows(context);
+            log.LogDebug('tableBenchmarks_Render 2')
             tableBenchmarks_AddColumns_Banner0(context);
+            log.LogDebug('tableBenchmarks_Render 3')
 
             table.Decimals = 0;
             table.RowNesting = TableRowNestingType.Nesting;
             table.RemoveEmptyHeaders.Rows = false;
         }
+        log.LogDebug('tableBenchmarks_Render end')
     }
 
     /*
