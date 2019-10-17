@@ -16,14 +16,16 @@ class PageUtil {
         log.LogDebug('page init start')
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-
+        log.LogDebug('page init 1')
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
             pageContext.Items.Add('Source', add_in_source);
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
+        log.LogDebug('page init 2')
 
         ParamUtil.Initialise(context); // initialise parameters
+        log.LogDebug('page init 3')
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -31,6 +33,7 @@ class PageUtil {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
+        log.LogDebug('page init 4')
 
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
