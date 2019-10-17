@@ -429,8 +429,10 @@ class PageResults {
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
+        log.LogDebug('BenchmarkColumns_Banner0 -1')
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
         var suppressValue = SuppressConfig.TableSuppressValue;
+        log.LogDebug('BenchmarkColumns_Banner0 0')
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
         var base: Datapoint;
 
