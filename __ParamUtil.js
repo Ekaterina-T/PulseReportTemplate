@@ -868,9 +868,12 @@ class ParamUtil {
 
         var log = context.log;
         var combinedOptions = [];
+        log.LogDebug('getOptions_ParameterList: start')
         for (var i=0; i<parameterNameList.length; i++) {
+            log.LogDebug('getOptions_ParameterList: i='+i)
             combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i], 'param list'));
         }
+        log.LogDebug('getOptions_ParameterList: end')
         return combinedOptions;
 
     }
