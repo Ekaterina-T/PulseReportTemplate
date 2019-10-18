@@ -558,27 +558,30 @@ class PageResults {
         }
 
         //add hierarchy comparison benchmarks
-        var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var reportBases = context.user.PersonalizedReportBase.split(',');
+        if(reportBases.length === 1) {
 
-        for(i=0; i<hierCompCols.length; i++) {
+            var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+            for (i = 0; i < hierCompCols.length; i++) {
 
-            var hierCompContent: HeaderContent = new HeaderContent();
-            var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',bmColumn); // num of column where values are bmVolumn
-            hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn-1]);
+                var hierCompContent: HeaderContent = new HeaderContent();
+                var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
 
-            for(var j=0; j<baseValues.length; j++) {
+                for (var j = 0; j < baseValues.length; j++) {
 
-                base = baseValues[j];
-                benchmark = hierValues[j];
+                    base = baseValues[j];
+                    benchmark = hierValues[j];
 
-                if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                    hierCompContent.SetCellValue(j, benchmark.Value);
+                    if (base.Value >= suppressValue && !benchmark.IsEmpty) {
+                        hierCompContent.SetCellValue(j, benchmark.Value);
+                    }
                 }
-            }
 
-            table.ColumnHeaders.Add(hierCompContent);
-            //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
-            bmColumn +=1;
+                table.ColumnHeaders.Add(hierCompContent);
+                //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
+                bmColumn += 1;
+            }
         }
     }
 
@@ -719,8 +722,6 @@ class PageResults {
 
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -756,10 +757,13 @@ class PageResults {
         }
 
         //add Benchmark as comparison to upper/lower hierarchy levels
-        var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var bases = context.user.PersonalizedReportBase.split(',');
+        if(bases.length === 1) {
+            var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
-        for(var i=0; i<hierarchyLevelsToCompare.length; i++) {
-            tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
+            for(var i=0; i<hierarchyLevelsToCompare.length; i++) {
+                tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
+            }
         }
 
     }
@@ -787,9 +791,10 @@ class PageResults {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
         }
 
-        if(parentsList && parentsList.length>0) {
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentsList[parentsList.length-1]['id'], null);
-            levelSegment.Label = new Label(report.CurrentLanguage, parentsList[parentsList.length-1]['label']);
+        if(parentsList && parentsList.length===1 && parentsList[0].length>0) { //===1 for multiselect hierarchy
+            var parentArr = parentsList[0];
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[parentArr.length-1]['id'], null);
+            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[parentArr.length-1]['label']);
         } else {
             return; // no such parent in the hierarchy
         }
@@ -876,9 +881,10 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
 
-        if(benchmarkProject || showPrevWave || (hierarchyLevels && hierarchyLevels.length>0)) {
+        if(benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length>0)) {
             return true;
         }
         return false;

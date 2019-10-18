@@ -293,7 +293,8 @@ class PageResponseRate {
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in TableUtil break by function :(
                 hq.ReferenceGroup.Enabled = true;
                 hq.ReferenceGroup.Self = false;
-                hq.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
+                var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
+                hq.ReferenceGroup.Levels = parentLevels.join(', ');
             }
             table.RowHeaders.Add(hq);
         } else {

@@ -62,7 +62,13 @@ class HierarchyUtil {
         var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
 
         if(hierarchyQId) {
-            return getHierarchyFilterExpressionForNode (context, context.user.PersonalizedReportBase);
+            var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+            var filterExpr = [];
+
+            for(var i=0; i< bases.length; i++) {
+                parents.push(getHierarchyFilterExpressionForNode (context, bases[i]))
+            }
+            return filterExpr.join(' OR ');
         }
 
         return '';
@@ -168,9 +174,37 @@ class HierarchyUtil {
     static function getParentsForCurrentHierarchyNode(context, numberOfLevelsUp) {
 
         var log = context.log;
-        var hierarchyNodeId = context.user.PersonalizedReportBase;
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var parents = [];
 
-        return getParentsForHierarchyNode(context, hierarchyNodeId, numberOfLevelsUp);
+        for(var i=0; i< bases.length; i++) {
+            parents.push(getParentsForHierarchyNode(context, bases[i], numberOfLevelsUp))
+        }
+
+        return parents;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getParentLevelsForCurrentHierarchyNode
+     * @description gets array of levels for parent nodes for the specified hierarchy node
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @param {numberOfLevelsUp} number of levels to go up the hierarchy
+     * @returns {Array}
+     */
+    static function getParentLevelsForCurrentHierarchyNode(context, numberOfLevelsUp) {
+
+        var log = context.log;
+        var parents = getParentsForCurrentHierarchyNode(context, numberOfLevelsUp);
+        var levels = [];
+
+        for(var i=0; i< parents.length; i++) {
+            levels.push(parents[i].length+1);
+        }
+
+        log.LogDebug(JSON.stringify(levels))
+
+        return levels;
     }
 
     /*

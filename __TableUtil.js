@@ -276,7 +276,8 @@ class TableUtil {
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
                 nestedHeader.ReferenceGroup.Enabled = true;
                 nestedHeader.ReferenceGroup.Self = false;
-                nestedHeader.ReferenceGroup.Levels = HierarchyUtil.getParentsForCurrentHierarchyNode(context).length+1;
+                var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
+                nestedHeader.ReferenceGroup.Levels = parentLevels.join(', ');
             }
 
             nestedHeader.ShowTotals = false;
