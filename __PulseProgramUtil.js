@@ -182,7 +182,7 @@ class PulseProgramUtil {
 
         var log = context.log;
 
-        //log.LogDebug('excludeItemsWithoutData start')
+        //log.LogDebug('excludeItemsWithoutData start '+JSON.stringify(allOptions))
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo.hasOwnProperty(key) && pulseSurveyContentInfo[key];
 
@@ -190,8 +190,8 @@ class PulseProgramUtil {
         if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !resources || resources.length === 0) {
             return allOptions;
         }
-
-        var availableCodes = getPulseSurveyContentInfo_ItemsWithData(context);
+        
+        var availableCodes = getPulseSurveyContentInfo_ItemsWithData(context);        
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {

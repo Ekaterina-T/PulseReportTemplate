@@ -39,10 +39,10 @@ class PagePulseSurveyData {
                 (questionInfo.hasOwnProperty('standardType')) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
 
                 if(questionType.indexOf('hierarchy')>=0) {
-                    header = new HeaderQuestion(qe);
-                    header.ReferenceGroup.Enabled = true;
-                    header.ReferenceGroup.Self = true;
-                    header.ShowTotals = false;
+                    header = new HeaderSegment();
+                    header.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                    header.SegmentType = HeaderSegmentType.Expression;
+                    header.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB (context);
                     table.RowHeaders.Add(header);
 
                 } else if(questionType.indexOf('multi')>=0) {

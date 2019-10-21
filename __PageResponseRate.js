@@ -106,12 +106,8 @@ class PageResponseRate {
      */
     static function tableCollectionPeriod_Render(context){
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
-
-        var project : Project = DataSourceUtil.getProject(context);
         var qId  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
         var column: HeaderQuestion = new HeaderQuestion(qe);
@@ -149,8 +145,8 @@ class PageResponseRate {
         var report = context.report;
         var state = context.state;
         var log = context.log;
-
         var dates = report.TableUtils.GetColumnHeaderCategoryTitles("Response_Rate:CollectionPeriod");
+
         if (dates.length > 0) {
             var period = dates[0];
             if (dates.length > 1) {
@@ -160,6 +156,7 @@ class PageResponseRate {
         else {
             period = 'N/A';
         }
+
         return period;
     }
 
@@ -293,8 +290,9 @@ class PageResponseRate {
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in TableUtil break by function :(
                 hq.ReferenceGroup.Enabled = true;
                 hq.ReferenceGroup.Self = false;
-                var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
-                hq.ReferenceGroup.Levels = parentLevels.join(', ');
+                //var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
+                //log.LogDebug('parentLevels='+parentLevels)
+                hq.ReferenceGroup.Levels = '+1';//parentLevels.join(', ');
             }
             table.RowHeaders.Add(hq);
         } else {
