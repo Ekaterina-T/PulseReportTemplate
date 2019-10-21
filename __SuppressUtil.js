@@ -157,7 +157,7 @@ class SuppressUtil {
     
             var report = context.report;
             var log = context.log;
-            var user = context.user;
+            
             
             var N_of_participants = report.TableUtils.GetCellValue('Confidentiality:ReportBase',1, 1).Value;
     
@@ -174,17 +174,18 @@ class SuppressUtil {
             var log = context.log;
             var state = context.state;
             var pageContext = context.pageContext;
+            var user = context.user;          
+
+            // if no hierarchy question is defined in Config, we don't perform checking
+            if (!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'))
+                return false;
 
             // if multiple hierachy selection is allowed, no confidentionality checks are performed, i.e.
             // all  nodes are shown irrespective of small neighbor units
             var bases = user.PersonalizedReportBase.split(',');
             if (bases.length > 1) 
                return false;
-
-
-            // if no hierarchy question is defined in Config, we don't perform checking
-            if (!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'))
-                return false;
+    
     
             var bases : Datapoint[] = report.TableUtils.GetColumnValues("Confidentiality:HierarchyTable",1);
             var selfUnitBase = bases[0].Value;
