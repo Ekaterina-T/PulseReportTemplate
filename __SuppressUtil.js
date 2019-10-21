@@ -182,8 +182,8 @@ class SuppressUtil {
 
             // if multiple hierachy selection is allowed, no confidentionality checks are performed, i.e.
             // all  nodes are shown irrespective of small neighbor units
-            var bases = user.PersonalizedReportBase.split(',');
-            if (bases.length > 1) 
+            var user_bases = user.PersonalizedReportBase.split(',');
+            if (user_bases.length > 1) 
                return false;
     
     
