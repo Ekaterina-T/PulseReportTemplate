@@ -229,6 +229,7 @@ class QuestionUtil {
    */
     static function getQuestionIdsByCategory (context, category) {
 
+        // see EN-430
         var log = context.log;
         var questions = getQuestionsByCategory (context, category);
         var questionIds = [];
