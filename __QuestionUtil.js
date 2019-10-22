@@ -203,8 +203,7 @@ class QuestionUtil {
         return questionIdWithDot.replace(/\./g,'_');
     }
 
-
-    /*
+    /**
        * Get questions be category
        * @param {object} context object {state: state, report: report, log: log}
        * @param {string} category
@@ -220,6 +219,25 @@ class QuestionUtil {
             return project.GetQuestions({'InCategories': [category]});
         }
         return [];
+    }
+
+    /*
+   * Get questions ids by category
+   * @param {object} context object {state: state, report: report, log: log}
+   * @param {string} category
+   * @returns {array} - String[]
+   */
+    static function getQuestionIdsByCategory (context, category) {
+
+        var log = context.log;
+        var questions = getQuestionsByCategory (context, category);
+        var questionIds = [];
+
+        for(var i=0; i<questions.length; i++) {
+            var q: Question = questions[i];
+            questionIds.push(q.QuestionId);
+        }
+        return questionIds;
     }
 
 

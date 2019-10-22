@@ -523,7 +523,9 @@ class ParamUtil {
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && (paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList')) {
+        var paramToBeFiltered = paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList' || paramType === 'CustomQuestionList';
+
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')

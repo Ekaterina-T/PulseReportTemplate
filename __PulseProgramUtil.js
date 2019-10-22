@@ -13,10 +13,27 @@ class PulseProgramUtil {
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
-        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables'],
+        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
         Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions']
+    }
+
+    /**
+     *
+     */
+    static private function buildQuestionCategoryId(context, pageId, pageProperty) {
+
+        var log = context.log;
+
+        if(typeof pageProperties[i] === 'object' && pageProperties[i].type === 'QuestionsCategory') {
+            var category = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty);
+            return QuestionUtil.getQuestionIdsByCategory(context, category);
+        } else {
+            return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty);
+        }
+
+        throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+pageProperty+' on page '+pageId);
     }
 
     /**
@@ -42,7 +59,7 @@ class PulseProgramUtil {
         }
 
         for(i=0; i<pageProperties.length; i++) {
-            listOfResources=listOfResources.concat(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperties[i]));
+            listOfResources=listOfResources.concat(buildQuestionCategoryId(context, pageId, pageProperties[i]));
         }
 
         //remove duplicates and format
