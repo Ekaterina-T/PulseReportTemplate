@@ -264,8 +264,8 @@ class QuestionUtil {
         var cachedTxt;
         var baby_p_number = codes[0];
 
-        // Redis is not available in Excel export
-        if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
+        // Redis is not available in export
+        if (state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
 
@@ -280,7 +280,7 @@ class QuestionUtil {
                 var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
                 if (custom_texts.Count) {
                     cachedTxt = custom_texts[0];
-                    if (state.ReportExecutionMode != ReportExecutionMode.ExcelExport) {
+                    if (state.ReportExecutionMode == ReportExecutionMode.Web) {
                         confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
                     }
                 }
