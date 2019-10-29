@@ -612,6 +612,7 @@ class ParamUtil {
         }
 
         if(type === 'PulseSurveyInfo') {
+            context.log.LogDebug('fhdf='+resource['storageInfo'])
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']);
         }
 
