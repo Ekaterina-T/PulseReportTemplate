@@ -2,7 +2,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
     private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
-    private var _additionalInfo: [String];
+    private var _additionalInfo;
 
     /**
      * constructor
