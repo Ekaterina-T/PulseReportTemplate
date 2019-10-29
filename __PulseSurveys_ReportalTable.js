@@ -2,7 +2,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
     private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
-    private var _additionalInfo;
+    private var _additionalInfo : String;
 
     /**
      * constructor
@@ -11,7 +11,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
-        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
+        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo.join(','): [];
     }
 
     /**
@@ -19,7 +19,6 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      */
     public static function getInstance(context, storageInfo){
         var log = context.log;
-        log.LogDebug(JSON.stringify(storageInfo))
         return new PulseSurveys_ReportalTable(context, storageInfo);
     }
 
@@ -63,8 +62,26 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         // reverse order
         for(var i=HeaderCategoryTitles.length-1; i>=0; i--) { // reverse order
             var surveyInfo = {};
-            surveyInfo.Label = HeaderCategoryTitles[i][2]; //label - inner header
-            surveyInfo.Code = HeaderCategoryTitles[i][3]; // pid - outer header
+
+            //hardcoded in the table: pid->pname->creator->status
+            var surveyStatus = HeaderCategoryTitles[i][0];
+            var surveyAuthor = HeaderCategoryTitles[i][1];
+            var surveyName = HeaderCategoryTitles[i][2];
+            var sureveyId = HeaderCategoryTitles[i][3];
+            var addInfo = [];
+
+            if(_additionalInfo.indexOf('CreatedByEndUserName')) {
+                addInfo.push(surveyAuthor);
+            }
+
+            if(_additionalInfo.indexOf('Status')) {
+                addInfo.push(surveyStatus);
+            }
+
+            addInfo = addInfo.join(', ');
+
+            surveyInfo.Label = addInfo.length > 0: surveyName+'('+addInfo+')' : surveyName; //label - inner header
+            surveyInfo.Code = sureveyId; // pid - outer header
             surveyList.push(surveyInfo);            
         }
 
