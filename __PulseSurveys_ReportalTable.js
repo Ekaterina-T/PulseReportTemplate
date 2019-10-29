@@ -70,6 +70,8 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             var sureveyId = HeaderCategoryTitles[i][3];
             var addInfo = [];
 
+            log.LogDebug(_additionalInfo.indexOf('CreatedByEndUserName'))
+
             if(_additionalInfo.indexOf('CreatedByEndUserName')>=0) {
                 addInfo.push(surveyAuthor);
             }
@@ -77,8 +79,10 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             if(_additionalInfo.indexOf('Status')>=0) {
                 addInfo.push(surveyStatus);
             }
+            log.LogDebug(addInfo)
 
             addInfo = addInfo.join(', ');
+            log.LogDebug(addInfo)
 
             surveyInfo.Label = addInfo.length >0 ? surveyName+' ('+addInfo+')' : surveyName; //label - inner header
             surveyInfo.Code = sureveyId; // pid - outer header
