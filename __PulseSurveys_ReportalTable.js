@@ -11,7 +11,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     private function PulseSurveys_ReportalTable(storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
-        _additionalInfo = storageInfo.additionalInfo;
+        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
     }
 
     /**
