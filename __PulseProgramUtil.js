@@ -27,7 +27,7 @@ class PulseProgramUtil {
         var log = context.log;
 
         if(typeof pageProperty === 'object' && pageProperty.type === 'QuestionsCategory') {
-            var category = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty);
+            var category = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty.propertyWithCat);
             return QuestionUtil.getQuestionIdsByCategory(context, category);
         } else {
             return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty);
