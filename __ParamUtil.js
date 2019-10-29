@@ -260,33 +260,29 @@ class ParamUtil {
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
+            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+
             //set default pulse baby project
-            //if(selectedPulseSurvey.length===0) {
-            if(!state.Parameters.IsNull('p_projectSelector')) {
+            if(selectedPulseSurvey.length===0) {
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
-            } else {
+            } else if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+                var selectedProject = selectedPulseSurvey[0];
+                var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
+                var doReset = true;
 
-                var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-                var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-
-                //user checked "show all pulse surveys" checkbox or changed report base
-                if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
-                    var selectedProject = selectedPulseSurvey[0];
-                    var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
-                    var doReset = true;
-
-                    for (i = 0; i < availableProjects.length; i++) {
-                        if (selectedProject === availableProjects[i].Code) {
-                            doReset = false;
-                            break;
-                        }
-                    }
-
-                    if (doReset) {
-                        ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                for (i = 0; i < availableProjects.length; i++) {
+                    if (selectedProject === availableProjects[i].Code) {
+                        doReset = false;
+                        break;
                     }
                 }
+
+                if (doReset) {
+                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                }
             }
+
 
             //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
@@ -298,7 +294,6 @@ class ParamUtil {
                 Filters.ResetAllFilters(context);
             }
 
-            
         }
         //log.LogDebug('project selector processing end')
         
@@ -505,7 +500,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         //CacheParameterOptions(context, parameterId);
 
@@ -521,9 +516,9 @@ class ParamUtil {
         }
 
         paramType = parameterInfo.type;
-        log.LogDebug('before options')
+        //log.LogDebug('before options')
         options = getRawOptions(context, resource, paramType);
-        log.LogDebug('after options')
+        //log.LogDebug('after options')
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
@@ -532,7 +527,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }

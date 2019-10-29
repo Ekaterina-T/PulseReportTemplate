@@ -7,7 +7,7 @@ class PagePulseSurveyData {
     static public function tablePulseSurveyContentInfo_Render(context) {
 
         var log = context.log;
-        log.LogDebug('pulse filtering table build start')
+        //log.LogDebug('pulse filtering table build start')
         var table = context.table;
         var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
         var resources = PulseProgramUtil.pulseSurveyContentInfo[key];
@@ -79,6 +79,6 @@ class PagePulseSurveyData {
         table.ColumnHeaders.Add(base);
         table.Caching.Enabled = false;
 
-        log.LogDebug('pulse filtering table build end')
+        //log.LogDebug('pulse filtering table build end')
     }
 }
