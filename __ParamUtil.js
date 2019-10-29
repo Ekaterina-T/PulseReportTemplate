@@ -244,7 +244,7 @@ class ParamUtil {
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        // reset all parameters if a page refreshes when switching surveys
+        // reset all parameters (=null) if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
@@ -259,30 +259,32 @@ class ParamUtil {
 
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-            
-            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
-            var showAll = ParamUtil.GetSelectedCodes(context,'p_ShowAllPulseSurveys');
 
             //set default pulse baby project
-            if(selectedPulseSurvey.length===0) {
+            //if(selectedPulseSurvey.length===0) {
+            if(!state.Parameters.IsNull('p_projectSelector'))
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
+            } else {
 
-            } else if(selectedPulseSurvey.length>0 && selectedPulseSurvey[0] !== 'none' && showAll[0]!=='showAll') {
+                var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+                var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+
                 //user checked "show all pulse surveys" checkbox or changed report base
+                if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+                    var selectedProject = selectedPulseSurvey[0];
+                    var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
+                    var doReset = true;
 
-                var selectedProject = selectedPulseSurvey[0];
-                var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
-                var doReset = true;
-
-                for(var i=0; i<availableProjects.length; i++) {
-                    if(selectedProject === availableProjects[i].Code) {
-                        doReset = false;
-                        break;
+                    for (var i = 0; i < availableProjects.length; i++) {
+                        if (selectedProject === availableProjects[i].Code) {
+                            doReset = false;
+                            break;
+                        }
                     }
-                }
 
-                if(doReset) {
-                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                    if (doReset) {
+                        ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                    }
                 }
             }
 
