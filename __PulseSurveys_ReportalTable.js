@@ -2,6 +2,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
     private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
+    private var _additionalInfo: [String];
 
     /**
      * constructor
@@ -10,6 +11,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     private function PulseSurveys_ReportalTable(storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
+        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
     }
 
     /**
@@ -54,6 +56,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var surveyList = [];
 
         log.LogDebug(JSON.stringify(HeaderCategoryTitles));
+        log.LogDebug(JSON.stringify(_additionalInfo));
 
         // reverse order
         for(var i=HeaderCategoryTitles.length-1; i>=0; i--) { // reverse order
