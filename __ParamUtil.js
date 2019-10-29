@@ -503,7 +503,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         //CacheParameterOptions(context, parameterId);
 
@@ -519,7 +519,9 @@ class ParamUtil {
         }
 
         paramType = parameterInfo.type;
+        log.LogDebug('before options')
         options = getRawOptions(context, resource, paramType);
+        log.LogDebug('after options')
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
@@ -528,7 +530,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }
-        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
