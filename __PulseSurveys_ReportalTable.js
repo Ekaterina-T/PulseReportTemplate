@@ -80,7 +80,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
             addInfo = addInfo.join(', ');
 
-            surveyInfo.Label = addInfo.length > 0 ? surveyName+'('+addInfo+')' : surveyName; //label - inner header
+            surveyInfo.Label = addInfo.length >=0 0 ? surveyName+' ('+addInfo+')' : surveyName; //label - inner header
             surveyInfo.Code = sureveyId; // pid - outer header
             surveyList.push(surveyInfo);            
         }
