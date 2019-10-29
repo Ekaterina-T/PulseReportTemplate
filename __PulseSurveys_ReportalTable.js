@@ -8,7 +8,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * constructor
      * @param {Object} storageInfo - path to table that lists all existing pulse surveys (not filtered by userid)
      */
-    private function PulseSurveys_ReportalTable(storageInfo) {
+    private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
         _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
@@ -18,7 +18,9 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * creates instance of PulseSurveys_ReportalTable class, should have check if instance is created already (singleton)
      */
     public static function getInstance(context, storageInfo){
-        return new PulseSurveys_ReportalTable(storageInfo);
+        var log = context.log;
+        log.LogDebug(JSON.stringify(storageInfo))
+        return new PulseSurveys_ReportalTable(context, storageInfo);
     }
 
     /**
