@@ -58,7 +58,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         // reverse order
         for(var i=HeaderCategoryTitles.length-1; i>=0; i--) { // reverse order
             var surveyInfo = {};
-            surveyInfo.Label = HeaderCategoryTitles[i][1]; //label - inner header
+            surveyInfo.Label = HeaderCategoryTitles[i][2]; //label - inner header
             surveyInfo.Code = HeaderCategoryTitles[i][3]; // pid - outer header
             surveyList.push(surveyInfo);            
         }
