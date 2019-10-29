@@ -262,7 +262,7 @@ class ParamUtil {
 
             //set default pulse baby project
             //if(selectedPulseSurvey.length===0) {
-            if(!state.Parameters.IsNull('p_projectSelector'))
+            if(!state.Parameters.IsNull('p_projectSelector')) {
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(getDefaultParameterValue(context, 'p_projectSelector'));
             } else {
 
@@ -275,7 +275,7 @@ class ParamUtil {
                     var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
                     var doReset = true;
 
-                    for (var i = 0; i < availableProjects.length; i++) {
+                    for (i = 0; i < availableProjects.length; i++) {
                         if (selectedProject === availableProjects[i].Code) {
                             doReset = false;
                             break;
@@ -303,7 +303,7 @@ class ParamUtil {
         //log.LogDebug('project selector processing end')
         
         // set default values for mandatory page parameters
-        for(i=0; i<mandatoryPageParameters.length; i++) {
+        for(i = 0; i<mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
             if (!state.Parameters.IsNull(mandatoryPageParameters[i])) {
                 continue;
