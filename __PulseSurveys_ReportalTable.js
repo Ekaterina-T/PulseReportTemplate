@@ -68,7 +68,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             var addInfo = [];
 
             if(_additionalInfo.indexOf('CreatedByEndUserName')>=0) {
-                addInfo.push(surveyAuthor);
+                addInfo.push(surveyAuthor.length>0 ? surveyAuthor : 'Undefined user');
             }
 
             if(_additionalInfo.indexOf('Status')>=0) {
