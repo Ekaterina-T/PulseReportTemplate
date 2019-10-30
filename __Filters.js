@@ -410,17 +410,22 @@ class Filters {
     */
     static function projectSelectorInPulseProgram(context) {
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        var log = context.log;
+        var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
 
-            if(!context.state.Parameters.IsNull('p_projectSelector')) {
-                return 'IN(source_projectid, PValStr("p_projectSelector"))';
-            } else {
-                var defaultVal = ParamUtil.getDefaultParameterValue(context, 'p_projectSelector');
-                return 'source_projectid = "' + defaultVal + '"';
-            }
+        log.LogDebug('from filter: '+context.pageContext.Items['p_projectSelector']);
+        log.LogDebug('from filter: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
+
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return '';
         }
 
-        return '';
+        if(pidFromPageContext) {
+            return 'source_projectid = "' + pidFromPageContext + '"';
+        }
+
+        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
+        return 'source_projectid = "' + val[0] + '"';
     }
 
     /**
