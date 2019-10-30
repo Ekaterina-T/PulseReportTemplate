@@ -414,6 +414,7 @@ class Filters {
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
 
         log.LogDebug('from filter: '+context.pageContext.Items['p_projectSelector']);
+
         log.LogDebug('from filter: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {

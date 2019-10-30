@@ -288,7 +288,7 @@ class ParamUtil {
             if(state.Parameters.IsNull('p_projectSelector')) {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
-                pageContext.Items.Add('p_projectSelector', defaultVal);
+                context.pageContext.Items.Add('p_projectSelector', defaultVal);
             }
 
             log.LogDebug('here: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')))
