@@ -43,10 +43,10 @@ class ParamUtil {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_BenchmarkSet', 'p_Wave', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet', 'p_Wave'/*, 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions'*/];
 
     // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
+    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions']; // we must add them empty option as 1st value instead
 
     static public var cachedParameterOptions = {};
 
@@ -533,9 +533,10 @@ class ParamUtil {
 
         var paramToBeFiltered = paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList' || paramType === 'CustomQuestionList';
 
+        /*
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-        }
+        }*/
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
