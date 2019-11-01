@@ -291,8 +291,6 @@ class ParamUtil {
                 context.pageContext.Items.Add('p_projectSelector', defaultVal);
             }
 
-            log.LogDebug('here: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')))
-
             //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);

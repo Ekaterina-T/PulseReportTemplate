@@ -292,7 +292,7 @@ class PageResponseRate {
                 hq.ReferenceGroup.Self = false;
                 //var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
                 //log.LogDebug('parentLevels='+parentLevels)
-                hq.ReferenceGroup.Levels = '+1';//parentLevels.join(', ');
+                hq.ReferenceGroup.Levels = '+1';//Data from PulseSurveyContentInfo;
             }
             table.RowHeaders.Add(hq);
         } else {
