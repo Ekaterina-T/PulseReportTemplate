@@ -403,7 +403,7 @@ class TableUtil {
         var log = context.log;
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, propertyName);
 
-        log.LogDebug('getActiveQuestionsListFromPageConfig: '+JSON.stringify(Qs))
+        log.LogDebug('getActiveQuestionsListFromPageConfig 1 before: '+JSON.stringify(Qs))
 
         if (doPreCheck && Qs.length == 0) {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
@@ -411,7 +411,7 @@ class TableUtil {
 
         var questions = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
 
-        log.LogDebug('getActiveQuestionsListFromPageConfig: '+JSON.stringify(questions))
+        log.LogDebug('getActiveQuestionsListFromPageConfig 2 after: '+JSON.stringify(questions));
 
         return questions;
     }
