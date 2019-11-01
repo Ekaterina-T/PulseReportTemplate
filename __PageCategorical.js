@@ -74,14 +74,11 @@ class PageCategorical {
 
     static function tableCategorical_Render(context, tableType) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
 
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var project : Project = DataSourceUtil.getProject(context);
         var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
@@ -89,6 +86,8 @@ class PageCategorical {
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
+
+        log.LogDebug('tableType='+tableType+' Qs='+JSON.stringify(Qs));
 
         for (var i=0; i<Qs.length; i++) {
 
