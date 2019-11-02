@@ -429,7 +429,9 @@ class ParamUtil {
 
         }
 
-        return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
+        if(!paramInfo.hasOwnProperty('isQuestionBased')) {
+            return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
+        }
     }
 
     /*
