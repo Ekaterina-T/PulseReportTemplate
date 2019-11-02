@@ -417,7 +417,7 @@ class ParamUtil {
 
         if(paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
-            log.LogDebug('qidsWithData='+qidsWithData)
+            log.LogDebug('qidsWithData='+JSON.stringify(qidsWithData))
             for(var i=0; i<parameterOptions.length; i++) {
                 if(qidsWithData.hasOwnProperty[parameterOptions[i].Code]) {
                     log.LogDebug('parameterOptions[i].Code='+parameterOptions[i].Code)
