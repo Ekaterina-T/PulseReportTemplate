@@ -265,6 +265,7 @@ class ParamUtil {
 
                 var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+                log.LogDebug
 
                 //user checked "show all pulse surveys" checkbox or changed report base
                 if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
@@ -349,8 +350,10 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
+        log.LogDebug('---- GetSelectedCodes START for '+parameterName+' ----'); 
+
         if (state.Parameters.IsNull(parameterName)) {
-            //log.LogDebug('is null parameterName='+parameterName)
+            log.LogDebug('param is null')
                 return [];
         }        
 
@@ -358,28 +361,23 @@ class ParamUtil {
             var param = state.Parameters[parameterName];
 
             // single select parameter
-            if (param instanceof ParameterValueResponse) {
-                
-                //log.LogDebug('single parameterName='+parameterName)
-                //log.LogDebug('skv='+skv)
-                //log.LogDebug('sv='+sv)
+            if (param instanceof ParameterValueResponse) {                
+                log.LogDebug('SINGLE: stringKeyValue='+param.StringKeyValue+'; stringValue='+state.Parameters.GetString(parameterName));
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
             // multi-select response
             if (param instanceof ParameterValueMultiSelect) {
+                log.LogDebug('MULTI')
                 var selectedCodes = [];
                 var param = state.Parameters[parameterName];
-                //log.LogDebug(parameterName+': multi '+param.Count);
-                //log.LogDebug('param options: '+JSON.stringify(ParamUtil.GetParameterOptions(context, parameterName)))
+                log.LogDebug('count='+param.Count);
                 
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue;
-                    //log.LogDebug('multi parameterName='+parameterName)
-                    //log.LogDebug('skv='+skv)
-                    //log.LogDebug('sv='+sv)
+                    log.LogDebug('skv='+skv+'; sv='+sv)
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
