@@ -349,6 +349,8 @@ class ParamUtil {
         var log = context.log;
 
         if (state.Parameters.IsNull(parameterName)) {
+            log.LogDebug('parameterName='+parameterName)
+            log.LogDebug('is null');
                 return [];
         }        
 
