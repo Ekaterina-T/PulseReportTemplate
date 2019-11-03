@@ -371,7 +371,7 @@ class ParamUtil {
                     log.LogDebug('response.StringValue='+response.StringValue)
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue
-                    log.LogDebug('!skv ? sv : skv ='+!skv ? sv : skv)
+                    log.LogDebug('!skv ? sv : skv ='+(!skv ? sv : skv))
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
