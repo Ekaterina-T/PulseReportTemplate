@@ -411,9 +411,11 @@ class Filters {
     */
     static function projectSelectorInPulseProgram(context) {
 
+	    var log = context.log;
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             if(!context.state.Parameters.IsNull('p_projectSelector')) {
+		log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
                 return 'IN(pid, PValStr("p_projectSelector"))';
             } else {
                 var defaultVal = ParamUtil.getDefaultParameterValue(context, 'p_projectSelector');
