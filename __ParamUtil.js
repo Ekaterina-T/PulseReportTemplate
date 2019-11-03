@@ -313,7 +313,7 @@ class ParamUtil {
 
             try {
                 var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
-                log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
+                //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
                 if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                     continue;
                 }
@@ -431,26 +431,17 @@ class ParamUtil {
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = reportParameterValuesMap[parameterName];
 
-        log.LogDebug('GET DEFAULT FOR '+parameterName)
-        log.LogDebug('parameterOptions'+JSON.stringify(parameterOptions))
-        log.LogDebug('paramInfo '+JSON.stringify(paramInfo))
-
-        if(paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
-            log.LogDebug('qidsWithData '+JSON.stringify(qidsWithData))
 
             for(var i=0; i<parameterOptions.length; i++) {
-                log.LogDebug('parameterOptions[i].Code='+parameterOptions[i].Code)
-                log.LogDebug('prop='+qidsWithData.hasOwnProperty(parameterOptions[i].Code))
                 if(qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
-                    log.LogDebug('here')
                     return parameterOptions[i].Code;
                 }
             }
-
         }
 
-        if(!paramInfo.hasOwnProperty('isQuestionBased')) {
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
             return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
