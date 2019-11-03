@@ -443,7 +443,7 @@ class ParamUtil {
         }
 
         if(!paramInfo.hasOwnProperty('isQuestionBased')) {
-            log.LogDebug(parameterName+'  based '+(parameterOptions.length>0 ? parameterOptions[0].Code)))
+            log.LogDebug(parameterName+'  based '+(parameterOptions.length>0 ? parameterOptions[0].Code: '')))
             return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
