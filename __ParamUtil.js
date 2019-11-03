@@ -348,10 +348,8 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
-        log.LogDebug('parameterName='+parameterName)
-
         if (state.Parameters.IsNull(parameterName)) {
-            log.LogDebug('is null')
+            parameterName==='p_AllOpenTextQs' ? log.LogDebug(parameterName+' is null') : '';
                 return [];
         }        
 
@@ -360,16 +358,19 @@ class ParamUtil {
 
             // single select parameter
             if (param instanceof ParameterValueResponse) {
-                log.LogDebug('param.StringKeyValue='+param.StringKeyValue)
-                log.LogDebug('state.Parameters.GetString(parameterName)='+state.Parameters.GetString(parameterName))
+                parameterName==='p_AllOpenTextQs' ? log.LogDebug('param.StringKeyValue='+param.StringKeyValue+'; state.Parameters.GetString(parameterName)='+state.Parameters.GetString(parameterName)) : '';
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
             // multi-select response
             if (param instanceof ParameterValueMultiSelect) {
                 var selectedCodes = [];
+                parameterName==='p_AllOpenTextQs' ? log.LogDebug('multi '+param.Count)
+                
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
+                    log.LogDebug('response.StringKeyValue='+response.StringKeyValue)
+                    log.LogDebug('response.StringValue='+response.StringValue)
                     selectedCodes.push(response.StringValue || response.StringKeyValue);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can extracted via StringValue
                 }
                 return selectedCodes;

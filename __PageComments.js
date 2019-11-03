@@ -64,10 +64,10 @@ class PageComments {
          */
           static function tableBase_Render (context) {
               var log = context.log;
+              log.LogDebug('is null: '+context.state.PArameters.IsNull('p_AllOpenTextQs'))
               var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
+              log.LogDebug('open_Ids='+JSON.stringify(open_Ids))
               var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
-              log.LogDebug('tableBase_Render, all options: '+JSON.stringify(ParamUtil.GetParameterOptions(context,'p_AllOpenTextQs')))
-              log.LogDebug('tableBase_Render, sekected: '+JSON.stringify(open_Ids))
               SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
           }
 
