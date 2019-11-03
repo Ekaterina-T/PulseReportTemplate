@@ -363,12 +363,12 @@ class ParamUtil {
             // multi-select response
             if (param instanceof ParameterValueMultiSelect) {
                 var selectedCodes = [];
-                parameterName==='p_AllOpenTextQs' ? log.LogDebug('multi '+param.Count): '';
+                var param = state.Parameters[parameterName];
+                log.LogDebug(parameterName+': multi '+param.Count);
+                log.LogDebug('param options: '+JSON.stringify(GetParameterOptions(context,parameterName)))
                 
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
-                    log.LogDebug('response.StringKeyValue='+response.StringKeyValue)
-                    log.LogDebug('response.StringValue='+response.StringValue)
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue
                     log.LogDebug('!skv ? sv : skv ='+(!skv ? sv : skv))
