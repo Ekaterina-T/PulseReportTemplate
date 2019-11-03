@@ -313,6 +313,7 @@ class ParamUtil {
 
             try {
                 var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
+                log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
                 if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                     continue;
                 }
@@ -349,8 +350,7 @@ class ParamUtil {
         var log = context.log;
 
         if (state.Parameters.IsNull(parameterName)) {
-            log.LogDebug('parameterName='+parameterName)
-            log.LogDebug('is null');
+            log.LogDebug('is null parameterName='+parameterName)
                 return [];
         }        
 
@@ -360,7 +360,7 @@ class ParamUtil {
             // single select parameter
             if (param instanceof ParameterValueResponse) {
                 
-                log.LogDebug('parameterName='+parameterName)
+                log.LogDebug('single parameterName='+parameterName)
                 log.LogDebug('skv='+skv)
                 log.LogDebug('sv='+sv)
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
@@ -377,7 +377,7 @@ class ParamUtil {
                     var response : ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue;
-                    log.LogDebug('parameterName='+parameterName)
+                    log.LogDebug('multi parameterName='+parameterName)
                     log.LogDebug('skv='+skv)
                     log.LogDebug('sv='+sv)
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
@@ -443,7 +443,7 @@ class ParamUtil {
         }
 
         if(!paramInfo.hasOwnProperty('isQuestionBased')) {
-            log.LogDebug(parameterName+'  based '+(parameterOptions.length>0 && parameterOptions[0].Code))
+            log.LogDebug(parameterName+' !q based '+(parameterOptions.length>0 && parameterOptions[0].Code))
             return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
