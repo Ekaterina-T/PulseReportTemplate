@@ -22,7 +22,7 @@ class PulseProgramUtil {
     /**
      *
      */
-    static private function buildQuestionCategoryId(context, pageId, pageProperty) {
+    static private function buildQuestionAndCategoryId(context, pageId, pageProperty) {
 
         var log = context.log;
 
@@ -36,33 +36,16 @@ class PulseProgramUtil {
         throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+pageProperty+' on page '+pageId);
     }
 
+    
     /**
-     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
-     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
-     * @param {Object} context
-     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
+     * 
      */
-    static private function getResourcesList (context) {
+    static private function removeDuplicates (context, listOfResources) {
 
-        var log = context.log;
-        var listOfResources = [];
         var resources = [];
         var resourcesLog = {};
         var i;
-        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
-        var pageId = PageUtil.getCurrentPageIdInConfig (context);
-        var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
 
-        // keep property values in array
-        for(i=0; i<surveyProperties.length; i++) {
-            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
-        }
-
-        for(i=0; i<pageProperties.length; i++) {
-            listOfResources=listOfResources.concat(buildQuestionCategoryId(context, pageId, pageProperties[i]));
-        }
-
-        //remove duplicates and format
         for(i=0; i<listOfResources.length; i++) {
             var item = listOfResources[i];
             var code;
@@ -83,6 +66,70 @@ class PulseProgramUtil {
         }
 
         return resources;
+    }
+
+    /**
+     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
+     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
+     * @param {Object} context
+     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
+     */
+    static private function getPageResourcesList (context, currentPageId) {
+
+        var log = context.log;
+        var listOfResources = [];
+        var i;
+        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+        var pageId = currentPageId ? currentPageId : PageUtil.getCurrentPageIdInConfig (context);
+        var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
+
+        // keep property values in array
+        for(i=0; i<surveyProperties.length; i++) {
+            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
+        }
+
+        for(i=0; i<pageProperties.length; i++) {
+            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, pageId, pageProperties[i]));
+        }
+
+        return listOfResources;
+    }
+
+    static private function getSurveyResourcesList (context) {
+
+        var log = context.log;
+        var listOfResources = [];
+        var i;
+        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+
+        // keep property values in array
+        for(i=0; i<surveyProperties.length; i++) {
+            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
+        }
+
+        return listOfResources;
+    }
+
+    /**
+     * 
+     */
+    static private function getResourcesList (context) {
+
+        var listOfResources = [];
+        
+        if(!Export.isExcelExportMode(context)) {
+            listOfResources=listOfResources.concat(getSurveyResourcesList(context));
+            listOfResources=listOfResources.concat(getPageResourcesList(context));
+        } else {
+            for(var pageId in resourcesDependentOnSpecificSurvey) {
+                if(pageId != 'Survey') {
+                    listOfResources=listOfResources.concat(getPageResourcesList(context, pageId));
+                } else {
+                    listOfResources=listOfResources.concat(getSurveyResourcesList(context));                    
+                }
+            }
+        }
+        return removeDuplicates(context, listOfResources);
     }
 
     /**
@@ -123,18 +170,13 @@ class PulseProgramUtil {
         if(pulseSurveyContentInfo[key].length === 0) {
             resourcesBase = [];
         } else {
-            log.LogDebug('request to pulse table start')
             resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
-            log.LogDebug('request to pulse table end')
         }
-
-        log.LogDebug('resourcesBase='+resourcesBase.length)
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             baseValues.push(baseVal.Value);
         }
-
         
         log.LogDebug('baseValues='+JSON.stringify(baseValues))
 
@@ -158,7 +200,7 @@ class PulseProgramUtil {
         var log = context.log;
         var currentPage = PageUtil.getCurrentPageIdInConfig (context);
         var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+currentPage;
+        var key = !Export.isExcelExportMode(context) ? pageContext.Items['userEmail']+'_'+currentPage : pageContext.Items['userEmail'];
 
         return key;
     }
