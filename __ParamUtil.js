@@ -349,7 +349,6 @@ class ParamUtil {
         var log = context.log;
 
         if (state.Parameters.IsNull(parameterName)) {
-            parameterName==='p_AllOpenTextQs' ? log.LogDebug(parameterName+' is null') : '';
                 return [];
         }        
 
@@ -358,7 +357,6 @@ class ParamUtil {
 
             // single select parameter
             if (param instanceof ParameterValueResponse) {
-                parameterName==='p_AllOpenTextQs' ? log.LogDebug('param.StringKeyValue='+param.StringKeyValue+'; state.Parameters.GetString(parameterName)='+state.Parameters.GetString(parameterName)) : '';
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
@@ -371,7 +369,10 @@ class ParamUtil {
                     var response : ParameterValueResponse = param[i];
                     log.LogDebug('response.StringKeyValue='+response.StringKeyValue)
                     log.LogDebug('response.StringValue='+response.StringValue)
-                    selectedCodes.push(response.StringValue || response.StringKeyValue);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can extracted via StringValue
+                    var skv = response.StringKeyValue;
+                    var sv = response.StringValue
+                    log.LogDebug('!skv ? sv : skv ='+!skv ? sv : skv)
+                    selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
 
