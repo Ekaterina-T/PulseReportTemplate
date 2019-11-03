@@ -356,6 +356,8 @@ class ParamUtil {
 
             // single select parameter
             if (param instanceof ParameterValueResponse) {
+                log.LogDebug('param.StringKeyValue='+param.StringKeyValue)
+                log.LogDebug('state.Parameters.GetString(parameterName)='+state.Parameters.GetString(parameterName))
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
