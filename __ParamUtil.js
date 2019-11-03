@@ -435,7 +435,6 @@ class ParamUtil {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
             for(var i=0; i<parameterOptions.length; i++) {
                 if(qidsWithData.hasOwnProperty[parameterOptions[i].Code]) {
-                    log.LogDebug(parameterName+' q based '+parameterOptions[i].Code)
                     return parameterOptions[i].Code;
                 }
             }
@@ -443,11 +442,8 @@ class ParamUtil {
         }
 
         if(!paramInfo.hasOwnProperty('isQuestionBased')) {
-            log.LogDebug(parameterName+' !q based '+(parameterOptions.length>0 && parameterOptions[0].Code))
             return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
-
-        log.LogDebug(parameterName+' null')
 
         return null;
     }
