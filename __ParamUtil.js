@@ -364,14 +364,13 @@ class ParamUtil {
             if (param instanceof ParameterValueMultiSelect) {
                 var selectedCodes = [];
                 var param = state.Parameters[parameterName];
-                log.LogDebug(parameterName+': multi '+param.Count);
-                log.LogDebug('param options: '+JSON.stringify(ParamUtil.GetParameterOptions(context, parameterName)))
+                //log.LogDebug(parameterName+': multi '+param.Count);
+                //log.LogDebug('param options: '+JSON.stringify(ParamUtil.GetParameterOptions(context, parameterName)))
                 
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
-                    var sv = response.StringValue
-                    log.LogDebug('!skv ? sv : skv ='+(!skv ? sv : skv))
+                    var sv = response.StringValue;
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
@@ -530,7 +529,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         //CacheParameterOptions(context, parameterId);
 
@@ -539,9 +538,9 @@ class ParamUtil {
 
         //--------------------------------------------------
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-        log.LogDebug('parameterInfo= '+JSON.stringify(parameterInfo))
+        //log.LogDebug('parameterInfo= '+JSON.stringify(parameterInfo))
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        log.LogDebug('resource= '+JSON.stringify(resource))
+        //log.LogDebug('resource= '+JSON.stringify(resource))
 
         if(!resource) {
             return [];
@@ -550,7 +549,7 @@ class ParamUtil {
         paramType = parameterInfo.type;
         //log.LogDebug('before options')
         options = getRawOptions(context, resource, paramType);
-        log.LogDebug(JSON.stringify(options))
+        //log.LogDebug(JSON.stringify(options))
         //log.LogDebug('after options')
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
@@ -560,7 +559,7 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }*/
-        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
