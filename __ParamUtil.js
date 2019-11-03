@@ -353,7 +353,7 @@ class ParamUtil {
         //log.LogDebug('---- GetSelectedCodes START for '+parameterName+' ----'); 
 
         if (state.Parameters.IsNull(parameterName)) {
-            log.LogDebug('param is null')
+            //log.LogDebug('param is null')
                 return [];
         }        
 
