@@ -352,7 +352,7 @@ class ParamUtil {
                 return [];
         }        
 
-        try {
+        //try {
             var param = state.Parameters[parameterName];
 
             // single select parameter
@@ -378,10 +378,10 @@ class ParamUtil {
 
             }
 
-        }
-        catch (e) {
-            throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
-        }
+        //}
+        //catch (e) {
+       //     throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
+       // }
     }
 
     /*
