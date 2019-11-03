@@ -37,6 +37,7 @@ class PagePulseSurveyData {
 
                 //define question type to apply correct header properties later
                 questionType = (questionInfo.hasOwnProperty('standardType')) ? questionInfo.standardType : questionInfo.type;
+                questionType = questionType.toLowerCase();
 
                 log.LogDebug(resource.Code+' open?: '+questionType+':'+questionType.indexOf('open'))
 
