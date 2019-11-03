@@ -365,7 +365,7 @@ class ParamUtil {
                 var selectedCodes = [];
                 var param = state.Parameters[parameterName];
                 log.LogDebug(parameterName+': multi '+param.Count);
-                //log.LogDebug('param options: '+JSON.stringify(ParamUtil.GetParameterOptions(context, parameterName)))
+                log.LogDebug('param options: '+JSON.stringify(ParamUtil.GetParameterOptions(context, parameterName)))
                 
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
