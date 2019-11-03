@@ -352,7 +352,7 @@ class ParamUtil {
                 return [];
         }        
 
-        //try {
+        try {
             var param = state.Parameters[parameterName];
 
             // single select parameter
@@ -378,10 +378,10 @@ class ParamUtil {
 
             }
 
-        //}
-        //catch (e) {
-       //     throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
-       // }
+        }
+        catch (e) {
+            throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
+        }
     }
 
     /*
@@ -528,7 +528,7 @@ class ParamUtil {
         var options = [];
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
-        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         //CacheParameterOptions(context, parameterId);
 
@@ -537,7 +537,9 @@ class ParamUtil {
 
         //--------------------------------------------------
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+        log.LogDebug('parameterInfo= '+JSON.stringify(parameterInfo))
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        log.LogDebug('resource= '+JSON.stringify(resource))
 
         if(!resource) {
             return [];
@@ -546,17 +548,17 @@ class ParamUtil {
         paramType = parameterInfo.type;
         //log.LogDebug('before options')
         options = getRawOptions(context, resource, paramType);
+        log.LogDebug(JSON.stringify(options))
         //log.LogDebug('after options')
         options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
-        var paramToBeFiltered = paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList' || paramType === 'CustomQuestionList';
+        /*var paramToBeFiltered = paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList' || paramType === 'CustomQuestionList';
 
-        /*
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
             options = PulseProgramUtil.excludeItemsWithoutData(context, options);
         }*/
-        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
