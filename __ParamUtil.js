@@ -431,10 +431,17 @@ class ParamUtil {
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = reportParameterValuesMap[parameterName];
 
+        log.LogDebug('GET DEFAULT FOR '+parameterName)
+        log.LogDebug('parameterOptions'+JSON.stringify(parameterOptions))
+        log.LogDebug('paramInfo '+JSON.stringify(paramInfo))
+
         if(paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+            log.LogDebug('qidsWithData '+JSON.stringify(qidsWithData))
+
             for(var i=0; i<parameterOptions.length; i++) {
                 if(qidsWithData.hasOwnProperty[parameterOptions[i].Code]) {
+                    log.LogDebug('here')
                     return parameterOptions[i].Code;
                 }
             }
