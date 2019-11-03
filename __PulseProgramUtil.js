@@ -128,7 +128,7 @@ class PulseProgramUtil {
             log.LogDebug('request to pulse table end')
         }
 
-        log.LogDebug('resourcesBase='+JSON.stringify(resourcesBase))
+        log.LogDebug('resourcesBase='+resourcesBase.length)
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
