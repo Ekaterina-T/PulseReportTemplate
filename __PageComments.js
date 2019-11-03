@@ -65,7 +65,6 @@ class PageComments {
           static function tableBase_Render (context) {
               var log = context.log;
               var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
-              log.LogDebug('open_Ids='+open_Ids)
               var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
               SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
           }

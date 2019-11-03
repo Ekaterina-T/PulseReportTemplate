@@ -265,7 +265,6 @@ class ParamUtil {
 
                 var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-                log.LogDebug
 
                 //user checked "show all pulse surveys" checkbox or changed report base
                 if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {

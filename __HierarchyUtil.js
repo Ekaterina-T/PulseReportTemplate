@@ -202,7 +202,7 @@ class HierarchyUtil {
             levels.push(parents[i].length+1);
         }
 
-        log.LogDebug(JSON.stringify(levels))
+        //log.LogDebug(JSON.stringify(levels))
 
         return levels;
     }

@@ -292,7 +292,7 @@ class SuppressUtil {
             var log = context.log;
             var table = context.table;
 
-            log.LogDebug('openTextQIds='+JSON.stringify(openTextQIds))
+            //log.LogDebug('openTextQIds='+JSON.stringify(openTextQIds))
     
             // add rows = open text questions
             for (var i=0; i<openTextQIds.length; i++) {
