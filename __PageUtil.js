@@ -46,7 +46,7 @@ class PageUtil {
         
         log.LogDebug('pulseSurveyContentInfo after:'+JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo))
         log.LogDebug('pulseSurveyContentBaseValues after:'+JSON.stringify(PulseProgramUtil.pulseSurveyContentBaseValues))
-        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
         //log.LogDebug('page init end');
     }
 
