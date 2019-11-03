@@ -36,7 +36,9 @@ class PagePulseSurveyData {
                 var questionType;
 
                 //define question type to apply correct header properties later
-                (questionInfo.hasOwnProperty('standardType')) ? questionType = questionInfo.standardType : questionType = questionInfo.type;
+                questionType = (questionInfo.hasOwnProperty('standardType')) ? questionInfo.standardType : questionInfo.type;
+
+                log.LogDebug('open?: '+questionType.indexOf('open'))
 
                 if(questionType.indexOf('hierarchy')>=0) {
                     header = new HeaderSegment();
