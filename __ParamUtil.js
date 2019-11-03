@@ -360,9 +360,9 @@ class ParamUtil {
             // single select parameter
             if (param instanceof ParameterValueResponse) {
                 
-                log.LogDebug('single parameterName='+parameterName)
-                log.LogDebug('skv='+skv)
-                log.LogDebug('sv='+sv)
+                //log.LogDebug('single parameterName='+parameterName)
+                //log.LogDebug('skv='+skv)
+                //log.LogDebug('sv='+sv)
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
@@ -377,9 +377,9 @@ class ParamUtil {
                     var response : ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue;
-                    log.LogDebug('multi parameterName='+parameterName)
-                    log.LogDebug('skv='+skv)
-                    log.LogDebug('sv='+sv)
+                    //log.LogDebug('multi parameterName='+parameterName)
+                    //log.LogDebug('skv='+skv)
+                    //log.LogDebug('sv='+sv)
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
