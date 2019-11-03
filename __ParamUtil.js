@@ -441,8 +441,8 @@ class ParamUtil {
 
             for(var i=0; i<parameterOptions.length; i++) {
                 log.LogDebug('parameterOptions[i].Code='+parameterOptions[i].Code)
-                log.LogDebug('prop='+qidsWithData.hasOwnProperty[parameterOptions[i].Code])
-                if(qidsWithData.hasOwnProperty[parameterOptions[i].Code]) {
+                log.LogDebug('prop='+qidsWithData.hasOwnProperty(parameterOptions[i].Code))
+                if(qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
                     log.LogDebug('here')
                     return parameterOptions[i].Code;
                 }
