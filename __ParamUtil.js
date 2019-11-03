@@ -365,7 +365,7 @@ class ParamUtil {
             // multi-select response
             if (param instanceof ParameterValueMultiSelect) {
                 var selectedCodes = [];
-                parameterName==='p_AllOpenTextQs' ? log.LogDebug('multi '+param.Count)
+                parameterName==='p_AllOpenTextQs' ? log.LogDebug('multi '+param.Count): '';
                 
                 for (var i=0; i<param.Count; i++) {
                     var response : ParameterValueResponse = param[i];
