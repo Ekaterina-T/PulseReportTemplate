@@ -39,8 +39,6 @@ class PagePulseSurveyData {
                 questionType = (questionInfo.hasOwnProperty('standardType')) ? questionInfo.standardType : questionInfo.type;
                 questionType = questionType.toLowerCase();
 
-                log.LogDebug(resource.Code+' open?: '+questionType+':'+questionType.indexOf('open'))
-
                 if(questionType.indexOf('hierarchy')>=0) {
                     header = new HeaderSegment();
                     header.DataSourceNodeId = DataSourceUtil.getDsId(context);
