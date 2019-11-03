@@ -348,8 +348,12 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
-        if (state.Parameters.IsNull(parameterName))
-            return [];
+        log.LogDebug('parameterName='+parameterName)
+
+        if (state.Parameters.IsNull(parameterName)) {
+            log.LogDebug('is null')
+                return [];
+        }        
 
         try {
             var param = state.Parameters[parameterName];
