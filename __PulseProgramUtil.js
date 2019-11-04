@@ -36,6 +36,47 @@ class PulseProgramUtil {
         throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+pageProperty+' on page '+pageId);
     }
 
+
+    /**
+     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
+     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
+     * @param {Object} context
+     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
+     */
+    static private function getPageResourcesList (context, currentPageId) {
+
+        var log = context.log;
+        var listOfResources = [];
+        var i;
+        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+        var pageId = currentPageId ? currentPageId : PageUtil.getCurrentPageIdInConfig (context);
+        var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
+
+        for(i=0; i<pageProperties.length; i++) {
+            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, pageId, pageProperties[i]));
+        }
+
+        return listOfResources;
+    }
+
+    /**
+     * 
+     */
+    static private function getSurveyResourcesList (context) {
+
+        var log = context.log;
+        var listOfResources = [];
+        var i;
+        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+
+        // keep property values in array
+        for(i=0; i<surveyProperties.length; i++) {
+            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
+        }
+
+        return listOfResources;
+    }
+
     
     /**
      * 
@@ -67,49 +108,7 @@ class PulseProgramUtil {
 
         return resources;
     }
-
-    /**
-     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
-     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
-     * @param {Object} context
-     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
-     */
-    static private function getPageResourcesList (context, currentPageId) {
-
-        var log = context.log;
-        var listOfResources = [];
-        var i;
-        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
-        var pageId = currentPageId ? currentPageId : PageUtil.getCurrentPageIdInConfig (context);
-        var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
-
-        // keep property values in array
-        for(i=0; i<surveyProperties.length; i++) {
-            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
-        }
-
-        for(i=0; i<pageProperties.length; i++) {
-            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, pageId, pageProperties[i]));
-        }
-
-        return listOfResources;
-    }
-
-    static private function getSurveyResourcesList (context) {
-
-        var log = context.log;
-        var listOfResources = [];
-        var i;
-        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
-
-        // keep property values in array
-        for(i=0; i<surveyProperties.length; i++) {
-            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
-        }
-
-        return listOfResources;
-    }
-
+    
     /**
      * 
      */
@@ -142,6 +141,11 @@ class PulseProgramUtil {
         var log = context.log;
         var key = getKeyForPulseSurveyContentInfo(context);
 
+        if(Export.isExcelExportMode(context) && pulseSurveyContentInfo.hasOwnProperty(key)) {
+            log.LogDebug('Excel export repeat info: '+JSON.stringify(pulseSurveyContentInfo.key))
+            return pulseSurveyContentInfo.key;
+        }
+
         delete pulseSurveyContentInfo.key;
         pulseSurveyContentInfo[key] = getResourcesList(context);
 
@@ -165,6 +169,11 @@ class PulseProgramUtil {
 
         if(!pulseSurveyContentInfo[key]) {
             throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
+        }
+
+        if(Export.isExcelExportMode(context) && pulseSurveyContentBaseValues.hasOwnProperty(key)) {
+            log.LogDebug('Excel export repeat base vals: '+JSON.stringify(pulseSurveyContentBaseValues.key))
+            return pulseSurveyContentBaseValues.key;
         }
 
         if(pulseSurveyContentInfo[key].length === 0) {
