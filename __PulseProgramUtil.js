@@ -144,8 +144,8 @@ class PulseProgramUtil {
         if(Export.isExcelExportMode(context) && pulseSurveyContentInfo.hasOwnProperty(key)) {
             log.LogDebug('key='+key);
             log.LogDebug('pulseSurveyContentInfo='+JSON.stringify(pulseSurveyContentInfo))
-            log.LogDebug('Excel export repeat info: '+JSON.stringify(pulseSurveyContentInfo.key))
-            return pulseSurveyContentInfo.key;
+            log.LogDebug('Excel export repeat info: '+JSON.stringify(pulseSurveyContentInfo[key]))
+            return pulseSurveyContentInfo[key];
         }
 
         delete pulseSurveyContentInfo.key;
@@ -176,8 +176,8 @@ class PulseProgramUtil {
         if(Export.isExcelExportMode(context) && pulseSurveyContentBaseValues.hasOwnProperty(key)) {
             log.LogDebug('key='+key);
             log.LogDebug('pulseSurveyContentBaseValues='+JSON.stringify(pulseSurveyContentBaseValues))
-            log.LogDebug('Excel export repeat base vals: '+JSON.stringify(pulseSurveyContentBaseValues.key))
-            return pulseSurveyContentBaseValues.key;
+            log.LogDebug('Excel export repeat base vals: '+JSON.stringify(pulseSurveyContentBaseValues[key]))
+            return pulseSurveyContentBaseValues[key];
         }
 
         if(pulseSurveyContentInfo[key].length === 0) {
