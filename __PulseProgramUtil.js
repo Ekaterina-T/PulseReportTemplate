@@ -142,6 +142,8 @@ class PulseProgramUtil {
         var key = getKeyForPulseSurveyContentInfo(context);
 
         if(Export.isExcelExportMode(context) && pulseSurveyContentInfo.hasOwnProperty(key)) {
+            log.LogDebug('key='+key);
+            log.LogDebug('pulseSurveyContentInfo='+JSON.stringify(pulseSurveyContentInfo))
             log.LogDebug('Excel export repeat info: '+JSON.stringify(pulseSurveyContentInfo.key))
             return pulseSurveyContentInfo.key;
         }
@@ -160,7 +162,7 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentBaseValues (context) {
 
         var log = context.log;
-        log.LogDebug('setPulseSurveyContentBaseValues start')
+        //log.LogDebug('setPulseSurveyContentBaseValues start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
 
@@ -172,6 +174,8 @@ class PulseProgramUtil {
         }
 
         if(Export.isExcelExportMode(context) && pulseSurveyContentBaseValues.hasOwnProperty(key)) {
+            log.LogDebug('key='+key);
+            log.LogDebug('pulseSurveyContentBaseValues='+JSON.stringify(pulseSurveyContentBaseValues))
             log.LogDebug('Excel export repeat base vals: '+JSON.stringify(pulseSurveyContentBaseValues.key))
             return pulseSurveyContentBaseValues.key;
         }
@@ -186,15 +190,12 @@ class PulseProgramUtil {
             var baseVal: Datapoint = resourcesBase[i];
             baseValues.push(baseVal.Value);
         }
-        
-        log.LogDebug('baseValues='+JSON.stringify(baseValues))
 
         // remove old value as it might have changed if new data appeared
         delete pulseSurveyContentBaseValues.key;
         pulseSurveyContentBaseValues[key] = baseValues;
 
-
-        log.LogDebug('setPulseSurveyContentBaseValues end')
+        //log.LogDebug('setPulseSurveyContentBaseValues end')
 
         return;
     }
