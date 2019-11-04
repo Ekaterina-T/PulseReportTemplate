@@ -16,7 +16,7 @@ class PageUtil {
         //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-        log.LogDebug('page init start: '+page.CurrentPageId);
+        //log.LogDebug('page init start: '+page.CurrentPageId);
 
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
@@ -40,9 +40,6 @@ class PageUtil {
         }
 
         //for tests
-        
-        log.LogDebug('pulseSurveyContentInfo after:'+JSON.stringify(PulseProgramUtil.pulseSurveyContentInfo))
-        log.LogDebug('pulseSurveyContentBaseValues after:'+JSON.stringify(PulseProgramUtil.pulseSurveyContentBaseValues))
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
         //log.LogDebug('page init end');
     }
