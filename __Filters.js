@@ -418,11 +418,11 @@ class Filters {
         }
 
         if(pidFromPageContext) {
-            return 'source_projectid = "' + pidFromPageContext + '"';
+            return 'pid = "' + pidFromPageContext + '"';//'source_projectid = "' + pidFromPageContext + '"';
         }
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
-        return 'source_projectid = "' + val[0] + '"';
+        return 'pid = "' + val[0] + '"';//'source_projectid = "' + val[0] + '"';
     }
 
     /**
