@@ -13,7 +13,7 @@ class PulseProgramUtil {
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
-        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', 'BreakVariables', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
+        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
         Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions']
