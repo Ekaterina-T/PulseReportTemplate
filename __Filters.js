@@ -422,7 +422,7 @@ class Filters {
         }
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
-        return 'pid = "' + val[0] + '"';//'source_projectid = "' + val[0] + '"';
+        return 'source_projectid = "' + val[0] + '"';
     }
 
     /**
