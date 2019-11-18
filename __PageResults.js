@@ -82,10 +82,10 @@ class PageResults {
             rowsAdded = true;
         }
 
-        if (custom_questions && custom_questions.length > 0) {
+        /*if (custom_questions && custom_questions.length > 0) {
             tableStatements_AddRows_Banner2(context);          
             rowsAdded = true;
-        }
+        }*/
 
         if (!rowsAdded) {        
             throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
