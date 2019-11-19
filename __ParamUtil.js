@@ -289,7 +289,7 @@ class ParamUtil {
                 }
             }
 
-            if(state.Parameters.IsNull('p_projectSelector') || selectedPulseSurvey[0]!=="") {
+            if(state.Parameters.IsNull('p_projectSelector') || selectedPulseSurvey[0]==="") {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
                 context.pageContext.Items.Add('p_projectSelector', defaultVal);
