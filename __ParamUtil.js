@@ -262,8 +262,10 @@ class ParamUtil {
 
             log.LogDebug('state.Parameters.IsNull(\'p_projectSelector\')='+state.Parameters.IsNull('p_projectSelector'))
             log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
+
+            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
             //set default pulse baby project
-            if(!state.Parameters.IsNull('p_projectSelector')) {
+            if(!state.Parameters.IsNull('p_projectSelector') && selectedPulseSurvey[0]!=="") {
 
                 var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
@@ -287,7 +289,7 @@ class ParamUtil {
                 }
             }
 
-            if(state.Parameters.IsNull('p_projectSelector')) {
+            if(state.Parameters.IsNull('p_projectSelector') || selectedPulseSurvey[0]!=="") {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
                 context.pageContext.Items.Add('p_projectSelector', defaultVal);
