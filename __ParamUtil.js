@@ -260,6 +260,7 @@ class ParamUtil {
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
+            log.LogDebug('state.Parameters.IsNull(\'p_projectSelector\')='+state.Parameters.IsNull('p_projectSelector'))
             //set default pulse baby project
             if(!state.Parameters.IsNull('p_projectSelector')) {
 
