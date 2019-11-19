@@ -264,10 +264,13 @@ class ParamUtil {
             log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
 
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-            //set default pulse baby project
-            if(!state.Parameters.IsNull('p_projectSelector') && selectedPulseSurvey[0]!=="") {
 
-                var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            if(selectedPulseSurvey[0]==="") {
+                state.Parameters['p_projectSelector'] = null;
+            }
+            //set default pulse baby project
+            if(!state.Parameters.IsNull('p_projectSelector')) {
+
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
 
                 //user checked "show all pulse surveys" checkbox or changed report base
@@ -289,11 +292,12 @@ class ParamUtil {
                 }
             }
 
-            if(state.Parameters.IsNull('p_projectSelector') || selectedPulseSurvey[0]==="") {
+            if(state.Parameters.IsNull('p_projectSelector')) {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
                 context.pageContext.Items.Add('p_projectSelector', defaultVal);
             }
+            log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
 
             //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
