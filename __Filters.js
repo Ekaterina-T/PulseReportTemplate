@@ -416,12 +416,16 @@ class Filters {
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
         }
+        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
+
+        log.LogDebug('pidFromPageContext = '+pidFromPageContext)
+        log.LogDebug('from param util = '+val)
 
         if(pidFromPageContext) {
             return 'pid = "' + pidFromPageContext + '"';//'source_projectid = "' + pidFromPageContext + '"';
         }
 
-        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
+        //var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
         return 'source_projectid = "' + val[0] + '"';
     }
 
