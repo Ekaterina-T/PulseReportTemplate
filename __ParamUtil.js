@@ -260,9 +260,6 @@ class ParamUtil {
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
-            log.LogDebug('state.Parameters.IsNull(\'p_projectSelector\')='+state.Parameters.IsNull('p_projectSelector'))
-            log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
-
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
             if(selectedPulseSurvey[0]==="") {
@@ -297,7 +294,6 @@ class ParamUtil {
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
                 context.pageContext.Items.Add('p_projectSelector', defaultVal);
             }
-            log.LogDebug(JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_projectSelector')))
 
             //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
