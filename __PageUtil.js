@@ -40,7 +40,7 @@ class PageUtil {
         }
 
         //for tests
-        PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
         //log.LogDebug('page init end');
     }
 
