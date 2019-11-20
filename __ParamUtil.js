@@ -274,6 +274,7 @@ class ParamUtil {
 
                 //user checked "show all pulse surveys" checkbox or changed report base
                 if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+
                     var selectedProject = selectedPulseSurvey[0];
                     var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
                     var doReset = true;
@@ -287,6 +288,7 @@ class ParamUtil {
 
                     if (doReset) {
                         ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                        //context.pageContext.Items.Add('p_projectSelector', null);
                     }
                 }
             }
