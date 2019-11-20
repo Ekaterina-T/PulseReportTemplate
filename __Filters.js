@@ -11,6 +11,7 @@ class Filters {
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
         log.LogDebug('before elim: '+JSON.stringify(filterFromSurveyData))
         PulseProgramUtil.printPulseSurveyContentInfoTable(context);
+        log.LogDebug('after elim: '+PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData))
         return !filterFromSurveyData? [] : PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
     }
 
