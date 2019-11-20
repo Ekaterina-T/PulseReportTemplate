@@ -262,7 +262,6 @@ class ParamUtil {
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-            log.LogDebug('sdf='+JSON.stringify(selectedPulseSurvey))
 
             if(selectedPulseSurvey[0]==="") {
                 state.Parameters['p_projectSelector'] = null;
@@ -288,7 +287,7 @@ class ParamUtil {
 
                     if (doReset) {
                         ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                        context.pageContext.Items['p_projectSelector'] = 'none';
+                        context.pageContext.Items['p_projectSelector'] = 'NA';
                     }
                 }
             }
