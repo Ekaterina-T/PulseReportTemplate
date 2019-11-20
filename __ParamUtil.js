@@ -296,7 +296,7 @@ class ParamUtil {
             if(state.Parameters.IsNull('p_projectSelector')) {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
-                context.pageContext.Items.Add('p_projectSelector', defaultVal);
+                context.pageContext.Items['p_projectSelector'] = defaultVal;
             }
 
             //set up object holding questions available on current page
