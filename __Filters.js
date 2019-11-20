@@ -411,7 +411,8 @@ class Filters {
     static function projectSelectorInPulseProgram(context) {
 
         var log = context.log;
-        var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
+        var pageContext = context.pageContext;
+        var pidFromPageContext = pageContext.Items['p_projectSelector'];
 
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
@@ -421,7 +422,7 @@ class Filters {
         //var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
         //log.LogDebug('from param util = '+JSON.stringify(val))
 
-        if(pidFromPageContext) {
+        if(pageContext.Items.Contains('p_projectSelector') /* pidFromPageContext*/) {
             return 'pid = "' + pidFromPageContext + '"';//'source_projectid = "' + pidFromPageContext + '"';
         }
 
