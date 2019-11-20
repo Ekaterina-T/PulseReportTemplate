@@ -255,9 +255,6 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
-        log.LogDebug('project selector processing start');
-
-
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
@@ -287,7 +284,7 @@ class ParamUtil {
 
                     if (doReset) {
                         ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                        context.pageContext.Items['p_projectSelector'] = 'NA';
+                        context.pageContext.Items['p_projectSelector'] = 'nothing_selected';
                     }
                 }
             }
