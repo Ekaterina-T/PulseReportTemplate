@@ -288,7 +288,7 @@ class ParamUtil {
 
                     if (doReset) {
                         ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                        context.pageContext.Items.Add('p_projectSelector', null);
+                        context.pageContext.Items.Add('p_projectSelector', 'none');
                     }
                 }
             }
