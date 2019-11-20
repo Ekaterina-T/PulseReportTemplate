@@ -255,12 +255,14 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
-       // log.LogDebug('project selector processing start')
+        log.LogDebug('project selector processing start');
+
 
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            log.LogDebug('sdf='+JSON.stringify(selectedPulseSurvey))
 
             if(selectedPulseSurvey[0]==="") {
                 state.Parameters['p_projectSelector'] = null;
