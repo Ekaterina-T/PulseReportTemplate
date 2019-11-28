@@ -493,7 +493,7 @@ class ParamUtil {
             return;
         }
 
-        log.LOG2E('here')
+        log.LogDebug('here')
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var paramOptionsObj = {};
