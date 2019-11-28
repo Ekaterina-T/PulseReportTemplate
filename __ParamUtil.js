@@ -537,34 +537,29 @@ class ParamUtil {
 
         //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
-        //CacheParameterOptions(context, parameterId);
+        CacheParameterOptions(context, parameterId); //if needed
 
         //paramType = cachedParameterOptions[key]['type'];
-        //options = GetParameterOptionsFromCache(context, parameterId);
+        options = GetParameterOptionsFromCache(context, parameterId);
 
         //--------------------------------------------------
-        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
+        //var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         //log.LogDebug('parameterInfo= '+JSON.stringify(parameterInfo))
-        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
+        //var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         //log.LogDebug('resource= '+JSON.stringify(resource))
 
-        if(!resource) {
-            return [];
-        }
+        //if(!resource) {
+        //    return [];
+        //}
 
-        paramType = parameterInfo.type;
+        //paramType = parameterInfo.type;
         //log.LogDebug('before options')
-        options = getRawOptions(context, resource, paramType);
+        //options = getRawOptions(context, resource, paramType);
         //log.LogDebug(JSON.stringify(options))
         //log.LogDebug('after options')
-        options = modifyOptionsOrder(context, options, parameterInfo);
+        //options = modifyOptionsOrder(context, options, parameterInfo);
         //--------------------------------------------------
 
-        /*var paramToBeFiltered = paramType === 'QuestionList' || paramType === 'QuestionAndCategoriesList' || paramType === 'CustomQuestionList';
-
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramToBeFiltered) {
-            options = PulseProgramUtil.excludeItemsWithoutData(context, options);
-        }*/
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
