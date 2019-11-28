@@ -287,6 +287,24 @@ class ParamUtil {
                     }
                 }
             }
+
+            if(state.Parameters.IsNull('p_projectSelector')) {
+                var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
+                state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
+                context.pageContext.Items['p_projectSelector'] = defaultVal;
+            }
+
+            //set up object holding questions available on current page
+            PulseProgramUtil.setPulseSurveyContentInfo(context);
+            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+
+            //reset question and category based params when baby survey changes
+            if(page.SubmitSource === 'projectSelector') {
+                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+                Filters.ResetAllFilters(context);
+            }
+
+        }
         //log.LogDebug('project selector processing end')
 
         // set default values for mandatory page parameters
