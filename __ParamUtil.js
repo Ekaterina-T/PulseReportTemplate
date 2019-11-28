@@ -512,7 +512,7 @@ class ParamUtil {
         var options = [];
 
         log.LogDebug('key='+key)
-        //log.LogDebug(JSON.stringify(cachedParameterOptions))
+        log.LogDebug(JSON.stringify(cachedParameterOptions[key]))
         for(var i=0; i<cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
