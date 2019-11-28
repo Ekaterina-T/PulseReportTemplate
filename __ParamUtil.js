@@ -221,14 +221,13 @@ class ParamUtil {
     }
 
 
-    /*
-  * Initialise parametrs on page.
-  * Steps to do:
-  * - clear all params if new data source is selected
-  * - set default values
-  * @param {object} context object {state: state, report: report, page: page, log: log}
-  */
-
+    /**
+    * Initialise parametrs on page.
+    * Steps to do:
+    * - clear all params if new data source is selected
+    * - set default values
+    * @param {object} context object {state: state, report: report, page: page, log: log}
+    */
     static function Initialise (context) {
 
         var state = context.state;
@@ -255,19 +254,22 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
-       // log.LogDebug('project selector processing start')
-
         // pulse program handler
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
+            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+            if(selectedPulseSurvey[0]==="") {
+                state.Parameters['p_projectSelector'] = null;
+            }
             //set default pulse baby project
             if(!state.Parameters.IsNull('p_projectSelector')) {
 
-                var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
 
                 //user checked "show all pulse surveys" checkbox or changed report base
                 if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+
                     var selectedProject = selectedPulseSurvey[0];
                     var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
                     var doReset = true;
@@ -281,29 +283,12 @@ class ParamUtil {
 
                     if (doReset) {
                         ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                        context.pageContext.Items['p_projectSelector'] = 'nothing_selected';
                     }
                 }
             }
-
-            if(state.Parameters.IsNull('p_projectSelector')) {
-                var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
-                state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
-                context.pageContext.Items.Add('p_projectSelector', defaultVal);
-            }
-
-            //set up object holding questions available on current page
-            PulseProgramUtil.setPulseSurveyContentInfo(context);
-            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
-
-            //reset question and category based params when baby survey changes
-            if(page.SubmitSource === 'projectSelector') {
-                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
-                Filters.ResetAllFilters(context);
-            }
-
-        }
         //log.LogDebug('project selector processing end')
-        
+
         // set default values for mandatory page parameters
         for(i = 0; i<mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
@@ -481,8 +466,7 @@ class ParamUtil {
     static function CacheParameterOptions(context, parameterId) {
 
         var log = context.log;
-        var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+        var key = CacheUtil.getParameterCacheKey(context, parameterId);
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
             return;
@@ -503,12 +487,10 @@ class ParamUtil {
      * get copy of parameter options from cache in
      */
     static function GetParameterOptionsFromCache(context, parameterId) {
-        //cached options might need to be modified (exclude no data options)
-        //copy needed to avoid 'spoiling' full list with exclude
+        //copy needed to avoid 'spoiling' full list
 
         var log = context.log;
-        var pageContext = context.pageContext;
-        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
+        var key = CacheUtil.getParameterCacheKey(context, parameterId);
         var options = [];
 
         for(var i=0; i<cachedParameterOptions[key]['options'].length; i++) {
@@ -529,37 +511,12 @@ class ParamUtil {
     static function GetParameterOptions (context, parameterName, from) {
 
         var log = context.log;
-        var pageContext = context.pageContext;
-        var parameterId = parameterName || context.parameter.ParameterId; //context.hasOwnProperty('parameter') ? context.parameter.ParameterId : parameterName;
-        var paramType;
+        var parameterId = parameterName || context.parameter.ParameterId;
         var options = [];
-        var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
-
         CacheParameterOptions(context, parameterId); //if needed
-
-        //paramType = cachedParameterOptions[key]['type'];
         options = GetParameterOptionsFromCache(context, parameterId);
-
-        //--------------------------------------------------
-        //var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-        //log.LogDebug('parameterInfo= '+JSON.stringify(parameterInfo))
-        //var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        //log.LogDebug('resource= '+JSON.stringify(resource))
-
-        //if(!resource) {
-        //    return [];
-        //}
-
-        //paramType = parameterInfo.type;
-        //log.LogDebug('before options')
-        //options = getRawOptions(context, resource, paramType);
-        //log.LogDebug(JSON.stringify(options))
-        //log.LogDebug('after options')
-        //options = modifyOptionsOrder(context, options, parameterInfo);
-        //--------------------------------------------------
-
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
