@@ -532,10 +532,11 @@ class ParamUtil {
         var parameterId = parameterName || context.parameter.ParameterId;
         var options = [];
 
-        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
         CacheParameterOptions(context, parameterId); //if needed
         options = GetParameterOptionsFromCache(context, parameterId);
-        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(JSON.stringify(options))
+        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
