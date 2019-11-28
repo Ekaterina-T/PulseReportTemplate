@@ -511,6 +511,8 @@ class ParamUtil {
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
         var options = [];
 
+        log.LogDebug('key='+key)
+        log.LogDebug(JSON.stringify(cachedParameterOptions))
         for(var i=0; i<cachedParameterOptions[key]['options'].length; i++) {
             options.push(cachedParameterOptions[key]['options'][i]);
         }
@@ -535,7 +537,6 @@ class ParamUtil {
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
         CacheParameterOptions(context, parameterId); //if needed
         options = GetParameterOptionsFromCache(context, parameterId);
-        log.LogDebug(JSON.stringify(options))
         log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
