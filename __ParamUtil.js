@@ -502,7 +502,7 @@ class ParamUtil {
         paramOptionsObj['type'] = parameterInfo.type;
         paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
         cachedParameterOptions[key] = paramOptionsObj;
-        log.LogDebug(JSON.stringify(paramOptionsObj))
+        //log.LogDebug(JSON.stringify(paramOptionsObj))
 
         return;
     }
