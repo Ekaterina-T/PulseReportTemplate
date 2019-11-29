@@ -486,8 +486,9 @@ class ParamUtil {
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
 
+
         log.LogDebug('key='+key)
-        log.LogDebug(JSON.stringify(cachedParameterOptions))
+        log.LogDebug('cached? '+cachedParameterOptions.hasOwnProperty(key));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
             return;
