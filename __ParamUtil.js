@@ -489,6 +489,7 @@ class ParamUtil {
 
         log.LogDebug('key='+key)
         log.LogDebug('cached? '+cachedParameterOptions.hasOwnProperty(key));
+        log.LogDebug(JSON.stringify(cachedParameterOptions));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
             return;
@@ -497,10 +498,19 @@ class ParamUtil {
         log.LogDebug('here')
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        var paramOptionsObj = {};
+        var options = [];
 
+        if(resource) {
+            options = getRawOptions(context, resource, parameterInfo.type);
+            options = modifyOptionsOrder(context, options, parameterInfo);
+        }
+
+        log.LogDebug(JSON.stringify(options));
+
+        var paramOptionsObj = {};
         paramOptionsObj['type'] = parameterInfo.type;
-        paramOptionsObj['options'] = !resource ? [] : modifyOptionsOrder(context, getRawOptions(context, resource, parameterInfo.type), parameterInfo);
+        paramOptionsObj['options'] = options;
+
         cachedParameterOptions[key] = paramOptionsObj;
         //log.LogDebug(JSON.stringify(paramOptionsObj))
 
