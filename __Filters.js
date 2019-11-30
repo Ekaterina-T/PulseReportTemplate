@@ -3,13 +3,21 @@ class Filters {
     /**
     * Get the list of all filters defined on the survey level based on survey data variables
     * @param {object} context object {state: state, report: report, log: log}
+    * @param {boolean} doNotExcludeItems - flag, needed to cache filter data at load
     * @returns {Array} - array of questions to filter survey data by (not page specific)
     */
-    static function GetSurveyDataFilterList (context) {
+    static function GetSurveyDataFilterList (context, doNotExcludeItems) {
 
         var log = context.log;
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');  
-        return !filterFromSurveyData? [] : PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData'); 
+        
+        if(!filterFromSurveyData) {
+            return [];
+        }
+
+        return filterFromSurveyData;
+
+        //return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
     }
 
     /**
@@ -17,7 +25,7 @@ class Filters {
      * @param {object} context object {state: state, report: report, log: log}
      * @returns {Array} - array of questions to filter background data by (not page specific)
      */
-    static function GetBackgroundDataFilterList (context) {
+    static function GetBackgroundDataFilterList (context, doNotExcludeItems) {
 
         var log = context.log;
         return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');        
