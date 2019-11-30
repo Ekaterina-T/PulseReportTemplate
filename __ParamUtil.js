@@ -487,38 +487,23 @@ class ParamUtil {
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
-
-        log.LogDebug('key='+key)
-        log.LogDebug('cached? '+cachedParameterOptions.hasOwnProperty(key));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
-            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
-            log.LogDebug('param is already cached')
             return;
         }
 
-        log.LogDebug('new param')
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var options = [];
-
-        log.LogDebug('paramInfo: '+JSON.stringify(parameterInfo));
-        log.LogDebug('resource: '+JSON.stringify(resource));
 
         if(resource) {
             options = getRawOptions(context, resource, parameterInfo.type);
             options = modifyOptionsOrder(context, options, parameterInfo);
         }
 
-        log.LogDebug('options: '+JSON.stringify(options));
-
         var paramOptionsObj = {};
-        //paramOptionsObj['type'] = parameterInfo.type;
         paramOptionsObj['options'] = options;
-
         cachedParameterOptions[key] = paramOptionsObj;
-        //log.LogDebug(JSON.stringify(paramOptionsObj))
 
         return;
     }
@@ -552,10 +537,10 @@ class ParamUtil {
         var parameterId = parameterName || context.parameter.ParameterId;
         var options = [];
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
         CacheParameterOptions(context, parameterId); //if needed
         options = GetParameterOptionsFromCache(context, parameterId);
-        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
