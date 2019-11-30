@@ -491,9 +491,9 @@ class ParamUtil {
 
         log.LogDebug('key='+key)
         log.LogDebug('cached? '+cachedParameterOptions.hasOwnProperty(key));
-        log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
+            log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
             log.LogDebug('param is already cached')
             return;
         }
@@ -502,6 +502,9 @@ class ParamUtil {
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var options = [];
+
+        log.LogDebug('paramInfo: '+JSON.stringify(parameterInfo));
+        log.LogDebug('resource: '+JSON.stringify(resource));
 
         if(resource) {
             options = getRawOptions(context, resource, parameterInfo.type);
