@@ -77,7 +77,7 @@ class Filters {
 
         var log = context.log; 
         var filterFromRespondentData = GetBackgroundDataFilterList (context);
-        var filterFromSurveyData = GetSurveyDataFilterList (context, false);
+        var filterFromSurveyData = GetSurveyDataFilterList (context, true);
 
         return filterFromRespondentData.concat(filterFromSurveyData);
     }
