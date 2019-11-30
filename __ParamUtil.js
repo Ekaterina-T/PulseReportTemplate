@@ -491,7 +491,7 @@ class ParamUtil {
 
         log.LogDebug('key='+key)
         log.LogDebug('cached? '+cachedParameterOptions.hasOwnProperty(key));
-        log.LogDebug(JSON.stringify(cachedParameterOptions));
+        log.LogDebug(JSON.stringify(cachedParameterOptions[key]));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
             log.LogDebug('param is already cached')
