@@ -1,6 +1,6 @@
 class ParamUtil {
 
-    /*
+    /** 
   * Object with resources (values) for parameters.
   * - propertyName: name of property (the lowest level of the path so to say) that keeps the value
   * - type (type of data): StaticArrayofObjects (static array text values in format {Code: code, Label: label}), QuestionList (array of question ids), QuestionId (sring with questionId)
@@ -60,7 +60,7 @@ class ParamUtil {
         'QuestionAndCategoriesList': true
     };
 
-    /*
+    /**
   * Populates p_SurveyType parameter based on surveys from Config.
   * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
   */
@@ -83,7 +83,7 @@ class ParamUtil {
         return;
     }
 
-    /*
+    /** 
   * Populates p_projectSelector based on pid and pname questions.
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   */
@@ -109,7 +109,7 @@ class ParamUtil {
 
     }
 
-    /*
+    /** 
   * Check if parameter needed to be loaded with values, i.e. relevant for the survey
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   * @return {Boolean}
@@ -180,7 +180,7 @@ class ParamUtil {
         return true;
     }
 
-    /*
+    /** 
   * Reset parametrs according to the list.
   * @param {object} context object {state: state}
   * @param {array} parameterList
@@ -198,7 +198,7 @@ class ParamUtil {
         return;
     }
 
-    /*
+    /** 
     * Reset parametrs according to the list.
     * @param {object} context object {state: state}
     * @param {array} parameterList
@@ -392,7 +392,7 @@ class ParamUtil {
         }
     }
 
-    /*
+    /** 
   * Get full info about selected answers of the report parameter (single or multi response)
   * @param {Object} context  - object {state: state, log: log}
   * @param {String} parameterName - the name of the report parameter
@@ -418,7 +418,7 @@ class ParamUtil {
         return selectedOptions;
     }
 
-    /*
+    /** 
   * Get defaultParameterValue for parameter
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   * @param {string} parameterName
@@ -448,7 +448,7 @@ class ParamUtil {
         return null;
     }
 
-    /*
+    /** 
   * Adding values to single response parameter
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   */
@@ -479,7 +479,9 @@ class ParamUtil {
 
 
     /**
-     * cache parameter values
+     * cache parameter values if they are not cached already
+     * @param {Object} context
+     * @param {String} parameterId
      */
     static function CacheParameterOptions(context, parameterId) {
 
@@ -492,10 +494,11 @@ class ParamUtil {
         log.LogDebug(JSON.stringify(cachedParameterOptions));
         
         if(cachedParameterOptions.hasOwnProperty(key)) {
+            log.LogDebug('param is already cached')
             return;
         }
 
-        log.LogDebug('here')
+        log.LogDebug('new param')
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var options = [];
@@ -505,10 +508,10 @@ class ParamUtil {
             options = modifyOptionsOrder(context, options, parameterInfo);
         }
 
-        log.LogDebug(JSON.stringify(options));
+        log.LogDebug('options: '+JSON.stringify(options));
 
         var paramOptionsObj = {};
-        paramOptionsObj['type'] = parameterInfo.type;
+        //paramOptionsObj['type'] = parameterInfo.type;
         paramOptionsObj['options'] = options;
 
         cachedParameterOptions[key] = paramOptionsObj;
@@ -518,20 +521,18 @@ class ParamUtil {
     }
 
     /**
-     * get copy of parameter options from cache in
+     * get copy of parameter options from cache
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Array} array of options [{Code:, Label:}, ...]
      */
     static function GetParameterOptionsFromCache(context, parameterId) {
         //copy needed to avoid 'spoiling' full list
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
-        var options = [];
 
-        for(var i=0; i<cachedParameterOptions[key]['options'].length; i++) {
-            options.push(cachedParameterOptions[key]['options'][i]);
-        }
-
-        return options;
+        return cachedParameterOptions[key]['options'];
     }
 
 
@@ -558,7 +559,7 @@ class ParamUtil {
 
     /**
      * parameterInfo is descriptive object; stores parameter type, options order settings, location settings
-     * it is basis for building parameterResource object identifing location of options
+     * it is basis for building parameterResource object identifing location of options and type of that resource
      *@param {Object} context
      *@param {String} parameterId
      *@parreturn {Object} parameterInfo - reportParameterValuesMap object
@@ -601,7 +602,6 @@ class ParamUtil {
 
         return options;
     }
-
 
     /**
      *@param {Object} context
