@@ -3,10 +3,10 @@ class Filters {
     /**
     * Get the list of all filters defined on the survey level based on survey data variables
     * @param {object} context object {state: state, report: report, log: log}
-    * @param {boolean} excludeNotAnsweredQid - flag, needed run filter hide script
+    * @param {boolean} includeNotAnsweredQid - flag, needed run filter hide script
     * @returns {Array} - array of questions to filter survey data by (not page specific)
     */
-    static function GetSurveyDataFilterList (context, excludeNotAnsweredQid) {
+    static function GetSurveyDataFilterList (context, includeNotAnsweredQid) {
 
         var log = context.log;
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData'); 
@@ -15,11 +15,12 @@ class Filters {
             return [];
         }
 
-        if(excludeNotAnsweredQid) {
-            return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+        if(includeNotAnsweredQid) {
+            return filterFromSurveyData;
         }
 
-        return filterFromSurveyData;
+        return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+
     }
 
     /**
