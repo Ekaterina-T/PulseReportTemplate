@@ -3,10 +3,10 @@ class Filters {
     /**
     * Get the list of all filters defined on the survey level based on survey data variables
     * @param {object} context object {state: state, report: report, log: log}
-    * @param {boolean} doNotExcludeItems - flag, needed to cache filter data at load
+    * @param {boolean} excludeNotAnsweredQid - flag, needed run filter hide script
     * @returns {Array} - array of questions to filter survey data by (not page specific)
     */
-    static function GetSurveyDataFilterList (context, doNotExcludeItems) {
+    static function GetSurveyDataFilterList (context, excludeNotAnsweredQid) {
 
         var log = context.log;
         var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData'); 
@@ -15,9 +15,11 @@ class Filters {
             return [];
         }
 
-        return filterFromSurveyData;
+        if(excludeNotAnsweredQid) {
+            return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+        }
 
-        //return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
+        return filterFromSurveyData;
     }
 
     /**
@@ -25,7 +27,7 @@ class Filters {
      * @param {object} context object {state: state, report: report, log: log}
      * @returns {Array} - array of questions to filter background data by (not page specific)
      */
-    static function GetBackgroundDataFilterList (context, doNotExcludeItems) {
+    static function GetBackgroundDataFilterList (context) {
 
         var log = context.log;
         return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');        
@@ -51,7 +53,8 @@ class Filters {
     }
 
     /**
-    * Get the list of all filters defined on the survey level (including background and survey data variables)
+    * Get the list of filters defined on the survey level (including background and survey data variables) that should be displayed.
+    * I.e. include only questions with answers.
     * @param {object} context object {state: state, report: report, log: log}
     * @returns {Array} - array of questions to filter both background and survey data by (not page specific)
     */
@@ -63,6 +66,21 @@ class Filters {
 
         return filterFromRespondentData.concat(filterFromSurveyData);
     }
+    
+    /**
+    * Get the list of all filters defined on the survey level (including background and survey data variables).
+    * I.e. all questions no matter if they have answers or not.
+    * @param {object} context object {state: state, report: report, log: log}
+    * @returns {Array} - array of questions to filter both background and survey data by (not page specific)
+    */
+    static function GetFullConfigFilterList (context) {
+
+        var log = context.log; 
+        var filterFromRespondentData = GetBackgroundDataFilterList (context);
+        var filterFromSurveyData = GetSurveyDataFilterList (context, false);
+
+        return filterFromRespondentData.concat(filterFromSurveyData);
+    }
 
     /**
      * Get list of filters by type: 
@@ -71,7 +89,7 @@ class Filters {
      * @param {string} filtersType - type of filter list
      * @returns {Array} filters - array of questions o filter by
      */
-    static function GetFilterListByType (context, filtersType) {
+    static function GetFilterListByType (context, filtersType, from) {
 
         var log = context.log;
 

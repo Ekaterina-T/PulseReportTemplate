@@ -898,7 +898,7 @@ class ParamUtil {
     static function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
         var resourceInfo = {};
-        var filterList = Filters.GetGlobalFilterList(context);
+        var filterList = Filters.GetFullConfigFilterList(context);
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
