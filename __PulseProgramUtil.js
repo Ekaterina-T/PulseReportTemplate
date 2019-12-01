@@ -4,20 +4,7 @@ class PulseProgramUtil {
 
     static public var pulseSurveyContentBaseValues = {};
 
-    /**
-     * list of properties of survey or report page that are based on questions and/or categories
-     */
-    static private var resourcesDependentOnSpecificSurvey = {
-
-        Survey: ['FiltersFromSurveyData'],
-        Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
-        Page_Trends: ['TrendQuestions'],
-        Page_Results: ['BreakVariables'],
-        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
-        Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
-        Page_CategoricalDrilldown: ['BreakVariables'],
-        Page_Response_Rate: ['DemographicsQuestions']
-    }
+    
 
     /**
      *
@@ -48,6 +35,7 @@ class PulseProgramUtil {
         var log = context.log;
         var listOfResources = [];
         var i;
+        var resourcesDependentOnSpecificSurvey = SystemConfig.resourcesDependentOnSpecificSurvey;
         var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
         var pageId = currentPageId ? currentPageId : PageUtil.getCurrentPageIdInConfig (context);
         var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
@@ -67,7 +55,7 @@ class PulseProgramUtil {
         var log = context.log;
         var listOfResources = [];
         var i;
-        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
+        var surveyProperties = SystemConfig.resourcesDependentOnSpecificSurvey['Survey'];
 
         // keep property values in array
         for(i=0; i<surveyProperties.length; i++) {
@@ -114,7 +102,8 @@ class PulseProgramUtil {
      */
     static private function getResourcesList (context) {
 
-        var listOfResources = [];
+        var listOfResources = [];        
+        var resourcesDependentOnSpecificSurvey = SystemConfig.resourcesDependentOnSpecificSurvey;
         
         if(!Export.isExcelExportMode(context)) {
             listOfResources=listOfResources.concat(getSurveyResourcesList(context));

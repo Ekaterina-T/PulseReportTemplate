@@ -25,7 +25,7 @@ class StyleAndJavaScriptUtil {
             return str;
         }
     
-        /*
+        /** TO DO: organize better to support flexibility for other reports
          * all js variables and functions that
          * - are specific to the template
          * - are defined based on Config

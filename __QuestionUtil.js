@@ -242,7 +242,7 @@ class QuestionUtil {
     }
 
 
-    /*
+    /** TO DO: Should be moved to CustomQuestion class probably as too specific
     * Get custom question text / title by question id from DB table or cache
     * @param {object} context object {state: state, report: report, log: log}
     * @param {string} qId

@@ -56,4 +56,20 @@ public class SystemConfig {
         'QuestionList': true,
         'QuestionAndCategoriesList': true
     };
+
+    /**
+     * list of properties of survey or report page that are based on questions and/or categories
+     * for pulse programs to be able to exclude questions not relevant for particular baby survey from selector lists and widgets
+     */
+    static private var resourcesDependentOnSpecificSurvey = {
+
+        Survey: ['FiltersFromSurveyData'],
+        Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
+        Page_Trends: ['TrendQuestions'],
+        Page_Results: ['BreakVariables'],
+        Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
+        Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
+        Page_CategoricalDrilldown: ['BreakVariables'],
+        Page_Response_Rate: ['DemographicsQuestions']
+    }
 }

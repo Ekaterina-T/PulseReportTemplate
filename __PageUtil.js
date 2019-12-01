@@ -126,6 +126,7 @@ class PageUtil {
             throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')
         }
 
+        // not needed anymore
         if(pageId.indexOf('_ExcelExport')>0) {
             pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
         }

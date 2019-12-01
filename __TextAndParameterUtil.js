@@ -92,43 +92,4 @@ class TextAndParameterUtil {
 
     }
 
-
-
-    /*
-    * Hide parameter text if parameter is not needed.
-    * @param {object} context object {state: state, report: report, pageContext: pageContext, log: log}
-    * @param {string} parameterName
-    * @return {boolean}
-    */
-
-    /* static function hideTextControl(context, parameterName) {
-
-       var log = context.log;
-       var pageContext = context.pageContext;
-       var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-
-       if(parameterName === 'p_ScoreQs') {
-         var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ScoresForComments');
-         if(!Qs || !Qs.length) {
-           return true;
-         }
-         return false;
-
-       }
-
-
-       if(parameterName === 'p_TagQs') {
-         var Qs = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'TagsForComments');
-         if(!Qs || !Qs.length) {
-           return true;
-         }
-         return false;
-
-       }
-
-     } */
-
-
-
 }
