@@ -61,7 +61,7 @@ public class SystemConfig {
      * list of properties of survey or report page that are based on questions and/or categories
      * for pulse programs to be able to exclude questions not relevant for particular baby survey from selector lists and widgets
      */
-    static private var resourcesDependentOnSpecificSurvey = {
+    static public var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
