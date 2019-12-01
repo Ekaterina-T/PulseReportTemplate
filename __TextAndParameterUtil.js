@@ -26,7 +26,7 @@ class TextAndParameterUtil {
      */
     static function getInfoByParameterValue(parameterName, parameterValue) {
 
-        var configParamName = ParamUtil.reportParameterValuesMap[parameterName];
+        var configParamName = SystemConfig.reportParameterValuesMap[parameterName];
         var domainParamValues = getParameterValuesByKey(configParamName);
 
         for (var i=0; i< domainParamValues.length; i++) {
