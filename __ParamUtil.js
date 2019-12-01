@@ -1,64 +1,6 @@
 class ParamUtil {
 
-    /** 
-  * Object with resources (values) for parameters.
-  * - propertyName: name of property (the lowest level of the path so to say) that keeps the value
-  * - type (type of data): StaticArrayofObjects (static array text values in format {Code: code, Label: label}), QuestionList (array of question ids), QuestionId (sring with questionId)
-  * - locationType (where data is stored): TextAndParameterLibrary (as is), Page (in page property), Survey (in survey property), Report (general report property in Config)
-  * - page: when locationType is 'Page' this property specifies pageId
-  */
-
-    static var reportParameterValuesMap = {
-
-        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: 'PulseSurveyData'},
-
-        'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
-        'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
-        'p_TimePeriod':               { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimePeriods'},
-        'p_TimeUnitWithDefault':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsWithDefaultValue'},
-        'p_TimeUnitNoDefault':        { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
-        'p_CatDD_TimeUnitNoDefault':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
-        'p_DisplayMode':              { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DisplayMode'},
-        'p_ShowAllPulseSurveys':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ShowAllPulseSurveys'},
-
-        'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
-        'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
-        'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
-        'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
-        'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments', isQuestionBased: true},
-        'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory', isQuestionBased: true},
-        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs'], isQuestionBased: true},
-        'p_ScoreQs':              { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'ScoresForComments', isQuestionBased: true},
-        'p_TagQs':                { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'TagsForComments', isQuestionBased: true},
-        'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},
-        'p_Statements':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Actions',              propertyName: 'Statements', isQuestionBased: true},
-
-        'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
-        'p_Dimensions':   { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
-
-        'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
-
-        'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true}
-
-    };
-
-    // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet', 'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions'];
-
-    // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault'/*, 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions'*/]; // we must add them empty option as 1st value instead
-
     static public var cachedParameterOptions = {};
-
-    static const paramTypesToBeReset = {
-        'PulseSurveyInfo': false,
-        'QuestionId': false,
-        'StaticArrayofObjects': false,
-        'CustomQuestionList': true,
-        'ParameterOptionList': true,
-        'QuestionList': true,
-        'QuestionAndCategoriesList': true
-    };
 
     /**
   * Populates p_SurveyType parameter based on surveys from Config.
@@ -149,6 +91,7 @@ class ParamUtil {
         }
 
         // TO DO: pageNames are specified explicitly - this is very bad
+        // think how to pass load condition differently, so that LCL would call some func and would be more flexible
         if(parameterName === 'p_Results_TableTabSwitcher') {
             return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
         }
@@ -210,8 +153,8 @@ class ParamUtil {
         var i;
 
         for(i=0; i<parameterList.length; i++) {
-            var paramType = reportParameterValuesMap[parameterList[i]].type;
-            var isTypeToReset = paramTypesToBeReset[paramType];
+            var paramType = SystemConfig.reportParameterValuesMap[parameterList[i]].type;
+            var isTypeToReset = SystemConfig.paramTypesToBeReset[paramType];
             if(isTypeToReset) {
                 state.Parameters[parameterList[i]] = null;
             }
@@ -234,7 +177,8 @@ class ParamUtil {
         var page = context.page;
         var log = context.log;
         var i;
-
+        var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
+        var optionalPageParameters = SystemConfig.optionalPageParameters;
         //log.LogDebug('param init start')
 
         //set ds if it is not defined
@@ -308,7 +252,7 @@ class ParamUtil {
         //log.LogDebug('project selector processing end')
 
         // set default values for mandatory page parameters
-        for(i = 0; i<mandatoryPageParameters.length; i++) {
+        for(i = 0; i<.mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
             if (!state.Parameters.IsNull(mandatoryPageParameters[i])) {
                 continue;
@@ -429,7 +373,7 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
-        var paramInfo = reportParameterValuesMap[parameterName];
+        var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
@@ -559,7 +503,7 @@ class ParamUtil {
         if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
-            parameterInfo = reportParameterValuesMap[parameterId];
+            parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
         }
 
         if(!parameterInfo) {
@@ -698,11 +642,11 @@ class ParamUtil {
         return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
     }
 
-    /*
-  *Populates p_projectSelector based on pid and pname questions.
-  *@param {object} context - contains Reportal scripting state, log, report, parameter objects
-  *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-  */
+    /**
+     *Populates p_projectSelector based on pid and pname questions.
+    *@param {object} context - contains Reportal scripting state, log, report, parameter objects
+    *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+    */
 
     static function getOptions_CombinationOfQuestionsSelector(context, locationObj) {
 
@@ -880,6 +824,13 @@ class ParamUtil {
 
     }
 
+    /**
+     * This function generates object similar to SysemConfig.reportParameterValuesMap. 
+     * Since filter panel are not described in this object we generate it ourselves.
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Object} resourceInfo
+     */
     static function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
         var resourceInfo = {};
