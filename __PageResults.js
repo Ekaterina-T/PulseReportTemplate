@@ -64,7 +64,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')==='custom';
+        var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
@@ -73,7 +73,9 @@ class PageResults {
         if(!showCustomQuestions && resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
             return;
-        } else if (!showCustomQuestions && dimensions && dimensions.length>0) {
+        } 
+        
+        if (!showCustomQuestions && dimensions && dimensions.length>0) {
             tableStatements_AddRows_Banner1(context);
             return;
         }
