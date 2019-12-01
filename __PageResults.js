@@ -66,7 +66,8 @@ class PageResults {
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
 
-        log.LogDebug(ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0])
+        log.LogDebug('selected codes: '+JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0])
+        log.LogDebug('selected codes len: '+ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher').length)
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
