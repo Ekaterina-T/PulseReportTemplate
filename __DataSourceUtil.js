@@ -1,6 +1,6 @@
 class DataSourceUtil {
 
-    /*
+    /**
       * Get current ds id from Config library on basis of p_SurveyType.
       * Return add-in source from the page context if the source is defined on the page level.
       * If the page config doesn't have any custom source, the report uses the global one defined on the survey level.

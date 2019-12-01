@@ -13,10 +13,9 @@ class ParamUtil {
         var log = context.log;
         var surveys = Config.Surveys;
 
-        for (var i=0; i<surveys.length; i++) {
-
-            if(!surveys[i].isHidden && User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'load param')) {
-                var val : ParameterValueProject = new ParameterValueProject();
+        for (var i = 0; i < surveys.length; i++) {
+            if (!surveys[i].isHidden && User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'load param')) {
+                var val: ParameterValueProject = new ParameterValueProject();
                 val.ProjectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, surveys[i].Source);
                 parameter.Items.Add(val);
             }
@@ -25,12 +24,12 @@ class ParamUtil {
         return;
     }
 
-    /** 
+  /** 
   * Populates p_projectSelector based on pid and pname questions.
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   */
 
-    static function  MaskParameter (context) {
+    static function  MaskParameter(context) {
 
         var parameterId = context.parameterId;
         var mask = context.mask;
@@ -43,12 +42,11 @@ class ParamUtil {
 
             var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
             var qIds = report.TableUtils.GetRowHeaderCategoryIds("QuestionsByDimension");
-            for (var i=0; i<qIds.length; i++) {
+            for (var i = 0; i < qIds.length; i++) {
                 mask.Keys.Add(qIds[i]);
             }
 
         }
-
     }
 
     /** 
@@ -56,17 +54,17 @@ class ParamUtil {
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   * @return {Boolean}
   */
-    static function isParameterToBeLoaded (context) {
+    static function isParameterToBeLoaded(context) {
 
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
 
-        if(parameterName === 'p_projectSelector') {
-            return !DataSourceUtil.isProjectSelectorNotNeeded (context);
+        if (parameterName === 'p_projectSelector') {
+            return !DataSourceUtil.isProjectSelectorNotNeeded(context);
         }
 
-        if(parameterName === 'p_Results_CountsPercents') {
+        if (parameterName === 'p_Results_CountsPercents') {
             var user = context.user;
 
             if (user.UserType != ReportUserType.Enduser) {
@@ -92,31 +90,31 @@ class ParamUtil {
 
         // TO DO: pageNames are specified explicitly - this is very bad
         // think how to pass load condition differently, so that LCL would call some func and would be more flexible
-        if(parameterName === 'p_Results_TableTabSwitcher') {
+        if (parameterName === 'p_Results_TableTabSwitcher') {
             return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
         }
 
-        if(parameterName === 'p_Results_BreakBy') {
+        if (parameterName === 'p_Results_BreakBy') {
             var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
             return (breakBy && breakBy.length > 0) ? true : false;
         }
 
-        if(parameterName === 'p_TimeUnitNoDefault') {
+        if (parameterName === 'p_TimeUnitNoDefault') {
             var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakByTimeUnits');
             return breakByTimeUnits ? true : false;
         }
 
-        if(parameterName === 'p_CategoricalDD_BreakBy') {
+        if (parameterName === 'p_CategoricalDD_BreakBy') {
             var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakVariables');
             return (breakBy && breakBy.length > 0) ? true : false;
         }
 
-        if(parameterName === 'p_CatDD_TimeUnitNoDefault') {
+        if (parameterName === 'p_CatDD_TimeUnitNoDefault') {
             var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakByTimeUnits');
             return breakByTimeUnits ? true : false;
         }
 
-        if(parameterName === 'p_BenchmarkSet') {
+        if (parameterName === 'p_BenchmarkSet') {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
 
@@ -129,12 +127,12 @@ class ParamUtil {
   * @param {array} parameterList
   */
 
-    static function ResetParameters (context, parameterList) {
+    static function ResetParameters(context, parameterList) {
 
         var state = context.state;
         var i;
 
-        for(i=0; i<parameterList.length; i++) {
+        for (i = 0; i < parameterList.length; i++) {
             state.Parameters[parameterList[i]] = null;
         }
 
@@ -147,15 +145,15 @@ class ParamUtil {
     * @param {array} parameterList
     */
 
-    static function ResetQuestionBasedParameters (context, parameterList) {
+    static function ResetQuestionBasedParameters(context, parameterList) {
 
         var state = context.state;
         var i;
 
-        for(i=0; i<parameterList.length; i++) {
+        for (i = 0; i < parameterList.length; i++) {
             var paramType = SystemConfig.reportParameterValuesMap[parameterList[i]].type;
             var isTypeToReset = SystemConfig.paramTypesToBeReset[paramType];
-            if(isTypeToReset) {
+            if (isTypeToReset) {
                 state.Parameters[parameterList[i]] = null;
             }
         }
@@ -171,7 +169,7 @@ class ParamUtil {
     * - set default values
     * @param {object} context object {state: state, report: report, page: page, log: log}
     */
-    static function Initialise (context) {
+    static function Initialise(context) {
 
         var state = context.state;
         var page = context.page;
@@ -199,15 +197,15 @@ class ParamUtil {
         }
 
         // pulse program handler
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if (!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
-            if(selectedPulseSurvey[0]==="") {
+            if (selectedPulseSurvey[0] === "") {
                 state.Parameters['p_projectSelector'] = null;
             }
             //set default pulse baby project
-            if(!state.Parameters.IsNull('p_projectSelector')) {
+            if (!state.Parameters.IsNull('p_projectSelector')) {
 
                 var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
 
@@ -232,7 +230,7 @@ class ParamUtil {
                 }
             }
 
-            if(state.Parameters.IsNull('p_projectSelector')) {
+            if (state.Parameters.IsNull('p_projectSelector')) {
                 var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
                 state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
                 context.pageContext.Items['p_projectSelector'] = defaultVal;
@@ -243,7 +241,7 @@ class ParamUtil {
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
 
             //reset question and category based params when baby survey changes
-            if(page.SubmitSource === 'projectSelector') {
+            if (page.SubmitSource === 'projectSelector') {
                 ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
                 Filters.ResetAllFilters(context);
             }
@@ -252,7 +250,7 @@ class ParamUtil {
         //log.LogDebug('project selector processing end')
 
         // set default values for mandatory page parameters
-        for(i = 0; i<.mandatoryPageParameters.length; i++) {
+        for (i = 0; i <mandatoryPageParameters.length; i++) {
             // safety check: set default value if not defined or pulse program changed
             if (!state.Parameters.IsNull(mandatoryPageParameters[i])) {
                 continue;
@@ -261,19 +259,19 @@ class ParamUtil {
             try {
                 var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
                 //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
-                if(!defaultParameterValue) {  //parameter is not defined for this DS or on this page
+                if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                     continue;
                 }
-            } catch (e) {continue;}
+            } catch (e) { continue; }
 
             // We can't get the type of parameter (single or multi) before its initialisation.
             // So firstly check if it supports ParameterValueMultiSelect options
             try {
                 var valArr = [new ParameterValueResponse(defaultParameterValue)];
-                var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+                var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
                 state.Parameters[mandatoryPageParameters[i]] = multiResponse;
             }
-                //if not, set it as single select parameter
+            //if not, set it as single select parameter
             catch (e) {
                 state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
             }
@@ -292,7 +290,7 @@ class ParamUtil {
      * @returns {Array} - list of selected answer codes
      */
 
-    static function GetSelectedCodes (context, parameterName) {
+    static function GetSelectedCodes(context, parameterName) {
         var state = context.state;
         var log = context.log;
 
@@ -300,14 +298,14 @@ class ParamUtil {
 
         if (state.Parameters.IsNull(parameterName)) {
             //log.LogDebug('param is null')
-                return [];
-        }        
+            return [];
+        }
 
         try {
             var param = state.Parameters[parameterName];
 
             // single select parameter
-            if (param instanceof ParameterValueResponse) {                
+            if (param instanceof ParameterValueResponse) {
                 //log.LogDebug('SINGLE: stringKeyValue='+param.StringKeyValue+'; stringValue='+state.Parameters.GetString(parameterName));
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
@@ -318,9 +316,9 @@ class ParamUtil {
                 var selectedCodes = [];
                 var param = state.Parameters[parameterName];
                 //log.LogDebug('count='+param.Count);
-                
-                for (var i=0; i<param.Count; i++) {
-                    var response : ParameterValueResponse = param[i];
+
+                for (var i = 0; i < param.Count; i++) {
+                    var response: ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue;
                     //log.LogDebug('skv='+skv+'; sv='+sv)
@@ -332,7 +330,7 @@ class ParamUtil {
 
         }
         catch (e) {
-            throw new Error ('ParamUtil.GetSelectedCodes: undefined parameter type or value for "'+parameterName+'".')
+            throw new Error('ParamUtil.GetSelectedCodes: undefined parameter type or value for "' + parameterName + '".')
         }
     }
 
@@ -343,15 +341,15 @@ class ParamUtil {
   * @returns {Array} - list of objects with all parameter properties Code, Label, TimeUnit, etc.
   */
 
-    static function GetSelectedOptions (context, parameterName) {
+    static function GetSelectedOptions(context, parameterName) {
 
         var log = context.log;
-        var selectedCodes = GetSelectedCodes (context, parameterName);
-        var parameterOptions = GetParameterOptions( context, parameterName, 'get selected options');
+        var selectedCodes = GetSelectedCodes(context, parameterName);
+        var parameterOptions = GetParameterOptions(context, parameterName, 'get selected options');
         var selectedOptions = [];
 
-        for (var i=0; i<selectedCodes.length; i++) {
-            for (var j=0; j<parameterOptions.length; j++) {
+        for (var i = 0; i < selectedCodes.length; i++) {
+            for (var j = 0; j < parameterOptions.length; j++) {
                 if (selectedCodes[i] === parameterOptions[j].Code) {
                     selectedOptions.push(parameterOptions[j]);
                     break;
@@ -375,18 +373,18 @@ class ParamUtil {
         var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
 
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
+        if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
 
-            for(var i=0; i<parameterOptions.length; i++) {
-                if(qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
+            for (var i = 0; i < parameterOptions.length; i++) {
+                if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
                     return parameterOptions[i].Code;
                 }
             }
         }
 
-        if(DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            return parameterOptions.length>0 ? parameterOptions[0].Code : ''; // return the 1st option
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
+            return parameterOptions.length > 0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
         return null;
@@ -396,20 +394,20 @@ class ParamUtil {
   * Adding values to single response parameter
   * @param {object} context - contains Reportal scripting state, log, report, parameter objects
   */
-    static function LoadParameter (context) {
+    static function LoadParameter(context) {
 
         var parameter = context.parameter;
         var log = context.log;
 
         var currentPage = context.pageContext.Items['CurrentPageId'];
 
-        if(!isParameterToBeLoaded (context)) { // no need to load parameter
+        if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
 
         var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
 
-        for(var i=0; i<parameterOptions.length; i++) { // populate parameter
+        for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
             val.StringKeyValue = parameterOptions[i].Code;
             val.StringValue = parameterOptions[i].Label;
@@ -431,8 +429,8 @@ class ParamUtil {
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
-        
-        if(cachedParameterOptions.hasOwnProperty(key)) {
+
+        if (cachedParameterOptions.hasOwnProperty(key)) {
             return;
         }
 
@@ -440,7 +438,7 @@ class ParamUtil {
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var options = [];
 
-        if(resource) {
+        if (resource) {
             options = getRawOptions(context, resource, parameterInfo.type);
             options = modifyOptionsOrder(context, options, parameterInfo);
         }
@@ -475,7 +473,7 @@ class ParamUtil {
      * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
 
-    static function GetParameterOptions (context, parameterName, from) {
+    static function GetParameterOptions(context, parameterName, from) {
 
         var log = context.log;
         var parameterId = parameterName || context.parameter.ParameterId;
@@ -500,13 +498,13 @@ class ParamUtil {
 
         var parameterInfo = {};
 
-        if(parameterId.indexOf('p_ScriptedFilterPanelParameter')===0) {
+        if (parameterId.indexOf('p_ScriptedFilterPanelParameter') === 0) {
             parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
         } else {
             parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
         }
 
-        if(!parameterInfo) {
+        if (!parameterInfo) {
             throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
         }
 
@@ -522,10 +520,10 @@ class ParamUtil {
 
     static function modifyOptionsOrder(context, options, parameterInfo) {
 
-        if(parameterInfo.isInReverseOrder) {
+        if (parameterInfo.isInReverseOrder) {
 
             var reversed = [];
-            for(var i=options.length-1; i>=0; i--) {
+            for (var i = options.length - 1; i >= 0; i--) {
                 reversed.push(options[i]);
             }
 
@@ -544,21 +542,21 @@ class ParamUtil {
 
     static function getRawOptions(context, resource, type) {
         // propertyValue is a questionId; question answer list are options
-        if(type === 'QuestionId') {
+        if (type === 'QuestionId') {
             return getOptions_QuestionAnswersSelector(context, resource);
         }
 
         // propertyValue is a static array with predefined options
-        if(type === 'StaticArrayofObjects') {
-            return getOptions_StaticArrayOfObjectsSelector (context, resource);
+        if (type === 'StaticArrayofObjects') {
+            return getOptions_StaticArrayOfObjectsSelector(context, resource);
         }
 
         // propertyValue is a list of question ids, i.e. populate question selector
-        if(type === 'QuestionList') {
-            return getOptions_QuestionList (context, resource);
+        if (type === 'QuestionList') {
+            return getOptions_QuestionList(context, resource);
         }
 
-        if(type === 'CombinationOfQuestions') {
+        if (type === 'CombinationOfQuestions') {
             return getOptions_CombinationOfQuestionsSelector(context, resource);
         }
 
@@ -566,16 +564,16 @@ class ParamUtil {
             return getOptions_QuestionAndCategoriesList(context, resource);
         }
 
-        if(type === 'PulseSurveyInfo') {
+        if (type === 'PulseSurveyInfo') {
             return getOptions_PulseSurveyInfo(context, resource['storageInfo']);
         }
 
-        if(type === 'CustomQuestionList') {
-            return getOptions_CustomQuestionList (context, resource);
+        if (type === 'CustomQuestionList') {
+            return getOptions_CustomQuestionList(context, resource);
         }
 
-        if(type === 'ParameterOptionList') {
-            return getOptions_ParameterList (context, resource);
+        if (type === 'ParameterOptionList') {
+            return getOptions_ParameterList(context, resource);
         }
 
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
@@ -593,38 +591,38 @@ class ParamUtil {
         // fetch propertyValue and then transform into needed format
         // locationType will tell where to fetch value from
 
-        if(parameterInfo.locationType === 'TextAndParameterLibrary') {
+        if (parameterInfo.locationType === 'TextAndParameterLibrary') {
             return TextAndParameterLibrary.ParameterValuesLibrary[parameterInfo.propertyName]; // return value as is
         }
 
-        if(parameterInfo.locationType === 'Page') {
+        if (parameterInfo.locationType === 'Page') {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName); // static array, qid array, qid
         }
 
-        if(parameterInfo.locationType === 'Survey') {
+        if (parameterInfo.locationType === 'Survey') {
             return DataSourceUtil.getSurveyPropertyValueFromConfig(context, parameterInfo.propertyName); // static array, qid array, qid
         }
 
-        if(parameterInfo.locationType === 'CombinationOfQuestions') {
-            return {Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
+        if (parameterInfo.locationType === 'CombinationOfQuestions') {
+            return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
         }
 
-        if(parameterInfo.locationType === 'FilterPanel') {
+        if (parameterInfo.locationType === 'FilterPanel') {
             return parameterInfo.FilterQid;
         }
 
-        if(parameterInfo.locationType === 'QuestionCategory') {
+        if (parameterInfo.locationType === 'QuestionCategory') {
             var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
-            var custom_questions = QuestionUtil.getQuestionsByCategory (context, customCategory);
+            var custom_questions = QuestionUtil.getQuestionsByCategory(context, customCategory);
             var custom_qIds = [];
-            for (var i=0; i<custom_questions.length; i++) {
-                var custom_question : Question = custom_questions[i];
+            for (var i = 0; i < custom_questions.length; i++) {
+                var custom_question: Question = custom_questions[i];
                 custom_qIds.push(custom_question.QuestionId);
             }
             return custom_qIds;
         }
 
-        if(parameterInfo.locationType === 'CombinationOfParameters') {
+        if (parameterInfo.locationType === 'CombinationOfParameters') {
             var paramNames = parameterInfo.parameterList;
             return paramNames;
         }
@@ -651,11 +649,11 @@ class ParamUtil {
     static function getOptions_CombinationOfQuestionsSelector(context, locationObj) {
 
         var log = context.log;
-        var codes : Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Codes']);
-        var labels : Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Labels']);
+        var codes: Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Codes']);
+        var labels: Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Labels']);
         var options = [];
 
-        for(var i=0; i<codes.length; i++) {
+        for (var i = 0; i < codes.length; i++) {
             var option = {};
             option.Label = codes[i].Precode;
             option.Code = labels[i].Precode;
@@ -678,7 +676,7 @@ class ParamUtil {
         var parameterOptions = [];
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
 
-        for(var i=0; i<answers.length; i++) {
+        for (var i = 0; i < answers.length; i++) {
             var option = {};
             option.Label = answers[i].Text;
             option.Code = answers[i].Precode;
@@ -699,12 +697,12 @@ class ParamUtil {
         var parameterOptions = [];
         var report = context.report;
 
-        for(var i=0; i<ArrayOfObjects.length; i++) {
+        for (var i = 0; i < ArrayOfObjects.length; i++) {
 
             var option = {};
 
-            for(var prop in ArrayOfObjects[i]) {
-                if(prop !== 'Label') {
+            for (var prop in ArrayOfObjects[i]) {
+                if (prop !== 'Label') {
                     option[prop] = ArrayOfObjects[i][prop];
                 } else {
                     option[prop] = ArrayOfObjects[i][prop][report.CurrentLanguage];
@@ -726,11 +724,11 @@ class ParamUtil {
 
         var parameterOptions = [];
 
-        if(!qList instanceof Array) {
+        if (!qList instanceof Array) {
             throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
         }
 
-        for(var i=0; i<qList.length; i++) {
+        for (var i = 0; i < qList.length; i++) {
             var option = {};
             option.Code = qList[i]; // propertyValue[i] is qid in this case
             option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
@@ -786,7 +784,7 @@ class ParamUtil {
         var log = context.log;
         var parameterOptions = [];
 
-        if(!qList instanceof Array) {
+        if (!qList instanceof Array) {
             throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
         }
 
@@ -794,7 +792,7 @@ class ParamUtil {
 
         if (codes.length) {
             var baby_p_number = codes[0];
-            for(var i=0; i<qList.length; i++) {
+            for (var i = 0; i < qList.length; i++) {
                 var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
                 if (customTxt) {
                     var option = {};
@@ -817,8 +815,8 @@ class ParamUtil {
         var log = context.log;
         var combinedOptions = [];
 
-        for (var i=0; i<parameterNameList.length; i++) {
-            combinedOptions = combinedOptions.concat(GetParameterOptions (context, parameterNameList[i], 'param list'));
+        for (var i = 0; i < parameterNameList.length; i++) {
+            combinedOptions = combinedOptions.concat(GetParameterOptions(context, parameterNameList[i], 'param list'));
         }
         return combinedOptions;
 
@@ -840,8 +838,8 @@ class ParamUtil {
         resourceInfo.type = 'QuestionId';
         resourceInfo.locationType = 'FilterPanel'
 
-        if(paramNumber <= filterList.length) {
-            resourceInfo.FilterQid = filterList[paramNumber-1];
+        if (paramNumber <= filterList.length) {
+            resourceInfo.FilterQid = filterList[paramNumber - 1];
         }
 
         return resourceInfo;
