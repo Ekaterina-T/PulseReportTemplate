@@ -64,32 +64,27 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-
-        var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
-        var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
+        var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')==='custom';
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
-        var rowsAdded = false;
-
-        if(resultStatements && resultStatements.length>0) {
+        if(!showCustomQuestions && resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
-            rowsAdded = true;
-        } else if (dimensions && dimensions.length>0) {
+            return;
+        } else if (!showCustomQuestions && dimensions && dimensions.length>0) {
             tableStatements_AddRows_Banner1(context);
-            rowsAdded = true;
+            return;
         }
 
-        /*if (custom_questions && custom_questions.length > 0) {
-            tableStatements_AddRows_Banner2(context);          
-            rowsAdded = true;
-        }*/
+        if (showCustomQuestions) {
+            tableStatements_AddRows_Banner2(context);    
+            return;
+        }
 
-        if (!rowsAdded) {        
-            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
-        }  
+        throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+         
   }
 
     /*
@@ -128,7 +123,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims';
+        var isDimensionVisible = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')==='withDims';
 
         for (var i=0; i<categorizations.length; i++) {
 
@@ -149,7 +144,7 @@ class PageResults {
         table.TotalsFirst = true;
     }
 
-    /*
+    /**
 * Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
 *  @param {object} context: {state: state, report: report, log: log, table: table}
 * @return {array} array of categorization ids
@@ -188,7 +183,7 @@ class PageResults {
         return dimensionsInConfig;
     }
 
-       /*
+       /**
   * Add custom statement questions as table rows based on Question category
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   */
