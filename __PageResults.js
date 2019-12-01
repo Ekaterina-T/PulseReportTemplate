@@ -65,17 +65,21 @@ class PageResults {
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
+
+        log.LogDebug(ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0])
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
         if(!showCustomQuestions && resultStatements && resultStatements.length>0) {
+            log.LogDebug('banner0')
             tableStatements_AddRows_Banner0(context);
             return;
         } 
         
         if (!showCustomQuestions && dimensions && dimensions.length>0) {
+            log.LogDebug('banner1')
             tableStatements_AddRows_Banner1(context);
             return;
         }
@@ -118,14 +122,11 @@ class PageResults {
 
     static function tableStatements_AddRows_Banner1(context) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var isDimensionVisible = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')==='withDims';
+        var isDimensionVisible = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='withDims';
 
         for (var i=0; i<categorizations.length; i++) {
 
