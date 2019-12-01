@@ -122,10 +122,8 @@ class PageResults {
         var log = context.log;
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var isDimensionVisible = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='withDims';
-
-        log.LogDebug('selected codes: '+JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]))
-        log.LogDebug('selected codes len: '+ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher').length)
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher');
+        var isDimensionVisible = tabSwitcher.length === 0 || tabSwitcher[0]==='withDims';
 
         for (var i=0; i<categorizations.length; i++) {
 
