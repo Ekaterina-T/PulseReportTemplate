@@ -76,11 +76,13 @@ class PageResults {
         } 
         
         if (!showCustomQuestions && dimensions && dimensions.length>0) {
+            log.LogDebug('dims')
             tableStatements_AddRows_Banner1(context);
             return;
         }
 
         if (showCustomQuestions || Export.isExcelExportMode(context)) {
+            log.LogDebug('custom')
             tableStatements_AddRows_Banner2(context);    
             return;
         }
