@@ -2,7 +2,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
     private var _pulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
-    private var _additionalInfo : String;
+    private var _additionalInfo;
 
     /**
      * constructor
@@ -11,7 +11,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _pulseSurveysTablePath = storageInfo.tableName;
-        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo.join(','): [];
+        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
     }
 
     /**
@@ -56,24 +56,21 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var log = context.log;
         var surveyList = [];
 
-        // reverse order
+        // loop by rows of header groups (many custom tables can be used)
         for(var i=HeaderCategoryTitles.length-1; i>=0; i--) { // reverse order
             var surveyInfo = {};
 
+            var headerRow = HeaderCategoryTitles[i];
+            var colNum = headerRow.length;
+
+            var sureveyId = headerRow[colNum-1];
+            var surveyName = headerRow[colNum-2];
+
             //hardcoded in the table: pid->pname->creator->status
-            var surveyStatus = HeaderCategoryTitles[i][0];
-            var surveyAuthor = HeaderCategoryTitles[i][1];
-            var surveyName = HeaderCategoryTitles[i][2];
-            var sureveyId = HeaderCategoryTitles[i][3];
             var addInfo = [];
-
-            if(_additionalInfo.indexOf('CreatedByEndUserName')>=0) {
-                addInfo.push(surveyAuthor.length>0 ? surveyAuthor : 'Undefined user');
-            }
-
-            if(_additionalInfo.indexOf('Status')>=0) {
-                addInfo.push(surveyStatus);
-            }
+            /*for(var j=colNum-3; j>=0; j--) {
+                var col = headerRow[j];
+            }*/
             addInfo = addInfo.join(', ');
 
             surveyInfo.Label = addInfo.length >0 ? surveyName+' ('+addInfo+')' : surveyName; //label - inner header
