@@ -75,13 +75,11 @@ class PageResults {
             tableStatements_AddRows_Banner0(context);
             numberOfAddedBanners++;
         } else if (!showCustomQuestions && dimensions && dimensions.length>0) {
-            log.LogDebug('dims')
             tableStatements_AddRows_Banner1(context);
             numberOfAddedBanners++;
         }
 
         if (showCustomQuestions || Export.isExcelExportMode(context)) {
-            log.LogDebug('custom')
             tableStatements_AddRows_Banner2(context);
             numberOfAddedBanners++;
         }

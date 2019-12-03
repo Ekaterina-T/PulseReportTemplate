@@ -416,6 +416,7 @@ class Filters {
 
         var kpiQids = ParamUtil.GetSelectedCodes(context, 'p_QsToFilterBy');
         var kpiQidsConfig = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
+        var kpiQidsConfig = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_KPI', 'KPI');
         var qId;
 
         if (kpiQidsConfig.length == 1) {

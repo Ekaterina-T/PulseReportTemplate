@@ -1,12 +1,11 @@
 class ParamUtil {
 
-    static public var cachedParameterOptions = {};
+
 
     /**
   * Populates p_SurveyType parameter based on surveys from Config.
   * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
   */
-
     static function LoadParameter_SurveysSelector_ConfigList(context) {
 
         var parameter = context.parameter;
@@ -24,101 +23,61 @@ class ParamUtil {
         return;
     }
 
-  /** 
-  * Populates p_projectSelector based on pid and pname questions.
-  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-  */
-
-    static function  MaskParameter(context) {
-
-        var parameterId = context.parameterId;
-        var mask = context.mask;
-        var log = context.log;
-        var state = context.state;
-        var report = context.report;
-
-        if (parameterId === 'p_Statements') {
-            mask.Access = ParameterAccessType.Inclusive;
-
-            var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
-            var qIds = report.TableUtils.GetRowHeaderCategoryIds("QuestionsByDimension");
-            for (var i = 0; i < qIds.length; i++) {
-                mask.Keys.Add(qIds[i]);
-            }
-
-        }
-    }
-
-    /** 
-  * Check if parameter needed to be loaded with values, i.e. relevant for the survey
-  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-  * @return {Boolean}
-  */
-    static function isParameterToBeLoaded(context) {
+    /**
+     * Adding values to single response parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     */
+    static function LoadParameter(context) {
 
         var parameter = context.parameter;
-        var parameterName = parameter.ParameterId;
         var log = context.log;
 
-        if (parameterName === 'p_projectSelector') {
-            return !DataSourceUtil.isProjectSelectorNotNeeded(context);
+        var currentPage = context.pageContext.Items['CurrentPageId'];
+
+        if (!isParameterToBeLoaded(context)) { // no need to load parameter
+            return;
         }
 
-        if (parameterName === 'p_Results_CountsPercents') {
-            var user = context.user;
+        var parameterOptions = ParameterOptions.GetParameterOptions(context, null, 'load'); // get options
 
-            if (user.UserType != ReportUserType.Enduser) {
-                return true;
-            }
+        for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
+            var val = new ParameterValueResponse();
+            val.StringKeyValue = parameterOptions[i].Code;
+            val.StringValue = parameterOptions[i].Label;
+            parameter.Items.Add(val);
+        }
 
-            var isDetailedView = false;
-            var detailedViewRoles = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DetailedViewRoles');
+        return;
+    }
 
-            if (!detailedViewRoles || detailedViewRoles.length <= 0) {
-                return true;
-            }
 
-            for (var i = 0; i < detailedViewRoles.length; i++) {
-                if (user.HasRole(detailedViewRoles[i])) {
-                    isDetailedView = true;
-                    break;
+    /**
+     * Get defaultParameterValue for parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * @param {string} parameterName
+     * @returns {string} default value
+     */
+    static function getDefaultParameterValue(context, parameterName) {
+
+        var log = context.log;
+        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
+        var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+
+        if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
+            var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+
+            for (var i = 0; i < parameterOptions.length; i++) {
+                if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
+                    return parameterOptions[i].Code;
                 }
             }
-
-            return isDetailedView;
         }
 
-        // TO DO: pageNames are specified explicitly - this is very bad
-        // think how to pass load condition differently, so that LCL would call some func and would be more flexible
-        if (parameterName === 'p_Results_TableTabSwitcher') {
-            return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
+            return parameterOptions.length > 0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
-        if (parameterName === 'p_Results_BreakBy') {
-            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
-            return (breakBy && breakBy.length > 0) ? true : false;
-        }
-
-        if (parameterName === 'p_TimeUnitNoDefault') {
-            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakByTimeUnits');
-            return breakByTimeUnits ? true : false;
-        }
-
-        if (parameterName === 'p_CategoricalDD_BreakBy') {
-            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakVariables');
-            return (breakBy && breakBy.length > 0) ? true : false;
-        }
-
-        if (parameterName === 'p_CatDD_TimeUnitNoDefault') {
-            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakByTimeUnits');
-            return breakByTimeUnits ? true : false;
-        }
-
-        if (parameterName === 'p_BenchmarkSet') {
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
-        }
-
-        return true;
+        return null;
     }
 
     /** 
@@ -126,7 +85,6 @@ class ParamUtil {
   * @param {object} context object {state: state}
   * @param {array} parameterList
   */
-
     static function ResetParameters(context, parameterList) {
 
         var state = context.state;
@@ -144,7 +102,6 @@ class ParamUtil {
     * @param {object} context object {state: state}
     * @param {array} parameterList
     */
-
     static function ResetQuestionBasedParameters(context, parameterList) {
 
         var state = context.state;
@@ -160,7 +117,6 @@ class ParamUtil {
 
         return;
     }
-
 
     /**
     * Initialise parametrs on page.
@@ -289,7 +245,6 @@ class ParamUtil {
      * @param {String} parameterName - the name of the report parameter
      * @returns {Array} - list of selected answer codes
      */
-
     static function GetSelectedCodes(context, parameterName) {
         var state = context.state;
         var log = context.log;
@@ -340,7 +295,6 @@ class ParamUtil {
   * @param {String} parameterName - the name of the report parameter
   * @returns {Array} - list of objects with all parameter properties Code, Label, TimeUnit, etc.
   */
-
     static function GetSelectedOptions(context, parameterName) {
 
         var log = context.log;
@@ -360,489 +314,100 @@ class ParamUtil {
         return selectedOptions;
     }
 
-    /** 
-  * Get defaultParameterValue for parameter
-  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-  * @param {string} parameterName
-  * @returns {string} default value
-  */
+    /**
+     *
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     */
+    static function MaskParameter(context) {
 
-    static function getDefaultParameterValue(context, parameterName) {
-
+        var parameterId = context.parameterId;
+        var mask = context.mask;
         var log = context.log;
-        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
-        var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+        var state = context.state;
+        var report = context.report;
 
-        if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
-            var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        if (parameterId === 'p_Statements') {
+            mask.Access = ParameterAccessType.Inclusive;
 
-            for (var i = 0; i < parameterOptions.length; i++) {
-                if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
-                    return parameterOptions[i].Code;
-                }
+            var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
+            var qIds = report.TableUtils.GetRowHeaderCategoryIds("QuestionsByDimension");
+            for (var i = 0; i < qIds.length; i++) {
+                mask.Keys.Add(qIds[i]);
             }
-        }
 
-        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            return parameterOptions.length > 0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
-
-        return null;
     }
 
-    /** 
-  * Adding values to single response parameter
-  * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-  */
-    static function LoadParameter(context) {
+    /**
+     * Check if parameter needed to be loaded with values, i.e. relevant for the survey
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * @return {Boolean}
+     */
+    static function isParameterToBeLoaded(context) {
 
         var parameter = context.parameter;
+        var parameterName = parameter.ParameterId;
         var log = context.log;
 
-        var currentPage = context.pageContext.Items['CurrentPageId'];
-
-        if (!isParameterToBeLoaded(context)) { // no need to load parameter
-            return;
+        if (parameterName === 'p_projectSelector') {
+            return !DataSourceUtil.isProjectSelectorNotNeeded(context);
         }
 
-        var parameterOptions = GetParameterOptions(context, null, 'load'); // get options
+        if (parameterName === 'p_Results_CountsPercents') {
+            var user = context.user;
 
-        for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
-            var val = new ParameterValueResponse();
-            val.StringKeyValue = parameterOptions[i].Code;
-            val.StringValue = parameterOptions[i].Label;
-            parameter.Items.Add(val);
-        }
-
-        return;
-    }
-
-    //-----------------------------------------------------------------------------
-
-
-    /**
-     * cache parameter values if they are not cached already
-     * @param {Object} context
-     * @param {String} parameterId
-     */
-    static function CacheParameterOptions(context, parameterId) {
-
-        var log = context.log;
-        var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
-        if (cachedParameterOptions.hasOwnProperty(key)) {
-            return;
-        }
-
-        var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
-        var resource = getParameterValuesResourceByLocation(context, parameterInfo);
-        var options = [];
-
-        if (resource) {
-            options = getRawOptions(context, resource, parameterInfo.type);
-            options = modifyOptionsOrder(context, options, parameterInfo);
-        }
-
-        var paramOptionsObj = {};
-        paramOptionsObj['options'] = options;
-        cachedParameterOptions[key] = paramOptionsObj;
-
-        return;
-    }
-
-    /**
-     * get copy of parameter options from cache
-     * @param {Object} context
-     * @param {String} parameterId
-     * @returns {Array} array of options [{Code:, Label:}, ...]
-     */
-    static function GetParameterOptionsFromCache(context, parameterId) {
-        //copy needed to avoid 'spoiling' full list
-
-        var log = context.log;
-        var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
-        return cachedParameterOptions[key]['options'];
-    }
-
-
-    /**
-     * This function returns parameter options in standardised format.
-     * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
-     * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
-     * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function GetParameterOptions(context, parameterName, from) {
-
-        var log = context.log;
-        var parameterId = parameterName || context.parameter.ParameterId;
-        var options = [];
-
-        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
-        CacheParameterOptions(context, parameterId); //if needed
-        options = GetParameterOptionsFromCache(context, parameterId);
-        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
-
-        return options;
-    }
-
-    /**
-     * parameterInfo is descriptive object; stores parameter type, options order settings, location settings
-     * it is basis for building parameterResource object identifing location of options and type of that resource
-     *@param {Object} context
-     *@param {String} parameterId
-     *@parreturn {Object} parameterInfo - reportParameterValuesMap object
-     */
-    static function GetParameterInfoObject(context, parameterId) {
-
-        var parameterInfo = {};
-
-        if (parameterId.indexOf('p_ScriptedFilterPanelParameter') === 0) {
-            parameterInfo = generateResourceObjectForFilterPanelParameter(context, parameterId);
-        } else {
-            parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
-        }
-
-        if (!parameterInfo) {
-            throw new Error('ParamUtil.GetParameterOptions: either parameterId or parameter resource for this parameter is undefined.');
-        }
-
-        return parameterInfo;
-    }
-
-    /**
-     *@param {Object} context
-     *@param {Array} array of options [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     *@param {Object} parameterInfo - reportParameterValuesMap object
-     *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function modifyOptionsOrder(context, options, parameterInfo) {
-
-        if (parameterInfo.isInReverseOrder) {
-
-            var reversed = [];
-            for (var i = options.length - 1; i >= 0; i--) {
-                reversed.push(options[i]);
+            if (user.UserType != ReportUserType.Enduser) {
+                return true;
             }
 
-            return reversed;
-        }
+            var isDetailedView = false;
+            var detailedViewRoles = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DetailedViewRoles');
 
-        return options;
-    }
-
-    /**
-     *@param {Object} context
-     *@param {Object| String| Array|...} resource - depends on type of resurce
-     *@param {String} type: see reportParameterValuesMap object, property type
-     *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function getRawOptions(context, resource, type) {
-        // propertyValue is a questionId; question answer list are options
-        if (type === 'QuestionId') {
-            return getOptions_QuestionAnswersSelector(context, resource);
-        }
-
-        // propertyValue is a static array with predefined options
-        if (type === 'StaticArrayofObjects') {
-            return getOptions_StaticArrayOfObjectsSelector(context, resource);
-        }
-
-        // propertyValue is a list of question ids, i.e. populate question selector
-        if (type === 'QuestionList') {
-            return getOptions_QuestionList(context, resource);
-        }
-
-        if (type === 'CombinationOfQuestions') {
-            return getOptions_CombinationOfQuestionsSelector(context, resource);
-        }
-
-        if (type === 'QuestionAndCategoriesList') {
-            return getOptions_QuestionAndCategoriesList(context, resource);
-        }
-
-        if (type === 'PulseSurveyInfo') {
-            return getOptions_PulseSurveyInfo(context, resource['storageInfo']);
-        }
-
-        if (type === 'CustomQuestionList') {
-            return getOptions_CustomQuestionList(context, resource);
-        }
-
-        if (type === 'ParameterOptionList') {
-            return getOptions_ParameterList(context, resource);
-        }
-
-        throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
-    }
-
-    /**
-     * Get clean resource for parameter from its location
-     * @param {object} context
-     * @param {object} parameterInfo with locationType and other data to retrieve the resource
-     * @return {object} - depends on parameter
-     */
-
-    static function getParameterValuesResourceByLocation(context, parameterInfo) {
-
-        // fetch propertyValue and then transform into needed format
-        // locationType will tell where to fetch value from
-
-        if (parameterInfo.locationType === 'TextAndParameterLibrary') {
-            return TextAndParameterLibrary.ParameterValuesLibrary[parameterInfo.propertyName]; // return value as is
-        }
-
-        if (parameterInfo.locationType === 'Page') {
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName); // static array, qid array, qid
-        }
-
-        if (parameterInfo.locationType === 'Survey') {
-            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, parameterInfo.propertyName); // static array, qid array, qid
-        }
-
-        if (parameterInfo.locationType === 'CombinationOfQuestions') {
-            return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
-        }
-
-        if (parameterInfo.locationType === 'FilterPanel') {
-            return parameterInfo.FilterQid;
-        }
-
-        if (parameterInfo.locationType === 'QuestionCategory') {
-            var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
-            var custom_questions = QuestionUtil.getQuestionsByCategory(context, customCategory);
-            var custom_qIds = [];
-            for (var i = 0; i < custom_questions.length; i++) {
-                var custom_question: Question = custom_questions[i];
-                custom_qIds.push(custom_question.QuestionId);
+            if (!detailedViewRoles || detailedViewRoles.length <= 0) {
+                return true;
             }
-            return custom_qIds;
-        }
 
-        if (parameterInfo.locationType === 'CombinationOfParameters') {
-            var paramNames = parameterInfo.parameterList;
-            return paramNames;
-        }
-
-        throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
-    }
-
-    /** 
-    *Populates p_projectSelector based on storageInfo settings from Congfig.
-    *@param {object} context - contains Reportal scripting state, log, report, parameter objects
-    *@param {object} storageInfo 
-    *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-    */
-    static function getOptions_PulseSurveyInfo(context, storageInfo) {
-        return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
-    }
-
-    /**
-     *Populates p_projectSelector based on pid and pname questions.
-    *@param {object} context - contains Reportal scripting state, log, report, parameter objects
-    *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-    */
-
-    static function getOptions_CombinationOfQuestionsSelector(context, locationObj) {
-
-        var log = context.log;
-        var codes: Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Codes']);
-        var labels: Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Labels']);
-        var options = [];
-
-        for (var i = 0; i < codes.length; i++) {
-            var option = {};
-            option.Label = codes[i].Precode;
-            option.Code = labels[i].Precode;
-            options.push(option);
-        }
-
-
-        return options;
-    }
-
-
-    /**
-     *@param {object} context
-     *@param {string} qid
-     *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function getOptions_QuestionAnswersSelector(context, qid) {
-
-        var parameterOptions = [];
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
-
-        for (var i = 0; i < answers.length; i++) {
-            var option = {};
-            option.Label = answers[i].Text;
-            option.Code = answers[i].Precode;
-            parameterOptions.push(option);
-        }
-
-        return parameterOptions;
-    }
-
-    /**
-     *@param {object} context
-     *@param {array} arary of objevts {Code:, Label:}
-     *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function getOptions_StaticArrayOfObjectsSelector(context, ArrayOfObjects) {
-
-        var parameterOptions = [];
-        var report = context.report;
-
-        for (var i = 0; i < ArrayOfObjects.length; i++) {
-
-            var option = {};
-
-            for (var prop in ArrayOfObjects[i]) {
-                if (prop !== 'Label') {
-                    option[prop] = ArrayOfObjects[i][prop];
-                } else {
-                    option[prop] = ArrayOfObjects[i][prop][report.CurrentLanguage];
+            for (var i = 0; i < detailedViewRoles.length; i++) {
+                if (user.HasRole(detailedViewRoles[i])) {
+                    isDetailedView = true;
+                    break;
                 }
             }
-            parameterOptions.push(option);
-        }
-        return parameterOptions;
-    }
 
-    /**
-     *@param {object} context
-     *@param {array} arary of questions
-     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-
-    static function getOptions_QuestionList(context, qList) {
-
-        var parameterOptions = [];
-
-        if (!qList instanceof Array) {
-            throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
+            return isDetailedView;
         }
 
-        for (var i = 0; i < qList.length; i++) {
-            var option = {};
-            option.Code = qList[i]; // propertyValue[i] is qid in this case
-            option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
-            parameterOptions.push(option);
+        // TO DO: pageNames are specified explicitly - this is very bad
+        // think how to pass load condition differently, so that LCL would call some func and would be more flexible
+        if (parameterName === 'p_Results_TableTabSwitcher') {
+            return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
         }
 
-        return parameterOptions;
-    }
-
-    /**
-     *@param {object} context
-     *@param {array} arary of questions
-     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-
-    static function getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
-
-        var report = context.report;
-        var parameterOptions = [];
-
-        if (!qIdsAndCatList instanceof Array) {
-            throw new Error('ParamUtil.GetParameterOptions: expected parameter type cannot be used, array of objects was expected.');
+        if (parameterName === 'p_Results_BreakBy') {
+            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
+            return (breakBy && breakBy.length > 0) ? true : false;
         }
 
-        for (var i = 0; i < qIdsAndCatList.length; i++) {
-            var option = {};
-
-            if (typeof qIdsAndCatList[i] === 'object' && qIdsAndCatList[i].Type === 'Dimension') { // options is a dimension
-
-                option.Code = qIdsAndCatList[i].Code;
-                option.Label = TextAndParameterUtil.getTextTranslationByKey(context, qIdsAndCatList[i].Code);// perfect case: categories are in parameters block not just translations
-                option.Type = 'Dimension';
-            } else {
-
-                option.Code = qIdsAndCatList[i]; // propertyValue[i] is qid in this case
-                option.Label = QuestionUtil.getQuestionTitle(context, qIdsAndCatList[i]);
-                option.Type = 'Question';
-            }
-            parameterOptions.push(option);
+        if (parameterName === 'p_TimeUnitNoDefault') {
+            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakByTimeUnits');
+            return breakByTimeUnits ? true : false;
         }
 
-        return parameterOptions;
-    }
-
-
-    /**
-     *@param {object} context
-     *@param {array} array of question Ids
-     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-    static function getOptions_CustomQuestionList(context, qList) {
-
-        var log = context.log;
-        var parameterOptions = [];
-
-        if (!qList instanceof Array) {
-            throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
+        if (parameterName === 'p_CategoricalDD_BreakBy') {
+            var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakVariables');
+            return (breakBy && breakBy.length > 0) ? true : false;
         }
 
-        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-
-        if (codes.length) {
-            var baby_p_number = codes[0];
-            for (var i = 0; i < qList.length; i++) {
-                var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
-                if (customTxt) {
-                    var option = {};
-                    option.Code = qList[i]; // propertyValue[i] is qid in this case
-                    option.Label = customTxt;
-                    parameterOptions.push(option);
-                }
-            }
-        }
-        return parameterOptions;
-    }
-
-    /**
-     *@param {object} context
-     *@param {array} array of parameter Ids
-     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
-     */
-    static function getOptions_ParameterList(context, parameterNameList) {
-
-        var log = context.log;
-        var combinedOptions = [];
-
-        for (var i = 0; i < parameterNameList.length; i++) {
-            combinedOptions = combinedOptions.concat(GetParameterOptions(context, parameterNameList[i], 'param list'));
-        }
-        return combinedOptions;
-
-    }
-
-    /**
-     * This function generates object similar to SysemConfig.reportParameterValuesMap. 
-     * Since filter panel are not described in this object we generate it ourselves.
-     * @param {Object} context
-     * @param {String} parameterId
-     * @returns {Object} resourceInfo
-     */
-    static function generateResourceObjectForFilterPanelParameter(context, parameterId) {
-
-        var resourceInfo = {};
-        var filterList = Filters.GetFullConfigFilterList(context);
-        var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
-
-        resourceInfo.type = 'QuestionId';
-        resourceInfo.locationType = 'FilterPanel'
-
-        if (paramNumber <= filterList.length) {
-            resourceInfo.FilterQid = filterList[paramNumber - 1];
+        if (parameterName === 'p_CatDD_TimeUnitNoDefault') {
+            var breakByTimeUnits = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'BreakByTimeUnits');
+            return breakByTimeUnits ? true : false;
         }
 
-        return resourceInfo;
+        if (parameterName === 'p_BenchmarkSet') {
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
+        }
+
+        return true;
     }
 
 }
