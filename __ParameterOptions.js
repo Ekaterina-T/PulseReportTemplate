@@ -301,7 +301,7 @@ class ParameterOptionsBuilder {
         var combinedOptions = [];
 
         for (var i = 0; i < parameterNameList.length; i++) {
-            combinedOptions = combinedOptions.concat(GetParameterOptions(context, parameterNameList[i], 'param list'));
+            combinedOptions = combinedOptions.concat(ParameterOptionsBuilder.GetOptions(context, parameterNameList[i], 'param list'));
         }
         return combinedOptions;
 
