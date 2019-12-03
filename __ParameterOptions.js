@@ -130,7 +130,7 @@ class ParameterOptionsBuilder {
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
     static private function getOptions_PulseSurveyInfo(context, storageInfo) {
-        return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getVisiblePulseSurveys(context);
+        return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getPulseSurveys(context);
     }
 
     /**

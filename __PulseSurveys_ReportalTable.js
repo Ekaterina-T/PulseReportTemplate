@@ -1,6 +1,6 @@
 public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
-    private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
+    private var _pulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
     private var _additionalInfo : String;
 
@@ -10,7 +10,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      */
     private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
-        _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
+        _pulseSurveysTablePath = storageInfo.tableName;
         _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo.join(','): [];
     }
 
@@ -27,11 +27,11 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {Object} context {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log, confirmit: confirmit}
      * @returns {Array} array of objects {Code: pid, Label: pname} for user's pulse surveys
      */
-    public function getVisiblePulseSurveys(context) : Object[] {
+    public function getPulseSurveys(context) : Object[] {
 
         var report = context.report;
         var log = context.log;
-        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
+        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_pulseSurveysTablePath);
         var surveyList = [];
 
         if(_isEmptyOptionNeeded) {
