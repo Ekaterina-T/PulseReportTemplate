@@ -38,7 +38,7 @@ class ParamUtil {
             return;
         }
 
-        var parameterOptions = ParameterOptions.GetParameterOptions(context, null, 'load'); // get options
+        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, null, 'load'); // get options
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -60,7 +60,7 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
-        var parameterOptions = GetParameterOptions(context, parameterName, 'get default'); // get all options
+        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
@@ -169,7 +169,7 @@ class ParamUtil {
                 if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
 
                     var selectedProject = selectedPulseSurvey[0];
-                    var availableProjects = ParamUtil.GetParameterOptions(context, 'p_projectSelector', 'available proj');
+                    var availableProjects = ParameterOptionsBuilder.GetOptions(context, 'p_projectSelector', 'available proj');
                     var doReset = true;
 
                     for (i = 0; i < availableProjects.length; i++) {

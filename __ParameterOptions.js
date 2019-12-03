@@ -438,7 +438,7 @@ class ParameterOptionsBuilder {
      * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
      * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static public function GetParameterOptions(context, parameterName, from) {
+    static public function GetOptions(context, parameterName, from) {
 
         var log = context.log;
         var parameterId = parameterName || context.parameter.ParameterId;
