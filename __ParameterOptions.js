@@ -344,7 +344,6 @@ class ParameterOptionsBuilder {
         }
 
         if (type === 'PulseSurveyInfo') {
-            log.LogDebug('resource='+JSON.stringify(resource))
             return getOptions_PulseSurveyInfo(context, resource);
         }
 
