@@ -317,6 +317,9 @@ class ParameterOptionsBuilder {
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
     static private function getRawOptions(context, resource, type) {
+
+        var log = context.log;
+
         // propertyValue is a questionId; question answer list are options
         if (type === 'QuestionId') {
             return getOptions_QuestionAnswersSelector(context, resource);
@@ -341,6 +344,7 @@ class ParameterOptionsBuilder {
         }
 
         if (type === 'PulseSurveyInfo') {
+            log.LogDebug('resource='+JSON.stringify(resource))
             return getOptions_PulseSurveyInfo(context, resource);
         }
 
@@ -383,7 +387,6 @@ class ParameterOptionsBuilder {
      *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
     static private function modifyOptions(context, options, parameterInfo) {
-
         return modifyOptionsOrder(context, options, parameterInfo);
     }
 
