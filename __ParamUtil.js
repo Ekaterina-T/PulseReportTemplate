@@ -299,7 +299,7 @@ class ParamUtil {
 
         var log = context.log;
         var selectedCodes = GetSelectedCodes(context, parameterName);
-        var parameterOptions = GetParameterOptions(context, parameterName, 'get selected options');
+        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get selected options');
         var selectedOptions = [];
 
         for (var i = 0; i < selectedCodes.length; i++) {
