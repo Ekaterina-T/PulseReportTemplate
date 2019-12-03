@@ -80,7 +80,7 @@ class PageResults {
             return;
         }
 
-        if (showCustomQuestions) {
+        if (showCustomQuestions || Export.isExcelExportMode(context)) {
             tableStatements_AddRows_Banner2(context);    
             return;
         }
