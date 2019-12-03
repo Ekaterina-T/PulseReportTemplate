@@ -65,6 +65,7 @@ class PageResults {
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
+        var numberOfAddedBanners = 0;
         
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
@@ -72,22 +73,22 @@ class PageResults {
 
         if(!showCustomQuestions && resultStatements && resultStatements.length>0) {
             tableStatements_AddRows_Banner0(context);
-            return;
-        } 
-        
-        if (!showCustomQuestions && dimensions && dimensions.length>0) {
+            numberOfAddedBanners++;
+        } else if (!showCustomQuestions && dimensions && dimensions.length>0) {
             log.LogDebug('dims')
             tableStatements_AddRows_Banner1(context);
-            return;
+            numberOfAddedBanners++;
         }
 
         if (showCustomQuestions || Export.isExcelExportMode(context)) {
             log.LogDebug('custom')
-            tableStatements_AddRows_Banner2(context);    
-            return;
+            tableStatements_AddRows_Banner2(context);
+            numberOfAddedBanners++;
         }
 
-        throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+        if(!numberOfAddedBanners) { //otherwise cannot add several banners
+            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+        }
          
   }
 
