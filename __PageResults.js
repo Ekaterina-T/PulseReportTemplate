@@ -9,20 +9,25 @@ class PageResults {
 
     static function tableStatements_Render(context, bannerId) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
 
+        log.LogDebug('tableStatements_Render1');
         tableStatements_AddColumns(context, bannerId);
+        log.LogDebug('tableStatements_Render2');
         tableStatements_AddRows(context);
+        log.LogDebug('tableStatements_Render3');
         tableStatements_ApplyConditionalFormatting(context);
+        log.LogDebug('tableStatements_Render4');
         SuppressUtil.setTableSuppress(table, suppressSettings);
+        log.LogDebug('tableStatements_Render5');
 
         table.Decimals = 0;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
+        log.LogDebug('tableStatements_Render6');
 
     }
 
