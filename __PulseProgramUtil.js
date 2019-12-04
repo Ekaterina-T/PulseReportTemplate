@@ -207,7 +207,7 @@ class PulseProgramUtil {
         var log = context.log;
 
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-            return {};
+            return null;
         }
 
         //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
