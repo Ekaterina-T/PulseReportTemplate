@@ -205,6 +205,11 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo_ItemsWithData (context) {
 
         var log = context.log;
+
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return {};
+        }
+
         //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         var resources = pulseSurveyContentInfo[key];
