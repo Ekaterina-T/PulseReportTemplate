@@ -9,7 +9,6 @@ class PageResults {
 
     static function tableStatements_Render(context, bannerId) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;

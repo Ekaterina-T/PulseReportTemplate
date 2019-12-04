@@ -206,7 +206,7 @@ class PulseProgramUtil {
 
         var log = context.log;
 
-        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) { //not pulse program
             return null;
         }
 
