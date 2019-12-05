@@ -1,7 +1,5 @@
 class ParameterOptionsBuilder {
 
-    static public var cachedParameterOptions = {};
-
     /**
      * parameterInfo is descriptive object; stores parameter type, options order settings, location settings
      * it is basis for building parameterResource object identifing location of options and type of that resource
@@ -390,18 +388,9 @@ class ParameterOptionsBuilder {
     }
 
     /**
-     * cache parameter values if they are not cached already
-     * @param {Object} context
-     * @param {String} parameterId
+     *
      */
-    static private function CacheParameterOptions(context, parameterId) {
-
-        var log = context.log;
-        var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
-        if (cachedParameterOptions.hasOwnProperty(key)) {
-            return;
-        }
+    static private function GetProcessedList(context, parameterId) {
 
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
@@ -412,26 +401,33 @@ class ParameterOptionsBuilder {
             options = modifyOptions(context, options, parameterInfo);
         }
 
-        var paramOptionsObj = {};
-        paramOptionsObj['options'] = options;
-        cachedParameterOptions[key] = paramOptionsObj;
-
-        return;
+        return options;
     }
 
     /**
-     * get copy of parameter options from cache
+     *
+     */
+    static public function isCachable(context, parameterId) {
+
+        var parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
+        return !(parameterInfo && parameterInfo.hasOwnProperty('CachingDisabled') && parameterInfo['CachingDisabled']);
+    }
+
+    /**
+     * cache parameter values if they are not cached already
      * @param {Object} context
      * @param {String} parameterId
-     * @returns {Array} array of options [{Code:, Label:}, ...]
      */
-    static private function GetParameterOptionsFromCache(context, parameterId) {
-        //copy needed to avoid 'spoiling' full list
+    static private function CacheParameterOptions(context, parameterId) {
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
 
-        return cachedParameterOptions[key]['options'];
+        var paramOptionsObj = {};
+        paramOptionsObj['options'] = GetProcessedList;
+        CacheUtil.cachedParameterOptions[key] = paramOptionsObj;
+
+        return;
     }
 
     /**
@@ -445,10 +441,18 @@ class ParameterOptionsBuilder {
         var log = context.log;
         var parameterId = parameterName || context.parameter.ParameterId;
         var options = [];
+        var isCached = CacheUtil.isParameterCached(context, parameterId);
 
         //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
-        CacheParameterOptions(context, parameterId); //if needed
-        options = GetParameterOptionsFromCache(context, parameterId);
+        if(isCachable(context, parameterId) && !isCached) {
+            CacheParameterOptions(context, parameterId);
+        }
+
+        if(isCached) {
+            return CacheUtil.GetParameterOptions(context, parameterId);
+        }
+
+        options = GetProcessedList(context, parameterId);
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
