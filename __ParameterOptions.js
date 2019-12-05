@@ -400,7 +400,7 @@ class ParameterOptionsBuilder {
             options = getRawOptions(context, resource, parameterInfo.type);
             options = modifyOptions(context, options, parameterInfo);
         }
-        log.LogDebug(JSON.stringify(options))
+        context.log.LogDebug(JSON.stringify(options))
 
         return options;
     }
