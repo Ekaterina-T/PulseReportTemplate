@@ -424,7 +424,7 @@ class ParameterOptionsBuilder {
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
 
         var paramOptionsObj = {};
-        paramOptionsObj['options'] = GetProcessedList;
+        paramOptionsObj['options'] = GetProcessedList(context, parameterId);
         CacheUtil.cachedParameterOptions[key] = paramOptionsObj;
 
         return;
