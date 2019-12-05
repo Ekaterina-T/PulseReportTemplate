@@ -5,7 +5,7 @@ class ParameterOptionsBuilder {
      * it is basis for building parameterResource object identifing location of options and type of that resource
      *@param {Object} context
      *@param {String} parameterId
-     *@parreturn {Object} parameterInfo - reportParameterValuesMap object
+     *@return {Object} parameterInfo - reportParameterValuesMap object
      */
     static private function GetParameterInfoObject(context, parameterId) {
 
@@ -388,7 +388,10 @@ class ParameterOptionsBuilder {
     }
 
     /**
-     *
+     * creates options list with all midificators applied
+     * @param {Object} context
+     * @param {String} parameterId
+     * @return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
     static private function GetProcessedList(context, parameterId) {
 
@@ -406,7 +409,11 @@ class ParameterOptionsBuilder {
     }
 
     /**
-     *
+     * checks if param should be cached
+     * custom question based params shouldn't because their label changes depending on pulse survey
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Boolean}
      */
     static public function isCachable(context, parameterId) {
 
@@ -423,7 +430,6 @@ class ParameterOptionsBuilder {
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
 
         var paramOptionsObj = {};
         paramOptionsObj['options'] = GetProcessedList(context, parameterId);
@@ -445,22 +451,17 @@ class ParameterOptionsBuilder {
         var options = [];
         var isCached = CacheUtil.isParameterCached(context, parameterId);
 
-        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
-        log.LogDebug('isCached='+isCached)
+        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
         if(isCachable(context, parameterId) && !isCached) {
-            log.LogDebug('caching')
             CacheParameterOptions(context, parameterId);
         }
 
         if(isCached) {
-            log.LogDebug('get ops from cache')
             return CacheUtil.GetParameterOptions(context, parameterId);
         }
-        log.LogDebug('special case')
 
-        options = GetProcessedList(context, parameterId);
-        log.LogDebug(JSON.stringify(options))
-        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        options = GetProcessedList(context, parameterId); //for params that shouldn't be cached
+        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }

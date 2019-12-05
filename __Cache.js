@@ -1,12 +1,18 @@
 class CacheUtil {
 
-
+    /**
+     * Object that keeps options' lists for parameters
+     * its item looks like that: key: {options: [{},{}] }
+     */
     static public var cachedParameterOptions = {};
 
     /**
-     *
+     * returns key for parameter cache
+     * @param {Object} context
+     * @param {String} param id
+     * @returns {String}: userEmail_ds0_parameter0
      */
-    public static function getParameterCacheKey(context, parameterId) {
+    static public function getParameterCacheKey(context, parameterId) {
 
         var log = context.log;
         var pageContext = context.pageContext;
@@ -16,28 +22,27 @@ class CacheUtil {
     }
 
     /**
-     *
+     * checks if param was cached already
+     * @param {Object} context
+     * @param {String} param id
+     * @returns {Boolean}
      */
     static public function isParameterCached(context, parameterId) {
         var log = context.log;
         var key = getParameterCacheKey(context, parameterId);
-        log.LogDebug('key='+key)
 
         return cachedParameterOptions.hasOwnProperty(key)
     }
 
     /**
-     * get copy of parameter options from cache
+     * get parameter options from cache
      * @param {Object} context
      * @param {String} parameterId
      * @returns {Array} array of options [{Code:, Label:}, ...]
      */
     static public function GetParameterOptions(context, parameterId) {
-        //copy needed to avoid 'spoiling' full list
-
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
-
         return cachedParameterOptions[key]['options'];
     }
 
