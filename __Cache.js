@@ -10,7 +10,6 @@ class CacheUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
-        if(SystemConfig.reportParameterValuesMap[parameterId].includePulseSurveyIdInCacheKey)
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         return key;
