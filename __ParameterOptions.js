@@ -443,17 +443,22 @@ class ParameterOptionsBuilder {
         var options = [];
         var isCached = CacheUtil.isParameterCached(context, parameterId);
 
-        //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
         if(isCachable(context, parameterId) && !isCached) {
+            log.LogDebug('1')
             CacheParameterOptions(context, parameterId);
         }
 
+        log.LogDebug('2')
         if(isCached) {
+            log.LogDebug('3')
             return CacheUtil.GetParameterOptions(context, parameterId);
         }
+        log.LogDebug('4')
 
         options = GetProcessedList(context, parameterId);
-        //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug(JSON.stringify(options))
+        log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
     }
