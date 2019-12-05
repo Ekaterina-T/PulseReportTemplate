@@ -22,6 +22,7 @@ class CacheUtil {
     static public function isParameterCached(context, parameterId) {
         var log = context.log;
         var key = getParameterCacheKey(context, parameterId);
+        log.LogDebug('key='+key)
 
         return cachedParameterOptions.hasOwnProperty(key)
     }

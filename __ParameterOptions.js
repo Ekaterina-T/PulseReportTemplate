@@ -400,6 +400,7 @@ class ParameterOptionsBuilder {
             options = getRawOptions(context, resource, parameterInfo.type);
             options = modifyOptions(context, options, parameterInfo);
         }
+        log.LogDebug(JSON.stringify(options))
 
         return options;
     }
@@ -423,6 +424,7 @@ class ParameterOptionsBuilder {
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
 
+
         var paramOptionsObj = {};
         paramOptionsObj['options'] = GetProcessedList(context, parameterId);
         CacheUtil.cachedParameterOptions[key] = paramOptionsObj;
@@ -444,17 +446,17 @@ class ParameterOptionsBuilder {
         var isCached = CacheUtil.isParameterCached(context, parameterId);
 
         log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+        log.LogDebug('isCached='+isCached)
         if(isCachable(context, parameterId) && !isCached) {
-            log.LogDebug('1')
+            log.LogDebug('caching')
             CacheParameterOptions(context, parameterId);
         }
 
-        log.LogDebug('2')
         if(isCached) {
-            log.LogDebug('3')
+            log.LogDebug('get ops from cache')
             return CacheUtil.GetParameterOptions(context, parameterId);
         }
-        log.LogDebug('4')
+        log.LogDebug('special case')
 
         options = GetProcessedList(context, parameterId);
         log.LogDebug(JSON.stringify(options))
