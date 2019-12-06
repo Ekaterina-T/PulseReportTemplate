@@ -221,16 +221,16 @@ class TableUtil {
             return;
         }
         //TO DO: get rid of explicit page names
-        if(breakByTimeUnits && pageId === 'Page_Results') {
+        if(breakByTimeUnits && pageId.indexOf('Page_Results')>=0) {
             breakByParameter = 'p_TimeUnitNoDefault';
             breakByType = 'TimeUnit';
-        } else if(breakByTimeUnits && pageId === 'Page_CategoricalDrilldown') {
+        } else if(breakByTimeUnits && pageId.indexOf('Page_CategoricalDrilldown')>=0) {
             breakByParameter = 'p_CatDD_TimeUnitNoDefault';
             breakByType = 'TimeUnit';
-        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_Results') {
+        } else if(breakVariables && breakVariables.length>0 && pageId.indexOf('Page_Results')>=0) {
             breakByParameter = 'p_Results_BreakBy';
             breakByType = 'Question';
-        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_CategoricalDrilldown') {
+        } else if(breakVariables && breakVariables.length>0 && pageId.indexOf('Page_CategoricalDrilldown')>=0) {
             breakByParameter = 'p_CategoricalDD_BreakBy';
             breakByType = 'Question';
         }
