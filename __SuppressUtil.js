@@ -217,7 +217,7 @@ class SuppressUtil {
     
             // Additional check for Results table with breakdown by child hierarchy level
             var pageId = pageContext.Items['CurrentPageId'];
-            if (pageId === 'Results' && !state.Parameters.IsNull('p_Results_BreakBy'))  {  // break by option is active
+            if (pageId.indexOf('Results')>=0 && !state.Parameters.IsNull('p_Results_BreakBy'))  {  // break by option is active
     
                 var selectedOption = ParamUtil.GetSelectedOptions(context, 'p_Results_BreakBy')[0];
                 var questionInfo = QuestionUtil.getQuestionInfo(context, selectedOption.Code);
