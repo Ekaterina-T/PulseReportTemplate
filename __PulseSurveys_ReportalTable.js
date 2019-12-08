@@ -41,7 +41,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             surveyList[0] = emptyOption;
         }
 
-        var rowInfo2 = report.TableUtils.GetColumnHeaderCategoryIds(_pulseSurveysTablePath);
+        var rowInfo2 = report.TableUtils.GetRowHeaderCategoryIds(_pulseSurveysTablePath);
         log.LogDebug('category titles: '+JSON.stringify(rowInfo));
         log.LogDebug('category titles: '+JSON.stringify(rowInfo2));
         
