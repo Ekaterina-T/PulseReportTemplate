@@ -43,7 +43,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
         var rowInfo2 = report.TableUtils.GetRowHeaderCategoryIds(_pulseSurveysTablePath);
         log.LogDebug('category titles: '+JSON.stringify(rowInfo));
-        log.LogDebug('category titles: '+JSON.stringify(rowInfo2));
+        log.LogDebug('category ids: '+JSON.stringify(rowInfo2));
         
 
         surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rowInfo));
