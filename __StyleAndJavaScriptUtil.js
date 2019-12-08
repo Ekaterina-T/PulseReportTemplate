@@ -10,17 +10,8 @@ class StyleAndJavaScriptUtil {
     
             var str = '';
     
-            try {
-                str += buildReportTemplateModule (context); //js
-            } catch(e) {
-                throw new Error('StyleAndJavaScriptUtil.buildReportTemplateModule: failed with error "'+e.Message+'"');
-            }
-    
-            try {
-                str += applyTheme(context); // css
-            } catch(e) {
-                throw new Error('StyleAndJavaScriptUtil.applyTheme: failed with error "'+e.Message+'"');
-            }
+            str += buildReportTemplateModule (context); //js    
+            str += applyTheme(context); // css
     
             return str;
         }
