@@ -11,7 +11,12 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
     private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
         _pulseSurveysTablePath = storageInfo.tableName;
-        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo: [];
+
+        if(storageInfo.hasOwnProperty('additionalInfo')) {
+            _additionalInfo = storageInfo.additionalInfo;
+        } else {
+            throw new Error ('PulseSurveys_ReportalTable: additional info is not provided for pulse program surveys table');
+        } 
     }
 
     /**
@@ -39,12 +44,7 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
             emptyOption.Code = 'none';
             surveyList[0] = emptyOption;
-        }
-
-        var rowInfo2 = report.TableUtils.GetRowHeaderCategoryIds(_pulseSurveysTablePath);
-        log.LogDebug('category titles: '+JSON.stringify(rowInfo));
-        log.LogDebug('category ids: '+JSON.stringify(rowInfo2));
-        
+        }        
 
         surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rowInfo));
 
@@ -68,14 +68,21 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
             var headerRow = HeaderCategoryTitles[i]; // all headers in the row
             var colNum = headerRow.length; // number of columns
 
-            var sureveyId = headerRow[colNum-1];
-            var surveyName = headerRow[colNum-2];
+            var sureveyId = headerRow[colNum-1]; //always last
+            var surveyName = headerRow[colNum-2]; // always one before last
 
             //hardcoded in the table: pid->pname->creator->status
             var addInfo = [];
-            /*for(var j=colNum-3; j>=0; j--) {
-                var col = headerRow[j];
-            }*/
+            
+            if(_additionalInfo['CreatedByEndUserName']) {
+                var author = headerRow[colNum-3];
+                author.length>0 ? addInfo.push(author) : addInfo.push('undefined user'); //better ideas welcome
+            } 
+
+            if(_additionalInfo['Status']) {
+                addInfo.push(headerRow[colNum-4]); 
+            }
+
             addInfo = addInfo.join(', ');
 
             surveyInfo.Label = addInfo.length >0 ? surveyName+' ('+addInfo+')' : surveyName; //label - inner header
