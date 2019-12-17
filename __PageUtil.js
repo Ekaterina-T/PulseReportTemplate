@@ -118,9 +118,9 @@ class PageUtil {
         var pageContext = context.pageContext;
         var pageId;
 
-        if(!!pageContext.Items['CurrentPageId']) {
+        /*if(!!pageContext.Items['CurrentPageId']) { //we don't remember why that's needed
             pageId = pageContext.Items['CurrentPageId'];
-        } else if(context.hasOwnProperty('CurrentPageId') && context.CurrentPageId) {
+        } else*/ if(context.hasOwnProperty('CurrentPageId') && context.CurrentPageId) {
             pageId = context.CurrentPageId;
         } else {
             throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')

@@ -1,4 +1,4 @@
-class PageResults {
+class PageResults2 {
 
 
     /*
@@ -56,15 +56,15 @@ class PageResults {
   * @param {object} context: {state: state, report: report, log: log, table: table}
   */
 
-  static function tableStatements_AddRows(context) {
-    
+    static function tableStatements_AddRows(context) {
+
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
         var numberOfAddedBanners = 0;
-        
+
         if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
@@ -85,8 +85,8 @@ class PageResults {
         if(!numberOfAddedBanners) { //otherwise cannot add several banners
             throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
         }
-         
-  }
+
+    }
 
     /*
   * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
@@ -144,10 +144,10 @@ class PageResults {
     }
 
     /**
-* Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
-*  @param {object} context: {state: state, report: report, log: log, table: table}
-* @return {array} array of categorization ids
-*/
+     * Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     * @return {array} array of categorization ids
+     */
 
     static function getActiveCategorizations(context) {
 
@@ -182,51 +182,51 @@ class PageResults {
         return dimensionsInConfig;
     }
 
-       /**
-  * Add custom statement questions as table rows based on Question category
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-  
-  static function tableStatements_AddRows_Banner2 (context) {
-    
-            var report = context.report;
-            var state = context.state;
-            var table = context.table;
-            var log = context.log;
-            var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
-            var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
-        
-            var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims'
-            // display a categorisation object as a dimension
-            if (isDimensionVisible)   {
-                var categorization : HeaderCategorization = new HeaderCategorization();
-                categorization.CategorizationId = 'Custom';
-                categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                categorization.Collapsed = true;
-                categorization.Totals = true;  
-                TableUtil.addBreakByNestedHeader(context, categorization);
-                table.RowHeaders.Add(categorization);
-            }
+    /**
+     * Add custom statement questions as table rows based on Question category
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
-            for (var i=0; i<custom_questions.length; i++) {
-              var qId = custom_questions[i].QuestionId;        
-              var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId); 
-              var headerQuestion : HeaderQuestion = new HeaderQuestion(questionnaireElement);
-              headerQuestion.IsCollapsed = true;
-              headerQuestion.HideHeader = true;
-              TableUtil.addBreakByNestedHeader(context, headerQuestion);
-              
-              var dummyHeader: HeaderSegment = new HeaderSegment();
-              dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
-              dummyHeader.SegmentType = HeaderSegmentType.Expression;
-              dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
-              dummyHeader.HideData = false;
-              dummyHeader.SubHeaders.Add(headerQuestion);
-              
-              table.RowHeaders.Add(dummyHeader);
-            }
-      }
+    static function tableStatements_AddRows_Banner2 (context) {
+
+        var report = context.report;
+        var state = context.state;
+        var table = context.table;
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+        var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
+
+        var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims'
+        // display a categorisation object as a dimension
+        if (isDimensionVisible)   {
+            var categorization : HeaderCategorization = new HeaderCategorization();
+            categorization.CategorizationId = 'Custom';
+            categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+            categorization.Collapsed = true;
+            categorization.Totals = true;
+            TableUtil.addBreakByNestedHeader(context, categorization);
+            table.RowHeaders.Add(categorization);
+        }
+
+        for (var i=0; i<custom_questions.length; i++) {
+            var qId = custom_questions[i].QuestionId;
+            var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
+            var headerQuestion : HeaderQuestion = new HeaderQuestion(questionnaireElement);
+            headerQuestion.IsCollapsed = true;
+            headerQuestion.HideHeader = true;
+            TableUtil.addBreakByNestedHeader(context, headerQuestion);
+
+            var dummyHeader: HeaderSegment = new HeaderSegment();
+            dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+            dummyHeader.SegmentType = HeaderSegmentType.Expression;
+            dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
+            dummyHeader.HideData = false;
+            dummyHeader.SubHeaders.Add(headerQuestion);
+
+            table.RowHeaders.Add(dummyHeader);
+        }
+    }
 
     /*
   * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
@@ -371,10 +371,11 @@ class PageResults {
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
         bcCategories.HideData = true;
-        
+
         table.ColumnHeaders.Add(bcCategories);
 
         var barChartColors = Config.barChartColors_Distribution;
+        var n = barChartColors.length;
 
         if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
@@ -384,9 +385,9 @@ class PageResults {
 
             bcCategories.HideData = true;
 
-            for(i=0; i< barChartColors.length; i++) {
+            for(i=0; i< n; i++) {
                 var chartValue: ChartComboValue = new ChartComboValue();
-                chartValue.Expression = 'cellv(col-'+(i+1)+', row)';
+                chartValue.Expression = 'cellv(col-'+(i+1)+', row)';//'cellv(col-'+(n-i)+', row)';//
                 chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
                 chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
                 chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution '+ barChartColors[i].type;
@@ -401,13 +402,12 @@ class PageResults {
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
 
-            var n = barChartColors.length;
             for(i=0; i< barChartColors.length; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
-                formula.Expression = 'cellv(col-'+barChartColors.length+', row)/100';
+                formula.Expression = 'cellv(col-'+(i*2+1)+', row)/100';
                 formula.Percent = true;
-                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[n - i - 1].label);
+                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
             }
         }
