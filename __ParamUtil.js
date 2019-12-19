@@ -152,89 +152,117 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
-        // pulse program handler
-        if (!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-
-            var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-
-            if (selectedPulseSurvey[0] === "") {
-                state.Parameters['p_projectSelector'] = null;
-            }
-            //set default pulse baby project
-            if (!state.Parameters.IsNull('p_projectSelector')) {
-
-                var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-
-                //user checked "show all pulse surveys" checkbox or changed report base
-                if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
-
-                    var selectedProject = selectedPulseSurvey[0];
-                    var availableProjects = ParameterOptionsBuilder.GetOptions(context, 'p_projectSelector', 'available proj');
-                    var doReset = true;
-
-                    for (i = 0; i < availableProjects.length; i++) {
-                        if (selectedProject === availableProjects[i].Code) {
-                            doReset = false;
-                            break;
-                        }
-                    }
-
-                    if (doReset) {
-                        ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                        context.pageContext.Items['p_projectSelector'] = 'nothing_selected';
-                    }
-                }
-            }
-
-            if (state.Parameters.IsNull('p_projectSelector')) {
-                var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
-                state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
-                context.pageContext.Items['p_projectSelector'] = defaultVal;
-            }
-
-            //set up object holding questions available on current page
-            PulseProgramUtil.setPulseSurveyContentInfo(context);
-            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
-
-            //reset question and category based params when baby survey changes
-            if (page.SubmitSource === 'projectSelector') {
-                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
-                Filters.ResetAllFilters(context);
-            }
-
-        }
         //log.LogDebug('project selector processing end')
+        pulseRelatedParamsInit(context);
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
-            // safety check: set default value if not defined or pulse program changed
-            if (!state.Parameters.IsNull(mandatoryPageParameters[i])) {
-                continue;
-            }
-
-            try {
-                var defaultParameterValue = getDefaultParameterValue(context, mandatoryPageParameters[i]);
-                //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
-                if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
-                    continue;
-                }
-            } catch (e) { continue; }
-
-            // We can't get the type of parameter (single or multi) before its initialisation.
-            // So firstly check if it supports ParameterValueMultiSelect options
-            try {
-                var valArr = [new ParameterValueResponse(defaultParameterValue)];
-                var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
-                state.Parameters[mandatoryPageParameters[i]] = multiResponse;
-            }
-            //if not, set it as single select parameter
-            catch (e) {
-                state.Parameters[mandatoryPageParameters[i]] = new ParameterValueResponse(defaultParameterValue);
-            }
-
+            setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
         //log.LogDebug('param init end')
+    }
 
+    /**
+     * set default value for a parameter
+     * @param {Object} context  - object {state: state, log: log}
+     * @param {String} paramId - the id of the parameter
+     */
+    static function setDefaultValueForParameter(context, paramId) {
+
+        var state = context.state;
+        var log = context.log;
+
+        // safety check: set default value if not defined or pulse program changed
+        if (!state.Parameters.IsNull(paramId)) {
+            continue;
+        }
+
+        try {
+            var defaultParameterValue = getDefaultParameterValue(context, paramId);
+            //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
+            if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
+                continue;
+            }
+        } catch (e) { continue; }
+
+        // We can't get the type of parameter (single or multi) before its initialisation.
+        // So firstly check if it supports ParameterValueMultiSelect options
+        try {
+            var valArr = [new ParameterValueResponse(defaultParameterValue)];
+            var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+            state.Parameters[paramId] = multiResponse;
+        }
+            //if not, set it as single select parameter
+        catch (e) {
+            state.Parameters[paramId] = new ParameterValueResponse(defaultParameterValue);
+        }
+    }
+
+    /**
+     * param init for pulse programs
+     * @param {Object} context  - object {state: state, log: log}
+     */
+    static function pulseRelatedParamsInit(context) {
+
+        var log = context.log;
+
+        // pulse program handler
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return;
+        }
+
+        var state = context.state;
+        var page = context.page;
+        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+        //TODO: there's some mess around selectedPulseSurvey[0] values
+        if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
+            ParamUtil.ResetParameters(context, ['p_projectSelector']);
+        }
+
+        //set default pulse baby project
+        if (!state.Parameters.IsNull('p_projectSelector')) {
+
+            var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+
+            //user unchecked "show all pulse surveys" checkbox while some survey was selected
+            if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+
+                var selectedProject = selectedPulseSurvey[0];
+                var availableProjects = ParameterOptionsBuilder.GetOptions(context, 'p_projectSelector', 'available proj');
+                var doReset = true;
+
+                //if available list does include selected project, then don't reset pulse project selector
+                for (var i = 0; i < availableProjects.length; i++) {
+                    if (selectedProject === availableProjects[i].Code) {
+                        doReset = false;
+                        break;
+                    }
+                }
+
+                if (doReset) {
+                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                    context.pageContext.Items['p_projectSelector'] = 'nothing_selected';
+                }
+            }
+        }
+
+        //in the end project is still undefined -> set default
+        if (state.Parameters.IsNull('p_projectSelector')) {
+            var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
+            state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
+            context.pageContext.Items['p_projectSelector'] = defaultVal;
+        }
+
+        //set up object holding questions available on current page
+        PulseProgramUtil.setPulseSurveyContentInfo(context);
+        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+
+        //reset question and category based params when baby survey changes
+        if (page.SubmitSource === 'projectSelector') {
+            ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+            Filters.ResetAllFilters(context);
+        }
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
