@@ -205,6 +205,8 @@ class ParamUtil {
     static function pulseRelatedParamsInit(context) {
 
         var log = context.log;
+        var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
+        var optionalPageParameters = SystemConfig.optionalPageParameters;
 
         // pulse program handler
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
