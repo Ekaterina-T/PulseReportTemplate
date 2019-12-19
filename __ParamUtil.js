@@ -174,16 +174,16 @@ class ParamUtil {
 
         // safety check: set default value if not defined or pulse program changed
         if (!state.Parameters.IsNull(paramId)) {
-            continue;
+            return;
         }
 
         try {
             var defaultParameterValue = getDefaultParameterValue(context, paramId);
             //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
             if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
-                continue;
+                return;
             }
-        } catch (e) { continue; }
+        } catch (e) { return; }
 
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
