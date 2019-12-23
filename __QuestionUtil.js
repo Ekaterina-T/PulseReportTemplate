@@ -250,13 +250,13 @@ class QuestionUtil {
      * @param {Array} categoryList
      * @returns {array} - String[]
      */
-    static function getQuestionsByCategories(context, categoryList) {
+    static function getQuestionIdsByCategories(context, categoryList) {
 
         var log = context.log;
         var questions = [];
         
         for(var i=0; i<categoryList.length; i++) {
-            questions = questions.concat(getQuestionsByCategory(context, categoryList[i]));
+            questions = questions.concat(getQuestionIdsByCategory(context, categoryList[i]));
         }
 
         return questions;

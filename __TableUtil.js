@@ -427,7 +427,7 @@ class TableUtil {
             throw new Error('TableUtil.getActiveQuestionsListByCategories: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
         }
 
-        var Qs = QuestionUtil.getQuestionsByCategories(context, categories);
+        var Qs = QuestionUtil.getQuestionIdsByCategories(context, categories);
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
 
