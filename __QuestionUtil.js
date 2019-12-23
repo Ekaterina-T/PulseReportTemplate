@@ -214,6 +214,9 @@ class QuestionUtil {
         var report = context.report;
         var log = context.log;
 
+        // not clear how to leave with that, needs testing
+        // how grids would be processed? and other questions?
+        // how to standardise this to work with
         if (category) {
             var project : Project = DataSourceUtil.getProject(context);
             return project.GetQuestions({'InCategories': [category]});
@@ -221,12 +224,12 @@ class QuestionUtil {
         return [];
     }
 
-    /*
-   * Get questions ids by category
-   * @param {object} context object {state: state, report: report, log: log}
-   * @param {string} category
-   * @returns {array} - String[]
-   */
+    /**
+     * Get questions ids by category
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} category
+     * @returns {array} - String[]
+     */
     static function getQuestionIdsByCategory (context, category) {
 
         // see EN-430
@@ -239,6 +242,24 @@ class QuestionUtil {
             questionIds.push(q.QuestionId);
         }
         return questionIds;
+    }
+    
+    /** 
+     * Get questions ids by array of categories
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {Array} categoryList
+     * @returns {array} - String[]
+     */
+    static function getQuestionsByCategories(context, categoryList) {
+
+        var log = context.log;
+        var questions = [];
+        
+        for(var i=0; i<categoryList.length; i++) {
+            questions = questions.concat(getQuestionsByCategory(context, categoryList[i]));
+        }
+
+        return questions;
     }
 
 

@@ -278,7 +278,7 @@ class PulseProgramUtil {
         var optionsWithData = [];
 
         for(var i=0; i<allOptions.length; i++) {
-            // options can be a list of objects with code property or just a list of codes
+            // options can be a list of objects with code property (category) or just a list of codes
             if(typeof allOptions[i] === 'object' && availableCodes.hasOwnProperty(allOptions[i].Code)) {
                 optionsWithData.push(allOptions[i]);
             } else if (typeof allOptions[i] === 'string' && availableCodes.hasOwnProperty(allOptions[i])) {

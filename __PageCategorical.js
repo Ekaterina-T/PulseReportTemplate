@@ -42,9 +42,10 @@ class PageCategorical {
             categoriesConfigNames = 'CustomCategoriesSingle';
         }
 
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs1 = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, questionConfigParamName);
+        var Qs2 = TableUtil.getActiveQuestionsListByCategories(context, pageId, categoriesConfigNames);
 
-        return Qs;
+        return Qs1.concat(Qs2);
     }
 
 
