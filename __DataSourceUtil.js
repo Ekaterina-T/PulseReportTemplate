@@ -167,7 +167,7 @@ class DataSourceUtil {
         catch (e) {};
 
         // if the property isn't defined on the page level, grab it from the survey config
-        if(!value) {
+        if(pageId === null || !value) {
             value = getSurveyPropertyValueFromConfig (context, propertyName);
         }
 

@@ -1,28 +1,43 @@
 class PulseProgramUtil {
 
     static public var pulseSurveyContentInfo = {};
-
     static public var pulseSurveyContentBaseValues = {};
 
-    
 
     /**
-     *
+     * builds list of questions and/or categories based on what represents the property: qids, survey category, ...
+     * @param {Object} context
+     * @param {string} pageId - real pageId or null if resource is on survey level
+     * @param {string} property - property id (originates from SystemConfig -> resourcesDependentOnSpecificSurvey)
+     * @returns {Object} - array or one qid taht will be united into array later
      */
-    static private function buildQuestionAndCategoryId(context, pageId, pageProperty) {
+    static private function buildQuestionAndCategoryId(context, pageId, property) {
 
         var log = context.log;
 
-        if(typeof pageProperty === 'object' && pageProperty.type === 'QuestionsCategory') {
-            var category = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty.propertyWithCat);
+        // page property references one question category
+        if(typeof property === 'object' && property.type === 'QuestionsCategory') {
+            var category = DataSourceUtil.getPropertyValueFromConfig(context, pageId, property.propertyWithCat);
             return QuestionUtil.getQuestionIdsByCategory(context, category);
-        } else {
-            return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, pageProperty);
         }
 
-        throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+pageProperty+' on page '+pageId);
+        // page property references several question categories united into array
+        if(typeof property === 'object' && property.type === 'QuestionsCategories') {
+            var categories = DataSourceUtil.getPropertyValueFromConfig(context, pageId, property.propertyWithCategories);
+            var qs = [];
+            for(var i=0; i< categories.length; i++) {
+                qs = qs.concat(QuestionUtil.getPropertyValueFromConfig(context, categories[i]));
+            }
+            return qs;
+        }
+        
+        // page property references question or array of questions
+        if(typeof property === 'string') {
+            return DataSourceUtil.getPropertyValueFromConfig(context, pageId, property);
+        }
+        
+        throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+property+' on page '+pageId);
     }
-
 
     /**
      * creates array of qids and category ids that need to be checked against pulse baby survey on current page
@@ -35,10 +50,8 @@ class PulseProgramUtil {
         var log = context.log;
         var listOfResources = [];
         var i;
-        var resourcesDependentOnSpecificSurvey = SystemConfig.resourcesDependentOnSpecificSurvey;
-        var surveyProperties = resourcesDependentOnSpecificSurvey['Survey'];
         var pageId = currentPageId ? currentPageId : PageUtil.getCurrentPageIdInConfig (context);
-        var pageProperties = resourcesDependentOnSpecificSurvey[pageId];
+        var pageProperties = SystemConfig.resourcesDependentOnSpecificSurvey[pageId];
 
         for(i=0; i<pageProperties.length; i++) {
             listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, pageId, pageProperties[i]));
@@ -48,7 +61,12 @@ class PulseProgramUtil {
     }
 
     /**
-     * 
+     * creates array of qids and category ids that need to be checked against pulse baby survey on current page
+     * array item is an object {ItemCode : ItemType}, ItemType can be QuestionId or CategorizationId, ItemCode - id iteslf
+     * identical to the above function, but pageId = null
+     * allows to avoid referencing survey level many times at excel export
+     * @param {Object} context
+     * @returns {Array} object where property is resourceId (question or dimension) and value is its type
      */
     static private function getSurveyResourcesList (context) {
 
@@ -59,15 +77,18 @@ class PulseProgramUtil {
 
         // keep property values in array
         for(i=0; i<surveyProperties.length; i++) {
-            listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i]));
+            //listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i])); //old version
+            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, null, property))
         }
 
         return listOfResources;
     }
-
     
     /**
-     * 
+     * removes duplicate values from question/categories lists build by the above functions
+     * @param {Object} context
+     * @param {Array} array of strings (qids) and objects (dimensions,...)
+     * @returns {Array} without duplicates
      */
     static private function removeDuplicates (context, listOfResources) {
 
@@ -108,7 +129,7 @@ class PulseProgramUtil {
         if(!Export.isExcelExportMode(context)) {
             listOfResources=listOfResources.concat(getSurveyResourcesList(context));
             listOfResources=listOfResources.concat(getPageResourcesList(context));
-        } else {
+        } else { //in excel we need properties from all pages at once
             for(var pageId in resourcesDependentOnSpecificSurvey) {
                 if(pageId != 'Survey') {
                     listOfResources=listOfResources.concat(getPageResourcesList(context, pageId));
@@ -202,7 +223,7 @@ class PulseProgramUtil {
      * @param {Object} context
      * @returns {Object} resourcesWithData - object {resourceId: resourceType} - only those that have data
      */
-    static public function getPulseSurveyContentInfo_ItemsWithData (context) {
+    static public function getPulseSurveyContentInfo_ItemsWithData(context) {
 
         var log = context.log;
 
@@ -273,7 +294,7 @@ class PulseProgramUtil {
      * Debug function that prints PulseSurveyContentInfo into log
      * @param {Object} context
      */
-    static public function printPulseSurveyContentInfoTable (context) {
+    static public function printPulseSurveyContentInfoTable(context) {
 
         var log = context.log;
         var report = context.report;

@@ -24,6 +24,29 @@ class PageCategorical {
 
     }
 
+    /**
+     * @param {Object} context
+     * @param {String} type: multi or anything else = single
+     */
+    static function defineCategoricalQuestionsList(context, type) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var questionConfigParamName;
+        var categoriesConfigNames;
+
+        if(typee === 'multi') {
+            questionConfigParamName = 'ResultMultiCategoricalQuestions';
+            categoriesConfigNames = 'CustomCategoriesMulti';
+        } else {
+            questionConfigParamName = 'ResultCategoricalQuestions';
+            categoriesConfigNames = 'CustomCategoriesSingle';
+        }
+
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+
+        return Qs;
+    }
+
 
     /**
      * @memberof PageCategorical
@@ -42,9 +65,7 @@ class PageCategorical {
             return true;
         }
 
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var questionConfigParamName = type === 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = defineCategoricalQuestionsList(context, type); 
 
         if (!Qs || Qs.length === 0) {
             return true;
@@ -79,10 +100,9 @@ class PageCategorical {
 
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = defineCategoricalQuestionsList(context, tableType);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
@@ -194,9 +214,9 @@ class PageCategorical {
         // show topN answers in a list for questions with more than <answerLimit> options
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
-        var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
+
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = TableUtil.getActidefineCategoricalQuestionsList(context, tableType);
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
 
