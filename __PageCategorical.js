@@ -34,7 +34,7 @@ class PageCategorical {
         var questionConfigParamName;
         var categoriesConfigNames;
 
-        if(typee === 'multi') {
+        if(type === 'multi') {
             questionConfigParamName = 'ResultMultiCategoricalQuestions';
             categoriesConfigNames = 'CustomCategoriesMulti';
         } else {
@@ -216,7 +216,7 @@ class PageCategorical {
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
 
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-        var Qs = TableUtil.getActidefineCategoricalQuestionsList(context, tableType);
+        var Qs = defineCategoricalQuestionsList(context, tableType);
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
 

@@ -26,7 +26,7 @@ class PulseProgramUtil {
             var categories = DataSourceUtil.getPropertyValueFromConfig(context, pageId, property.propertyWithCategories);
             var qs = [];
             for(var i=0; i< categories.length; i++) {
-                qs = qs.concat(QuestionUtil.getPropertyValueFromConfig(context, categories[i]));
+                qs = qs.concat(QuestionUtil.getQuestionIdsByCategory(context, categories[i]));
             }
             return qs;
         }
@@ -78,7 +78,7 @@ class PulseProgramUtil {
         // keep property values in array
         for(i=0; i<surveyProperties.length; i++) {
             //listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i])); //old version
-            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, null, property))
+            listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, null, surveyProperties[i]))
         }
 
         return listOfResources;
