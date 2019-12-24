@@ -26,6 +26,13 @@ class QuestionUtil {
             questionInfo.standardType = ((String)(question.QuestionType)).toLowerCase();
             questionInfo.questionId = questionId;
 
+            //check if custom question from pulse program
+            var categories = '&'+question.GetCategories().join('&');
+            categories = categories.toLowerCase();
+            if(categories.indexOf('&custom')>=0) {
+                questionInfo.isCustom = true;
+            }
+
         } else if(questionId.slice(-6) === '.other') { // other option of single or multi
 
             splittedQuestionId = splitStringByLastPoint(questionId.substr(0,questionId.lastIndexOf('.other')));
@@ -100,6 +107,12 @@ class QuestionUtil {
         var title;
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
+        var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context)
+
+
+        if(questionInfo.type==='general' && questionInfo.isCustom) { //simple custom question from pulse
+            return getCustomQuestionTextById(context, questionId);
+        }
 
         if(questionInfo.type==='general') {  // simple question type: single, open text, grid overall
             return question.Title || question.Text || NA;
@@ -156,7 +169,6 @@ class QuestionUtil {
     }
 
 
-
     /*
      * Check if a question has a specific answer code.
      * @param {object} context object {state: state, report: report, log: log}
@@ -199,7 +211,6 @@ class QuestionUtil {
    */
 
     static function getQuestionIdWithUnderscoreInsteadOfDot (questionIdWithDot) {
-
         return questionIdWithDot.replace(/\./g,'_');
     }
 
@@ -279,8 +290,9 @@ class QuestionUtil {
         }
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        if (codes.length == 0)
+        if (codes.length == 0) {
             return null;
+        }
 
         var cachedTxt;
         var baby_p_number = codes[0];
