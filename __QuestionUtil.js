@@ -108,15 +108,7 @@ class QuestionUtil {
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
-        log.LogDebug(JSON.stringify(questionInfo));
-        log.LogDebug('a');
-        log.LogDebug(questionInfo.hasOwnProperty('isCustom'));
-        log.LogDebug('b');
-        log.LogDebug(questionInfo.isCustom);
-        log.LogDebug('c');
-
         if(questionInfo.hasOwnProperty('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
-            log.LogDebug('check ok for '+questionId)
             return getCustomQuestionTextById(context, questionId);
         }
 
@@ -292,7 +284,7 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
 
-        log.LogDebug('inside custom q text')
+        log.LogDebug('inside custom q text for '+qId);
 
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
@@ -302,6 +294,7 @@ class QuestionUtil {
         if (codes.length == 0) {
             return null;
         }
+        log.LogDebug('1');
 
         var cachedTxt;
         var baby_p_number = codes[0];
@@ -310,20 +303,24 @@ class QuestionUtil {
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
+        log.LogDebug('2');
 
         // if Redis doesn't have cached question, look it up in the DB table
         if (!cachedTxt) {
             var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
             var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+            log.LogDebug('3');
 
             if(!schemaId && !tableName) { // storage for baby survey custom questions
                 throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
             }
+            log.LogDebug('4');
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var custom_id = baby_p_number+"_"+qId;
             var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
+            log.LogDebug('5');
 
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
@@ -331,7 +328,9 @@ class QuestionUtil {
                     confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
                 }
             }
+            log.LogDebug('6');
         }
+        log.LogDebug('cachedTxt='+cachedTxt);
 
         return cachedTxt;
     }
