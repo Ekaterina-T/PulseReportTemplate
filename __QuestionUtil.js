@@ -108,9 +108,12 @@ class QuestionUtil {
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
-        log.LogDebug(JSON.stringify(questionInfo))
-        log.LogDebug(questionInfo.hasOwnPropety('isCustom'))
-        log.LogDebug(questionInfo.isCustom)
+        log.LogDebug(JSON.stringify(questionInfo));
+        log.LogDebug('a');
+        log.LogDebug(questionInfo.hasOwnPropety('isCustom'));
+        log.LogDebug('b');
+        log.LogDebug(questionInfo.isCustom);
+        log.LogDebug('c');
 
         if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
             log.LogDebug('check ok for '+questionId)
@@ -137,7 +140,8 @@ class QuestionUtil {
             title = (question.Title || question.Text);
             return (title || answer.Text) ? (title+': '+answer.Text) : NA;
         }
-
+        
+        throw new Error('QuestionUtil.getQuestionTitle: couldn\'t found way to get question title for '+questionId);
     }
 
     /*
