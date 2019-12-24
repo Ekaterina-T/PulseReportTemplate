@@ -298,10 +298,13 @@ class QuestionUtil {
 
         var cachedTxt;
         var baby_p_number = codes[0];
+        log.LogDebug('baby_p_number='+baby_p_number);
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
+            log.LogDebug('c1');
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
+            log.LogDebug('c2');
         }
         log.LogDebug('2');
 
