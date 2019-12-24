@@ -108,9 +108,6 @@ class QuestionUtil {
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
-        log.LogDebug(questionId);
-        log.LogDebug(JSON.stringify(questionInfo));
-
         if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
             return getCustomQuestionTextById(context, questionId);
         }
@@ -285,7 +282,7 @@ class QuestionUtil {
         var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;
-
+        log.LogDebug(qId);
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -302,24 +299,35 @@ class QuestionUtil {
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
+        log.LogDebug('1');
 
         // if Redis doesn't have cached question, look it up in the DB table
         if (!cachedTxt) {
             var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
             var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-            if(schemaId && tableName) { // storage for baby survey custom questions
-                var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-                var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-                var custom_id = baby_p_number+"_"+qId;
-                var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
-                if (custom_texts.Count) {
-                    cachedTxt = custom_texts[0];
-                    if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-                        confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
-                    }
+
+            if(!schemaId && !tableName) { // storage for baby survey custom questions
+                throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
+            }
+            log.LogDebug('2');
+
+            var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+            var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+            var custom_id = baby_p_number+"_"+qId;
+            var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
+            log.LogDebug('3');
+            if (custom_texts.Count) {
+                cachedTxt = custom_texts[0];
+                if (state.ReportExecutionMode == ReportExecutionMode.Web) {
+                    confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
                 }
             }
+            
         }
+
+        
+        log.LogDebug(cachedTxt);
+
         return cachedTxt;
     }
 
