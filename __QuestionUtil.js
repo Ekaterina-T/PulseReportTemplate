@@ -107,10 +107,11 @@ class QuestionUtil {
         var title;
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
-        var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context)
 
+        log.LogDebug(questionId);
+        log.LogDebug(JSON.stringify(questionInfo));
 
-        if(questionInfo.type==='general' && questionInfo.isCustom) { //simple custom question from pulse
+        if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
             return getCustomQuestionTextById(context, questionId);
         }
 
