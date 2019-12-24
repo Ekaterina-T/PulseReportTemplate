@@ -302,7 +302,7 @@ class QuestionUtil {
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
             log.LogDebug('c1');
             log.LogDebug(baby_p_number+"_"+qId)
-            cachedTxt = confirmit.ReportDataCache();//baby_p_number+"_"+qId);
+            cachedTxt = confirmit.ReportDataCache('p1879718234_CQ1_GoodBad');//baby_p_number+"_"+qId);
             log.LogDebug('c2');
         }
         log.LogDebug('2');
