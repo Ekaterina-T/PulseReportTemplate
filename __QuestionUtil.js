@@ -108,6 +108,8 @@ class QuestionUtil {
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
+        log.LogDebug(JSON.stringify(questionInfo))
+
         if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
             log.LogDebug('check ok for '+questionId)
             return getCustomQuestionTextById(context, questionId);
