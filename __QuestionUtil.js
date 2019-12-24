@@ -109,6 +109,7 @@ class QuestionUtil {
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
 
         if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
+            log.LogDebug('check ok for '+questionId)
             return getCustomQuestionTextById(context, questionId);
         }
 
@@ -282,7 +283,9 @@ class QuestionUtil {
         var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;
-        log.LogDebug(qId);
+
+        log.LogDebug('inside custom q text')
+
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -313,16 +316,14 @@ class QuestionUtil {
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var custom_id = baby_p_number+"_"+qId;
             var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
-            log.LogDebug('3 '+custom_id);
+
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
                 if (state.ReportExecutionMode == ReportExecutionMode.Web) {
                     confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
                 }
             }
-            
         }
-        log.LogDebug(cachedTxt);
 
         return cachedTxt;
     }

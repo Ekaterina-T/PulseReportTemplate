@@ -229,7 +229,7 @@ class PageCategorical {
                 answerCount--;
             }
 
-            log.LogDebug('get title1')
+            log.LogDebug('get title1 for '+Qs[i])
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
             log.LogDebug('get title2='+title)
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
@@ -250,8 +250,6 @@ class PageCategorical {
             row_index += displayNumberOfAnswers;
 
         }
-
-        log.LogDebug(JSON.stringify(categoricals))
         return categoricals;
     }
 
