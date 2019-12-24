@@ -110,12 +110,12 @@ class QuestionUtil {
 
         log.LogDebug(JSON.stringify(questionInfo));
         log.LogDebug('a');
-        log.LogDebug(questionInfo.hasOwnPropety('isCustom'));
+        log.LogDebug(questionInfo.hasOwnProperty('isCustom'));
         log.LogDebug('b');
         log.LogDebug(questionInfo.isCustom);
         log.LogDebug('c');
 
-        if(questionInfo.hasOwnPropety('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
+        if(questionInfo.hasOwnProperty('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
             log.LogDebug('check ok for '+questionId)
             return getCustomQuestionTextById(context, questionId);
         }
