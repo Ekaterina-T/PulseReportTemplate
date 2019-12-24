@@ -284,8 +284,6 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
 
-        log.LogDebug('inside custom q text for '+qId);
-
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -300,12 +298,8 @@ class QuestionUtil {
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-            log.LogDebug('c1');
-            log.LogDebug(baby_p_number+"_"+qId)
-            cachedTxt = confirmit.ReportDataCache('p1879718234_CQ1_GoodBad');//baby_p_number+"_"+qId);
-            log.LogDebug('c2');
+            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
-        log.LogDebug('2');
 
         // if Redis doesn't have cached question, look it up in the DB table
         if (!cachedTxt) {
@@ -328,7 +322,6 @@ class QuestionUtil {
                 }
             }
         }
-        log.LogDebug('cachedTxt='+cachedTxt);
 
         return cachedTxt;
     }
