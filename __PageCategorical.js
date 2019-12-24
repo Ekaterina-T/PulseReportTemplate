@@ -82,8 +82,7 @@ class PageCategorical {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-    static function tileCategorical_Hide(context){
-
+    static function tileCategorical_Hide(context) {
         return SuppressUtil.isGloballyHidden(context);
     }
 
@@ -230,7 +229,9 @@ class PageCategorical {
                 answerCount--;
             }
 
+            log.LogDebug('get title1')
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
+            log.LogDebug('get title2='+title)
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
             var result = [];
@@ -249,6 +250,8 @@ class PageCategorical {
             row_index += displayNumberOfAnswers;
 
         }
+
+        log.LogDebug(JSON.stringify(categoricals))
         return categoricals;
     }
 

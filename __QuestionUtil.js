@@ -299,7 +299,6 @@ class QuestionUtil {
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
         }
-        log.LogDebug('1');
 
         // if Redis doesn't have cached question, look it up in the DB table
         if (!cachedTxt) {
@@ -309,13 +308,12 @@ class QuestionUtil {
             if(!schemaId && !tableName) { // storage for baby survey custom questions
                 throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
             }
-            log.LogDebug('2');
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var custom_id = baby_p_number+"_"+qId;
             var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
-            log.LogDebug('3');
+            log.LogDebug('3 '+custom_id);
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
                 if (state.ReportExecutionMode == ReportExecutionMode.Web) {
@@ -324,8 +322,6 @@ class QuestionUtil {
             }
             
         }
-
-        
         log.LogDebug(cachedTxt);
 
         return cachedTxt;
