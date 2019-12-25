@@ -304,6 +304,7 @@ class QuestionUtil {
         }
 
         // if Redis doesn't have cached question, look it up in the DB table
+        //TODO : doesn't seem to be a good idea to cache texts that get updated with respondents answers
         if (!cachedTxt) {
             var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
             var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
