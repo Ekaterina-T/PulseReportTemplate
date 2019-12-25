@@ -326,7 +326,7 @@ class QuestionUtil {
 
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
-                if (state.ReportExecutionMode == ReportExecutionMode.Web) {
+                if (custom_texts[0].length>0 && state.ReportExecutionMode == ReportExecutionMode.Web) {
                     confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
                 }
             }
