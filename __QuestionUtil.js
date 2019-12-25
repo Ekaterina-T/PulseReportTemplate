@@ -284,6 +284,7 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
         var report = context.report;
+        var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
 
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
@@ -299,7 +300,7 @@ class QuestionUtil {
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
+            cachedTxt = confirmit.ReportDataCache(cacheKey);
         }
 
         // if Redis doesn't have cached question, look it up in the DB table
@@ -313,7 +314,7 @@ class QuestionUtil {
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-            var custom_id = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
+            var custom_id = baby_p_number+"_"+qId;
             var custom_texts;
 
             try {
@@ -325,7 +326,7 @@ class QuestionUtil {
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
                 if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-                    confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
+                    confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
                 }
             }
         }
