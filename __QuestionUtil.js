@@ -283,6 +283,7 @@ class QuestionUtil {
         var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;
+        var report = context.report;
 
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
@@ -313,7 +314,13 @@ class QuestionUtil {
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var custom_id = baby_p_number+"_"+qId;
-            var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
+            var custom_texts;
+
+            try {
+                custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
+            } catch(e) {
+                custom_texts= table.GetColumnValues("__l9", "id", custom_id);
+            }
 
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
