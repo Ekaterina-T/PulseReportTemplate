@@ -313,7 +313,7 @@ class QuestionUtil {
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-            var custom_id = baby_p_number+"_"+qId;
+            var custom_id = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
             var custom_texts;
 
             try {
