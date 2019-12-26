@@ -16,6 +16,7 @@ class CacheUtil {
 
         var log = context.log;
         var pageContext = context.pageContext;
+        var lang = context.report.CurrentLanguage;
         var key = pageContext.Items['userEmail']+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId;
 
         return key;
