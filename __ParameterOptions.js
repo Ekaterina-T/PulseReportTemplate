@@ -116,6 +116,10 @@ class ParameterOptionsBuilder {
             return paramNames;
         }
 
+        if (parameterInfo.locationType === 'FunctionCall') {
+            return parameterInfo.path; //how to pass functions in JScript?
+        }
+
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }
 
@@ -305,6 +309,19 @@ class ParameterOptionsBuilder {
 
     }
 
+    /**
+     *@param {object} context
+     *@param {string} unique 'path' to call proper function
+     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+    static private function getOptions_DynamicList(context, path) {
+
+        if(path === 'SurveyTracker.getAllSurveyNames') {
+            return SurveyTracker.getAllSurveyNames(context);
+        }
+
+        throw new Error('ParameterOptionsBuilder.getOptions_FunctionCall: cannot find handler for path: '+path);
+    }
 
     //------------------------------------------------------------------------------------------------------
 
@@ -351,6 +368,10 @@ class ParameterOptionsBuilder {
 
         if (type === 'ParameterOptionList') {
             return getOptions_ParameterList(context, resource);
+        }
+
+        if(type === 'DynamicList') {
+            return getOptions_DynamicList(context, resource);
         }
 
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
