@@ -64,7 +64,7 @@ class PageTrend {
         for (var i = 0; i < headers.length; i++) {
             var header = TableUtil.getTrendHeader(context, headers[i]);
             if(projectHeader) {
-                table.RowHeaders.Add(projectHeader.SubHeaders.Add(header);)
+                table.RowHeaders.Add(projectHeader.SubHeaders.Add(header));
             } else {
                 table.RowHeaders.Add(header);
             }
