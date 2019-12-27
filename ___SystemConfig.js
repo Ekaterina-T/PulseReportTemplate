@@ -9,7 +9,7 @@ public class SystemConfig {
   */
     static var reportParameterValuesMap = {
 
-        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys']},
+        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
         'p_projectSelector2': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'allSurveys']},
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
