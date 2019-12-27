@@ -379,8 +379,12 @@ class ParamUtil {
         var parameterName = parameter.ParameterId;
         var log = context.log;
 
+        var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+        var trackerString = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'TrackerString');
+        var isTrackerStringProvided = trackerString && trackerString.length >0;
+
         if (parameterName === 'p_projectSelector') {
-            return !DataSourceUtil.isProjectSelectorNotNeeded(context);
+            return isPulseProgram;
         }
 
         if (parameterName === 'p_Results_CountsPercents') {
@@ -410,7 +414,15 @@ class ParamUtil {
         // TO DO: pageNames are specified explicitly - this is very bad
         // think how to pass load condition differently, so that LCL would call some func and would be more flexible
         if (parameterName === 'p_Results_TableTabSwitcher') {
-            return !DataSourceUtil.isProjectSelectorNotNeeded(context); // only needed for pulse programs
+            return isPulseProgram; // only needed for pulse programs
+        }
+
+        if (parameterName === 'p_Trends_trackerSurveys') {
+            return isPulseProgram && isTrackerStringProvided; // only needed for pulse programs
+        }
+
+        if (parameterName === 'p_AcrossAllSurveys') {
+            return isPulseProgram && isTrackerStringProvided; // only needed for pulse programs
         }
 
         if (parameterName === 'p_Results_BreakBy') {
