@@ -380,7 +380,7 @@ class ParamUtil {
         var log = context.log;
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
-        var trackerString = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'TrackerString');
+        var trackerString = isPulseProgram && DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'TrackerString');
         var isTrackerStringProvided = trackerString && trackerString.length >0;
 
         if (parameterName === 'p_projectSelector') {
