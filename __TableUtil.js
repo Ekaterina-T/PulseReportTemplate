@@ -293,7 +293,7 @@ class TableUtil {
      *@param {object} header {Type: "Question"|"Dimension", Code: "qid"|"catId"}
      */
 
-    static function getTrendHeader(context, header) {
+    static function getTrendHeader(context, header, parentHeader) {
 
         var report = context.report;
         var log = context.log;
@@ -351,7 +351,6 @@ class TableUtil {
      *@param {object} context
      *@param {string} categorization id
      */
-
     static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
@@ -375,7 +374,6 @@ class TableUtil {
     *@param {object} context
     *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
     */
-  
     static function getHeaderDescriptorObject(context, configItem) {
         
         var header = {}; // prepare param for getTrendHeader

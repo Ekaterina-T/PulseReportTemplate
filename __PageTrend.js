@@ -42,11 +42,8 @@ class PageTrend {
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function
+    static function tableTrend_Render(context) {
 
-    tableTrend_Render(context) {
-
-        var report = context.report;
         var state = context.state;
         var table = context.table;
         var suppressSettings = context.suppressSettings;
@@ -54,9 +51,18 @@ class PageTrend {
 
         // add rows (1 or more KPI questions)
         var headers = ParamUtil.GetSelectedOptions(context, "p_TrendQs");
+        var projectHeader: HeaderQuestion; //for pulse programs
+
+        // in pulse program Trend shows comparison between surveys
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
+            var pname_qe = QuestionUtil.getQuestionnaireElement(context, 'pname');
+            projectHeader = new HeaderQuestion(pname_qe);
+            projectHeader.IsCollapsed = false;
+            projectHeader.ShowTotals = !state.Parameters.IsNull('p_AcrossAllSurveys');
+        }
 
         for (var i = 0; i < headers.length; i++) {
-            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i], projectHeader));
         }
 
         // add column - trending by Date variable

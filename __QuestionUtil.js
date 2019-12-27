@@ -67,7 +67,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {QuestionnaireElement} qe
      */
-
     static function getQuestionnaireElement(context, questionId) {
 
         var log = context.log;
@@ -97,7 +96,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {string} title question title
      */
-
     static function getQuestionTitle (context, questionId) {
 
         var log = context.log;
@@ -142,7 +140,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {Answer []} answers or scale for grids
      */
-
     static function getQuestionAnswers (context, questionId) {
 
         var state = context.state;
@@ -166,7 +163,6 @@ class QuestionUtil {
         throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list. Check if it\'s open text question without \'single in reporting\' property.');
 
     }
-
 
     /*
      * Check if a question has a specific answer code.
@@ -194,7 +190,6 @@ class QuestionUtil {
      * @param {string}
      * @returns {object} { beforePoint: beforeLastPoint, afterLastPoint: afterLastPoint}
      */
-
     static function splitStringByLastPoint (string) {
 
         var positionOfLastPoint = string.lastIndexOf('.'); // grid: gridId.answerId
@@ -208,7 +203,6 @@ class QuestionUtil {
    * @param {string} questionId with dot
    * @returns {string} questionId with underscore instead of dot
    */
-
     static function getQuestionIdWithUnderscoreInsteadOfDot (questionIdWithDot) {
         return questionIdWithDot.replace(/\./g,'_');
     }
