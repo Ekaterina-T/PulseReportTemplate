@@ -300,17 +300,17 @@ class TableUtil {
 
         // header is question from parameter
         if (header.Type && header.Type === 'Question') {
-            return getTrendQuestionHeader(context, header.Code);
+            return getTrendQuestionHeader(context, header.Code, parentHeader);
         }
 
         // header is question from config
         if (typeof header === 'string') {
-            return getTrendQuestionHeader(context, header);
+            return getTrendQuestionHeader(context, header, parentHeader);
         }
 
         //header is dimension
         if (header.Type && header.Type === 'Dimension') {
-            return getTrendCategorizationHeader(context, header.Code);
+            return getTrendCategorizationHeader(context, header.Code, parentHeader);
         }
 
         throw new Error('TableUtil.getTrendHeader: cannot process header ' + JSON.stringify(header));
@@ -323,7 +323,7 @@ class TableUtil {
      *@param {Header} parent header
      */
 
-    static function getTrendQuestionHeader(context, qid) {
+    static function getTrendQuestionHeader(context, qid, parentHeader) {
 
         var report = context.report;
 
@@ -351,7 +351,7 @@ class TableUtil {
      *@param {object} context
      *@param {string} categorization id
      */
-    static function getTrendCategorizationHeader(context, catId) {
+    static function getTrendCategorizationHeader(context, catId, parentHeader) {
 
         var report = context.report;
         var row: HeaderCategorization = new HeaderCategorization();
