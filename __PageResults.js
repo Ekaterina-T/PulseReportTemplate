@@ -814,7 +814,7 @@ class PageResults {
             surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
             surveySegment.SegmentType = HeaderSegmentType.Expression;
             surveySegment.HideData = true;
-            surveySegment.Expression = FiltersNEW.getHierarchyAndWaveFilter(context, null, null, survey); 
+            surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey); 
 
             surveySegment.Label = new Label(report.CurrentLanguage, survey);
             //calc score
