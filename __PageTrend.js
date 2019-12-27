@@ -62,7 +62,12 @@ class PageTrend {
         }
 
         for (var i = 0; i < headers.length; i++) {
-            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i], projectHeader));
+            var header = TableUtil.getTrendHeader(context, headers[i]);
+            if(projectHeader) {
+                table.RowHeaders.Add(projectHeader.SubHeaders.Add(header););
+            } else {
+                table.RowHeaders.Add(header);
+            }
         }
 
         // add column - trending by Date variable

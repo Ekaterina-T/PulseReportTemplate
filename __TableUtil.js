@@ -293,7 +293,7 @@ class TableUtil {
      *@param {object} header {Type: "Question"|"Dimension", Code: "qid"|"catId"}
      */
 
-    static function getTrendHeader(context, header, parentHeader) {
+    static function getTrendHeader(context, header) {
 
         var report = context.report;
         var log = context.log;
@@ -323,7 +323,7 @@ class TableUtil {
      *@param {Header} parent header
      */
 
-    static function getTrendQuestionHeader(context, qid, parentHeader) {
+    static function getTrendQuestionHeader(context, qid) {
 
         var report = context.report;
 
@@ -351,7 +351,7 @@ class TableUtil {
      *@param {object} context
      *@param {string} categorization id
      */
-    static function getTrendCategorizationHeader(context, catId, parentHeader) {
+    static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
         var row: HeaderCategorization = new HeaderCategorization();
