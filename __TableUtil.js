@@ -300,17 +300,17 @@ class TableUtil {
 
         // header is question from parameter
         if (header.Type && header.Type === 'Question') {
-            return getTrendQuestionHeader(context, header.Code, parentHeader);
+            return getTrendQuestionHeader(context, header.Code);
         }
 
         // header is question from config
         if (typeof header === 'string') {
-            return getTrendQuestionHeader(context, header, parentHeader);
+            return getTrendQuestionHeader(context, header);
         }
 
         //header is dimension
         if (header.Type && header.Type === 'Dimension') {
-            return getTrendCategorizationHeader(context, header.Code, parentHeader);
+            return getTrendCategorizationHeader(context, header.Code);
         }
 
         throw new Error('TableUtil.getTrendHeader: cannot process header ' + JSON.stringify(header));
