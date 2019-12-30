@@ -581,7 +581,7 @@ class PageResults {
         var tabSwitcher = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher');
 
         if (tabSwitcher[0]!=='custom') {
-            var surveyCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'SurveyBasedComparisons');
+            var surveyCompCols = getBenchmarkSurveys(context);
             for (i = 0; i < surveyCompCols.length; i++) {
 
                 var surveyCompContent: HeaderContent = new HeaderContent();
@@ -789,40 +789,14 @@ class PageResults {
         var tabSwitcher = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher');
     
         if (tabSwitcher[0]!=='custom') {
-            if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'SurveyBasedComparisons')) {
-                var surveysToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'SurveyBasedComparisons');
+                var surveysToCompare = getBenchmarkSurveys(context);
                 
                 for(var i=0; i<surveysToCompare.length; i++) {
                     tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
                 }
-            }
          }
 
     }
-
-      /*
-        * Adds segment with proper filter by survey
-        * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-        * @param {string} survey - project id
-        */
-        static function tableBenchmarks_addSurveyBasedComparison(context, survey) {
-
-            //var log = context.log;
-            var report = context.report;
-            var surveySegment: HeaderSegment = new HeaderSegment();
-            
-            surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
-            surveySegment.SegmentType = HeaderSegmentType.Expression;
-            surveySegment.HideData = true;
-            surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey); 
-
-            surveySegment.Label = new Label(report.CurrentLanguage, survey);
-            //calc score
-            var newHeaders = addScore(context);
-            newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
-            newHeaders[1].SubHeaders.Add(surveySegment);
-
-        }
 
 
     /*
@@ -862,6 +836,31 @@ class PageResults {
         newHeaders[1].SubHeaders.Add(levelSegment);
 
     }
+
+          /*
+        * Adds segment with proper filter by survey
+        * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+        * @param {string} survey - project id
+        */
+       static function tableBenchmarks_addSurveyBasedComparison(context, survey) {
+
+        //var log = context.log;
+        var report = context.report;
+        var surveySegment: HeaderSegment = new HeaderSegment();
+        
+        surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        surveySegment.SegmentType = HeaderSegmentType.Expression;
+        surveySegment.HideData = true;
+        surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey.Code); 
+
+        surveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
+        //calc score
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+        newHeaders[1].SubHeaders.Add(surveySegment);
+
+    }
+
 
     /**
      *  gets previous wave column
@@ -940,7 +939,7 @@ class PageResults {
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
-        var surveysToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'SurveyBasedComparisons');
+        var surveysToCompare = getBenchmarkSurveys(context);
 
         if(benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length>0) || surveysToCompare) {
             return true;
@@ -957,5 +956,23 @@ class PageResults {
     static function table_Benchmarks_hide(context) {
         return !isBenchmarkAvailable(context);
     }
+
+      /*
+        * Gets benchmark surveys
+        *  @param {object} context: {state: state, report: report, log: log, table: table}
+        *  @return {Array} array of pids
+        */
+
+        static function getBenchmarkSurveys(context) {
+            var surveysToCompare = [];
+            var previousSurvey = SurveyTracker.getPreviousSurveyToSelected(context);
+            var PreviousSurveyExists = (previousSurvey)?true:false;
+            
+            if (previousSurvey.Code) {
+                surveysToCompare.push(previousSurvey);
+            }
+            
+        return surveysToCompare;
+        }
 
 }
