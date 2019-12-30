@@ -317,7 +317,7 @@ class ParameterOptionsBuilder {
     static private function getOptions_DynamicList(context, path) {
 
         if(path === 'SurveyTracker.getAllSurveyNames') {
-            return SurveyTracker.getAllPreviousSurveysToSelected(context);//.getAllSurveyNames(context);
+            return SurveyTracker.getAllSurveyNames(context);
         }
 
         throw new Error('ParameterOptionsBuilder.getOptions_FunctionCall: cannot find handler for path: '+path);
