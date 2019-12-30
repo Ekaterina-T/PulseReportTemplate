@@ -51,22 +51,31 @@ class PageTrend {
 
         // add rows (1 or more KPI questions)
         var headers = ParamUtil.GetSelectedOptions(context, "p_TrendQs");
-        var projectHeader: HeaderQuestion; //for pulse programs
 
         // in pulse program Trend shows comparison between surveys
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
-            var pname_qe = QuestionUtil.getQuestionnaireElement(context, 'pname');
-            projectHeader = new HeaderQuestion(pname_qe);
-            projectHeader.IsCollapsed = false;
-            projectHeader.ShowTotals = !state.Parameters.IsNull('p_AcrossAllSurveys');
-        }
 
-        for (var i = 0; i < headers.length; i++) {
-            var header = TableUtil.getTrendHeader(context, headers[i]);
-            if(projectHeader) {
-                table.RowHeaders.Add(projectHeader.SubHeaders.Add(header));
-            } else {
-                table.RowHeaders.Add(header);
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
+            var projectHQ: HeaderQuestion = new HeaderQuestion(qe);
+            projectHQ.IsCollapsed = false;
+            projectHQ.Sorting.Enabled = false;
+            projectHQ.ShowTotals = false;
+
+            if(!state.Parameters.IsNull('p_AcrossAllSurveys')) { //need to show average over all surveys
+                projectHQ.ShowTotals = true;
+                var qMask : MaskFlat = new MaskFlat();
+                qMask.IsInclusive = true;
+                projectHQ.AnswerMask = qMask;
+            }
+
+            for (var i = 0; i < headers.length; i++) {
+                projectHQ.SubHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
+            }
+            table.RowHeaders.Add(projectHQ);
+
+        } else {
+            for (var i = 0; i < headers.length; i++) {
+                table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
             }
         }
 
@@ -76,6 +85,7 @@ class PageTrend {
 
         // global table settings
         table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Rows = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 
