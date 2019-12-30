@@ -80,7 +80,16 @@ class SurveyTracker {
   */
     static function getPreviousSurveyToSelected(context) {
       var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-      return getOnePreviousSurvey(context, projectSelected);
+      return getOnePreviousSurvey(context, projectSelected[0]);
+    }
+
+    /**
+     *  Gets all previous surveys to survey selected in report dropdown.
+     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
+     */
+    static function getAllPreviousSurveysToSelected(context) {
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        return getAllPreviousSurveys(context, projectSelected[0]);
     }
   
   /**
