@@ -85,7 +85,7 @@ class PagePulseSurveyData {
     /**
      * @param {Object} context
      */
-    static public tableAllSurveys_PidPname_Render(context) {
+    static public function tableAllSurveys_PidPname_Render(context) {
 
         var table = context.table;
 
@@ -111,7 +111,7 @@ class PagePulseSurveyData {
     /**
      * @param {Object} context
      */
-    static public tableAllSurveys_PidPname_Hide(context) {
+    static public function tableAllSurveys_PidPname_Hide(context) {
         return DataSourceUtil.isProjectSelectorNotNeeded(context);
     }
 }
