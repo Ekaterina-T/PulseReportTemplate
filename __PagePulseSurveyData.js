@@ -89,8 +89,8 @@ class PagePulseSurveyData {
 
         var table = context.table;
 
-        var qe_pid = QuestionUtil.getQuestionnaireElement(context, 'pid');
-        var qe_pname = QuestionUtil.getQuestionnaireElement(context, 'pname');
+        var qe_pid:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pid');
+        var qe_pname:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
         var pid: HeaderQuestion = new HeaderQuestion(qe_pid);
         var pname: HeaderQuestion = new HeaderQuestion(qe_pname);
 
