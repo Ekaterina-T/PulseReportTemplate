@@ -118,7 +118,7 @@ class SurveyTracker {
   static function getAllSurveyNames(context) {
     return PulseSurveysInfoFabric.getPulseSurveysInfo(context,  {
           type: 'ReportTable', 
-          tableName:'PulseSurveyData:AllSurveys',
+          tableName:'PulseSurveyData:AllSurveys_PidPname',
           isEmptyOptionNeeded: false, 
           additionalInfo: {'CreatedByEndUserName': false, 'Status': false}// order is important, do not delete anything
         }).getPulseSurveys(context);
