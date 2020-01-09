@@ -278,7 +278,11 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
         var report = context.report;
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> ff8c576264cab30f98bd39d1067e5a6946b34400
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -310,11 +314,13 @@ class QuestionUtil {
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var custom_id = baby_p_number+"_"+qId;
             var custom_texts;
+            
 
             try {
                 custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
                 if (custom_texts.Count) {
-                    if (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null )  {
+                    var customTextIsEmpty = (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null) ? true : false;
+                    if (customTextIsEmpty)  {
                        custom_texts= table.GetColumnValues("__l9", "id", custom_id);
                     }
                  }
@@ -324,7 +330,8 @@ class QuestionUtil {
 
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
-                if (custom_texts[0]!==undefined && custom_texts[0]!=='' && custom_texts[0]!==null && state.ReportExecutionMode == ReportExecutionMode.Web) {
+                var customTextNotEmpty = (custom_texts[0]!==undefined && custom_texts[0]!=='' && custom_texts[0]!==null) ? true : false;
+                if (customTextNotEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
                     confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
                 }
             }

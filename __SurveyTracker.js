@@ -22,7 +22,7 @@ class SurveyTracker {
   */
   static function getOnePreviousSurvey(context, trackerId) {
     var allSurveys = getTrackerStringFromConfig(context);
-    var currentTrackerIndex = 0;
+    var currentTrackerIndex = -1;
     var previousSurveyId = '';
 
     for (var i = 0; i < allSurveys.length; i++) {
@@ -32,11 +32,13 @@ class SurveyTracker {
         }
     }
 
-    for (var j = currentTrackerIndex + 1; j < allSurveys.length; j++) {
-        if (allSurveys[j] != '') {
-            previousSurveyId = allSurveys[j];
-          	break;
-        }
+    if (currentTrackerIndex != -1) {
+     for (var j = currentTrackerIndex + 1; j < allSurveys.length; j++) {
+         if (allSurveys[j] != '') {
+             previousSurveyId = allSurveys[j];
+          	 break;
+         }
+     }
     }
     return getSurveyName(context, previousSurveyId);
   }
@@ -48,7 +50,7 @@ class SurveyTracker {
   */
   static function getAllPreviousSurveys(context, trackerId) {
     var allSurveys = getTrackerStringFromConfig(context);
-    var currentTrackerIndex = 0;
+    var currentTrackerIndex = -1;
     var previousSurveyIds = [];
 
     for (var i = 0; i < allSurveys.length; i++) {
@@ -58,15 +60,17 @@ class SurveyTracker {
             }
         }
 
-     for (var j = currentTrackerIndex + 1; j < allSurveys.length; j++) {
-            if (allSurveys[j] != '') {
-                previousSurveyIds.push(allSurveys[j]);
-            }
-        }
     var previousSurveys = [];
-    for (var i = 0; i < previousSurveyIds.length; i++) {
-      previousSurveys.push(getSurveyName(previousSurveyIds[i]));
-    }
+    if (currentTrackerIndex != -1) {
+      for (var j = currentTrackerIndex + 1; j < allSurveys.length; j++) {
+              if (allSurveys[j] != '') {
+                  previousSurveyIds.push(allSurveys[j]);
+              }
+          }
+      for (var i = 0; i < previousSurveyIds.length; i++) {
+        previousSurveys.push(getSurveyName(previousSurveyIds[i]));
+      }
+     }
     return previousSurveys;
   }
 
@@ -76,7 +80,16 @@ class SurveyTracker {
   */
     static function getPreviousSurveyToSelected(context) {
       var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-      return getOnePreviousSurvey(context, projectSelected);
+      return getOnePreviousSurvey(context, projectSelected[0]);
+    }
+
+    /**
+     *  Gets all previous surveys to survey selected in report dropdown.
+     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
+     */
+    static function getAllPreviousSurveysToSelected(context) {
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        return getAllPreviousSurveys(context, projectSelected[0]);
     }
   
   /**
@@ -105,7 +118,7 @@ class SurveyTracker {
   static function getAllSurveyNames(context) {
     return PulseSurveysInfoFabric.getPulseSurveysInfo(context,  {
           type: 'ReportTable', 
-          tableName:'PulseSurveyData:AllSurveys',
+          tableName:'PulseSurveyData:AllSurveys_PidPname',
           isEmptyOptionNeeded: false, 
           additionalInfo: {'CreatedByEndUserName': false, 'Status': false}// order is important, do not delete anything
         }).getPulseSurveys(context);

@@ -2,7 +2,6 @@ class PagePulseSurveyData {
 
     /**
      * @param {Object} context
-     * @param {string} pageId - not mandatory
      */
     static public function tablePulseSurveyContentInfo_Render(context) {
 
@@ -81,5 +80,38 @@ class PagePulseSurveyData {
         table.Caching.Enabled = false;
 
         //log.LogDebug('pulse filtering table build end')
+    }
+
+    /**
+     * @param {Object} context
+     */
+    static public function tableAllSurveys_PidPname_Render(context) {
+
+        var table = context.table;
+
+        var qe_pid:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pid');
+        var qe_pname:QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
+        var pid: HeaderQuestion = new HeaderQuestion(qe_pid);
+        var pname: HeaderQuestion = new HeaderQuestion(qe_pname);
+
+        pid.IsCollapsed = false;
+        pid.ShowTotals = false;
+
+        pname.IsCollapsed = false;
+        pname.ShowTotals = false;
+
+        pid.SubHeaders.Add(pname);
+
+        table.RowHeaders.Add(pid);
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
+
+    }
+
+    /**
+     * @param {Object} context
+     */
+    static public function tableAllSurveys_PidPname_Hide(context) {
+        return DataSourceUtil.isProjectSelectorNotNeeded(context);
     }
 }
