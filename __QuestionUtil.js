@@ -278,8 +278,7 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
         var report = context.report;
-        var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
-
+        
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
@@ -291,6 +290,7 @@ class QuestionUtil {
 
         var cachedTxt;
         var baby_p_number = codes[0];
+        var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web) {
@@ -313,19 +313,25 @@ class QuestionUtil {
 
             try {
                 custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
+                if (custom_texts.Count) {
+                    if (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null )  {
+                       custom_texts= table.GetColumnValues("__l9", "id", custom_id);
+                    }
+                 }
             } catch(e) {
                 custom_texts= table.GetColumnValues("__l9", "id", custom_id);
             }
 
             if (custom_texts.Count) {
                 cachedTxt = custom_texts[0];
-                if (custom_texts[0].length>0 && state.ReportExecutionMode == ReportExecutionMode.Web) {
+                if (custom_texts[0]!==undefined && custom_texts[0]!=='' && custom_texts[0]!==null && state.ReportExecutionMode == ReportExecutionMode.Web) {
                     confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
                 }
             }
         }
 
-        return cachedTxt;
+        //if empty cell or no such row in db custom table, show qid as label
+        return cachedTxt  || qId;
     }
 
 }
