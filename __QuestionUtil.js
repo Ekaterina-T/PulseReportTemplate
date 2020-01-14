@@ -287,51 +287,53 @@ class QuestionUtil {
         if (codes.length == 0) {
             return null;
         }
+        log.LogDebug('1');
 
-        var cachedTxt;
         var baby_p_number = codes[0];
         var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
+        var cachedTxt = confirmit.ReportDataCache(cacheKey);
+        log.LogDebug('2: cachedTxt='+cachedTxt+'('+(!!cachedTxt)+')');
 
         // Redis is not available in export
-        if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-            cachedTxt = confirmit.ReportDataCache(cacheKey);
+        if (state.ReportExecutionMode == ReportExecutionMode.Web && cachedTxt) {
+            return cachedTxt;
         }
+        log.LogDebug('2');
 
-        // if Redis doesn't have cached question, look it up in the DB table
-        if (!cachedTxt) {
-            var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
-            var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+        // if Redis doesn't have cached question or Excel Export mode, look it up in the DB table
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
 
-            if(!schemaId && !tableName) { // storage for baby survey custom questions
-                throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
-            }
-
-            var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-            var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-            var custom_id = baby_p_number+"_"+qId;
-            var custom_texts;
-            
-
-            try {
-                custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
-                if (custom_texts.Count) {
-                    var customTextIsEmpty = (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null) ? true : false;
-                    if (customTextIsEmpty)  {
-                       custom_texts= table.GetColumnValues("__l9", "id", custom_id);
-                    }
-                 }
-            } catch(e) {
-                custom_texts= table.GetColumnValues("__l9", "id", custom_id);
-            }
-
-            if (custom_texts.Count) {
-                cachedTxt = custom_texts[0];
-                var customTextNotEmpty = (custom_texts[0]!==undefined && custom_texts[0]!=='' && custom_texts[0]!==null) ? true : false;
-                if (customTextNotEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
-                    confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
-                }
-            }
+        if(!schemaId && !tableName) { // storage for baby survey custom questions
+            throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
         }
+        log.LogDebug('3');
+
+        var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+        var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+        var custom_id = baby_p_number+"_"+qId;
+        var custom_texts;
+        var customTextIsEmpty
+        log.LogDebug('4: custom_id='+custom_id);
+
+        try {
+            custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
+
+            customTextIsEmpty = custom_texts.Count && (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+            if(customTextIsEmpty) { //no translation in current lang -> try English
+                custom_texts= table.GetColumnValues("__l9l9", "id", custom_id);
+            }
+        } catch(e) { // no translation found -> try label as in old reports
+            custom_texts= table.GetColumnValues("__l9", "id", custom_id);
+        }
+        log.LogDebug('5');
+
+        customTextIsEmpty = custom_texts.Count && (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+        if (!customTextIsEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
+            cachedTxt = custom_texts[0];
+            confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
+        }
+        log.LogDebug('6');
 
         //if empty cell or no such row in db custom table, show qid as label
         return cachedTxt  || qId;
