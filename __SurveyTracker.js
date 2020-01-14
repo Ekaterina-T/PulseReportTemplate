@@ -5,7 +5,7 @@ class SurveyTracker {
     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
     * @return {Array} - tracker surveys related to the selected pulse survey
     */
-    static function getTrackerStringFromConfig(context) {
+    static function getTrackerStringFromConfig(context, trackerStringId) {
         var log = context.log;
 
         //only relevant for pulse programs
@@ -13,11 +13,15 @@ class SurveyTracker {
             return [];
         }
 
-        var trackerStrings = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'TrackerStrings');
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        //search for trackerStringId - pid, if nothing else specified explicitly
+        if(!trackerStringId) {
+            trackerStringId = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        }
 
-        if(trackerStrings.hasOwnProperty(projectSelected)) {
-            return trackerStrings[projectSelected];
+        var trackerStrings = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'TrackerStrings');
+
+        if(trackerStrings.hasOwnProperty(trackerStringId)) {
+            return trackerStrings[trackerStringId];
         } else {
             return [];
         }
