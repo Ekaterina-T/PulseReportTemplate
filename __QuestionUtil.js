@@ -278,6 +278,8 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
         var report = context.report;
+
+        log.LogDebug('qId='+qId)
         
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
@@ -298,7 +300,7 @@ class QuestionUtil {
         if (state.ReportExecutionMode == ReportExecutionMode.Web && cachedTxt) {
             return cachedTxt;
         }
-        log.LogDebug('2');
+        log.LogDebug('3');
 
         // if Redis doesn't have cached question or Excel Export mode, look it up in the DB table
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
@@ -307,14 +309,14 @@ class QuestionUtil {
         if(!schemaId && !tableName) { // storage for baby survey custom questions
             throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
         }
-        log.LogDebug('3');
+        log.LogDebug('4');
 
         var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
         var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
         var custom_id = baby_p_number+"_"+qId;
         var custom_texts;
         var customTextIsEmpty
-        log.LogDebug('4: custom_id='+custom_id);
+        log.LogDebug('5: custom_id='+custom_id);
 
         try {
             custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
@@ -326,14 +328,14 @@ class QuestionUtil {
         } catch(e) { // no translation found -> try label as in old reports
             custom_texts= table.GetColumnValues("__l9", "id", custom_id);
         }
-        log.LogDebug('5');
+        log.LogDebug('6');
 
         customTextIsEmpty = custom_texts.Count && (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
         if (!customTextIsEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = custom_texts[0];
             confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
         }
-        log.LogDebug('6');
+        log.LogDebug('7');
 
         //if empty cell or no such row in db custom table, show qid as label
         return cachedTxt  || qId;
