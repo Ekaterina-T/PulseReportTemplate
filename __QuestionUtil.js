@@ -292,7 +292,9 @@ class QuestionUtil {
         log.LogDebug('1');
 
         var baby_p_number = codes[0];
+        log.LogDebug('baby_p_number='+baby_p_number)
         var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
+        log.LogDebug('cacheKey='+cacheKey)
         var cachedTxt = confirmit.ReportDataCache(cacheKey);
         log.LogDebug('2: cachedTxt='+cachedTxt+'('+(!!cachedTxt)+')');
 
