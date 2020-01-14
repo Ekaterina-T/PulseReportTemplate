@@ -14,7 +14,6 @@ class PageCategoricalDrilldown {
         var text = context.text;
 
         var drillDownQId = state.Parameters.GetString('p_Drilldown');
-        log.LogDebug('drillDownQId='+drillDownQId)
         text.Output.Append(QuestionUtil.getQuestionTitle(context, drillDownQId));
 
     }
