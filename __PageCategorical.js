@@ -262,9 +262,9 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object[]} - array of objects containing information about categoricals with pie view
      */
-    static function getPieCollection(context) {
+    static function getPieCollection(context, from) {
         var log = context.log;
-        log.LogDebug('getPieCollection start');
+        log.LogDebug('getPieCollection start: '+from);
         var singleCategoricals = getCategoricalResult(context, 'single');
         log.LogDebug('getPieCollection 1');
         singleCategoricals.sort(SortCategoricals);
@@ -339,7 +339,7 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
         var text = context.text;
 log.LogDebug('buildCategoricalTiles start');
         // render cards with pies
-        var pies = getPieCollection(context);
+        var pies = getPieCollection(context, 'buildCategoricalTiles');
 
         log.LogDebug('pies: '+JSON.stringify(pies));
 

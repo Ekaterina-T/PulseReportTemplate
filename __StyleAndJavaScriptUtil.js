@@ -76,7 +76,7 @@ class StyleAndJavaScriptUtil {
             }
     
             if (pageId === 'Categorical_') {
-                properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context)));
+                properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context, 'jsutil')));
                 properties.push('pieColors: '+JSON.stringify(Config.pieColors));
             }
     
