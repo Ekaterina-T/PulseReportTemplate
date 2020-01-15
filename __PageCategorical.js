@@ -198,19 +198,24 @@ class PageCategorical {
 
         var report = context.report;
         var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         log.LogDubug('getCategoricalResult start');
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        log.LogDubug('1');
+
 
         // depending on <answerLimit> display a pie or list of topN answers
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "categoricalAnswerLimit");
+        log.LogDubug('2');
 
         // show topN answers in a list for questions with more than <answerLimit> options
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
+        log.LogDubug('3');
 
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
+        log.LogDubug('4');
         var Qs = defineCategoricalQuestionsList(context, tableType);
+        log.LogDubug('5');
         log.LogDubug('Qs='+JSON.stringify(Qs));
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
