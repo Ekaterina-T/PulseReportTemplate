@@ -259,14 +259,18 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
      */
     static function getPieCollection(context) {
         var log = context.log;
+        log.LogDebug('getPieCollection start');
         var singleCategoricals = getCategoricalResult(context, 'single');
+        log.LogDebug('getPieCollection 1');
         singleCategoricals.sort(SortCategoricals);
         var pieCollection = [];
+        log.LogDebug('getPieCollection 2');
         for (var i=0; i<singleCategoricals.length; i++) {
             if (singleCategoricals[i].type != 'pie')
                 break;
             pieCollection.push(singleCategoricals[i]);
         }
+        log.LogDebug('getPieCollection end');
         return pieCollection;
 
     }
@@ -328,7 +332,7 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
 
         var log = context.log;
         var text = context.text;
-
+log.LogDebug('buildCategoricalTiles start');
         // render cards with pies
         var pies = getPieCollection(context);
 
@@ -381,5 +385,6 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
         if(pies.length + lists.length === 0) {
             text.Output.Append(TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionsToDisplay'));
         }
+        log.LogDebug('buildCategoricalTiles end');
     }
 }
