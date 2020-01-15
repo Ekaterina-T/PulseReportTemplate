@@ -278,6 +278,7 @@ class QuestionUtil {
         var confirmit = context.confirmit;
         var state = context.state;
         var report = context.report;
+
         
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
