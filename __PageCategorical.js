@@ -198,7 +198,6 @@ class PageCategorical {
 
         var report = context.report;
         var log = context.log;
-        log.LogDebug('getCategoricalResult start');
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // depending on <answerLimit> display a pie or list of topN answers
@@ -213,7 +212,6 @@ class PageCategorical {
         var categoricals = [];
 
         for (var i=0; i<Qs.length; i++) {
-log.LogDebug('i='+i+' qid='+Qs[i]);
             var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
             var answerCount = Int32.Parse(newAnswerCount.length);
 
@@ -221,12 +219,10 @@ log.LogDebug('i='+i+' qid='+Qs[i]);
                 answerCount--;
             }
 
-            log.LogDebug('1')
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
-            log.LogDebug('2 title='+title);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
-            log.LogDebug('3')
+
             var result = [];
             for (var j=0; j<displayNumberOfAnswers; j++) {
 
@@ -236,17 +232,13 @@ log.LogDebug('i='+i+' qid='+Qs[i]);
                     var answerName = report.TableUtils.GetRowHeaderCategoryTitles(tableName)[row_index+j][0];
                     var answerPercent = (100*report.TableUtils.GetCellValue(tableName,row_index+j+1,1).Value);
                     result.push({name: answerName, base: answerBase, y: answerPercent});
-
                 }
             }
-            log.LogDebug('4')
             categoricals.push({qid: Qs[i], title: title, type: displayType, result: result, order: i});
             row_index += displayNumberOfAnswers;
 
         }
 
-
-        log.LogDebug('getCategoricalResult end');
         return categoricals;
     }
 
@@ -259,7 +251,6 @@ log.LogDebug('i='+i+' qid='+Qs[i]);
      */
     static function getPieCollection(context, from) {
         var log = context.log;
-        log.LogDebug('getPieCollection: '+from);
         var singleCategoricals = getCategoricalResult(context, 'single');
         singleCategoricals.sort(SortCategoricals);
 
