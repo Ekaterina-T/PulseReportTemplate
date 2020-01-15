@@ -324,9 +324,11 @@ class QuestionUtil {
         }
 
         customTextIsEmpty = custom_texts.Count==0 || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
-        if (!customTextIsEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
+        if (!customTextIsEmpty) {
             cachedTxt = custom_texts[0];
-            confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
+            if(state.ReportExecutionMode == ReportExecutionMode.Web) {
+                confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
+            }
         }
 
         //if empty cell or no such row in db custom table, show qid as label
