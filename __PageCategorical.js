@@ -7,11 +7,9 @@ class PageCategorical {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-
     static function Hide(context){
         return false;
     }
-
 
     /**
      * @memberof PageCategorical
@@ -19,7 +17,6 @@ class PageCategorical {
      * @description function to render the page
      * @param {Object} context - {component: page, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-
     static function Render(context){
 
     }
@@ -47,7 +44,6 @@ class PageCategorical {
 
         return Qs1.concat(Qs2);
     }
-
 
     /**
      * @memberof PageCategorical
@@ -92,7 +88,6 @@ class PageCategorical {
      * @description function to build the categorical table
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
-
     static function tableCategorical_Render(context, tableType) {
 
         var table = context.table;
@@ -159,7 +154,6 @@ class PageCategorical {
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function tableSingleCategorical_Render
@@ -184,7 +178,6 @@ class PageCategorical {
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function getCategoricalResult
@@ -201,12 +194,13 @@ class PageCategorical {
      * @property {String} base - # of responses
      * @property {String} y - vertical percent
      */
-
     static function getCategoricalResult(context, tableType) {
 
         var report = context.report;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        log.LogDubug('getCategoricalResult start');
 
         // depending on <answerLimit> display a pie or list of topN answers
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "categoricalAnswerLimit");
@@ -217,11 +211,12 @@ class PageCategorical {
 
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
         var Qs = defineCategoricalQuestionsList(context, tableType);
+        log.LogDubug('Qs='+JSON.stringify(Qs));
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
 
         for (var i=0; i<Qs.length; i++) {
-
+log.LogDubug('i='+i+' qid='+Qs[i]);
             var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
             var answerCount = Int32.Parse(newAnswerCount.length);
 
@@ -230,6 +225,7 @@ class PageCategorical {
             }
 
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
+            log.LogDubug('title='+title);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
             var result = [];
@@ -248,10 +244,11 @@ class PageCategorical {
             row_index += displayNumberOfAnswers;
 
         }
+
+
+        log.LogDubug('getCategoricalResult end');
         return categoricals;
     }
-
-
 
     /**
      * @memberof PageCategorical
@@ -260,7 +257,6 @@ class PageCategorical {
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object[]} - array of objects containing information about categoricals with pie view
      */
-
     static function getPieCollection(context) {
         var log = context.log;
         var singleCategoricals = getCategoricalResult(context, 'single');
@@ -275,7 +271,6 @@ class PageCategorical {
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function getTopListCollection
@@ -283,7 +278,6 @@ class PageCategorical {
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object[]} array of objects containing information about categoricals with Top X list view
      */
-
     static function getTopListCollection(context) {
 
         var report = context.report;
@@ -302,7 +296,6 @@ class PageCategorical {
         return listCollection.concat(multiCategoricals);
 
     }
-
 
     /**
      * @memberof PageCategorical
@@ -331,7 +324,6 @@ class PageCategorical {
      * @description function to generate material cards with categories
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-
     static function buildCategoricalTiles (context) {
 
         var log = context.log;
@@ -339,6 +331,8 @@ class PageCategorical {
 
         // render cards with pies
         var pies = getPieCollection(context);
+
+        log.LogDebug('pies: '+JSON.stringify(pies));
 
         for (var i=0; i<pies.length; i++) {
             var item = pies[i];
