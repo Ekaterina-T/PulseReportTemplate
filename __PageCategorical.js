@@ -198,30 +198,30 @@ class PageCategorical {
 
         var report = context.report;
         var log = context.log;
-        log.LogDubug('getCategoricalResult start');
+        log.LogDebug('getCategoricalResult start');
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        log.LogDubug('1');
+        log.LogDebug('1');
 
 
         // depending on <answerLimit> display a pie or list of topN answers
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "categoricalAnswerLimit");
-        log.LogDubug('2');
+        log.LogDebug('2');
 
         // show topN answers in a list for questions with more than <answerLimit> options
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
-        log.LogDubug('3');
+        log.LogDebug('3');
 
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-        log.LogDubug('4');
+        log.LogDebug('4');
         var Qs = defineCategoricalQuestionsList(context, tableType);
-        log.LogDubug('5');
-        log.LogDubug('Qs='+JSON.stringify(Qs));
+        log.LogDebug('5');
+        log.LogDebug('Qs='+JSON.stringify(Qs));
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
 
         for (var i=0; i<Qs.length; i++) {
-log.LogDubug('i='+i+' qid='+Qs[i]);
+log.LogDebug('i='+i+' qid='+Qs[i]);
             var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
             var answerCount = Int32.Parse(newAnswerCount.length);
 
@@ -230,7 +230,7 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
             }
 
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
-            log.LogDubug('title='+title);
+            log.LogDebug('title='+title);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
             var result = [];
@@ -251,7 +251,7 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
         }
 
 
-        log.LogDubug('getCategoricalResult end');
+        log.LogDebug('getCategoricalResult end');
         return categoricals;
     }
 
@@ -264,20 +264,17 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
      */
     static function getPieCollection(context, from) {
         var log = context.log;
-        log.LogDebug('getPieCollection start: '+from);
+        log.LogDebug('getPieCollection: '+from);
         var singleCategoricals = getCategoricalResult(context, 'single');
-        log.LogDebug('getPieCollection 1');
         singleCategoricals.sort(SortCategoricals);
+
         var pieCollection = [];
-        log.LogDebug('getPieCollection 2');
         for (var i=0; i<singleCategoricals.length; i++) {
             if (singleCategoricals[i].type != 'pie')
                 break;
             pieCollection.push(singleCategoricals[i]);
         }
-        log.LogDebug('getPieCollection end');
         return pieCollection;
-
     }
 
     /**
@@ -337,7 +334,6 @@ log.LogDubug('i='+i+' qid='+Qs[i]);
 
         var log = context.log;
         var text = context.text;
-log.LogDebug('buildCategoricalTiles start');
         // render cards with pies
         var pies = getPieCollection(context, 'buildCategoricalTiles');
 
@@ -390,6 +386,5 @@ log.LogDebug('buildCategoricalTiles start');
         if(pies.length + lists.length === 0) {
             text.Output.Append(TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionsToDisplay'));
         }
-        log.LogDebug('buildCategoricalTiles end');
     }
 }
