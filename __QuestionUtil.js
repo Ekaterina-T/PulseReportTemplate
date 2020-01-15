@@ -315,7 +315,7 @@ class QuestionUtil {
         try {
             custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
 
-            customTextIsEmpty = custom_texts.Count && (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+            customTextIsEmpty = !custom_texts.Count || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
             if(customTextIsEmpty) { //no translation in current lang -> try English
                 custom_texts= table.GetColumnValues("__l9l9", "id", custom_id);
             }
@@ -323,7 +323,7 @@ class QuestionUtil {
             custom_texts= table.GetColumnValues("__l9", "id", custom_id);
         }
 
-        customTextIsEmpty = custom_texts.Count && (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+        customTextIsEmpty = custom_texts.Count==0 || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
         if (!customTextIsEmpty && state.ReportExecutionMode == ReportExecutionMode.Web) {
             cachedTxt = custom_texts[0];
             confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
