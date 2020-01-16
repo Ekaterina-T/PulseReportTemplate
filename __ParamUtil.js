@@ -380,7 +380,6 @@ class ParamUtil {
         var log = context.log;
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
-        var isTrackerComparisonSurvey = isPulseProgram && DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Tracker_ComparisonSurvey');
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -417,11 +416,11 @@ class ParamUtil {
         }
 
         if (parameterName === 'p_Trends_trackerSurveys') {
-            return isTrackerComparisonSurvey; // only needed for pulse programs
+            //TO DO: return isTrackerComparisonSurvey; // only needed for pulse programs
         }
 
         if (parameterName === 'p_AcrossAllSurveys') {
-            return isPulseProgram && isTrackerStringProvided; // only needed for pulse programs
+            //TO DO: return isPulseProgram && isTrackerStringProvided; // only needed for pulse programs
         }
 
         if (parameterName === 'p_Results_BreakBy') {
