@@ -484,7 +484,9 @@ class Filters {
         var waveFilter = waveId ? getFilterExpressionByAnswerRange(context, waveQId, [waveId]) : getCurrentWaveExpression(context);
         var projectFilter = projectId ? getProjectExpression(context, projectId) : projectSelectorInPulseProgram(context);
 
-        excludedFilters.push(projectFilter);
+        if(projectFilter) {
+            excludedFilters.push(projectFilter);
+        }
 
         if (hierFilter) {
             excludedFilters.push(hierFilter);

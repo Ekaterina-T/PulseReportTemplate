@@ -728,10 +728,8 @@ class PageResults {
 
     static function tableBenchmarks_Render(context) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         if (isBenchmarkAvailable(context)) {
             tableStatements_AddRows(context);
@@ -764,12 +762,11 @@ class PageResults {
         excludedFiltersForN.HideHeader = true;
         excludedFiltersForN.SubHeaders.Add(responses);
         table.ColumnHeaders.Add(excludedFiltersForN);
-log.LogDebug('1');/*
+
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
             tableBenchmarks_addWaveScoreColumn(context);
         }
-        log.LogDebug('2');
 
         //add Benchmarks from benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
@@ -784,7 +781,6 @@ log.LogDebug('1');/*
             }
             table.ColumnHeaders.Add(benchmarks);
         }
-        log.LogDebug('3');
 
         //add survey based comparison
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
@@ -796,19 +792,17 @@ log.LogDebug('1');/*
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }
         }
-        log.LogDebug('4');
 
         //add Benchmark as comparison to upper/lower hierarchy levels
         var bases = context.user.PersonalizedReportBase.split(',');
-        log.LogDebug('bases='+JSON.stringify(bases));
+
         if (bases.length === 1) {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
-        }*/
-        log.LogDebug('5');
+        }
     }
 
 
