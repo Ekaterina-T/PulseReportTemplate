@@ -247,7 +247,7 @@ class PageResults {
         // add Responses Column
         addResponsesColumn(context);
         // add Benchmark related columns
-        //tableStatements_AddBenchmarkColumns_Banner0(context);
+        tableStatements_AddBenchmarkColumns_Banner0(context);
     }
 
     /*
@@ -491,7 +491,6 @@ class PageResults {
         }
 
         var report = context.report;
-        var state = context.state;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
@@ -554,6 +553,7 @@ class PageResults {
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
 
         if (tabSwitcher[0] !== 'custom') {
+            /*
             var surveyCompCols = getBenchmarkSurveys(context);
             for (i = 0; i < surveyCompCols.length; i++) {
 
@@ -573,7 +573,7 @@ class PageResults {
 
                 table.ColumnHeaders.Add(surveyCompContent);
                 bmColumn += 1;
-            }
+            }*/
         }
 
         //add hierarchy comparison benchmarks
