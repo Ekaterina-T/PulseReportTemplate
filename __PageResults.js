@@ -501,6 +501,7 @@ class PageResults {
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
 
+        log.LogDebug('1');
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         if (showPrevWave) {
@@ -527,6 +528,7 @@ class PageResults {
             bmColumn += 1;
         }
 
+        log.LogDebug('2');
         // add benchmark data based on benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -549,11 +551,12 @@ class PageResults {
             bmColumn += 1;
         }
 
+        log.LogDebug('3');
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
 
         if (tabSwitcher[0] !== 'custom') {
-            /*
+
             var surveyCompCols = getBenchmarkSurveys(context);
             for (i = 0; i < surveyCompCols.length; i++) {
 
@@ -573,9 +576,10 @@ class PageResults {
 
                 table.ColumnHeaders.Add(surveyCompContent);
                 bmColumn += 1;
-            }*/
+            }
         }
 
+        log.LogDebug('4');
         //add hierarchy comparison benchmarks
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
@@ -603,6 +607,7 @@ class PageResults {
             }
         }
 
+        log.LogDebug('5');
 
     }
 
