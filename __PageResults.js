@@ -764,7 +764,7 @@ class PageResults {
         excludedFiltersForN.HideHeader = true;
         excludedFiltersForN.SubHeaders.Add(responses);
         table.ColumnHeaders.Add(excludedFiltersForN);
-log.LogDebug('1');
+log.LogDebug('1');/*
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
             tableBenchmarks_addWaveScoreColumn(context);
@@ -807,7 +807,7 @@ log.LogDebug('1');
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
-        }
+        }*/
         log.LogDebug('5');
     }
 
