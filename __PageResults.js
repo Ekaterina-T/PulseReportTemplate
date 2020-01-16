@@ -797,9 +797,6 @@ class PageResults {
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
         }
-
-
-
     }
 
 
@@ -901,7 +898,6 @@ class PageResults {
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      * @return {Answer} {Code: code, Label: label}
      */
-
     static function getPreviousWave(context) {
 
         var log = context.log;
@@ -934,7 +930,6 @@ class PageResults {
      * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function isBenchmarkAvailable(context) {
 
         var log = context.log;
@@ -956,7 +951,6 @@ class PageResults {
      * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function table_Benchmarks_hide(context) {
         return !isBenchmarkAvailable(context);
     }
@@ -966,13 +960,11 @@ class PageResults {
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      *  @return {Array} array of pids
      */
-
     static function getBenchmarkSurveys(context) {
         var surveysToCompare = [];
         var previousSurvey = SurveyTracker.getComparisonTrackerForSelectedPid(context);
-        var PreviousSurveyExists = (previousSurvey) ? true : false;
 
-        if (previousSurvey.Code) {
+        if (previousSurvey && previousSurvey.Code) {
             surveysToCompare.push(previousSurvey);
         }
 

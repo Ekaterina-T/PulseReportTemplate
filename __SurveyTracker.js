@@ -44,7 +44,7 @@ class SurveyTracker {
 
         //only relevant for pulse programs
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-            return [];
+            return null;
         }
 
         var trackerStrings = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Tracker_ComparisonSurvey');
@@ -52,7 +52,7 @@ class SurveyTracker {
         if(trackerStrings.hasOwnProperty(pid) && trackerStrings[pid]) {
             return getSurveyDescriptorByPid(context, trackerStrings[pid]);
         } else {
-            return [];
+            return null;
         }
     }
 
