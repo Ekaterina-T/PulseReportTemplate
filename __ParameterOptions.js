@@ -316,7 +316,7 @@ class ParameterOptionsBuilder {
      */
     static private function getOptions_DynamicList(context, path) {
 
-        if(path === 'SurveyTracker.getAllSurveyNames') {
+        if(path === 'SurveyTracker.getAllSurveyDescriptors') {
             return SurveyTracker.getAllSurveyDescriptors(context);
         }
 
