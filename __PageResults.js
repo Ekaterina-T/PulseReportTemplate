@@ -247,7 +247,7 @@ class PageResults {
         // add Responses Column
         addResponsesColumn(context);
         // add Benchmark related columns
-        tableStatements_AddBenchmarkColumns_Banner0(context);
+        //tableStatements_AddBenchmarkColumns_Banner0(context);
     }
 
     /*
