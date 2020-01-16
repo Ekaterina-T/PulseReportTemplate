@@ -25,7 +25,7 @@ class SurveyTracker {
         var surveyDescriptor = {};
 
         for (var i = 0; i < allDescriptors.length; i++) {
-            if (allNames[i].Code == pid) {
+            if (allDescriptors[i].Code == pid) {
                 surveyDescriptor.Label = allDescriptors[i].Label;
                 surveyDescriptor.Code = allDescriptors[i].Code;
                 break;
