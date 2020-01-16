@@ -486,7 +486,7 @@ class PageResults {
 
         var log = context.log;
 
-        log.LogDebug('01');
+        log.LogDebug('01 ');
         if (!isBenchmarkAvailable(context)) {
             return;
         }
@@ -621,7 +621,6 @@ class PageResults {
      * @param {string} expression - how to calc value
      * @param {string} labelKey - defines chart label
      */
-
     static function addScoreVsBenchmarkChart(context, normColPosition, labelKey) {
 
         var report = context.report;
@@ -674,7 +673,6 @@ class PageResults {
      * Conditional Formatting for Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_ApplyConditionalFormatting(context) {
 
         var table = context.table;
@@ -766,11 +764,12 @@ class PageResults {
         excludedFiltersForN.HideHeader = true;
         excludedFiltersForN.SubHeaders.Add(responses);
         table.ColumnHeaders.Add(excludedFiltersForN);
-
+log.LogDebug('1');
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
             tableBenchmarks_addWaveScoreColumn(context);
         }
+        log.LogDebug('2');
 
         //add Benchmarks from benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
@@ -785,6 +784,7 @@ class PageResults {
             }
             table.ColumnHeaders.Add(benchmarks);
         }
+        log.LogDebug('3');
 
         //add survey based comparison
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
@@ -796,9 +796,11 @@ class PageResults {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }
         }
+        log.LogDebug('4');
 
         //add Benchmark as comparison to upper/lower hierarchy levels
         var bases = context.user.PersonalizedReportBase.split(',');
+        log.LogDebug('bases='+JSON.stringify(bases));
         if (bases.length === 1) {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
@@ -806,6 +808,7 @@ class PageResults {
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
         }
+        log.LogDebug('5');
     }
 
 
