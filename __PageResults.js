@@ -938,7 +938,7 @@ class PageResults {
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
-        var surveysToCompare = getBenchmarkSurveys(context);
+        var surveysToCompare = getBenchmarkSurveys(context).length;
 
         if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare) {
             return true;
