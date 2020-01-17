@@ -171,7 +171,7 @@ class PageResults {
                 configDimensionsStr = configDimensionsStr.toLowerCase();
                 var dimensionsArr = dimensions[0].split(',');
 
-                for (var i = 0; i < dimensidimensionsArrons.length; i++) {
+                for (var i = 0; i < dimensionsArr.length; i++) {
                     if (dimensionsArr[i] !== '' && configDimensionsStr.indexOf(dimensionsArr[i].toLowerCase() + '$') > -1) {
                         activeDimesions.push(dimensionsArr[i]);
                     }
