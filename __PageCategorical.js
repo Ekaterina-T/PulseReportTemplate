@@ -323,8 +323,6 @@ class PageCategorical {
         // render cards with pies
         var pies = getPieCollection(context, 'buildCategoricalTiles');
 
-        log.LogDebug('pies: '+JSON.stringify(pies));
-
         for (var i=0; i<pies.length; i++) {
             var item = pies[i];
             var content = {

@@ -486,26 +486,20 @@ class PageResults {
 
         var log = context.log;
 
-        log.LogDebug('01 ');
         if (!isBenchmarkAvailable(context)) {
             return;
         }
-        log.LogDebug('02');
         var report = context.report;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        log.LogDebug('03');
         var bmColumn = 2; // 1st coulumn always exists - it's base
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1);
-        log.LogDebug('04');
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
         var suppressValue = SuppressConfig.TableSuppressValue;
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
-        log.LogDebug('05');
         var base: Datapoint;
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
 
-        log.LogDebug('1');
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         if (showPrevWave) {
@@ -532,7 +526,6 @@ class PageResults {
             bmColumn += 1;
         }
 
-        log.LogDebug('2');
         // add benchmark data based on benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -555,7 +548,6 @@ class PageResults {
             bmColumn += 1;
         }
 
-        log.LogDebug('3');
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
 
@@ -583,7 +575,6 @@ class PageResults {
             }
         }
 
-        log.LogDebug('4');
         //add hierarchy comparison benchmarks
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
@@ -610,8 +601,6 @@ class PageResults {
                 bmColumn += 1;
             }
         }
-
-        log.LogDebug('5');
 
     }
 
@@ -825,6 +814,8 @@ class PageResults {
 
         if (level === 'top') {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
+        } else if (level === 'parent') {
+            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
         } else {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
         }
