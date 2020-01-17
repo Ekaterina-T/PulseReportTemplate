@@ -169,10 +169,11 @@ class PageResults {
                 var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
                 var configDimensionsStr = dimensionsInConfig.join('$') + '$';
                 configDimensionsStr = configDimensionsStr.toLowerCase();
+                var dimensionsArr = dimensions[0].split(',');
 
-                for (var i = 0; i < dimensions.Count; i++) {
-                    if (dimensions[i] !== '' && configDimensionsStr.indexOf(dimensions[i].toLowerCase() + '$') > -1) {
-                        activeDimesions.push(dimensions[i]);
+                for (var i = 0; i < dimensidimensionsArrons.length; i++) {
+                    if (dimensionsArr[i] !== '' && configDimensionsStr.indexOf(dimensionsArr[i].toLowerCase() + '$') > -1) {
+                        activeDimesions.push(dimensionsArr[i]);
                     }
                 }
                 return activeDimesions.length > 0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
