@@ -1,7 +1,5 @@
 class ParamUtil {
 
-
-
     /**
   * Populates p_SurveyType parameter based on surveys from Config.
   * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
@@ -380,6 +378,7 @@ class ParamUtil {
         var log = context.log;
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -415,12 +414,16 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }
 
+        if(parameterName === 'p_TimeUnitWithDefault' && pageId === 'Page_Trends') {
+            return !isPulseProgram;
+        }
+
         if (parameterName === 'p_Trends_trackerSurveys') {
-            //TO DO: return isTrackerComparisonSurvey; // only needed for pulse programs
+            return isPulseProgram; // only needed for pulse programs
         }
 
         if (parameterName === 'p_AcrossAllSurveys') {
-            //TO DO: return isPulseProgram && isTrackerStringProvided; // only needed for pulse programs
+            return isPulseProgram; // only needed for pulse programs
         }
 
         if (parameterName === 'p_Results_BreakBy') {

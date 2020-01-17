@@ -736,7 +736,6 @@ class PageResults {
      * Populate benchmarks table
      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
      */
-
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
         var table = context.table;

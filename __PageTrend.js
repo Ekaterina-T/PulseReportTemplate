@@ -52,8 +52,12 @@ class PageTrend {
         // add rows (1 or more KPI questions)
         var headers = ParamUtil.GetSelectedOptions(context, "p_TrendQs");
 
+        for (var i = 0; i < headers.length; i++) {
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
+        }
+
         // in pulse program Trend shows comparison between surveys
-        if(!DataSourceUtil.isProjectSelectorNotNeeded(context) && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
             var projectHQ: HeaderQuestion = new HeaderQuestion(qe);
@@ -67,17 +71,14 @@ class PageTrend {
                 qMask.IsInclusive = true;
                 projectHQ.AnswerMask = qMask;
             }
-            table.RowHeaders.Add(projectHQ);
+            table.ColumnHeaders.Add(projectHQ);
 
         } else {
-            for (var i = 0; i < headers.length; i++) {
-                table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
-            }
+            // add column - trending by Date variable
+            var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
+            TableUtil.addTrending(context, dateQId);
         }
 
-        // add column - trending by Date variable
-        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
-        TableUtil.addTrending(context, dateQId);
 
         // global table settings
         table.Caching.Enabled = false;
