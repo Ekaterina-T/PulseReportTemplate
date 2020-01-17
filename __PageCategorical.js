@@ -122,15 +122,12 @@ class PageCategorical {
             row.HideHeader = true;
 
             if(true/*Export.isExcelExportMode(context)*/) {
-                var qinfo = QuestionUtil.getQuestionInfo(context, Qs[i]);
-                if(qinfo.isCustom) {
-                    var dummyHeader: HeaderSegment = new HeaderSegment();
-                    dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                    dummyHeader.SegmentType = HeaderSegmentType.Expression;
-                    dummyHeader.Label = new Label(context.report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, Qs[i]));
-                    dummyHeader.HideData = false;
-                    row.SubHeaders.Add(dummyHeader);
-                }
+                var dummyHeader: HeaderSegment = new HeaderSegment();
+                dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                dummyHeader.SegmentType = HeaderSegmentType.Expression;
+                dummyHeader.Label = new Label(context.report.CurrentLanguage, QuestionUtil.getQuestionTitle(context, Qs[i]));
+                dummyHeader.HideData = false;
+                row.SubHeaders.Add(dummyHeader);
             }
 
             if (answerCount > answerLimit || tableType=='multi') {
