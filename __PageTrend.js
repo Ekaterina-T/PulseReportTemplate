@@ -67,10 +67,6 @@ class PageTrend {
                 qMask.IsInclusive = true;
                 projectHQ.AnswerMask = qMask;
             }
-
-            for (var i = 0; i < headers.length; i++) {
-                projectHQ.SubHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
-            }
             table.RowHeaders.Add(projectHQ);
 
         } else {

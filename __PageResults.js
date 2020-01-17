@@ -724,6 +724,7 @@ class PageResults {
         if (isBenchmarkAvailable(context)) {
             tableStatements_AddRows(context);
             tableBenchmarks_AddColumns_Banner0(context);
+            SuppressUtil.setTableSuppress(table, suppressSettings);
 
             table.Decimals = 0;
             table.RowNesting = TableRowNestingType.Nesting;
