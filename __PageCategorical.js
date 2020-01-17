@@ -127,7 +127,7 @@ class PageCategorical {
                     var dummyHeader: HeaderSegment = new HeaderSegment();
                     dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
                     dummyHeader.SegmentType = HeaderSegmentType.Expression;
-                    dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, Qs[i]));
+                    dummyHeader.Label = new Label(context.report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, Qs[i]));
                     dummyHeader.HideData = false;
                     row.SubHeaders.Add(dummyHeader);
                 }
