@@ -121,7 +121,7 @@ class PageCategorical {
             row.ShowTotals = false;
             row.HideHeader = true;
 
-            if(Export.isExcelExportMode(context)) {
+            if(true/*Export.isExcelExportMode(context)*/) {
                 var qinfo = QuestionUtil.getQuestionInfo(context, Qs[i]);
                 if(qinfo.isCustom) {
                     var dummyHeader: HeaderSegment = new HeaderSegment();
