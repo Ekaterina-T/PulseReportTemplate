@@ -351,7 +351,6 @@ class ParamUtil {
         var parameterId = context.parameterId;
         var mask = context.mask;
         var log = context.log;
-        var state = context.state;
         var report = context.report;
 
         if (parameterId === 'p_Statements') {
@@ -363,6 +362,18 @@ class ParamUtil {
                 mask.Keys.Add(qIds[i]);
             }
 
+        }
+
+        if (parameterId === 'p_Results_TableTabSwitcher') {
+
+            //hide custom tab when it's not needed
+            var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+            var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+
+            if(!isPulseProgram || !custom_category) {
+                mask.Access = ParameterAccessType.Exclusive;
+                mask.Keys.Add('custom');
+            }
         }
     }
 
