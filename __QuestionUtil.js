@@ -287,12 +287,15 @@ class QuestionUtil {
         }
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        log.LogDebug('11: codes='+JSON.stringify(codes));
         if (codes.length == 0) {
             return null;
         }
 
         var baby_p_number = codes[0];
+        log.LogDebug('12: baby_p_number='+baby_p_number);
         var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
+        log.LogDebug('13: baby_p_number='+baby_p_number);
         var cachedTxt = confirmit.ReportDataCache(cacheKey);
         log.LogDebug('2: cacheKey='+cacheKey);
         log.LogDebug('3: cachedTxt='+cachedTxt);
