@@ -803,7 +803,6 @@ class PageResults {
     static function tableBenchmarks_addHierarchyBasedComparison(context, level) {
 
         var log = context.log;
-        var table = context.table;
         var report = context.report;
         var levelSegment: HeaderSegment = new HeaderSegment();
         var parentsList = [];
@@ -816,14 +815,17 @@ class PageResults {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
         } else if (level === 'parent') {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
-        } else {
+        } else{
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
         }
 
         if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
             var parentArr = parentsList[0];
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[parentArr.length - 1]['id'], null);
-            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[parentArr.length - 1]['label']);
+            var index = parentArr.length - 1;
+
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+
         } else {
             return; // no such parent in the hierarchy
         }
