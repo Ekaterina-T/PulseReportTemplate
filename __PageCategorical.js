@@ -117,10 +117,21 @@ class PageCategorical {
             var row: HeaderQuestion = new HeaderQuestion(qe);
 
             row.IsCollapsed = (tableType == 'multi') ? true : false;
-
             row.ShowTitle = true;//false; - changed to true for excel export
             row.ShowTotals = false;
             row.HideHeader = true;
+
+            if(Export.isExcelExportMode(context)) {
+                var qinfo = QuestionUtil.getQuestionInfo(context, Qs[i]);
+                if(qinfo.isCustom) {
+                    var dummyHeader: HeaderSegment = new HeaderSegment();
+                    dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                    dummyHeader.SegmentType = HeaderSegmentType.Expression;
+                    dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, Qs[i]));
+                    dummyHeader.HideData = false;
+                    row.SubHeaders.Add(dummyHeader);
+                }
+            }
 
             if (answerCount > answerLimit || tableType=='multi') {
                 // sorting by base to show the most popular answers
