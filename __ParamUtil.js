@@ -370,7 +370,7 @@ class ParamUtil {
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
 
-            if(!isPulseProgram && !custom_category) {
+            if(!isPulseProgram || !custom_category) {
                 mask.Access = ParameterAccessType.Exclusive;
                 mask.Keys.Add('custom');
             }
