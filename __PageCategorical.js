@@ -121,7 +121,7 @@ class PageCategorical {
             row.ShowTotals = false;
             row.HideHeader = true;
 
-            if(true/*Export.isExcelExportMode(context)*/) {
+            if(Export.isExcelExportMode(context)) {
                 var dummyHeader: HeaderSegment = new HeaderSegment();
                 dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
                 dummyHeader.SegmentType = HeaderSegmentType.Expression;
