@@ -527,28 +527,6 @@ class PageResults {
             bmColumn += 1;
         }
 
-        // add benchmark data based on benchmark project
-        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
-
-            var benchmarkContent: HeaderContent = new HeaderContent();
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
-
-            for (var i = 0; i < benchmarkValues.length; i++) {
-
-                var benchmark: Datapoint = benchmarkValues[i];
-                base = baseValues[i];
-
-                if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                    benchmarkContent.SetCellValue(i, benchmark.Value);
-                }
-            }
-
-            benchmarkContent.HideData = true;
-            table.ColumnHeaders.Add(benchmarkContent);
-            addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
-            bmColumn += 1;
-        }
-
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
 
@@ -574,6 +552,28 @@ class PageResults {
                 table.ColumnHeaders.Add(surveyCompContent);
                 bmColumn += 1;
             }
+        }
+
+        // add benchmark data based on benchmark project
+        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+
+            var benchmarkContent: HeaderContent = new HeaderContent();
+            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+
+            for (var i = 0; i < benchmarkValues.length; i++) {
+
+                var benchmark: Datapoint = benchmarkValues[i];
+                base = baseValues[i];
+
+                if (base.Value >= suppressValue && !benchmark.IsEmpty) {
+                    benchmarkContent.SetCellValue(i, benchmark.Value);
+                }
+            }
+
+            benchmarkContent.HideData = true;
+            table.ColumnHeaders.Add(benchmarkContent);
+            addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
+            bmColumn += 1;
         }
 
         //add hierarchy comparison benchmarks
@@ -758,6 +758,17 @@ class PageResults {
             tableBenchmarks_addWaveScoreColumn(context);
         }
 
+        //add survey based comparison
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
+
+        if (tabSwitcher[0] !== 'custom') {
+            var surveysToCompare = getBenchmarkSurveys(context);
+
+            for (var i = 0; i < surveysToCompare.length; i++) {
+                tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
+            }
+        }
+
         //add Benchmarks from benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -772,16 +783,6 @@ class PageResults {
             table.ColumnHeaders.Add(benchmarks);
         }
 
-        //add survey based comparison
-        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
-
-        if (tabSwitcher[0] !== 'custom') {
-            var surveysToCompare = getBenchmarkSurveys(context);
-
-            for (var i = 0; i < surveysToCompare.length; i++) {
-                tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
-            }
-        }
 
         //add Benchmark as comparison to upper/lower hierarchy levels
         var bases = context.user.PersonalizedReportBase.split(',');
