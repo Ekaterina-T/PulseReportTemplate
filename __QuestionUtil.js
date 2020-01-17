@@ -279,7 +279,8 @@ class QuestionUtil {
         var state = context.state;
         var report = context.report;
 
-        log.LogDebug('qId='+qId);
+        log.LogDebug('--------------------------START--------------------------')
+        log.LogDebug('1: qId='+qId);
         
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
@@ -293,8 +294,8 @@ class QuestionUtil {
         var baby_p_number = codes[0];
         var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
         var cachedTxt = confirmit.ReportDataCache(cacheKey);
-        log.LogDebug('cacheKey='+cacheKey);
-        log.LogDebug('cachedTxt='+cachedTxt);
+        log.LogDebug('2: cacheKey='+cacheKey);
+        log.LogDebug('3: cachedTxt='+cachedTxt);
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web && cachedTxt) {
@@ -314,7 +315,7 @@ class QuestionUtil {
         var custom_id = baby_p_number+"_"+qId;
         var custom_texts;
         var customTextIsEmpty;
-        log.LogDebug('custom_id='+custom_id);
+        log.LogDebug('4: custom_id='+custom_id);
 
         try {
             custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
@@ -326,10 +327,10 @@ class QuestionUtil {
         } catch(e) { // no translation found -> try label as in old reports
             custom_texts= table.GetColumnValues("__l9", "id", custom_id);
         }
-        log.LogDebug('custom_texts.Count='+custom_texts.Count);
+        log.LogDebug('5: custom_texts.Count='+custom_texts.Count);
 
         customTextIsEmpty = custom_texts.Count==0 || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
-        log.LogDebug('customTextIsEmpty='+customTextIsEmpty);
+        log.LogDebug('6: customTextIsEmpty='+customTextIsEmpty);
         if (!customTextIsEmpty) {
             cachedTxt = custom_texts[0];
             if(state.ReportExecutionMode == ReportExecutionMode.Web) {
@@ -338,6 +339,7 @@ class QuestionUtil {
         }
 
         //if empty cell or no such row in db custom table, show qid as label
+        log.LogDebug('-------------------------- END --------------------------')
         return cachedTxt  || qId;
     }
 
