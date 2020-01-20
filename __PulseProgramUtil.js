@@ -38,7 +38,7 @@ class PulseProgramUtil {
 
         //survey level property
         if(typeof property === 'string' && !pageId) {
-            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, pageId, property);
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, property);
         }
         
         throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+property+' on page '+pageId);
