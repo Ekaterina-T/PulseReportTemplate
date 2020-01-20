@@ -74,6 +74,19 @@ class StyleAndJavaScriptUtil {
             if (pageId === 'KPI') {
                 properties.push('gaugeData: '+JSON.stringify(PageKPI.getKPIResult(context)));
             }
+
+            if (pageId === 'Results') {
+                var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+                var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+
+                if(isPulseProgram && !!custom_category) {
+                    var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
+                    if(custom_questions.length>0) {
+                        properties.push('isCustomQuestionsTabVisible: true');
+                    }
+                }
+                properties.push('isCustomQuestionsTabVisible: false');
+            }
     
             if (pageId === 'Categorical_') {
                 properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context, 'jsutil')));
