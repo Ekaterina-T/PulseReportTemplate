@@ -83,9 +83,12 @@ class StyleAndJavaScriptUtil {
                     var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
                     if(custom_questions.length>0) {
                         properties.push('isCustomQuestionsTabVisible: true');
+                    } else {
+                        properties.push('isCustomQuestionsTabVisible: false');
                     }
+                } else {
+                    properties.push('isCustomQuestionsTabVisible: false');
                 }
-                properties.push('isCustomQuestionsTabVisible: false');
             }
     
             if (pageId === 'Categorical_') {
