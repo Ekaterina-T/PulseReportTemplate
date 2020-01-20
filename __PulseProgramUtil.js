@@ -16,14 +16,14 @@ class PulseProgramUtil {
         var log = context.log;
 
         // page property references one question category
-        if(typeof property === 'object' && property.type === 'QuestionsCategory') {
-            var category = DataSourceUtil.getPropertyValueFromConfig(context, pageId, property.propertyWithCat);
+        if(typeof property === 'object' && pageId && property.type === 'QuestionsCategory') {
+            var category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, property.propertyWithCat);
             return QuestionUtil.getQuestionIdsByCategory(context, category);
         }
 
         // page property references several question categories united into array
-        if(typeof property === 'object' && property.type === 'QuestionsCategories') {
-            var categories = DataSourceUtil.getPropertyValueFromConfig(context, pageId, property.propertyWithCategories);
+        if(typeof property === 'object' && pageId && property.type === 'QuestionsCategories') {
+            var categories = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, property.propertyWithCategories);
             var qs = [];
             for(var i=0; i< categories.length; i++) {
                 qs = qs.concat(QuestionUtil.getQuestionIdsByCategory(context, categories[i]));
@@ -32,8 +32,13 @@ class PulseProgramUtil {
         }
         
         // page property references question or array of questions
-        if(typeof property === 'string') {
-            return DataSourceUtil.getPropertyValueFromConfig(context, pageId, property);
+        if(typeof property === 'string' && pageId) {
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, property);
+        }
+
+        //survey level property
+        if(typeof property === 'string' && !pageId) {
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, pageId, property);
         }
         
         throw new Error('PulseProgramUtil.buildQuestionCategoryId: couldn\'t build id list for property '+property+' on page '+pageId);
