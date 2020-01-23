@@ -66,4 +66,35 @@ class SurveyTracker {
         return getComparisonTrackerBySurveyId(context, projectSelected[0]);
     }
 
+    /**
+     * Gets array of trackers (pids) from Trackers property of Config.
+     * If passed pid exists in a tracker, then this tracker is returned.
+     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
+     * @param {string} pid - contains id of the survey for which we look for previous surveys
+     * @returns {Array} - array of pids
+     */
+    static private function getTrackersBySurveyId(context, pid) {
+
+        var trackerArrays = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Trackers');
+
+        for(var trackerId in trackerArrays) {
+            var trackers = trackerArrays[trackerId];
+            var testStr = '&'+trackers.join('&')+'&';
+            if(testStr.indexOf('&'+pid+'&')>-1) {
+                return trackers;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets array of trackers (pids) from Trackers for survey selected in report dropdown.
+     * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
+     * @returns {Array} - array of pids
+     */
+    static public function getTrackersForSelectedPid(context) {
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        return getTrackersBySurveyId(context, projectSelected[0]);
+    }
+
 }
