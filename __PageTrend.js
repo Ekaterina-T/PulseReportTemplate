@@ -80,17 +80,18 @@ class PageTrend {
             projectHQ.FilterByMask = true;
 
             table.ColumnHeaders.Add(projectHQ);
+            table.RemoveEmptyHeaders.Rows = false;
 
         } else {
             // add column - trending by Date variable
             var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
             TableUtil.addTrending(context, dateQId);
+            table.RemoveEmptyHeaders.Rows = true;
         }
 
 
         // global table settings
         table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Rows = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 
