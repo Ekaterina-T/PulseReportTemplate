@@ -74,7 +74,10 @@ class PageTrend {
 
             var qMask : MaskFlat = new MaskFlat();
             qMask.IsInclusive = true;
-            projectHQ.AnswerMask = projectsToShow;
+            for (var i=0;i<projectsToShow.length;i++) {
+                mask.Keys.Add(projectsToShow[i]);
+            }
+            projectHQ.AnswerMask = qMask;
             projectHQ.FilterByMask = true;
 
             table.ColumnHeaders.Add(projectHQ);
