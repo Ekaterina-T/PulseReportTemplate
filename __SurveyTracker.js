@@ -84,7 +84,7 @@ class SurveyTracker {
                 return trackers;
             }
         }
-        return null;
+        return [];
     }
 
     /**

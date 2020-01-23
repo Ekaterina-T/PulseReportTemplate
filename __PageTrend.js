@@ -65,12 +65,18 @@ class PageTrend {
             projectHQ.Sorting.Enabled = false;
             projectHQ.ShowTotals = false;
 
-            if(!state.Parameters.IsNull('p_AcrossAllSurveys')) { //need to show average over all surveys
-                projectHQ.ShowTotals = true;
-                var qMask : MaskFlat = new MaskFlat();
-                qMask.IsInclusive = true;
-                projectHQ.AnswerMask = qMask;
+            //take values from config
+            var projectsToShow = SurveyTracker.getTrackersForSelectedPid(context);
+
+            if(!projectsToShow && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
+                projectsToShow = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
             }
+
+            var qMask : MaskFlat = new MaskFlat();
+            qMask.IsInclusive = true;
+            projectHQ.AnswerMask = projectsToShow;
+            projectHQ.FilterByMask = true;
+
             table.ColumnHeaders.Add(projectHQ);
 
         } else {
