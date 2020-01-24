@@ -65,6 +65,8 @@ class StyleAndJavaScriptUtil {
     
             properties.push('Apply: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
             properties.push('Reset: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
+
+            properties.push('isPulseProgram: '+JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
     
             if (pageId === 'Comments') {
                 properties.push('tagColumnNumbers: '+JSON.stringify(Hitlist.GetTagColumnNumbers (context, 'p_ScoreQs', 'p_TagQs')));
