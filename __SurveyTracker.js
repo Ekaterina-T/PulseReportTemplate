@@ -76,16 +76,16 @@ class SurveyTracker {
     static private function getTrackersBySurveyId(context, pid) {
 
         var trackerArrays = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Trackers');
-        var trackers = [];
 
         for(var trackerId in trackerArrays) {
-            trackers = trackerArrays[trackerId];
+            var trackers = trackerArrays[trackerId];
             var testStr = '&'+trackers.join('&')+'&';
             if(testStr.indexOf('&'+pid+'&')>-1) {
-                break;
+                return trackers;
             }
         }
-        return trackers;
+
+        return [];
     }
 
     /**
