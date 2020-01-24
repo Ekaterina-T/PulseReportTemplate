@@ -450,6 +450,10 @@ class ParamUtil {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
 
+        if(pageId === 'Page_Trends' && isPulseProgram && parameterName === 'p_DisplayMode') {
+            return false;
+        }
+
         return true;
     }
 
