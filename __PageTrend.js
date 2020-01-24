@@ -59,11 +59,10 @@ class PageTrend {
         // in pulse program Trend shows comparison between surveys
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
-            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
-            var projectHQ: HeaderQuestion = new HeaderQuestion(qe);
-            projectHQ.IsCollapsed = false;
-            projectHQ.Sorting.Enabled = false;
-            projectHQ.ShowTotals = false;
+            var pname: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
+            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pid');
+            var pnameHQ: HeaderQuestion = new HeaderQuestion(pname);
+            var pidHQ: HeaderQuestion = new HeaderQuestion(pid);
 
             //take values from config
             var projectsToShow = SurveyTracker.getTrackersForSelectedPid(context);
@@ -76,11 +75,18 @@ class PageTrend {
             qMask.IsInclusive = true;
             qMask.Codes.AddRange(projectsToShow);
 
-            projectHQ.AnswerMask = qMask;
-            projectHQ.FilterByMask = true;
+            pidHQ.AnswerMask = qMask;
+            pidHQ.FilterByMask = false;
+            pidHQ.IsCollapsed = false;
+            pidHQ.ShowTotals = false;
+            pidHQ.HideHeader = true;
+            pidHQ.SubHeaders.Add(pnameHQ);
 
-            table.ColumnHeaders.Add(projectHQ);
+            pnameHQ.ShowTotals = false;
+
+            table.ColumnHeaders.Add(pidHQ);
             table.RemoveEmptyHeaders.Rows = false;
+            table.RemoveEmptyHeaders.Columns = true;
 
         } else {
             // add column - trending by Date variable
