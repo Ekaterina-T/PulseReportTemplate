@@ -67,7 +67,7 @@ class PageTrend {
             //take values from config
             var projectsToShow = SurveyTracker.getTrackersForSelectedPid(context);
 
-            if(!projectsToShow && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
+            if(projectsToShow.length === 0 && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
                 projectsToShow = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
             }
 
@@ -110,7 +110,7 @@ class PageTrend {
      */
     static function chartTrend_Hide(context){
 
-        return SuppressUtil.isGloballyHidden(context) || Export.isExcelExportMode(context);
+        return !DataSourceUtil.isProjectSelectorNotNeeded(context) || SuppressUtil.isGloballyHidden(context) || Export.isExcelExportMode(context);
 
     }
 

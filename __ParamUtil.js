@@ -418,7 +418,8 @@ class ParamUtil {
         }
 
         if (parameterName === 'p_Trends_trackerSurveys') {
-            return isPulseProgram; // only needed for pulse programs
+            // only needed for pulse programs when tracker string is not provided
+            return isPulseProgram && !SurveyTracker.getTrackersForSelectedPid(context).length;
         }
 
         if (parameterName === 'p_AcrossAllSurveys') {
