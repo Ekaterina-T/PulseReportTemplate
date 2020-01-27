@@ -963,7 +963,7 @@ class PageResults {
      */
     static function getBenchmarkSurveys(context) {
         var surveysToCompare = [];
-        var previousSurvey = SurveyTracker.getComparisonTrackerForSelectedPid(context);
+        var previousSurvey: Answer = SurveyTracker.getComparisonTrackerForSelectedPid(context);
 
         if (previousSurvey && previousSurvey.Code) {
             surveysToCompare.push(previousSurvey);

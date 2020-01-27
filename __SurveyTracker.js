@@ -3,35 +3,27 @@ class SurveyTracker {
     /**
      * Gets list of all pulse surveys from the allSurveys table in SystemPages -> PulseSurveyData -> AllSurveys table
      * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
-     * @returns {Array} array of objects like {Code: pid, Label: pname}
+     * @returns {Answer[]} array of Answers like {Precode: pid, Text: pname}
      */
     static function getAllSurveyDescriptors(context) {
-        return PulseSurveysInfoFabric.getPulseSurveysInfo(context,  {
-            type: 'ReportTable',
-            tableName:'PulseSurveyData:AllSurveys_PidPname',
-            isEmptyOptionNeeded: false,
-            additionalInfo: {'CreatedByEndUserName': false, 'Status': false}// order is important, do not delete anything
-        }).getPulseSurveys(context);
+
+        var project : Project = DataSourceUtil.getProject(context);
+        var source_projectid: Question = project.GetQuestion('source_projectid');
+        return source_projectid.GetAnswers();
     }
 
     /**
      * Gets Code and Label from list of all surveys - in case we change object which getAllSurveyNames function returns
      * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
      * @param {string} pid - contains id of the survey for which we get its name
-     * @returns {object} {Code: pid, Label: pname}
+     * @returns {object} {Code: pid, Text: pname}
      */
     static function getSurveyDescriptorByPid(context, pid) {
-        var allDescriptors = getAllSurveyDescriptors(context);
-        var surveyDescriptor = {};
 
-        for (var i = 0; i < allDescriptors.length; i++) {
-            if (allDescriptors[i].Code == pid) {
-                surveyDescriptor.Label = allDescriptors[i].Label;
-                surveyDescriptor.Code = allDescriptors[i].Code;
-                break;
-            }
-        }
-        return surveyDescriptor;
+        var project : Project = DataSourceUtil.getProject(context);
+        var source_projectid: Question = project.GetQuestion('source_projectid');
+        var info: Answer = source_projectid.GetAnswer(pid);
+        return {Code: info.Precode, Label: info.Text};
     }
 
     /**
