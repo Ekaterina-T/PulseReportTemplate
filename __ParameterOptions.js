@@ -64,8 +64,8 @@ class ParameterOptionsBuilder {
             return TextAndParameterLibrary.ParameterValuesLibrary[parameterInfo.propertyName]; // return value as is
         }
 
-        if (parameterInfo.locationType === 'ID') {
-            return parameterInfo.QuestionId; //how to pass functions in JScript?
+        if (parameterInfo.locationType === 'QuestionId') {
+            return parameterInfo.ID; //how to pass functions in JScript?
         }
 
         if (parameterInfo.locationType === 'Page') {
