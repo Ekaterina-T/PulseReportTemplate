@@ -59,9 +59,7 @@ class PageTrend {
         // in pulse program Trend shows comparison between surveys
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
-            var pname: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
-            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pid');
-            var pnameHQ: HeaderQuestion = new HeaderQuestion(pname);
+            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'source_projectid');
             var pidHQ: HeaderQuestion = new HeaderQuestion(pid);
 
             //take values from config
@@ -80,9 +78,6 @@ class PageTrend {
             pidHQ.IsCollapsed = false;
             pidHQ.ShowTotals = false;
             pidHQ.HideHeader = true;
-            pidHQ.SubHeaders.Add(pnameHQ);
-
-            pnameHQ.ShowTotals = false;
 
             table.ColumnHeaders.Add(pidHQ);
             table.RemoveEmptyHeaders.Rows = false;

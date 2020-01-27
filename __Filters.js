@@ -446,7 +446,7 @@ class Filters {
         }
 
         if (pidFromPageContext) {
-            return 'pid = "' + pidFromPageContext + '"'; //'source_projectid = "' + pidFromPageContext + '"';
+            return 'source_projectid = "' + pidFromPageContext + '"'; //'pid = "' + pidFromPageContext + '"';
         }
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
