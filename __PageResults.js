@@ -997,7 +997,7 @@ class PageResults {
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         var surveysToCompare = getBenchmarkSurveys(context).length;
-        var aggSurveysComparison = !state.Parameters.IsNull('p_Trends_trackerSurveys');
+        var aggSurveysComparison = !context.state.Parameters.IsNull('p_Trends_trackerSurveys');
 
         if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare || aggSurveysComparison) {
             return true;
