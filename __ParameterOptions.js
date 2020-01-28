@@ -547,12 +547,12 @@ class ParameterOptions {
         // return the 1st option as default value
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
             var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';
-            if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
+            //if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
             
             return code; 
         }
 
-        log.LogDebug(parameterName+': default value = null');
+        //log.LogDebug(parameterName+': default value = null');
 
         return null;
     }
