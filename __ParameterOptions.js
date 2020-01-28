@@ -1,4 +1,4 @@
-class ParameterOptionsBuilder {
+class ParameterOptions {
 
     /**
      * parameterInfo is descriptive object; stores parameter type, options order settings, location settings
@@ -87,13 +87,13 @@ class ParameterOptionsBuilder {
                     if(currentProperty.hasOwnProperty(propertyPath[i])) {
                         currentProperty = currentProperty[propertyPath[i]];
                     } else {
-                        throw new Error('ParameterOptionsBuilder.getParameterValuesResourceByLocation: cannot find property '+propertyPath[i]+' in path '+JSON.stringify(propertyPath));
+                        throw new Error('ParameterOptions.getParameterValuesResourceByLocation: cannot find property '+propertyPath[i]+' in path '+JSON.stringify(propertyPath));
                     }
                 }
                 return currentProperty;
             }
 
-            throw new Error('ParameterOptionsBuilder.getParameterValuesResourceByLocation: cannot build resource for "Survey" unknown type.')
+            throw new Error('ParameterOptions.getParameterValuesResourceByLocation: cannot build resource for "Survey" unknown type.')
         }
 
         if (parameterInfo.locationType === 'CombinationOfQuestions') {
@@ -307,7 +307,7 @@ class ParameterOptionsBuilder {
         var combinedOptions = [];
 
         for (var i = 0; i < parameterNameList.length; i++) {
-            combinedOptions = combinedOptions.concat(ParameterOptionsBuilder.GetOptions(context, parameterNameList[i], 'param list'));
+            combinedOptions = combinedOptions.concat(ParameterOptions.GetOptions(context, parameterNameList[i], 'param list'));
         }
         return combinedOptions;
 
@@ -324,7 +324,7 @@ class ParameterOptionsBuilder {
             return SurveyTracker.getAllSurveyDescriptors(context);
         }
 
-        throw new Error('ParameterOptionsBuilder.getOptions_FunctionCall: cannot find handler for path: '+path);
+        throw new Error('ParameterOptions.getOptions_FunctionCall: cannot find handler for path: '+path);
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -489,5 +489,71 @@ class ParameterOptionsBuilder {
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
+    }
+
+    //------------------------------------------------------------------------------------------
+
+    static function convertCodeToParameterValueResponse(context, code) {
+        return new ParameterValueResponse(code);
+    }
+    
+    static function convertCodeArrayToParameterValueResponseArray(context, codes) {
+
+        var defaultVals = [];
+
+        for(var i=0; i<codes.length; i++) {
+            defaultVals.push(new ParameterValueResponse(codes[i]));
+        }
+        return defaultVals;
+    }
+
+        
+    /**
+     * TODO: replace with some class maybe that would allow defining def values from outside (not using paramNames in code)
+     * Get defaultParameterValue for parameter
+     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
+     * @param {string} parameterName
+     * @returns default values: 1 code, array of codes, null
+     */
+    static function getDefaultParameterValue(context, parameterName) {
+
+        var log = context.log;
+        var parameterOptions = ParameterOptions.GetOptions(context, parameterName, 'get default'); // get all options
+        var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+        var code;
+
+        //pulse program
+        if (!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            if(parameterName === 'p_Trends_trackerSurveys') {
+                return convertCodeArrayToParameterValueResponseArray(context, SurveyTracker.getTrackersForSelectedPid(context));
+            }
+
+            //pulse program + question based params -> need to exclude questions with 0 answers (not used in current pulse survey)
+            //1st question with answers becomes default value
+            if(paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
+                var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+
+                for (var i = 0; i < parameterOptions.length; i++) {
+                    if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
+                        return convertCodeToParameterValueResponse(context, parameterOptions[i].Code);
+                    }
+                }
+            }
+
+        }
+
+        // not pulse program or not question based parameter
+        // return the 1st option as default value
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
+            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';
+            id(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
+            
+            return convertCodeToParameterValueResponse(context, code); 
+        }
+
+        log.LogDebug(parameterName+': default value = null');
+
+        return null;
     }
 }

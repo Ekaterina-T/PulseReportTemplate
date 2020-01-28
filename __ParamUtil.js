@@ -36,7 +36,7 @@ class ParamUtil {
             return;
         }
 
-        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, null, 'load'); // get options
+        var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -46,36 +46,6 @@ class ParamUtil {
         }
 
         return;
-    }
-
-
-    /**
-     * Get defaultParameterValue for parameter
-     * @param {object} context - contains Reportal scripting state, log, report, parameter objects
-     * @param {string} parameterName
-     * @returns {string} default value
-     */
-    static function getDefaultParameterValue(context, parameterName) {
-
-        var log = context.log;
-        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
-        var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
-
-        if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
-            var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
-
-            for (var i = 0; i < parameterOptions.length; i++) {
-                if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
-                    return parameterOptions[i].Code;
-                }
-            }
-        }
-
-        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            return parameterOptions.length > 0 ? parameterOptions[0].Code : ''; // return the 1st option
-        }
-
-        return null;
     }
 
     /** 
@@ -160,6 +130,7 @@ class ParamUtil {
         //log.LogDebug('param init end')
     }
 
+
     /**
      * set default value for a parameter
      * @param {Object} context  - object {state: state, log: log}
@@ -175,9 +146,9 @@ class ParamUtil {
             return;
         }
 
+        //TO DO: check why this try catch is needed
         try {
-            var defaultParameterValue = getDefaultParameterValue(context, paramId);
-            //log.LogDebug('default for '+mandatoryPageParameters[i]+': '+defaultParameterValue)
+            var defaultParameterValue = ParameterOptions.getDefaultValue(context, paramId);
             if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                 return;
             }
@@ -186,7 +157,12 @@ class ParamUtil {
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
-            var valArr = [new ParameterValueResponse(defaultParameterValue)];
+            var valArr = [];
+            if(typeof defaultParameterValue === 'string') {
+                valArr = [new ParameterValueResponse(defaultParameterValue)];
+            } else {
+                valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(defaultParameterValue);
+            }
             var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
             state.Parameters[paramId] = multiResponse;
         }
@@ -229,7 +205,7 @@ class ParamUtil {
             if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
 
                 var selectedProject = selectedPulseSurvey[0];
-                var availableProjects = ParameterOptionsBuilder.GetOptions(context, 'p_projectSelector', 'available proj');
+                var availableProjects = ParameterOptions.GetOptions(context, 'p_projectSelector', 'available proj');
                 var doReset = true;
 
                 //if available list does include selected project, then don't reset pulse project selector
@@ -249,7 +225,7 @@ class ParamUtil {
 
         //in the end project is still undefined -> set default
         if (state.Parameters.IsNull('p_projectSelector')) {
-            var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
+            var defaultVal = ParameterOptions.getDefaultValue(context, 'p_projectSelector');
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
             context.pageContext.Items['p_projectSelector'] = defaultVal;
         }
@@ -327,7 +303,7 @@ class ParamUtil {
 
         var log = context.log;
         var selectedCodes = GetSelectedCodes(context, parameterName);
-        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get selected options');
+        var parameterOptions = ParameterOptions.GetOptions(context, parameterName, 'get selected options');
         var selectedOptions = [];
 
         for (var i = 0; i < selectedCodes.length; i++) {
@@ -419,7 +395,7 @@ class ParamUtil {
 
         if (parameterName === 'p_Trends_trackerSurveys') {
             // only needed for pulse programs when tracker string is not provided
-            return isPulseProgram && !SurveyTracker.getTrackersForSelectedPid(context).length;
+            return isPulseProgram;
         }
 
         if (parameterName === 'p_AcrossAllSurveys') {

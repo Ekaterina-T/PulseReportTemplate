@@ -63,12 +63,7 @@ class PageTrend {
             var pidHQ: HeaderQuestion = new HeaderQuestion(pid);
 
             //take values from config
-            var projectsToShow = SurveyTracker.getTrackersForSelectedPid(context);
-
-            if(projectsToShow.length === 0 && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
-                projectsToShow = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
-            }
-
+            var projectsToShow = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
             var qMask : MaskFlat = new MaskFlat();
             qMask.IsInclusive = true;
             qMask.Codes.AddRange(projectsToShow);
