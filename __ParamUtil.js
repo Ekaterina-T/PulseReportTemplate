@@ -148,8 +148,6 @@ class ParamUtil {
             return;
         }
 
-        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(state.Parameters.IsNull(paramId));
-
         //TO DO: check why this try catch is needed
         try {
             var defaultParameterValue = ParameterOptions.getDefaultValue(context, paramId);
@@ -163,14 +161,13 @@ class ParamUtil {
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
             var valArr = [];
-            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+typeof defaultParameterValue === 'string');
             if(typeof defaultParameterValue === 'string') {
                 valArr = [new ParameterValueResponse(defaultParameterValue)];
             } else {
-                if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('here1: '+JSON.stringify(defaultParameterValue));
-                valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(defaultParameterValue);
+                if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+JSON.stringify(defaultParameterValue));
+                valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(context, defaultParameterValue);
             }
-            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+valArr.length);
+            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('4: '+valArr.length);
             var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
             state.Parameters[paramId] = multiResponse;
         }
