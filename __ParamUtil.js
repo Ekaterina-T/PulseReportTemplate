@@ -115,6 +115,11 @@ class ParamUtil {
             Filters.ResetAllFilters(context);
         }
 
+        // pulse survey iss changed -> tracker surveys changed
+        if (page.SubmitSource === 'projectSelector') {
+            ResetParameters(context, ['p_Trends_trackerSurveys']);
+        }
+
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
