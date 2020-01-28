@@ -502,11 +502,7 @@ class ParameterOptions {
         var log = context.log;
         var defaultVals = [];
 
-        log.LogDebug('in convert1: '+codes.length);
-
         for(var i=0; i<codes.length; i++) {
-            
-        log.LogDebug('in convert i='+i+': '+codes[i]+'; defaultVals.len='+defaultVals.length);
             defaultVals.push(new ParameterValueResponse(codes[i]));
         }
         return defaultVals;
