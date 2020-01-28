@@ -482,19 +482,19 @@ class PageResults {
     static function copyBenchmarkValues(context, bmColumn, targetHeader) {
         
         var report = context.report;
+        var table = context.table;
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+        var suppressValue = SuppressConfig.TableSuppressValue;
 
         for (var i = 0; i < bmValues.length; i++) {
 
             var bmVal: Datapoint = bmValues[i];
-            base = baseValues[i];
+            var base: Datapoint = baseValues[i];
 
             if (base.Value >= suppressValue && !bmVal.IsEmpty) {
                 targetHeader.SetCellValue(i, bmVal.Value);
-            } else if (base.Value >= suppressValue) {
-                targetHeader.SetCellValue(i, '-');
-            }
+            } 
         }
 
         table.ColumnHeaders.Add(targetHeader);
@@ -505,7 +505,6 @@ class PageResults {
      * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
      * @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_AddBenchmarkColumns_Banner0(context) {
 
         var log = context.log;
@@ -770,6 +769,7 @@ class PageResults {
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
         var table = context.table;
+        var state = context.state;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
