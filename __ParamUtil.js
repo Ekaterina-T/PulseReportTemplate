@@ -121,7 +121,7 @@ class ParamUtil {
         }
 
         //log.LogDebug('project selector processing end')
-        pulseRelatedParamsInit(context);
+        pulseInit(context);
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
@@ -141,14 +141,19 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
+        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(state.Parameters.IsNull(paramId));
+
         // safety check: set default value if not defined or pulse program changed
         if (!state.Parameters.IsNull(paramId)) {
             return;
         }
 
+        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(state.Parameters.IsNull(paramId));
+
         //TO DO: check why this try catch is needed
         try {
             var defaultParameterValue = ParameterOptions.getDefaultValue(context, paramId);
+        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(JSON.stringify(defaultParameterValue));
             if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                 return;
             }
@@ -158,9 +163,11 @@ class ParamUtil {
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
             var valArr = [];
+            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(typeof defaultParameterValue === 'string');
             if(typeof defaultParameterValue === 'string') {
                 valArr = [new ParameterValueResponse(defaultParameterValue)];
             } else {
+                if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('here1');
                 valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(defaultParameterValue);
             }
             var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
@@ -176,7 +183,7 @@ class ParamUtil {
      * param init for pulse programs
      * @param {Object} context  - object {state: state, log: log}
      */
-    static function pulseRelatedParamsInit(context) {
+    static function pulseInit(context) {
 
         var log = context.log;
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
