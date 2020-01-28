@@ -141,7 +141,7 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
-        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(state.Parameters.IsNull(paramId));
+        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('1: '+state.Parameters.IsNull(paramId));
 
         // safety check: set default value if not defined or pulse program changed
         if (!state.Parameters.IsNull(paramId)) {
@@ -153,7 +153,7 @@ class ParamUtil {
         //TO DO: check why this try catch is needed
         try {
             var defaultParameterValue = ParameterOptions.getDefaultValue(context, paramId);
-        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(JSON.stringify(defaultParameterValue));
+        if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('2: '+JSON.stringify(defaultParameterValue));
             if (!defaultParameterValue) {  //parameter is not defined for this DS or on this page
                 return;
             }
@@ -163,13 +163,14 @@ class ParamUtil {
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
             var valArr = [];
-            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug(typeof defaultParameterValue === 'string');
+            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+typeof defaultParameterValue === 'string');
             if(typeof defaultParameterValue === 'string') {
                 valArr = [new ParameterValueResponse(defaultParameterValue)];
             } else {
                 if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('here1');
                 valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(defaultParameterValue);
             }
+            if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+valArr.length);
             var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
             state.Parameters[paramId] = multiResponse;
         }
