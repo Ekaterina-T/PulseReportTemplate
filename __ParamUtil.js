@@ -167,7 +167,7 @@ class ParamUtil {
             if(typeof defaultParameterValue === 'string') {
                 valArr = [new ParameterValueResponse(defaultParameterValue)];
             } else {
-                if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('here1');
+                if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('here1: '+JSON.stringify(defaultParameterValue));
                 valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(defaultParameterValue);
             }
             if(paramId === 'p_Trends_trackerSurveys') log.LogDebug('3: '+valArr.length);
