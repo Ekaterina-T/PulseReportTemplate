@@ -515,7 +515,7 @@ class ParameterOptions {
      * @param {string} parameterName
      * @returns default values: 1 code, array of codes, null
      */
-    static function getDefaultParameterValue(context, parameterName) {
+    static function getDefaultValue(context, parameterName) {
 
         var log = context.log;
         var parameterOptions = ParameterOptions.GetOptions(context, parameterName, 'get default'); // get all options
@@ -526,7 +526,7 @@ class ParameterOptions {
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
             if(parameterName === 'p_Trends_trackerSurveys') {
-                return convertCodeArrayToParameterValueResponseArray(context, SurveyTracker.getTrackersForSelectedPid(context));
+                return SurveyTracker.getTrackersForSelectedPid(context);
             }
 
             //pulse program + question based params -> need to exclude questions with 0 answers (not used in current pulse survey)
@@ -536,7 +536,7 @@ class ParameterOptions {
 
                 for (var i = 0; i < parameterOptions.length; i++) {
                     if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
-                        return convertCodeToParameterValueResponse(context, parameterOptions[i].Code);
+                        return parameterOptions[i].Code;
                     }
                 }
             }
@@ -547,9 +547,9 @@ class ParameterOptions {
         // return the 1st option as default value
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
             var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';
-            id(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
+            if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
             
-            return convertCodeToParameterValueResponse(context, code); 
+            return code; 
         }
 
         log.LogDebug(parameterName+': default value = null');
