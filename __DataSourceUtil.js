@@ -13,20 +13,24 @@ class DataSourceUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
+log.LogDebug('getDsId 1')
         //ds is defined for particular element (table for instance)
         if(context['Source']) { 
             return context['Source'];
         }
+        log.LogDebug('getDsId 2')
         
         //ds is defined page-wide
         if (context.isCustomSource && !!pageContext.Items['Source']) {
             return pageContext.Items['Source'];
         }
+        log.LogDebug('getDsId 3')
         
         //ds is defined report-wide
         if (!state.Parameters.IsNull('p_SurveyType')) {
             return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey
         }
+        log.LogDebug('getDsId 4')
 
         return getDefaultDSFromConfig(context);
     }
@@ -73,9 +77,10 @@ class DataSourceUtil {
      */
     static function getSurveyConfig (context) {
 
-        var state = context.state;
         var log = context.log;
+        log.LogDebug('getSurveyConfig 1')
         var surveyType = getDsId(context);
+        log.LogDebug('getSurveyConfig 2')
         var surveys = Config.Surveys;
         var i = 0;
 
