@@ -29,14 +29,18 @@ class ParamUtil {
 
         var parameter = context.parameter;
         var log = context.log;
+        log.LogDebug('LoadParameter 1');
 
         var currentPage = context.pageContext.Items['CurrentPageId'];
+        log.LogDebug('LoadParameter 2: '+currentPage);
 
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
+        log.LogDebug('LoadParameter 3');
 
         var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
+        log.LogDebug('LoadParameter 4');
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -44,6 +48,7 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
         }
+        log.LogDebug('LoadParameter 5');
 
         return;
     }
