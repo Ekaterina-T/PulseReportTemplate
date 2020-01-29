@@ -13,7 +13,6 @@ class DataSourceUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-log.LogDebug('getDsId 1')
         //ds is defined for particular element (table for instance)
         if(context['Source']) { 
             return context['Source'];
@@ -28,7 +27,6 @@ log.LogDebug('getDsId 1')
         if (!state.Parameters.IsNull('p_SurveyType')) {
             return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey
         }
-        log.LogDebug('getDsId 4')
 
         return getDefaultDSFromConfig(context);
     }
@@ -43,20 +41,16 @@ log.LogDebug('getDsId 1')
     static function getDefaultDSFromConfig (context) {
 
         var log = context.log;
-        log.LogDebug('getDefaultDSFromConfig 1');
         var surveys = Config.Surveys;
         var i = 0;
-        log.LogDebug('getDefaultDSFromConfig 2');
 
         while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'getDefaultDSFromConfig'))) {
             i++;
         }
-        log.LogDebug('getDefaultDSFromConfig 3 '+i);
 
         if(i === surveys.length) {
             throw new Error('DataSourceUtil.getDefaultDSFromConfig: No active data sources found in Config for the user.');
         }
-        log.LogDebug('getDefaultDSFromConfig 4 '+JSON.stringify(surveys[i]));
 
         return surveys[i].Source;
     }
@@ -80,9 +74,7 @@ log.LogDebug('getDsId 1')
     static function getSurveyConfig (context) {
 
         var log = context.log;
-        log.LogDebug('getSurveyConfig 1')
         var surveyType = getDsId(context);
-        log.LogDebug('getSurveyConfig 2')
         var surveys = Config.Surveys;
         var i = 0;
 
@@ -203,18 +195,14 @@ log.LogDebug('getDsId 1')
     static function isProjectSelectorNotNeeded (context) {
 
         var log = context.log;
-        var report = context.report;
-log.LogDebug('isProjectSelectorNotNeeded1');
+
         context.isCustomSource = false;  // here always use the global source, so reset the custom source property for safety reasons
         var surveyConfig = getSurveyConfig(context);
-        log.LogDebug('isProjectSelectorNotNeeded2');
         var ifHide = false;
-        log.LogDebug('isProjectSelectorNotNeeded3');
 
         if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
-        log.LogDebug('isProjectSelectorNotNeeded4');
         return ifHide;
     }
 }

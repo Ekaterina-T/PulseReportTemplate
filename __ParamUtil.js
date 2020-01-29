@@ -361,9 +361,9 @@ class ParamUtil {
 
         log.LogDebug('isParameterToBeLoaded 1: '+parameterName);
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
-        log.LogDebug('isParameterToBeLoaded 1: '+isPulseProgram);
+        log.LogDebug('isParameterToBeLoaded 2: '+isPulseProgram);
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        log.LogDebug('isParameterToBeLoaded 2: '+pageId);
+        log.LogDebug('isParameterToBeLoaded 3: '+pageId);
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -436,7 +436,7 @@ class ParamUtil {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
 
-        log.LogDebug('isParameterToBeLoaded 3: '+pageId);
+        log.LogDebug('isParameterToBeLoaded 4: '+pageId);
 
         if(pageId === 'Page_Trends' && isPulseProgram && parameterName === 'p_DisplayMode') {
             return false;
