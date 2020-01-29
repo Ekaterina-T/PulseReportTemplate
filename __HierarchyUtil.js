@@ -100,7 +100,7 @@ class HierarchyUtil {
 
         if(isDataTableEmpty()) {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
-            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("nodes");
+            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
         }
     }
