@@ -119,16 +119,14 @@ class PageUtil {
         var pageId;
 
         if(!!pageContext.Items['CurrentPageId']) { // if pageContext contains page id info take from there
+            log.LogDebug('pageid exists in pageContext');
             pageId = pageContext.Items['CurrentPageId'];
         } else if(context.hasOwnProperty('CurrentPageId') && context.CurrentPageId) { // try to find it in context
+            log.LogDebug('pageid exists in context');
             pageId = context.CurrentPageId;
         } else { //it's nowhere
+            log.LogDebug('pageid is undefined');
             throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')
-        }
-
-        // not needed anymore
-        if(pageId.indexOf('_ExcelExport')>0) {
-            pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
         }
 
         return 'Page_'+pageId;

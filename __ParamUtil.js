@@ -31,16 +31,13 @@ class ParamUtil {
         var log = context.log;
         log.LogDebug('LoadParameter 1');
 
-        //var currentPage = context.pageContext.Items['CurrentPageId'];
-        log.LogDebug('LoadParameter 2: '/*+currentPage*/);
-
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
-        log.LogDebug('LoadParameter 3');
+        log.LogDebug('LoadParameter 2');
 
         var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
-        log.LogDebug('LoadParameter 4');
+        log.LogDebug('LoadParameter 3');
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -48,7 +45,7 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
         }
-        log.LogDebug('LoadParameter 5');
+        log.LogDebug('LoadParameter 4');
 
         return;
     }
@@ -362,8 +359,11 @@ class ParamUtil {
         var parameterName = parameter.ParameterId;
         var log = context.log;
 
+        log.LogDebug('isParameterToBeLoaded 1: '+parameterName);
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+        log.LogDebug('isParameterToBeLoaded 1: '+isPulseProgram);
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        log.LogDebug('isParameterToBeLoaded 2: '+pageId);
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -435,6 +435,8 @@ class ParamUtil {
         if (parameterName === 'p_BenchmarkSet') {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
+
+        log.LogDebug('isParameterToBeLoaded 3: '+pageId);
 
         if(pageId === 'Page_Trends' && isPulseProgram && parameterName === 'p_DisplayMode') {
             return false;
