@@ -32,7 +32,7 @@ class ParamUtil {
         log.LogDebug('LoadParameter 1');
 
         //var currentPage = context.pageContext.Items['CurrentPageId'];
-        log.LogDebug('LoadParameter 2: '+currentPage);
+        log.LogDebug('LoadParameter 2: '/*+currentPage*/);
 
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
