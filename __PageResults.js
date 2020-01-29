@@ -154,6 +154,11 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+        
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+           return dimensionsInConfig;
+        }
+
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
 
