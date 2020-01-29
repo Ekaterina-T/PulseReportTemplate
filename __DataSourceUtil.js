@@ -18,13 +18,11 @@ log.LogDebug('getDsId 1')
         if(context['Source']) { 
             return context['Source'];
         }
-        log.LogDebug('getDsId 2')
         
         //ds is defined page-wide
         if (context.isCustomSource && !!pageContext.Items['Source']) {
             return pageContext.Items['Source'];
         }
-        log.LogDebug('getDsId 3')
         
         //ds is defined report-wide
         if (!state.Parameters.IsNull('p_SurveyType')) {
@@ -45,16 +43,20 @@ log.LogDebug('getDsId 1')
     static function getDefaultDSFromConfig (context) {
 
         var log = context.log;
+        log.LogDebug('getDefaultDSFromConfig 1');
         var surveys = Config.Surveys;
         var i = 0;
+        log.LogDebug('getDefaultDSFromConfig 2');
 
         while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'getDefaultDSFromConfig'))) {
             i++;
         }
+        log.LogDebug('getDefaultDSFromConfig 3 '+i);
 
         if(i === surveys.length) {
             throw new Error('DataSourceUtil.getDefaultDSFromConfig: No active data sources found in Config for the user.');
         }
+        log.LogDebug('getDefaultDSFromConfig 4 '+JSON.stringify(surveys[i]));
 
         return surveys[i].Source;
     }
