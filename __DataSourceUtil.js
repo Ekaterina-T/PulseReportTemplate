@@ -197,14 +197,17 @@ class DataSourceUtil {
 
         var log = context.log;
         var report = context.report;
-
+log.LogDebug('isProjectSelectorNotNeeded1');
         context.isCustomSource = false;  // here always use the global source, so reset the custom source property for safety reasons
         var surveyConfig = getSurveyConfig(context);
+        log.LogDebug('isProjectSelectorNotNeeded2');
         var ifHide = false;
+        log.LogDebug('isProjectSelectorNotNeeded3');
 
         if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
+        log.LogDebug('isProjectSelectorNotNeeded4');
         return ifHide;
     }
 }
