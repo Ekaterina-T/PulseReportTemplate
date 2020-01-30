@@ -488,7 +488,6 @@ class PageResults {
         var suppressValue = SuppressConfig.TableSuppressValue;
 
         for (var i = 0; i < bmValues.length; i++) {
-
             var bmVal: Datapoint = bmValues[i];
             var base: Datapoint = baseValues[i];
 
