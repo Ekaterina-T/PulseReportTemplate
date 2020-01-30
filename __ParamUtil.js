@@ -361,6 +361,8 @@ class ParamUtil {
             return isPulseProgram;
         }
 
+        //after p_projectSelector to be able to iterate export over it
+        //in the above case p_projectSelector runs earlier than page script
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         if (parameterName === 'p_Results_CountsPercents') {
