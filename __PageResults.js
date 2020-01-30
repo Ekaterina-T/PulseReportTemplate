@@ -475,19 +475,23 @@ class PageResults {
     /**
      * copies values of column #bmColumn from Benchmarks table into targetHeader of another table
      * @param {Object} context
+     * @param {Datapoint[]} - base values for main table where we copy data to
      * @param {Number} column of Benchmark table to copy vals from (1-based)
      * @param {HeaderContent} header content that recieves values
      * @param {String} header content title
      */
-    static function copyBenchmarkValues(context, baseValues, bmColumn, targetHeader, title) {
+    static function copyBenchmarkValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title) {
         
         var report = context.report;
         var table = context.table;
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
+        var baseValues: Datapoint[];
 
-        if(!baseValues) {
-            baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1);
+        if(!baseValuesForOriginalScores) {
+            baseValues = report.TableUtils.GetColumnValues('Benchmarks', 1);
+        } else {
+            baseValues = baseValuesForOriginalScores;
         }
 
         for (var i = 0; i < bmValues.length; i++) {
