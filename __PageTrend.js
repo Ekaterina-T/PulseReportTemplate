@@ -76,7 +76,7 @@ class PageTrend {
 
             table.ColumnHeaders.Add(pidHQ);
             table.RemoveEmptyHeaders.Rows = false;
-            table.RemoveEmptyHeaders.Columns = true;
+            table.RemoveEmptyHeaders.Columns = false;
 
         } else {
             // add column - trending by Date variable

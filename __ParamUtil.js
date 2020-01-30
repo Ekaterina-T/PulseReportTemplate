@@ -166,8 +166,10 @@ class ParamUtil {
             } else {
                 valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(context, defaultParameterValue);
             }
-            var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
-            state.Parameters[paramId] = multiResponse;
+            if(valArr.length>0) {
+                var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+                state.Parameters[paramId] = multiResponse;
+            }
         }
             //if not, set it as single select parameter
         catch (e) {
