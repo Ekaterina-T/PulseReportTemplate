@@ -528,10 +528,10 @@ class PageResults {
         if (showPrevWave) {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
+
+            //TO DO: replace with copyBenchmarkValues(context, bmColumn, targetHeader, benchmarkTableLabels[bmColumn - 1]);
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
-
             waveHeader.HideData = true;
-
             for (var j = 0; j < preWaveVals.length; j++) {
 
                 var prevWaveVal: Datapoint = preWaveVals[j];
@@ -543,8 +543,8 @@ class PageResults {
                     waveHeader.SetCellValue(j, '-');
                 }
             }
-
             table.ColumnHeaders.Add(waveHeader);
+
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsPrevWave');
             bmColumn += 1;
         }
@@ -557,9 +557,14 @@ class PageResults {
             for (i = 0; i < surveyCompCols.length; i++) {
 
                 var surveyCompContent: HeaderContent = new HeaderContent();
+                copyBenchmarkValues(context, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1]);
+
+                /*
+                var surveyCompCols = getBenchmarkSurveys(context);
+                for (i = 0; i < surveyCompCols.length; i++) {
+
                 var surveyValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
                 surveyCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
-
                 for (var j = 0; j < baseValues.length; j++) {
 
                     base = baseValues[j];
@@ -569,15 +574,14 @@ class PageResults {
                         surveyCompContent.SetCellValue(j, benchmark.Value);
                     }
                 }
+                table.ColumnHeaders.Add(surveyCompContent);*/
 
-                table.ColumnHeaders.Add(surveyCompContent);
                 bmColumn += 1;
             }
         }
 
         //add benchmark with scrore aggregated across selected tracker surveys
         if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
-
             var aggSurveyData: HeaderContent = new HeaderContent();
             copyBenchmarkValues(context, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1]);
             bmColumn++;
@@ -587,8 +591,9 @@ class PageResults {
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarkContent: HeaderContent = new HeaderContent();
+            copyBenchmarkValues(context, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
+            /*
             var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
-
             for (var i = 0; i < benchmarkValues.length; i++) {
 
                 var benchmark: Datapoint = benchmarkValues[i];
@@ -598,9 +603,9 @@ class PageResults {
                     benchmarkContent.SetCellValue(i, benchmark.Value);
                 }
             }
-
-            benchmarkContent.HideData = true;
             table.ColumnHeaders.Add(benchmarkContent);
+            */
+            benchmarkContent.HideData = true;
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
             bmColumn += 1;
         }
@@ -610,12 +615,14 @@ class PageResults {
         if (reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-            for (i = 0; i < hierCompCols.length; i++) {
+            for (var i = 0; i < hierCompCols.length; i++) {
 
                 var hierCompContent: HeaderContent = new HeaderContent();
-                var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
-                hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
 
+                copyBenchmarkValues(context, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+
+                /*var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
                 for (var j = 0; j < baseValues.length; j++) {
 
                     base = baseValues[j];
@@ -625,8 +632,8 @@ class PageResults {
                         hierCompContent.SetCellValue(j, benchmark.Value);
                     }
                 }
+                table.ColumnHeaders.Add(hierCompContent);*/
 
-                table.ColumnHeaders.Add(hierCompContent);
                 //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
                 bmColumn += 1;
             }
