@@ -1,12 +1,10 @@
 class PageResults {
 
-
     /*
      * Assemble Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      * @param {string} bannerId: explicit bannerId to use, not mandotary
      */
-
     static function tableStatements_Render(context, bannerId) {
 
         var table = context.table;
@@ -28,18 +26,15 @@ class PageResults {
      * Hide Statements table because of suppress
      * @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_Hide(context) {
         return SuppressUtil.isGloballyHidden(context);
     }
-
 
     /*
      * Column Banner selector for Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table}
      * @param {string} bannerId: explicit bannerId to use, not mandotary
      */
-
     static function tableStatements_AddColumns(context, bannerId) {
 
         var log = context.log;
@@ -54,7 +49,6 @@ class PageResults {
      * Add set of rows based on questions or categorizations (for pulse)
      * @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_AddRows(context) {
 
         var log = context.log;
@@ -91,7 +85,6 @@ class PageResults {
      * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_AddRows_Banner0(context) {
 
         var table = context.table;
@@ -113,7 +106,6 @@ class PageResults {
      * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
-
     static function tableStatements_AddRows_Banner1(context) {
 
         var table = context.table;
@@ -147,7 +139,6 @@ class PageResults {
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      * @return {array} array of categorization ids
      */
-
     static function getActiveCategorizations(context) {
 
         var log = context.log;
@@ -482,7 +473,10 @@ class PageResults {
     }
 
     /**
-     * 
+     * copies values of column #bmColumn from Benchmarks table into targetHeader of another table
+     * @param {Object} context
+     * @param {Number} column of Benchmark table to copy vals from (1-based)
+     * @param {HeaderContent} header content that recieves values
      */
     static function copyBenchmarkValues(context, bmColumn, targetHeader) {
         
@@ -504,7 +498,6 @@ class PageResults {
 
         table.ColumnHeaders.Add(targetHeader);
     }
-
 
     /*
      * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
@@ -582,7 +575,7 @@ class PageResults {
         }
 
         //add benchmark with scrore aggregated across selected tracker surveys
-        if(false && !state.Parameters.IsNull('p_Trends_trackerSurveys')) {
+        if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
 
             var aggSurveyData: HeaderContent = new HeaderContent();
             copyBenchmarkValues(context, bmColumn, aggSurveyData);
@@ -901,14 +894,12 @@ class PageResults {
     }
 
     /*
-     * Adds segment with proper filter by survey
+     * Adds segment with proper filter by surveys selected in Combine Survey drop down
      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-     * @param {string} survey - project id
      */
     static function tableBenchmarks_addAggregatedSurveyBasedComparison(context) {
 
         var log = context.log;
-        var report = context.report;
         var aggSurveySegment: HeaderSegment = new HeaderSegment();
         var trackerSurveys = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
 
@@ -917,14 +908,12 @@ class PageResults {
         aggSurveySegment.HideData = true;
         aggSurveySegment.Expression = Filters.getFilterExpressionByAnswerRange(context, 'source_projectid', trackerSurveys);
 
-        /*
-        aggSurveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
+        aggSurveySegment.Label = TextAndParameterUtil.getLabelByKey(context, 'AggregatedResults');
         //calc score
         var newHeaders = addScore(context);
         newHeaders[0].Title = aggSurveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
-        newHeaders[1].SubHeaders.Add(aggSurveySegment);*/
+        newHeaders[1].SubHeaders.Add(aggSurveySegment);
     }
-
 
     /**
      *  gets previous wave column
