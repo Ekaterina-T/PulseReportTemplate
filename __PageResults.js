@@ -477,8 +477,9 @@ class PageResults {
      * @param {Object} context
      * @param {Number} column of Benchmark table to copy vals from (1-based)
      * @param {HeaderContent} header content that recieves values
+     * @param {String} header content title
      */
-    static function copyBenchmarkValues(context, bmColumn, targetHeader) {
+    static function copyBenchmarkValues(context, bmColumn, targetHeader, title) {
         
         var report = context.report;
         var table = context.table;
@@ -496,6 +497,7 @@ class PageResults {
             } 
         }
 
+        targetHeader.Title = new Label(report.CurrentLanguage, title);
         table.ColumnHeaders.Add(targetHeader);
     }
 
@@ -578,7 +580,7 @@ class PageResults {
         if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
 
             var aggSurveyData: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, bmColumn, aggSurveyData);
+            copyBenchmarkValues(context, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1]);
             bmColumn++;
         }
 
@@ -686,7 +688,6 @@ class PageResults {
 
     }
 
-
     /*
      * Conditional Formatting for Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table}
@@ -712,12 +713,10 @@ class PageResults {
 
     }
 
-
     /*
      * show distribution bar chart legend
      * @param {object} context {state: state, report: report, log: log, text: text}
      */
-
     static function drawDistributionChartLegend(context) {
 
         var text = context.text;
