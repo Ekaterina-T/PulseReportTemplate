@@ -479,13 +479,16 @@ class PageResults {
      * @param {HeaderContent} header content that recieves values
      * @param {String} header content title
      */
-    static function copyBenchmarkValues(context, bmColumn, targetHeader, title) {
+    static function copyBenchmarkValues(context, baseValues, bmColumn, targetHeader, title) {
         
         var report = context.report;
         var table = context.table;
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
+
+        if(!baseValues) {
+            baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1);
+        }
 
         for (var i = 0; i < bmValues.length; i++) {
             var bmVal: Datapoint = bmValues[i];
@@ -557,7 +560,7 @@ class PageResults {
             for (i = 0; i < surveyCompCols.length; i++) {
 
                 var surveyCompContent: HeaderContent = new HeaderContent();
-                copyBenchmarkValues(context, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1]);
+                copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1]);
 
                 /*
                 var surveyCompCols = getBenchmarkSurveys(context);
@@ -583,7 +586,7 @@ class PageResults {
         //add benchmark with scrore aggregated across selected tracker surveys
         if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
             var aggSurveyData: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1]);
+            copyBenchmarkValues(context, baseValues, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1]);
             bmColumn++;
         }
 
@@ -591,7 +594,7 @@ class PageResults {
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarkContent: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
+            copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
             /*
             var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
             for (var i = 0; i < benchmarkValues.length; i++) {
@@ -619,7 +622,7 @@ class PageResults {
 
                 var hierCompContent: HeaderContent = new HeaderContent();
 
-                copyBenchmarkValues(context, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
 
                 /*var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
                 hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
