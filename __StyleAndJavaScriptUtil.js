@@ -10,17 +10,8 @@ class StyleAndJavaScriptUtil {
     
             var str = '';
     
-            try {
-                str += buildReportTemplateModule (context); //js
-            } catch(e) {
-                throw new Error('StyleAndJavaScriptUtil.buildReportTemplateModule: failed with error "'+e.Message+'"');
-            }
-    
-            try {
-                str += applyTheme(context); // css
-            } catch(e) {
-                throw new Error('StyleAndJavaScriptUtil.applyTheme: failed with error "'+e.Message+'"');
-            }
+            str += buildReportTemplateModule (context); //js    
+            str += applyTheme(context); // css
     
             return str;
         }
@@ -83,9 +74,25 @@ class StyleAndJavaScriptUtil {
             if (pageId === 'KPI') {
                 properties.push('gaugeData: '+JSON.stringify(PageKPI.getKPIResult(context)));
             }
+
+            if (pageId === 'Results') {
+                var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+                var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+
+                if(isPulseProgram && !!custom_category) {
+                    var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
+                    if(custom_questions.length>0) {
+                        properties.push('isCustomQuestionsTabVisible: true');
+                    } else {
+                        properties.push('isCustomQuestionsTabVisible: false');
+                    }
+                } else {
+                    properties.push('isCustomQuestionsTabVisible: false');
+                }
+            }
     
             if (pageId === 'Categorical_') {
-                properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context)));
+                properties.push('pieData: '+JSON.stringify(PageCategorical.getPieCollection(context, 'jsutil')));
                 properties.push('pieColors: '+JSON.stringify(Config.pieColors));
             }
     

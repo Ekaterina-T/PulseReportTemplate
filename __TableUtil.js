@@ -351,7 +351,6 @@ class TableUtil {
      *@param {object} context
      *@param {string} categorization id
      */
-
     static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
@@ -371,49 +370,64 @@ class TableUtil {
     }
     
       
-  /**
-*@param {object} context
-*@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
-*/
-  
-  static function getHeaderDescriptorObject(context, configItem) {
-    
-    var header = {}; // prepare param for getTrendHeader
-    
-    if(typeof configItem === 'string') {
-      header.Code = configItem;
-      header.Type = 'Question';
-    } else {
-      header = configItem;
+    /**
+    *@param {object} context
+    *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
+    */
+    static function getHeaderDescriptorObject(context, configItem) {
+        
+        var header = {}; // prepare param for getTrendHeader
+        
+        if(typeof configItem === 'string') {
+        header.Code = configItem;
+        header.Type = 'Question';
+        } else {
+        header = configItem;
+        }
+        
+        if(!header || !header.Type || !header.Code) {
+        throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
+        }
+        
+        return header;
     }
-    
-    if(!header || !header.Type || !header.Code) {
-      throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
-    }
-    
-    return header;
-  }
 
     /**
-     *
+     * @param {Object} context
+     * @param {String} pageId
+     * @param {String} propertyName
+     * @param {Boolean} doPreCheck - for the case when there are no questions in the property, i.e. config error
      */
-
     static function getActiveQuestionsListFromPageConfig (context, pageId, propertyName, doPreCheck) {
 
         var log = context.log;
         var Qs = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, propertyName);
 
-        //log.LogDebug('getActiveQuestionsListFromPageConfig 1 before: '+JSON.stringify(Qs))
-
         if (doPreCheck && Qs.length == 0) {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
         }
 
-        var questions = PulseProgramUtil.excludeItemsWithoutData(context, Qs);
-
-        //log.LogDebug('getActiveQuestionsListFromPageConfig 2 after: '+JSON.stringify(questions));
-
-        return questions;
+        return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
+
+    /**
+     * @param {Object} context
+     * @param {String} pageId
+     * @param {String} propertyName - property holding array of categories
+     * @param {Boolean} doPreCheck - for the case when there are no questions in the property, i.e. config error
+     */
+    static function getActiveQuestionsListByCategories(context, pageId, propertyName, doPreCheck) {
+
+        var log = context.log;
+        var categories = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, propertyName);
+
+        if (doPreCheck && categories.length == 0) {
+            throw new Error('TableUtil.getActiveQuestionsListByCategories: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
+        }
+
+        var Qs = QuestionUtil.getQuestionIdsByCategories(context, categories);
+        return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
+    }
+
 
 }

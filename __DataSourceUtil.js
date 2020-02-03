@@ -7,7 +7,6 @@ class DataSourceUtil {
       * @param {object} context object {state: state, report: report, log: log}
       * @returns {string} surveyType : ds0
       */
-
     static function getDsId (context) {
         
         var state = context.state;
@@ -39,7 +38,6 @@ class DataSourceUtil {
      * @param {object} context object {state: state, report: report, user:user, log: log}
      * @returns {string} Source ds id
      */
-
     static function getDefaultDSFromConfig (context) {
 
         var log = context.log;
@@ -62,7 +60,6 @@ class DataSourceUtil {
      * @param {object} context object {state: state, report: report, log: log}
      * @returns {object}
      */
-
     static function getProject (context) {
 
         var report = context.report;
@@ -74,7 +71,6 @@ class DataSourceUtil {
      * @param {object} context object {state: state, report: report, log: log}
      * @returns {object} config
      */
-
     static function getSurveyConfig (context) {
 
         var state = context.state;
@@ -98,7 +94,6 @@ class DataSourceUtil {
      * @param {string} propertyName
      * @returns {object|array|string|number} property value
      */
-
     static function getSurveyPropertyValueFromConfig (context, propertyName) {
 
         var state = context.state;
@@ -167,7 +162,7 @@ class DataSourceUtil {
         catch (e) {};
 
         // if the property isn't defined on the page level, grab it from the survey config
-        if(!value) {
+        if(pageId === null || !value) {
             value = getSurveyPropertyValueFromConfig (context, propertyName);
         }
 

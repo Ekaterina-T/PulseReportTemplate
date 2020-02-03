@@ -1,4 +1,4 @@
 public interface IPulseSurveysInfo {
 
-    function getVisiblePulseSurveys (context) : Object[];
+    function getPulseSurveys (context) : Object[];
 }

@@ -7,11 +7,9 @@ class PageCategorical {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-
     static function Hide(context){
         return false;
     }
-
 
     /**
      * @memberof PageCategorical
@@ -19,11 +17,33 @@ class PageCategorical {
      * @description function to render the page
      * @param {Object} context - {component: page, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-
     static function Render(context){
 
     }
 
+    /**
+     * @param {Object} context
+     * @param {String} type: multi or anything else = single
+     */
+    static function defineCategoricalQuestionsList(context, type) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var questionConfigParamName;
+        var categoriesConfigNames;
+
+        if(type === 'multi') {
+            questionConfigParamName = 'ResultMultiCategoricalQuestions';
+            categoriesConfigNames = 'CustomCategoriesMulti';
+        } else {
+            questionConfigParamName = 'ResultCategoricalQuestions';
+            categoriesConfigNames = 'CustomCategoriesSingle';
+        }
+
+        var Qs1 = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, questionConfigParamName);
+        var Qs2 = TableUtil.getActiveQuestionsListByCategories(context, pageId, categoriesConfigNames);
+
+        return Qs1.concat(Qs2);
+    }
 
     /**
      * @memberof PageCategorical
@@ -42,9 +62,7 @@ class PageCategorical {
             return true;
         }
 
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var questionConfigParamName = type === 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = defineCategoricalQuestionsList(context, type); 
 
         if (!Qs || Qs.length === 0) {
             return true;
@@ -60,8 +78,7 @@ class PageCategorical {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-    static function tileCategorical_Hide(context){
-
+    static function tileCategorical_Hide(context) {
         return SuppressUtil.isGloballyHidden(context);
     }
 
@@ -71,7 +88,6 @@ class PageCategorical {
      * @description function to build the categorical table
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
-
     static function tableCategorical_Render(context, tableType) {
 
         var table = context.table;
@@ -79,15 +95,14 @@ class PageCategorical {
 
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var questionConfigParamName = tableType == 'multi' ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
 
         // add rows (single or multi questions)
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = defineCategoricalQuestionsList(context, tableType);
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "topN_single");
         var answerLimit = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, "categoricalAnswerLimit");  // if single has more than <answerLimit> options, it is displayed as TopN card. Otherwise, pie chart is displayed.
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
 
-        log.LogDebug('tableType='+tableType+' Qs='+JSON.stringify(Qs));
+        //log.LogDebug('tableType='+tableType+' Qs='+JSON.stringify(Qs));
 
         for (var i=0; i<Qs.length; i++) {
 
@@ -102,10 +117,18 @@ class PageCategorical {
             var row: HeaderQuestion = new HeaderQuestion(qe);
 
             row.IsCollapsed = (tableType == 'multi') ? true : false;
-
             row.ShowTitle = true;//false; - changed to true for excel export
             row.ShowTotals = false;
             row.HideHeader = true;
+
+            if(Export.isExcelExportMode(context)) {
+                var dummyHeader: HeaderSegment = new HeaderSegment();
+                dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                dummyHeader.SegmentType = HeaderSegmentType.Expression;
+                dummyHeader.Label = new Label(context.report.CurrentLanguage, QuestionUtil.getQuestionTitle(context, Qs[i]));
+                dummyHeader.HideData = false;
+                row.SubHeaders.Add(dummyHeader);
+            }
 
             if (answerCount > answerLimit || tableType=='multi') {
                 // sorting by base to show the most popular answers
@@ -139,7 +162,6 @@ class PageCategorical {
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function tableSingleCategorical_Render
@@ -164,7 +186,6 @@ class PageCategorical {
 
     }
 
-
     /**
      * @memberof PageCategorical
      * @function getCategoricalResult
@@ -181,7 +202,6 @@ class PageCategorical {
      * @property {String} base - # of responses
      * @property {String} y - vertical percent
      */
-
     static function getCategoricalResult(context, tableType) {
 
         var report = context.report;
@@ -194,14 +214,12 @@ class PageCategorical {
         // show topN answers in a list for questions with more than <answerLimit> options
         var topN = (tableType == 'multi') ? DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_multi") : DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "topN_single");
         var tableName = (tableType == 'multi') ? 'Multicategorical' : 'Categorical';
-        var questionConfigParamName = (tableType == 'multi') ? 'ResultMultiCategoricalQuestions' : 'ResultCategoricalQuestions';
         var naCode = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'NA_answerCode');
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, questionConfigParamName);
+        var Qs = defineCategoricalQuestionsList(context, tableType);
         var row_index = 0;  // iterator through table rows
         var categoricals = [];
 
         for (var i=0; i<Qs.length; i++) {
-
             var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
             var answerCount = Int32.Parse(newAnswerCount.length);
 
@@ -212,6 +230,7 @@ class PageCategorical {
             var title = QuestionUtil.getQuestionTitle(context, Qs[i]);
             var displayType = (answerCount > answerLimit || tableType=='multi') ? 'list' : 'pie'; // pie only for 3 answers
             var displayNumberOfAnswers = (answerCount > answerLimit || tableType=='multi') ? System.Math.Min(topN, answerCount) : answerCount;
+
             var result = [];
             for (var j=0; j<displayNumberOfAnswers; j++) {
 
@@ -221,17 +240,15 @@ class PageCategorical {
                     var answerName = report.TableUtils.GetRowHeaderCategoryTitles(tableName)[row_index+j][0];
                     var answerPercent = (100*report.TableUtils.GetCellValue(tableName,row_index+j+1,1).Value);
                     result.push({name: answerName, base: answerBase, y: answerPercent});
-
                 }
             }
             categoricals.push({qid: Qs[i], title: title, type: displayType, result: result, order: i});
             row_index += displayNumberOfAnswers;
 
         }
+
         return categoricals;
     }
-
-
 
     /**
      * @memberof PageCategorical
@@ -240,11 +257,11 @@ class PageCategorical {
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object[]} - array of objects containing information about categoricals with pie view
      */
-
-    static function getPieCollection(context) {
+    static function getPieCollection(context, from) {
         var log = context.log;
         var singleCategoricals = getCategoricalResult(context, 'single');
         singleCategoricals.sort(SortCategoricals);
+
         var pieCollection = [];
         for (var i=0; i<singleCategoricals.length; i++) {
             if (singleCategoricals[i].type != 'pie')
@@ -252,9 +269,7 @@ class PageCategorical {
             pieCollection.push(singleCategoricals[i]);
         }
         return pieCollection;
-
     }
-
 
     /**
      * @memberof PageCategorical
@@ -263,7 +278,6 @@ class PageCategorical {
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object[]} array of objects containing information about categoricals with Top X list view
      */
-
     static function getTopListCollection(context) {
 
         var report = context.report;
@@ -282,7 +296,6 @@ class PageCategorical {
         return listCollection.concat(multiCategoricals);
 
     }
-
 
     /**
      * @memberof PageCategorical
@@ -311,14 +324,12 @@ class PageCategorical {
      * @description function to generate material cards with categories
      * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-
     static function buildCategoricalTiles (context) {
 
         var log = context.log;
         var text = context.text;
-
         // render cards with pies
-        var pies = getPieCollection(context);
+        var pies = getPieCollection(context, 'buildCategoricalTiles');
 
         for (var i=0; i<pies.length; i++) {
             var item = pies[i];

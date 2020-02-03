@@ -26,6 +26,13 @@ class QuestionUtil {
             questionInfo.standardType = ((String)(question.QuestionType)).toLowerCase();
             questionInfo.questionId = questionId;
 
+            //check if custom question from pulse program
+            var categories = '&'+question.GetCategories().join('&');
+            categories = categories.toLowerCase();
+            if(categories.indexOf('&custom')>=0) {
+                questionInfo.isCustom = true;
+            }
+
         } else if(questionId.slice(-6) === '.other') { // other option of single or multi
 
             splittedQuestionId = splitStringByLastPoint(questionId.substr(0,questionId.lastIndexOf('.other')));
@@ -60,7 +67,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {QuestionnaireElement} qe
      */
-
     static function getQuestionnaireElement(context, questionId) {
 
         var log = context.log;
@@ -90,7 +96,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {string} title question title
      */
-
     static function getQuestionTitle (context, questionId) {
 
         var log = context.log;
@@ -100,6 +105,10 @@ class QuestionUtil {
         var title;
         var answer: Answer;
         var NA = TextAndParameterUtil.getTextTranslationByKey(context, 'NoQuestionTitle')+question.QuestionId;
+
+        if(questionInfo.hasOwnProperty('isCustom') && questionInfo.isCustom) { //simple custom question from pulse
+            return getCustomQuestionTextById(context, questionId);
+        }
 
         if(questionInfo.type==='general') {  // simple question type: single, open text, grid overall
             return question.Title || question.Text || NA;
@@ -121,7 +130,8 @@ class QuestionUtil {
             title = (question.Title || question.Text);
             return (title || answer.Text) ? (title+': '+answer.Text) : NA;
         }
-
+        
+        throw new Error('QuestionUtil.getQuestionTitle: couldn\'t found way to get question title for '+questionId);
     }
 
     /*
@@ -130,7 +140,6 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {Answer []} answers or scale for grids
      */
-
     static function getQuestionAnswers (context, questionId) {
 
         var state = context.state;
@@ -154,8 +163,6 @@ class QuestionUtil {
         throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list. Check if it\'s open text question without \'single in reporting\' property.');
 
     }
-
-
 
     /*
      * Check if a question has a specific answer code.
@@ -183,7 +190,6 @@ class QuestionUtil {
      * @param {string}
      * @returns {object} { beforePoint: beforeLastPoint, afterLastPoint: afterLastPoint}
      */
-
     static function splitStringByLastPoint (string) {
 
         var positionOfLastPoint = string.lastIndexOf('.'); // grid: gridId.answerId
@@ -197,9 +203,7 @@ class QuestionUtil {
    * @param {string} questionId with dot
    * @returns {string} questionId with underscore instead of dot
    */
-
     static function getQuestionIdWithUnderscoreInsteadOfDot (questionIdWithDot) {
-
         return questionIdWithDot.replace(/\./g,'_');
     }
 
@@ -214,6 +218,9 @@ class QuestionUtil {
         var report = context.report;
         var log = context.log;
 
+        // not clear how to leave with that, needs testing
+        // how grids would be processed? and other questions?
+        // how to standardise this to work with
         if (category) {
             var project : Project = DataSourceUtil.getProject(context);
             return project.GetQuestions({'InCategories': [category]});
@@ -221,12 +228,12 @@ class QuestionUtil {
         return [];
     }
 
-    /*
-   * Get questions ids by category
-   * @param {object} context object {state: state, report: report, log: log}
-   * @param {string} category
-   * @returns {array} - String[]
-   */
+    /**
+     * Get questions ids by category
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} category
+     * @returns {array} - String[]
+     */
     static function getQuestionIdsByCategory (context, category) {
 
         // see EN-430
@@ -240,6 +247,24 @@ class QuestionUtil {
         }
         return questionIds;
     }
+    
+    /** 
+     * Get questions ids by array of categories
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {Array} categoryList
+     * @returns {array} - String[]
+     */
+    static function getQuestionIdsByCategories(context, categoryList) {
+
+        var log = context.log;
+        var questions = [];
+        
+        for(var i=0; i<categoryList.length; i++) {
+            questions = questions.concat(getQuestionIdsByCategory(context, categoryList[i]));
+        }
+
+        return questions;
+    }
 
 
     /** TO DO: Should be moved to CustomQuestion class probably as too specific
@@ -252,41 +277,64 @@ class QuestionUtil {
         var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;
+        var report = context.report;
 
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        if (codes.length == 0)
+        if (codes.length == 0) {
             return null;
+        }
 
-        var cachedTxt;
         var baby_p_number = codes[0];
+        var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
 
         // Redis is not available in export
-        if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-            cachedTxt = confirmit.ReportDataCache(baby_p_number+"_"+qId);
-        }
-
-        // if Redis doesn't have cached question, look it up in the DB table
-        if (!cachedTxt) {
-            var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
-            var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-            if(schemaId && tableName) { // storage for baby survey custom questions
-                var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-                var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-                var custom_id = baby_p_number+"_"+qId;
-                var custom_texts = table.GetColumnValues("__l9", "id", custom_id);
-                if (custom_texts.Count) {
-                    cachedTxt = custom_texts[0];
-                    if (state.ReportExecutionMode == ReportExecutionMode.Web) {
-                        confirmit.ReportDataCache(custom_id, cachedTxt); // save the found value to the cache
-                    }
-                }
+        if (state.ReportExecutionMode == ReportExecutionMode.Web ) {
+            var cachedTxt = confirmit.ReportDataCache(cacheKey);
+            if(cachedTxt) {
+                return cachedTxt;
             }
         }
-        return cachedTxt;
+
+
+        // if Redis doesn't have cached question or Excel Export mode, look it up in the DB table
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
+
+        if(!schemaId && !tableName) { // storage for baby survey custom questions
+            throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
+        }
+
+        var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+        var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+        var custom_id = baby_p_number+"_"+qId;
+        var custom_texts;
+        var customTextIsEmpty;
+
+        try {
+            custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
+
+            customTextIsEmpty = !custom_texts.Count || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+            if(customTextIsEmpty) { //no translation in current lang -> try English
+                custom_texts= table.GetColumnValues("__l9l9", "id", custom_id);
+            }
+        } catch(e) { // no translation found -> try label as in old reports
+            custom_texts= table.GetColumnValues("__l9", "id", custom_id);
+        }
+
+        customTextIsEmpty = custom_texts.Count==0 || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
+        if (!customTextIsEmpty) {
+            cachedTxt = custom_texts[0];
+            if(state.ReportExecutionMode == ReportExecutionMode.Web) {
+                confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
+            }
+        }
+
+        //if empty cell or no such row in db custom table, show qid as label
+        return cachedTxt  || qId;
     }
 
 }

@@ -100,7 +100,7 @@ class HierarchyUtil {
 
         if(isDataTableEmpty()) {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
-            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable("nodes");
+            var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
         }
     }
@@ -140,7 +140,7 @@ class HierarchyUtil {
             var row : DataRow = rows[i];
             nodeList[row['id']] = {};
             nodeList[row['id']].label = row['__l9'];
-            nodeList[row['id']].parent = !row['parent'] ? row['id'] : row['parent'];
+            nodeList[row['id']].parent = !row[Config.relationName] ? row['id'] : row[Config.relationName];
         }
 
         if(!numberOfLevelsUp) {

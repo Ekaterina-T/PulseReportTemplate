@@ -42,11 +42,8 @@ class PageTrend {
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function
+    static function tableTrend_Render(context) {
 
-    tableTrend_Render(context) {
-
-        var report = context.report;
         var state = context.state;
         var table = context.table;
         var suppressSettings = context.suppressSettings;
@@ -59,12 +56,33 @@ class PageTrend {
             table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
         }
 
-        // add column - trending by Date variable
-        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
-        TableUtil.addTrending(context, dateQId);
+        // in pulse program Trend shows comparison between surveys
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
+            var projectHQ: HeaderQuestion = new HeaderQuestion(qe);
+            projectHQ.IsCollapsed = false;
+            projectHQ.Sorting.Enabled = false;
+            projectHQ.ShowTotals = false;
+
+            if(!state.Parameters.IsNull('p_AcrossAllSurveys')) { //need to show average over all surveys
+                projectHQ.ShowTotals = true;
+                var qMask : MaskFlat = new MaskFlat();
+                qMask.IsInclusive = true;
+                projectHQ.AnswerMask = qMask;
+            }
+            table.ColumnHeaders.Add(projectHQ);
+
+        } else {
+            // add column - trending by Date variable
+            var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
+            TableUtil.addTrending(context, dateQId);
+        }
+
 
         // global table settings
         table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Rows = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 

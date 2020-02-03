@@ -2,14 +2,13 @@ class PageResults {
 
 
     /*
-  * Assemble Statements table
-  * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
-  * @param {string} bannerId: explicit bannerId to use, not mandotary
-  */
+     * Assemble Statements table
+     * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
+     * @param {string} bannerId: explicit bannerId to use, not mandotary
+     */
 
     static function tableStatements_Render(context, bannerId) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
@@ -23,13 +22,12 @@ class PageResults {
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
-
     }
 
     /*
-  * Hide Statements table because of suppress
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Hide Statements table because of suppress
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
     static function tableStatements_Hide(context) {
 
@@ -38,10 +36,10 @@ class PageResults {
 
 
     /*
-  * Column Banner selector for Statements table
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  * @param {string} bannerId: explicit bannerId to use, not mandotary
-  */
+     * Column Banner selector for Statements table
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} bannerId: explicit bannerId to use, not mandotary
+     */
 
     static function tableStatements_AddColumns(context, bannerId) {
 
@@ -54,45 +52,46 @@ class PageResults {
     }
 
     /*
-  * Add set of rows based on questions or categorizations (for pulse)
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Add set of rows based on questions or categorizations (for pulse)
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
-  static function tableStatements_AddRows(context) {
-    
+    static function tableStatements_AddRows(context) {
+
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var showCustomQuestions = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher')[0]==='custom';
-        
-        if(resultStatements && resultStatements.length>0 && dimensions && dimensions.length>0) {
+        var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
+        var numberOfAddedBanners = 0;
+
+        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
-        if(!showCustomQuestions && resultStatements && resultStatements.length>0) {
+        if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {
             tableStatements_AddRows_Banner0(context);
-            return;
-        } 
-        
-        if (!showCustomQuestions && dimensions && dimensions.length>0) {
+            numberOfAddedBanners++;
+        } else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
             tableStatements_AddRows_Banner1(context);
-            return;
+            numberOfAddedBanners++;
         }
 
-        if (showCustomQuestions) {
-            tableStatements_AddRows_Banner2(context);    
-            return;
+        if (showCustomQuestions || Export.isExcelExportMode(context)) {
+            tableStatements_AddRows_Banner2(context);
+            numberOfAddedBanners++;
         }
 
-        throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
-         
-  }
+        if (!numberOfAddedBanners) { //otherwise cannot add several banners
+            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+        }
+
+    }
 
     /*
-  * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
     static function tableStatements_AddRows_Banner0(context) {
 
@@ -100,9 +99,9 @@ class PageResults {
         var log = context.log;
         var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'ResultStatements');
 
-        for(var i=0; i<questions.length; i++) {
-            var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, questions[i]);
-            var headerQuestion : HeaderQuestion = new HeaderQuestion(questionnaireElement);
+        for (var i = 0; i < questions.length; i++) {
+            var questionnaireElement: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, questions[i]);
+            var headerQuestion: HeaderQuestion = new HeaderQuestion(questionnaireElement);
             headerQuestion.IsCollapsed = true;
             TableUtil.maskOutNA(context, headerQuestion);
             TableUtil.addBreakByNestedHeader(context, headerQuestion);
@@ -112,9 +111,9 @@ class PageResults {
 
 
     /*
-  * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
     static function tableStatements_AddRows_Banner1(context) {
 
@@ -122,18 +121,18 @@ class PageResults {
         var log = context.log;
 
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var tabSwitcher = ParamUtil.GetSelectedCodes(context,'p_Results_TableTabSwitcher');
-        var isDimensionVisible = tabSwitcher.length === 0 || tabSwitcher[0]==='withDims';
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
+        var isDimensionVisible = tabSwitcher.length === 0 || tabSwitcher[0] === 'withDims';
 
-        for (var i=0; i<categorizations.length; i++) {
+        for (var i = 0; i < categorizations.length; i++) {
 
-            var categorization : HeaderCategorization = new HeaderCategorization();
-            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g,'');
+            var categorization: HeaderCategorization = new HeaderCategorization();
+            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
             categorization.DefaultStatistic = StatisticsType.Average;
             categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
             categorization.Preaggregation = PreaggregationType.Average;
-            categorization.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/browse/TQA-4116
+            categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
             categorization.Collapsed = false;
             categorization.Totals = isDimensionVisible;
 
@@ -145,100 +144,105 @@ class PageResults {
     }
 
     /**
-* Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
-*  @param {object} context: {state: state, report: report, log: log, table: table}
-* @return {array} array of categorization ids
-*/
+     * Retuns active categorizations. For baby survey from pulse program it'll be limited list of categorizations.
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     * @return {array} array of categorization ids
+     */
 
     static function getActiveCategorizations(context) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+        
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+           return dimensionsInConfig;
+        }
+
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
 
-        if(schemaId && tableName) { // there is storage for baby survey dimensions
+        if (schemaId && tableName) { // there is storage for baby survey dimensions
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
             var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-            var dimensions = table.GetColumnValues('__l9','id', selectedProject[0]); //only one or none
+            var dimensions = table.GetColumnValues('__l9', 'id', selectedProject[0]); //only one or none
 
-            if(dimensions && dimensions.Count>0) {
+            if (dimensions && dimensions.Count > 0) {
 
                 var activeDimesions = []; //intersection of config and survey content; config alows to exclude dimensions
-                var configDimensionsStr = dimensionsInConfig.join('$')+'$';
+                var configDimensionsStr = dimensionsInConfig.join('$') + '$';
                 configDimensionsStr = configDimensionsStr.toLowerCase();
+                var dimensionsArr = dimensions[0].split(',');
 
-                for(var i=0; i<dimensions.Count; i++) {
-                    if(dimensions[i]!=='' && configDimensionsStr.indexOf(dimensions[i].toLowerCase()+'$')>-1) {
-                        activeDimesions.push(dimensions[i]);
+                for (var i = 0; i < dimensionsArr.length; i++) {
+                    if (dimensionsArr[i] !== '' && configDimensionsStr.indexOf(dimensionsArr[i].toLowerCase() + '$') > -1) {
+                        activeDimesions.push(dimensionsArr[i]);
                     }
                 }
-                return activeDimesions.length >0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
+                return activeDimesions.length > 0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
             }
         }
 
         return dimensionsInConfig;
     }
 
-       /**
-  * Add custom statement questions as table rows based on Question category
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-  
-  static function tableStatements_AddRows_Banner2 (context) {
-    
-            var report = context.report;
-            var state = context.state;
-            var table = context.table;
-            var log = context.log;
-            var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
-            var custom_questions = QuestionUtil.getQuestionsByCategory (context, custom_category);
-        
-            var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher')!=='noDims'
-            // display a categorisation object as a dimension
-            if (isDimensionVisible)   {
-                var categorization : HeaderCategorization = new HeaderCategorization();
-                categorization.CategorizationId = 'Custom';
-                categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                categorization.Collapsed = true;
-                categorization.Totals = true;  
-                TableUtil.addBreakByNestedHeader(context, categorization);
-                table.RowHeaders.Add(categorization);
-            }
+    /**
+     * Add custom statement questions as table rows based on Question category
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
-            for (var i=0; i<custom_questions.length; i++) {
-              var qId = custom_questions[i].QuestionId;        
-              var questionnaireElement : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId); 
-              var headerQuestion : HeaderQuestion = new HeaderQuestion(questionnaireElement);
-              headerQuestion.IsCollapsed = true;
-              headerQuestion.HideHeader = true;
-              TableUtil.addBreakByNestedHeader(context, headerQuestion);
-              
-              var dummyHeader: HeaderSegment = new HeaderSegment();
-              dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
-              dummyHeader.SegmentType = HeaderSegmentType.Expression;
-              dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
-              dummyHeader.HideData = false;
-              dummyHeader.SubHeaders.Add(headerQuestion);
-              
-              table.RowHeaders.Add(dummyHeader);
-            }
-      }
+    static function tableStatements_AddRows_Banner2(context) {
+
+        var report = context.report;
+        var state = context.state;
+        var table = context.table;
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+        var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
+
+        var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher') !== 'noDims'
+            // display a categorisation object as a dimension
+        if (isDimensionVisible) {
+            var categorization: HeaderCategorization = new HeaderCategorization();
+            categorization.CategorizationId = 'Custom';
+            categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+            categorization.Collapsed = true;
+            categorization.Totals = true;
+            TableUtil.addBreakByNestedHeader(context, categorization);
+            table.RowHeaders.Add(categorization);
+        }
+
+        for (var i = 0; i < custom_questions.length; i++) {
+            var qId = custom_questions[i].QuestionId;
+            var questionnaireElement: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
+            var headerQuestion: HeaderQuestion = new HeaderQuestion(questionnaireElement);
+            headerQuestion.IsCollapsed = true;
+            headerQuestion.HideHeader = true;
+            TableUtil.addBreakByNestedHeader(context, headerQuestion);
+
+            var dummyHeader: HeaderSegment = new HeaderSegment();
+            dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
+            dummyHeader.SegmentType = HeaderSegmentType.Expression;
+            dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
+            dummyHeader.HideData = false;
+            dummyHeader.SubHeaders.Add(headerQuestion);
+
+            table.RowHeaders.Add(dummyHeader);
+        }
+    }
 
     /*
-  * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  * @param {string} scoreType
-  */
+     * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} scoreType
+     */
 
     static function tableStatements_AddColumns_Banner0(context) {
 
         var log = context.log;
-        var state = context.state;
 
         // add Score column
         addScore(context);
@@ -253,12 +257,12 @@ class PageResults {
     }
 
     /*
-  * Add Score calculation
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
-  * @param {Header} parentHeader - not mandotary
-  * @param {Array} [Header1, Header2,...]
-  */
+     * Add Score calculation
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
+     * @param {Header} parentHeader - not mandotary
+     * @param {Array} [Header1, Header2,...]
+     */
     static function addScore(context, parentHeader) {
 
         var table = context.table;
@@ -267,7 +271,7 @@ class PageResults {
 
         scoreType = scoreType.toLowerCase();
 
-        if(scoreType === 'avg')	{
+        if (scoreType === 'avg') {
 
             // add Score column
             var avg: HeaderFormula = new HeaderFormula();
@@ -282,7 +286,7 @@ class PageResults {
             score.HideData = true;
             //score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
-            if(parentHeader) {
+            if (parentHeader) {
                 parentHeader.SubHeaders.Add(avg);
                 parentHeader.SubHeaders.Add(score);
             } else {
@@ -295,13 +299,13 @@ class PageResults {
         var bcCategories: HeaderCategories = new HeaderCategories();
         //bcCategories.RecodingShowOriginal = true;
         //bcCategories.RecodingPosition = RecodingPositionType.OnStart;
-        if(scoreType === '%fav') {
+        if (scoreType === '%fav') {
 
             // add Score column
             var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
             var fav: HeaderFormula = new HeaderFormula();
             fav.Type = FormulaType.Expression;
-            fav.Expression = 'cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row)';
+            fav.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row)';
             fav.Decimals = 0;
             fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
 
@@ -313,7 +317,7 @@ class PageResults {
             bcCategories.Decimals = 0;
             bcCategories.HideData = true;
 
-            if(parentHeader) {
+            if (parentHeader) {
                 parentHeader.SubHeaders.Add(fav);
                 parentHeader.SubHeaders.Add(bcCategories);
             } else {
@@ -323,14 +327,14 @@ class PageResults {
             return [fav, bcCategories];
         }
 
-        if(scoreType === '%fav-%unfav') {
+        if (scoreType === '%fav-%unfav') {
 
             // add Score column
             var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
             var negScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_NegativeCols');
             var diff: HeaderFormula = new HeaderFormula();
             diff.Type = FormulaType.Expression;
-            diff.Expression = 'cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row)';
+            diff.Expression = 'cellv(col+' + posScoreRecodingCols.join(', row)+cellv(col+') + ',row) - cellv(col+' + negScoreRecodingCols.join(', row)-cellv(col+') + ',row)';
             diff.Decimals = 0;
             diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
 
@@ -342,7 +346,7 @@ class PageResults {
             bcCategories.Decimals = 0;
             bcCategories.HideData = true;
 
-            if(parentHeader) {
+            if (parentHeader) {
                 parentHeader.SubHeaders.Add(diff);
                 parentHeader.SubHeaders.Add(bcCategories);
             } else {
@@ -352,13 +356,13 @@ class PageResults {
             return [diff, bcCategories];
         }
 
-        throw new Error('PageResults.addScore: Calculation of score for type "'+scoreType+' is not found."');
+        throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
     }
 
     /*
-  *  add distribution bar chart
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     *  add distribution bar chart
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function addDistributionBarChart(context) {
 
         var log = context.log;
@@ -373,12 +377,13 @@ class PageResults {
         bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Decimals = 0;
         bcCategories.HideData = true;
-        
+
         table.ColumnHeaders.Add(bcCategories);
 
         var barChartColors = Config.barChartColors_Distribution;
+        var n = barChartColors.length;
 
-        if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+        if (state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             var barChart: HeaderChartCombo = new HeaderChartCombo();
             var chartValues = [];
@@ -386,12 +391,12 @@ class PageResults {
 
             bcCategories.HideData = true;
 
-            for(i=0; i< barChartColors.length; i++) {
+            for (i = 0; i < n; i++) {
                 var chartValue: ChartComboValue = new ChartComboValue();
-                chartValue.Expression = 'cellv(col-'+(i+1)+', row)';
+                chartValue.Expression = 'cellv(col-' + (i + 1) + ', row)'; //'cellv(col-'+(n-i)+', row)';//
                 chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
                 chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
-                chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution '+ barChartColors[i].type;
+                chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution ' + barChartColors[i].type;
                 chartValues.push(chartValue);
             }
 
@@ -403,13 +408,12 @@ class PageResults {
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
 
-            var n = barChartColors.length;
-            for(i=0; i< barChartColors.length; i++) {
+            for (i = 0; i < barChartColors.length; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
-                formula.Expression = 'cellv(col-'+barChartColors.length+', row)/100';
+                formula.Expression = 'cellv(col-' + (i * 2 + 1) + ', row)/100';
                 formula.Percent = true;
-                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[n - i - 1].label);
+                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
             }
         }
@@ -425,7 +429,7 @@ class PageResults {
         var table = context.table;
 
         // add scale distribution
-        if(!state.Parameters.IsNull('p_Results_CountsPercents')) {
+        if (!state.Parameters.IsNull('p_Results_CountsPercents')) {
 
             var selectedDistr = state.Parameters.GetString('p_Results_CountsPercents');
             var categoryDistr: HeaderCategories = new HeaderCategories();
@@ -436,7 +440,7 @@ class PageResults {
             baseDist.Decimals = 0;
             baseDist.HideHeader = true;
 
-            if(selectedDistr==='C') { // Counts
+            if (selectedDistr === 'C') { // Counts
 
                 baseDist.Distributions.Count = true;
                 baseDist.Distributions.HorizontalPercents = false;
@@ -454,9 +458,9 @@ class PageResults {
     }
 
     /*
-    *  add base column
-    *  @param {object} context: {state: state, report: report, log: log, table: table}
-    */
+     *  add base column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function addResponsesColumn(context) {
 
         var state = context.state;
@@ -480,24 +484,22 @@ class PageResults {
 
 
     /*
-  * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
-    static function tableStatements_AddBenchmarkColumns_Banner0 (context) {
+    static function tableStatements_AddBenchmarkColumns_Banner0(context) {
 
         var log = context.log;
 
-        if(!isBenchmarkAvailable(context)) {
+        if (!isBenchmarkAvailable(context)) {
             return;
         }
-
         var report = context.report;
-        var state = context.state;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',1);
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
         var suppressValue = SuppressConfig.TableSuppressValue;
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
         var base: Datapoint;
@@ -506,14 +508,14 @@ class PageResults {
 
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
-        if(showPrevWave) {
+        if (showPrevWave) {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
 
             waveHeader.HideData = true;
 
-            for(var j=0; j<preWaveVals.length; j++) {
+            for (var j = 0; j < preWaveVals.length; j++) {
 
                 var prevWaveVal: Datapoint = preWaveVals[j];
                 base = baseValues[j];
@@ -527,16 +529,43 @@ class PageResults {
 
             table.ColumnHeaders.Add(waveHeader);
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsPrevWave');
-            bmColumn+=1;
+            bmColumn += 1;
+        }
+
+        //add survey comparison score
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
+
+        if (tabSwitcher[0] !== 'custom') {
+
+            var surveyCompCols = getBenchmarkSurveys(context);
+            for (i = 0; i < surveyCompCols.length; i++) {
+
+                var surveyCompContent: HeaderContent = new HeaderContent();
+                var surveyValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                surveyCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+
+                for (var j = 0; j < baseValues.length; j++) {
+
+                    base = baseValues[j];
+                    benchmark = surveyValues[j];
+
+                    if (base.Value >= suppressValue && !benchmark.IsEmpty) {
+                        surveyCompContent.SetCellValue(j, benchmark.Value);
+                    }
+                }
+
+                table.ColumnHeaders.Add(surveyCompContent);
+                bmColumn += 1;
+            }
         }
 
         // add benchmark data based on benchmark project
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarkContent: HeaderContent = new HeaderContent();
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks',bmColumn);
+            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
 
-            for(var i=0; i<benchmarkValues.length; i++) {
+            for (var i = 0; i < benchmarkValues.length; i++) {
 
                 var benchmark: Datapoint = benchmarkValues[i];
                 base = baseValues[i];
@@ -549,12 +578,12 @@ class PageResults {
             benchmarkContent.HideData = true;
             table.ColumnHeaders.Add(benchmarkContent);
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
-            bmColumn+=1;
+            bmColumn += 1;
         }
 
         //add hierarchy comparison benchmarks
         var reportBases = context.user.PersonalizedReportBase.split(',');
-        if(reportBases.length === 1) {
+        if (reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
             for (i = 0; i < hierCompCols.length; i++) {
@@ -578,6 +607,7 @@ class PageResults {
                 bmColumn += 1;
             }
         }
+
     }
 
     /**
@@ -586,7 +616,6 @@ class PageResults {
      * @param {string} expression - how to calc value
      * @param {string} labelKey - defines chart label
      */
-
     static function addScoreVsBenchmarkChart(context, normColPosition, labelKey) {
 
         var report = context.report;
@@ -600,11 +629,11 @@ class PageResults {
         // add formula to calculate score vs. prev wave
         var formula_ScoreVsPrevNorm: HeaderFormula = new HeaderFormula();
         formula_ScoreVsPrevNorm.Type = FormulaType.Expression;
-        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv('+normColPosition+',row) < 1 AND (cellv(1,row)-cellv('+normColPosition+',row) > -1)), 0, cellv(1,row)-cellv('+normColPosition+',row))'; // the 1st column in the table is score
+        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), 0, cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
         table.ColumnHeaders.Add(formula_ScoreVsPrevNorm);
 
         // add barchart
-        if(state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+        if (state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
 
             barChart_ScoreVsNorm.TypeOfChart = ChartComboType.Bar;
             barChart_ScoreVsNorm.Thickness = '100%';
@@ -636,10 +665,9 @@ class PageResults {
 
 
     /*
-  * Conditional Formatting for Statements table
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-
+     * Conditional Formatting for Statements table
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function tableStatements_ApplyConditionalFormatting(context) {
 
         var table = context.table;
@@ -663,9 +691,9 @@ class PageResults {
 
 
     /*
-  * show distribution bar chart legend
-  * @param {object} context {state: state, report: report, log: log, text: text}
-  */
+     * show distribution bar chart legend
+     * @param {object} context {state: state, report: report, log: log, text: text}
+     */
 
     static function drawDistributionChartLegend(context) {
 
@@ -673,10 +701,10 @@ class PageResults {
         var barChartColors = Config.barChartColors_Distribution;
         var legend = '<div class="bar-chart-legend-container"><div class="bar-chart-legend">';
 
-        for (var i=0; i < barChartColors.length; i++) {
-            legend += '<div class="bar-chart-legend__item legend-item">'+
-                '<div class="legend-item__color" style="background-color: '+barChartColors[i].color+';"></div>'+
-                '<div class="legend-item__label">'+TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label)+'</div>'+
+        for (var i = 0; i < barChartColors.length; i++) {
+            legend += '<div class="bar-chart-legend__item legend-item">' +
+                '<div class="legend-item__color" style="background-color: ' + barChartColors[i].color + ';"></div>' +
+                '<div class="legend-item__label">' + TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label) + '</div>' +
                 '</div>';
         }
 
@@ -689,20 +717,19 @@ class PageResults {
     //-----------------------------------------------------------------------------------------------
 
     /*
-  * Assemble Benchmarks table
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     * Assemble Benchmarks table
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
 
     static function tableBenchmarks_Render(context) {
 
-        var state = context.state;
         var table = context.table;
         var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        if(isBenchmarkAvailable(context)) {
+        if (isBenchmarkAvailable(context)) {
             tableStatements_AddRows(context);
             tableBenchmarks_AddColumns_Banner0(context);
+            //SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
             table.Decimals = 0;
             table.RowNesting = TableRowNestingType.Nesting;
@@ -711,10 +738,9 @@ class PageResults {
     }
 
     /*
-  * Populate benchmarks table
-  * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-  */
-
+     * Populate benchmarks table
+     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+     */
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
         var table = context.table;
@@ -733,17 +759,28 @@ class PageResults {
         table.ColumnHeaders.Add(excludedFiltersForN);
 
         //add previous wave column
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
+        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
             tableBenchmarks_addWaveScoreColumn(context);
         }
 
+        //add survey based comparison
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
+
+        if (tabSwitcher[0] !== 'custom') {
+            var surveysToCompare = getBenchmarkSurveys(context);
+
+            for (var i = 0; i < surveysToCompare.length; i++) {
+                tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
+            }
+        }
+
         //add Benchmarks from benchmark project
-        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarks: HeaderBenchmark = new HeaderBenchmark();
             benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
 
-            if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) {// there's benchmark set
+            if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) { // there's benchmark set
 
                 var selectedBMSet = ParamUtil.GetSelectedCodes(context, 'p_BenchmarkSet'); // can be only one option
                 benchmarks.BenchmarkSet = selectedBMSet[0];
@@ -751,27 +788,28 @@ class PageResults {
             table.ColumnHeaders.Add(benchmarks);
         }
 
+
         //add Benchmark as comparison to upper/lower hierarchy levels
         var bases = context.user.PersonalizedReportBase.split(',');
-        if(bases.length === 1) {
+
+        if (bases.length === 1) {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
-            for(var i=0; i<hierarchyLevelsToCompare.length; i++) {
+            for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
         }
-
     }
 
+
     /*
-  * Adds segment with proper filter by hierarchy and base and score column for it
-  * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-  * @param {level} top or number of levels to go up
-  */
+     * Adds segment with proper filter by hierarchy and base and score column for it
+     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+     * @param {level} top or number of levels to go up
+     */
     static function tableBenchmarks_addHierarchyBasedComparison(context, level) {
 
         var log = context.log;
-        var table = context.table;
         var report = context.report;
         var levelSegment: HeaderSegment = new HeaderSegment();
         var parentsList = [];
@@ -780,16 +818,21 @@ class PageResults {
         levelSegment.SegmentType = HeaderSegmentType.Expression;
         levelSegment.HideData = true;
 
-        if(level === 'top') {
+        if (level === 'top') {
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
-        } else {
+        } else if (level === 'parent') {
+            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
+        } else{
             parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
         }
 
-        if(parentsList && parentsList.length===1 && parentsList[0].length>0) { //===1 for multiselect hierarchy
+        if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
             var parentArr = parentsList[0];
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[parentArr.length-1]['id'], null);
-            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[parentArr.length-1]['label']);
+            var index = parentArr.length - 1;
+
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+
         } else {
             return; // no such parent in the hierarchy
         }
@@ -800,6 +843,31 @@ class PageResults {
         newHeaders[1].SubHeaders.Add(levelSegment);
 
     }
+
+    /*
+     * Adds segment with proper filter by survey
+     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+     * @param {string} survey - project id
+     */
+    static function tableBenchmarks_addSurveyBasedComparison(context, survey) {
+
+        //var log = context.log;
+        var report = context.report;
+        var surveySegment: HeaderSegment = new HeaderSegment();
+
+        surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        surveySegment.SegmentType = HeaderSegmentType.Expression;
+        surveySegment.HideData = true;
+        surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey.Code);
+
+        surveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
+        //calc score
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+        newHeaders[1].SubHeaders.Add(surveySegment);
+
+    }
+
 
     /**
      *  gets previous wave column
@@ -820,7 +888,7 @@ class PageResults {
         currentHierarchyAndWaveId.SegmentType = HeaderSegmentType.Expression;
         currentHierarchyAndWaveId.HideData = true;
 
-        if(prevWave) { // current wave is not the 1st wave ever
+        if (prevWave) { // current wave is not the 1st wave ever
             currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
             newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
         } else {
@@ -832,33 +900,32 @@ class PageResults {
     }
 
     /*
-* get code of previous wave
-*  @param {object} context: {state: state, report: report, log: log, table: table}
-* @return {Answer} {Code: code, Label: label}
-*/
-
+     * get code of previous wave
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     * @return {Answer} {Code: code, Label: label}
+     */
     static function getPreviousWave(context) {
 
         var log = context.log;
         var waveQ = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
 
-        if(waveQ) {
+        if (waveQ) {
             var waves: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQ);
             var currentWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
             var prevWave;
 
-            if(!currentWave || currentWave.length === 0) {
+            if (!currentWave || currentWave.length === 0) {
                 throw new Error('PageResults.getPreviousWave: Current wave is not selected.');
             }
 
             currentWave = currentWave[0];
             var i = 0;
 
-            while(i<waves.length && waves[i].Precode !== currentWave) {
+            while (i < waves.length && waves[i].Precode !== currentWave) {
                 i++;
             }
 
-            return (i>0 && i<waves.length) ? waves[i-1] : null;     // i==0 -> no previous wave
+            return (i > 0 && i < waves.length) ? waves[i - 1] : null; // i==0 -> no previous wave
         }
 
         return null;
@@ -866,10 +933,9 @@ class PageResults {
 
 
     /*
-  * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-
+     * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function isBenchmarkAvailable(context) {
 
         var log = context.log;
@@ -878,8 +944,9 @@ class PageResults {
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
+        var surveysToCompare = getBenchmarkSurveys(context).length;
 
-        if(benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length>0)) {
+        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare) {
             return true;
         }
         return false;
@@ -887,12 +954,27 @@ class PageResults {
 
 
     /*
-  * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
-
+     * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function table_Benchmarks_hide(context) {
         return !isBenchmarkAvailable(context);
+    }
+
+    /*
+     * Gets benchmark surveys
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @return {Array} array of pids
+     */
+    static function getBenchmarkSurveys(context) {
+        var surveysToCompare = [];
+        var previousSurvey = SurveyTracker.getComparisonTrackerForSelectedPid(context);
+
+        if (previousSurvey && previousSurvey.Code) {
+            surveysToCompare.push(previousSurvey);
+        }
+
+        return surveysToCompare;
     }
 
 }

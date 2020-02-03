@@ -2,7 +2,6 @@ class PagePulseSurveyData {
 
     /**
      * @param {Object} context
-     * @param {string} pageId - not mandatory
      */
     static public function tablePulseSurveyContentInfo_Render(context) {
 
@@ -14,14 +13,14 @@ class PagePulseSurveyData {
 
         //log.LogDebug('res from table build='+JSON.stringify(resources))
 
-        for(var i=0; i< resources.length; i++) {
+        for (var i = 0; i < resources.length; i++) {
 
             var resource = resources[i];
             var base: HeaderBase = new HeaderBase();
             var header;
-            
-            if(resource.Type === 'Dimension') { //category;            
-              
+
+            if (resource.Type === 'Dimension') { //category;            
+
                 header = new HeaderCategorization();
                 header.CategorizationId = resource.Code;
                 header.DataSourceNodeId = DataSourceUtil.getDsId(context);
@@ -29,41 +28,41 @@ class PagePulseSurveyData {
                 header.Totals = true;
                 table.RowHeaders.Add(header); // to avoid case when previous header is added if troubles 
 
-            } else if (resource.Type === 'QuestionId') {  // question id
-                
+            } else if (resource.Type === 'QuestionId') { // question id
+
                 var questionInfo = QuestionUtil.getQuestionInfo(context, resource.Code);
-                var qe: QuestionnaireElement =  QuestionUtil.getQuestionnaireElement(context, resource.Code);
+                var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, resource.Code);
                 var questionType;
 
                 //define question type to apply correct header properties later
                 questionType = (questionInfo.hasOwnProperty('standardType')) ? questionInfo.standardType : questionInfo.type;
                 questionType = questionType.toLowerCase();
 
-                if(questionType.indexOf('hierarchy')>=0) {
+                if (questionType.indexOf('hierarchy') >= 0) {
                     header = new HeaderSegment();
                     header.DataSourceNodeId = DataSourceUtil.getDsId(context);
                     header.SegmentType = HeaderSegmentType.Expression;
-                    header.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB (context);
+                    header.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
                     table.RowHeaders.Add(header);
 
-                } else if(questionType.indexOf('multi')>=0) {
+                } else if (questionType.indexOf('multi') >= 0) {
 
                     header = new HeaderQuestion(qe);
 
-                    var mask : MaskFlat = new MaskFlat();
+                    var mask: MaskFlat = new MaskFlat();
                     mask.IsInclusive = true;
                     header.AnswerMask = mask;
                     header.IsCollapsed = true;
                     header.ShowTotals = true;
                     table.RowHeaders.Add(header);
 
-                } else if(questionType.indexOf('open')>=0) {
+                } else if (questionType.indexOf('open') >= 0) {
 
                     header = new HeaderQuestion(qe);
                     header.IsCollapsed = true;
                     table.RowHeaders.Add(header);
 
-                } else if(questionType.indexOf('single')>=0) { // for singles ...
+                } else if (questionType.indexOf('single') >= 0) { // for singles ...
 
                     header = new HeaderQuestion(qe);
                     header.IsCollapsed = true;
@@ -71,15 +70,70 @@ class PagePulseSurveyData {
                     table.RowHeaders.Add(header);
 
                 } else {
-                    throw new Error('PagePulseSurveyData.tablePulseSurveyContentInfo_Render: question type "'+questionType+'" is not supported');
+                    throw new Error('PagePulseSurveyData.tablePulseSurveyContentInfo_Render: question type "' + questionType + '" is not supported');
                 }
             }
-            
+
         }
 
         table.ColumnHeaders.Add(base);
         table.Caching.Enabled = false;
 
         //log.LogDebug('pulse filtering table build end')
+    }
+
+    /**
+     * @param {Object} context
+     */
+    static public function tableAllSurveys_PidPname_Render(context) {
+
+        var table = context.table;
+
+        var qe_pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pid');
+        var qe_pname: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
+        var pid: HeaderQuestion = new HeaderQuestion(qe_pid);
+        var pname: HeaderQuestion = new HeaderQuestion(qe_pname);
+
+        pid.IsCollapsed = false;
+        pid.ShowTotals = false;
+
+        pname.IsCollapsed = false;
+        pname.ShowTotals = false;
+
+        pid.SubHeaders.Add(pname);
+
+        table.RowHeaders.Add(pid);
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
+
+    }
+
+    /**
+     * @param {Object} context
+     */
+    static public function tableAllSurveys_PidPname_Hide(context) {
+        return DataSourceUtil.isProjectSelectorNotNeeded(context);
+    }
+
+    /*
+     * Sets up properties of question headers
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function setRowHeadersProperties(context) {
+
+        var table = context.table;
+        var log = context.log;
+
+        var headers = table.RowHeaders;
+        var cnt = headers.Count;
+
+        while (cnt > 0) {
+            var hd: HeaderQuestion = headers[0];
+            hd.ShowTotals = false;
+            hd.Sorting.Enabled = false;
+
+            headers = hd.SubHeaders;
+            cnt = headers.Count;
+        }
     }
 }

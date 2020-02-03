@@ -41,8 +41,6 @@ class PageKPI {
      */
   static function tableKPI_Render(context){
     
-    var report = context.report;
-    var state = context.state;
     var table = context.table;
     var log = context.log;
     var suppressSettings = context.suppressSettings;
@@ -126,8 +124,6 @@ class PageKPI {
      */
   static function tableTrend_Render(context){
     
-    var report = context.report;
-    var state = context.state;
     var table = context.table;
     var log = context.log;
     var suppressSettings = context.suppressSettings;
@@ -212,7 +208,6 @@ class PageKPI {
   static function getKPIResult(context) {
     
     var report = context.report;
-    var state = context.state;
     var log = context.log;
     var pageId = PageUtil.getCurrentPageIdInConfig(context);
     

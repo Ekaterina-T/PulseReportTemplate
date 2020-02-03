@@ -1,8 +1,8 @@
 public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
 
-    private var _visiblePulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
+    private var _pulseSurveysTablePath : String; // "PulseSurveyData:VisibleSurveys" = "pageId:tableName"
     private var _isEmptyOptionNeeded: Boolean;
-    private var _additionalInfo : String;
+    private var _additionalInfo;
 
     /**
      * constructor
@@ -10,8 +10,13 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      */
     private function PulseSurveys_ReportalTable(context, storageInfo) {
         _isEmptyOptionNeeded = storageInfo.isEmptyOptionNeeded;
-        _visiblePulseSurveysTablePath = storageInfo.hasOwnProperty('visiblePulseSurveysTablePath') ? storageInfo.visiblePulseSurveysTablePath: "PulseSurveyData:VisibleSurveys";
-        _additionalInfo = storageInfo.hasOwnProperty('additionalInfo') ? storageInfo.additionalInfo.join(','): [];
+        _pulseSurveysTablePath = storageInfo.tableName;
+
+        if(storageInfo.hasOwnProperty('additionalInfo')) {
+            _additionalInfo = storageInfo.additionalInfo;
+        } else {
+            throw new Error ('PulseSurveys_ReportalTable: additional info is not provided for pulse program surveys table');
+        } 
     }
 
     /**
@@ -27,21 +32,21 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
      * @param {Object} context {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log, confirmit: confirmit}
      * @returns {Array} array of objects {Code: pid, Label: pname} for user's pulse surveys
      */
-    public function getVisiblePulseSurveys(context) : Object[] {
+    public function getPulseSurveys(context) : Object[] {
 
         var report = context.report;
         var log = context.log;
-        var rawInfo = report.TableUtils.GetRowHeaderCategoryTitles(_visiblePulseSurveysTablePath);
+        var rowInfo = report.TableUtils.GetRowHeaderCategoryTitles(_pulseSurveysTablePath);
         var surveyList = [];
 
-        if(_isEmptyOptionNeeded) {
+        if(_isEmptyOptionNeeded) { // to do: move to system config for consistency?
             var emptyOption = {};
             emptyOption.Label = TextAndParameterUtil.getTextTranslationByKey(context, 'SelectSurveyEmptyOption');
             emptyOption.Code = 'none';
             surveyList[0] = emptyOption;
-        }
+        }        
 
-        surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rawInfo));
+        surveyList = surveyList.concat(transformTableHeaderTitlesIntoObj(context, rowInfo));
 
         return surveyList;
     }
@@ -56,27 +61,32 @@ public class PulseSurveys_ReportalTable implements IPulseSurveysInfo {
         var log = context.log;
         var surveyList = [];
 
-        // reverse order
+        // loop by rows of header groups (many custom tables can be used)
         for(var i=HeaderCategoryTitles.length-1; i>=0; i--) { // reverse order
             var surveyInfo = {};
 
+            var headerRow = HeaderCategoryTitles[i]; // all headers in the row
+            var colNum = headerRow.length; // number of columns
+
+            var sureveyId = headerRow[colNum-1]; //always last
+            var surveyName = headerRow[colNum-2]; // always one before last
+
             //hardcoded in the table: pid->pname->creator->status
-            var surveyStatus = HeaderCategoryTitles[i][0];
-            var surveyAuthor = HeaderCategoryTitles[i][1];
-            var surveyName = HeaderCategoryTitles[i][2];
-            var sureveyId = HeaderCategoryTitles[i][3];
             var addInfo = [];
+            
+            if(_additionalInfo['CreatedByEndUserName']) {
+                var author = headerRow[colNum-3];
+                author.length>0 ? addInfo.push(author) : addInfo.push('undefined user'); //better ideas welcome
+            } 
 
-            if(_additionalInfo.indexOf('CreatedByEndUserName')>=0) {
-                addInfo.push(surveyAuthor.length>0 ? surveyAuthor : 'Undefined user');
+            if(_additionalInfo['Status']) {
+                addInfo.push(headerRow[colNum-4]); 
             }
 
-            if(_additionalInfo.indexOf('Status')>=0) {
-                addInfo.push(surveyStatus);
-            }
             addInfo = addInfo.join(', ');
 
             surveyInfo.Label = addInfo.length >0 ? surveyName+' ('+addInfo+')' : surveyName; //label - inner header
+            surveyInfo.Label = surveyInfo.Label.toUpperCase();
             surveyInfo.Code = sureveyId; // pid - outer header
             surveyList.push(surveyInfo);            
         }

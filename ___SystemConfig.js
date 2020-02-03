@@ -9,7 +9,8 @@ public class SystemConfig {
   */
     static var reportParameterValuesMap = {
 
-        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: 'PulseSurveyData'},
+        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
+        'p_Trends_trackerSurveys': { type: 'DynamicList', locationType: 'FunctionCall', path: 'SurveyTracker.getAllSurveyDescriptors', CachingDisabled: true}, //temporary
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
         'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
@@ -19,14 +20,15 @@ public class SystemConfig {
         'p_CatDD_TimeUnitNoDefault':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
         'p_DisplayMode':              { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DisplayMode'},
         'p_ShowAllPulseSurveys':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ShowAllPulseSurveys'},
+        'p_AcrossAllSurveys':         { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'AcrossAllSurveys'},
 
         'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
         'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments', isQuestionBased: true},
-        'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory', isQuestionBased: true},
-        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs'], isQuestionBased: true},
+        'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory', isQuestionBased: true, CachingDisabled: true},
+        'p_AllOpenTextQs':        { type: 'ParameterOptionList', locationType: 'CombinationOfParameters',          parameterList: ['p_OpenTextQs', 'p_CustomOpenTextQs'], isQuestionBased: true, CachingDisabled: true},
         'p_ScoreQs':              { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'ScoresForComments', isQuestionBased: true},
         'p_TagQs':                { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'TagsForComments', isQuestionBased: true},
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},
@@ -42,7 +44,9 @@ public class SystemConfig {
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
-    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet', 'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs', 'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions'];
+    static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
+                                          'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
+                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -68,7 +72,11 @@ public class SystemConfig {
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
-        Page_Categorical_: ['ResultCategoricalQuestions', 'ResultMultiCategoricalQuestions'],
+        Page_Categorical_: ['ResultCategoricalQuestions', 
+                            'ResultMultiCategoricalQuestions', 
+                            {type: 'QuestionsCategories', propertyWithCategories: 'CustomCategoriesSingle'}, 
+                            {type: 'QuestionsCategories', propertyWithCategories: 'CustomCategoriesMulti'}
+                        ],
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions']
     }
