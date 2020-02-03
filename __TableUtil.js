@@ -365,6 +365,16 @@ class TableUtil {
         row.Collapsed = true;
         row.Totals = true;
         maskOutNA(context, row);
+        
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            var hs : HeaderStatistics = new HeaderStatistics();
+            hs.Statistics.Avg = true;
+            hs.Statistics.Count = true;
+            hs.HideHeader = false;
+            hs.Texts.Average = new Label(report.CurrentLanguage, catId+' (AVG)');
+            hs.Texts.Count = new Label(report.CurrentLanguage, catId+' (N)');
+            row.SubHeaders.Add(hs);
+        }
 
         return row;
     }
