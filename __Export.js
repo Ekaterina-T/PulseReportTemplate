@@ -32,14 +32,22 @@ class Export {
             str += System.Environment.NewLine; // for Excel export
         }
 
+
         if(!state.Parameters.IsNull('p_projectSelector')) {
-            var selectedSurvey = ParamUtil.GetSelectedOptions (context, 'p_projectSelector')[0];
-            if(selectedSurvey.Code!=='none') {
-                str+= 'Survey Name: '+selectedSurvey.Label+' ';
+            var selectedSurveys = ParamUtil.GetSelectedOptions (context, 'p_projectSelector');
+            if(selectedSurveys.length > 0) {
+
+                var selectedSurveysNames = [];
+                for(var i=0; i<selectedSurveys.length; i++) {
+                    selectedSurveysNames.push(selectedSurveys[i].Label)
+                }
+
+                str += 'Survey(-s): '+selectedSurveysNames.join(',')+' ';                
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }
         }
+        
         return str;
     }
 

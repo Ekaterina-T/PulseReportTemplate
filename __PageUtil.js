@@ -8,15 +8,14 @@ class PageUtil {
 
     static function Initialise(context) {
 
+        var log = context.log;
         var state = context.state;
         var page = context.page;
-        var log = context.log;
         var pageContext = context.pageContext;
 
         //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-        //log.LogDebug('page init start: '+page.CurrentPageId);
 
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');

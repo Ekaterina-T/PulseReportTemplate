@@ -140,7 +140,7 @@ class ParameterOptions {
     }
 
     /**
-     *Populates p_projectSelector based on pid and pname questions.
+     *Populates parameter based on pid and pname questions.
      *@param {object} context - contains Reportal scripting state, log, report, parameter objects
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
@@ -281,8 +281,7 @@ class ParameterOptions {
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
-        if (codes.length) {
-            var baby_p_number = codes[0];
+        if (codes.length === 1) {
             for (var i = 0; i < qList.length; i++) {
                 var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
                 if (customTxt) {
@@ -492,22 +491,6 @@ class ParameterOptions {
     }
 
     //------------------------------------------------------------------------------------------
-
-    static function convertCodeToParameterValueResponse(context, code) {
-        return new ParameterValueResponse(code);
-    }
-    
-    static function convertCodeArrayToParameterValueResponseArray(context, codes) {
-
-        var log = context.log;
-        var defaultVals = [];
-
-        for(var i=0; i<codes.length; i++) {
-            defaultVals.push(new ParameterValueResponse(codes[i]));
-        }
-        return defaultVals;
-    }
-
         
     /**
      * TODO: replace with some class maybe that would allow defining def values from outside (not using paramNames in code)
@@ -547,9 +530,7 @@ class ParameterOptions {
         // not pulse program or not question based parameter
         // return the 1st option as default value
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';
-            //if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
-            
+            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';            
             return code; 
         }
 

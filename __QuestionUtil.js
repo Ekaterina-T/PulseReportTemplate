@@ -284,7 +284,7 @@ class QuestionUtil {
         }
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        if (codes.length == 0) {
+        if (codes.length != 1) {
             return null;
         }
 
