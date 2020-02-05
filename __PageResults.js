@@ -4,15 +4,16 @@ class PageResults {
      * Assemble Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      * @param {string} bannerId: explicit bannerId to use, not mandotary
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_Render(context, bannerId) {
+    static function tableStatements_Render(context, bannerId, isNormalizedTable) {
 
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
 
-        tableStatements_AddColumns(context, bannerId);
-        tableStatements_AddRows(context);
+        tableStatements_AddColumns(context, bannerId, isNormalizedTable);
+        tableStatements_AddRows(context, isNormalizedTable);
         tableStatements_ApplyConditionalFormatting(context);
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
@@ -23,24 +24,85 @@ class PageResults {
     }
 
     /*
-     * Hide Statements table because of suppress
-     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * Hide Statements table because of suppress or absence of dimensions
+     * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_Hide(context) {
-        return SuppressUtil.isGloballyHidden(context);
+    static function tableStatements_Hide(context, isNormalizedTable) {
+        return SuppressUtil.isGloballyHidden(context) || tableStatementsHasNoDimensions(context, isNormalizedTable);
     }
+
+    /*
+     * Checks if Statements tablse has dimensions
+     * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
+     */
+
+    static function tableStatementsHasNoDimensions(context, isNormalizedTable) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
+        var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+        var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
+ 
+         if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {           
+         } 
+         else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
+         
+           if (!isNormalizedTable && Export.isExcelExportMode(context)) { //never hide first table for excel export - custom questions are added there
+             return false;
+           }
+           
+           var activeCats = getActiveCategorizations(context);
+           if (activeCats) {
+             var normalizedCats = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
+             var resultCats = [];
+             if (normalizedCats) {
+               var normalizedCatsStr = normalizedCats.join('$') + '$';
+               for (var i = 0; i < activeCats.length; i++) {
+                 var ind = normalizedCatsStr.indexOf(activeCats[i] + '$');
+                 
+                 if((ind >= 0 && isNormalizedTable) || (ind == -1 && !isNormalizedTable)) {
+                   resultCats.push(activeCats[i]);
+                 }
+              }
+             
+               if (resultCats.length > 0){ 
+                 return false;
+               }
+               else { //no active regular dimensions for Statements table, no active normalized dimensions for StatementsNorm table
+                 return true;
+               }
+             }
+             else {  //active dimensions exist, no normalized dimensions in conig
+               return false;
+             }
+           }
+           else { //no active dimensions
+             return true;
+           }
+       }
+       else if (showCustomQuestions && isNormalizedTable) { //always hide normalized table on custom questions tab
+               return true;
+       }
+  
+       return false;
+     }
 
     /*
      * Column Banner selector for Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table}
      * @param {string} bannerId: explicit bannerId to use, not mandotary
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_AddColumns(context, bannerId) {
+
+    static function tableStatements_AddColumns(context, bannerId, isNormalizedTable) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        tableStatements_AddColumns_Banner0(context); // default set
+        tableStatements_AddColumns_Banner0(context, isNormalizedTable); // default set
         return;
 
     }
@@ -48,8 +110,9 @@ class PageResults {
     /*
      * Add set of rows based on questions or categorizations (for pulse)
      * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_AddRows(context) {
+    static function tableStatements_AddRows(context, isNormalizedTable) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -63,15 +126,15 @@ class PageResults {
         }
 
         if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {
-            tableStatements_AddRows_Banner0(context);
+            tableStatements_AddRows_Banner0(context, isNormalizedTable);
             numberOfAddedBanners++;
         } else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
-            tableStatements_AddRows_Banner1(context);
+            tableStatements_AddRows_Banner1(context, isNormalizedTable);
             numberOfAddedBanners++;
         }
 
-        if (showCustomQuestions || Export.isExcelExportMode(context)) {
-            tableStatements_AddRows_Banner2(context);
+        if (showCustomQuestions || (Export.isExcelExportMode(context) && !isNormalizedTable)) {
+            tableStatements_AddRows_Banner2(context, isNormalizedTable);
             numberOfAddedBanners++;
         }
 
@@ -84,20 +147,25 @@ class PageResults {
     /*
      * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
      *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_AddRows_Banner0(context) {
+    static function tableStatements_AddRows_Banner0(context, isNormalizedTable) {
 
         var table = context.table;
         var log = context.log;
         var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'ResultStatements');
 
         for (var i = 0; i < questions.length; i++) {
-            var questionnaireElement: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, questions[i]);
-            var headerQuestion: HeaderQuestion = new HeaderQuestion(questionnaireElement);
-            headerQuestion.IsCollapsed = true;
-            TableUtil.maskOutNA(context, headerQuestion);
-            TableUtil.addBreakByNestedHeader(context, headerQuestion);
-            table.RowHeaders.Add(headerQuestion);
+
+            var isNormalizedQuestion = questions[i].indexOf('_normalized') != -1;
+        	if ((isNormalizedTable && isNormalizedQuestion) || (!isNormalizedTable && !isNormalizedQuestion)) {
+                var questionnaireElement: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, questions[i]);
+                var headerQuestion: HeaderQuestion = new HeaderQuestion(questionnaireElement);
+                headerQuestion.IsCollapsed = true;
+                TableUtil.maskOutNA(context, headerQuestion);
+                TableUtil.addBreakByNestedHeader(context, headerQuestion);
+                table.RowHeaders.Add(headerQuestion);
+            }
         }
     }
 
@@ -105,8 +173,9 @@ class PageResults {
     /*
      * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
      *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_AddRows_Banner1(context) {
+    static function tableStatements_AddRows_Banner1(context, isNormalizedTable) {
 
         var table = context.table;
         var log = context.log;
@@ -117,18 +186,22 @@ class PageResults {
 
         for (var i = 0; i < categorizations.length; i++) {
 
-            var categorization: HeaderCategorization = new HeaderCategorization();
-            categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
-            categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
-            categorization.DefaultStatistic = StatisticsType.Average;
-            categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-            categorization.Preaggregation = PreaggregationType.Average;
-            categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
-            categorization.Collapsed = false;
-            categorization.Totals = isDimensionVisible;
+            var catIncludesNormalizedQuestions = isNormalizedDimension(context, categorizations[i]);
 
-            TableUtil.addBreakByNestedHeader(context, categorization);
-            table.RowHeaders.Add(categorization);
+            if ((isNormalizedTable && catIncludesNormalizedQuestions) || (!isNormalizedTable && !catIncludesNormalizedQuestions)) {
+                var categorization: HeaderCategorization = new HeaderCategorization();
+                categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
+                categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                categorization.DefaultStatistic = StatisticsType.Average;
+                categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                categorization.Preaggregation = PreaggregationType.Average;
+                categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+                categorization.Collapsed = false;
+                categorization.Totals = isDimensionVisible;
+
+                TableUtil.addBreakByNestedHeader(context, categorization);
+                table.RowHeaders.Add(categorization);
+            }
         }
 
         table.TotalsFirst = true;
@@ -171,7 +244,7 @@ class PageResults {
                         activeDimesions.push(dimensionsArr[i]);
                     }
                 }
-                return activeDimesions.length > 0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
+                return activeDimesions.length > 0 ? activeDimesions : []; //return something to avoid table crush - changed to return [] if intersection is empty and use hide script for table
             }
         }
 
@@ -181,9 +254,10 @@ class PageResults {
     /**
      * Add custom statement questions as table rows based on Question category
      *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {boolean} isNormalizedTable: true for table for normalized questions
      */
 
-    static function tableStatements_AddRows_Banner2(context) {
+    static function tableStatements_AddRows_Banner2(context, isNormalizedTable) {
 
         var report = context.report;
         var state = context.state;
@@ -216,6 +290,7 @@ class PageResults {
             var dummyHeader: HeaderSegment = new HeaderSegment();
             dummyHeader.DataSourceNodeId = DataSourceUtil.getDsId(context);
             dummyHeader.SegmentType = HeaderSegmentType.Expression;
+            dummyHeader.Expression = Filters.projectSelectorInPulseProgram(context);
             dummyHeader.Label = new Label(report.CurrentLanguage, QuestionUtil.getCustomQuestionTextById(context, qId));
             dummyHeader.HideData = false;
             dummyHeader.SubHeaders.Add(headerQuestion);
@@ -228,22 +303,25 @@ class PageResults {
      * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
      * @param {object} context: {state: state, report: report, log: log, table: table}
      * @param {string} scoreType
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
 
-    static function tableStatements_AddColumns_Banner0(context) {
+    static function tableStatements_AddColumns_Banner0(context, isNormalizedTable) {
 
         var log = context.log;
 
         // add Score column
         addScore(context);
-        //add distribution barChart
-        addDistributionBarChart(context);
-        // add scale distribution
-        addScaleDistributionColumns(context);
+        if (!isNormalizedTable) {
+            //add distribution barChart
+            addDistributionBarChart(context);
+            // add scale distribution
+            addScaleDistributionColumns(context);
+        }
         // add Responses Column
         addResponsesColumn(context);
         // add Benchmark related columns
-        tableStatements_AddBenchmarkColumns_Banner0(context);
+        tableStatements_AddBenchmarkColumns_Banner0(context, isNormalizedTable);
     }
 
     /*
@@ -510,8 +588,9 @@ class PageResults {
     /*
      * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
      * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_AddBenchmarkColumns_Banner0(context) {
+    static function tableStatements_AddBenchmarkColumns_Banner0(context, isNormalizedTable) {
 
         var log = context.log;
 
@@ -523,9 +602,10 @@ class PageResults {
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
+        var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm" : "Benchmarks" ;
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, 1);
         var suppressValue = SuppressConfig.TableSuppressValue;
-        var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
+        var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles(benchmarkTable);
         var base: Datapoint;
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
@@ -537,7 +617,7 @@ class PageResults {
             var waveHeader: HeaderContent = new HeaderContent();
 
             //TO DO: replace with copyBenchmarkValues(context, bmColumn, targetHeader, benchmarkTableLabels[bmColumn - 1]);
-            var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+            var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
             waveHeader.HideData = true;
             for (var j = 0; j < preWaveVals.length; j++) {
 
@@ -570,7 +650,7 @@ class PageResults {
                 var surveyCompCols = getBenchmarkSurveys(context);
                 for (i = 0; i < surveyCompCols.length; i++) {
 
-                var surveyValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                var surveyValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn); // num of column where values are bmVolumn
                 surveyCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
                 for (var j = 0; j < baseValues.length; j++) {
 
@@ -600,7 +680,7 @@ class PageResults {
             var benchmarkContent: HeaderContent = new HeaderContent();
             copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
             /*
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
             for (var i = 0; i < benchmarkValues.length; i++) {
 
                 var benchmark: Datapoint = benchmarkValues[i];
@@ -628,7 +708,7 @@ class PageResults {
 
                 copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
 
-                /*var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                /*var hierValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn); // num of column where values are bmVolumn
                 hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
                 for (var j = 0; j < baseValues.length; j++) {
 
@@ -754,15 +834,16 @@ class PageResults {
     /*
      * Assemble Benchmarks table
      * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
 
-    static function tableBenchmarks_Render(context) {
+    static function tableBenchmarks_Render(context, isNormalizedTable) {
 
         var table = context.table;
         var log = context.log;
 
         if (isBenchmarkAvailable(context)) {
-            tableStatements_AddRows(context);
+            tableStatements_AddRows(context, isNormalizedTable);
             tableBenchmarks_AddColumns_Banner0(context);
             SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
@@ -1035,5 +1116,27 @@ class PageResults {
 
         return surveysToCompare;
     }
+
+    /*
+     * Checks if dimesion is included in DimensionsWithNormalizedQuestions in config
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+	 *	@param {string} dimension 
+     */
+
+    static function isNormalizedDimension(context, dimension) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var dimensionsNorm = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
+          
+        if (dimensionsNorm) {
+           for (var i = 0; i < dimensionsNorm.length; i++) {
+             if (dimension == dimensionsNorm[i]) {
+                    return true;      
+             }
+           }
+        }
+        return false; 
+      }
 
 }
