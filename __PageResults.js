@@ -629,7 +629,7 @@ class PageResults {
         // add formula to calculate score vs. prev wave
         var formula_ScoreVsPrevNorm: HeaderFormula = new HeaderFormula();
         formula_ScoreVsPrevNorm.Type = FormulaType.Expression;
-        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), 0, cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
+        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), emptyv(), cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
         table.ColumnHeaders.Add(formula_ScoreVsPrevNorm);
 
         // add barchart
