@@ -205,7 +205,7 @@ class PageResults {
 
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher') !== 'noDims'
             // display a categorisation object as a dimension
-        if (isDimensionVisible) {
+        if (isDimensionVisible && !DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             var categorization: HeaderCategorization = new HeaderCategorization();
             categorization.CategorizationId = 'Custom';
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
