@@ -557,17 +557,19 @@ class PageResults {
      * @param {Number} column of Benchmark table to copy vals from (1-based)
      * @param {HeaderContent} header content that recieves values
      * @param {String} header content title
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function copyBenchmarkValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title) {
+    static function copyBenchmarkValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title, isNormalizedTable) {
         
         var report = context.report;
         var table = context.table;
-        var bmValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
+        var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm" : "Benchmarks" ;
+        var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
         var baseValues: Datapoint[];
 
         if(!baseValuesForOriginalScores) {
-            baseValues = report.TableUtils.GetColumnValues('Benchmarks', 1);
+            baseValues = report.TableUtils.GetColumnValues(benchmarkTable, 1);
         } else {
             baseValues = baseValuesForOriginalScores;
         }
@@ -616,7 +618,7 @@ class PageResults {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
 
-            //TO DO: replace with copyBenchmarkValues(context, bmColumn, targetHeader, benchmarkTableLabels[bmColumn - 1]);
+            //TO DO: replace with copyBenchmarkValues(context, bmColumn, targetHeader, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
             var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
             waveHeader.HideData = true;
             for (var j = 0; j < preWaveVals.length; j++) {
@@ -644,7 +646,7 @@ class PageResults {
             for (i = 0; i < surveyCompCols.length; i++) {
 
                 var surveyCompContent: HeaderContent = new HeaderContent();
-                copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1]);
+                copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
 
                 /*
                 var surveyCompCols = getBenchmarkSurveys(context);
@@ -670,7 +672,7 @@ class PageResults {
         //add benchmark with scrore aggregated across selected tracker surveys
         if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
             var aggSurveyData: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, baseValues, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1]);
+            copyBenchmarkValues(context, baseValues, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
             bmColumn++;
         }
 
@@ -678,7 +680,7 @@ class PageResults {
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarkContent: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
+            copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
             /*
             var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
             for (var i = 0; i < benchmarkValues.length; i++) {
@@ -706,7 +708,7 @@ class PageResults {
 
                 var hierCompContent: HeaderContent = new HeaderContent();
 
-                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
 
                 /*var hierValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn); // num of column where values are bmVolumn
                 hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
