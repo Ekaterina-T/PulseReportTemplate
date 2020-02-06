@@ -354,7 +354,6 @@ class TableUtil {
     static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
-        var rowAVG: HeaderCategorization = new HeaderCategorization();
         var row: HeaderCategorization = new HeaderCategorization();
 
         row.CategorizationId = String(catId).replace(/[ ,&]/g, '');

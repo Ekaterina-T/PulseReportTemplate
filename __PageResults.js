@@ -669,13 +669,6 @@ class PageResults {
             }
         }
 
-        //add benchmark with scrore aggregated across selected tracker surveys
-        if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
-            var aggSurveyData: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, baseValues, bmColumn, aggSurveyData, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
-            bmColumn++;
-        }
-
         // add benchmark data based on benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -892,11 +885,6 @@ class PageResults {
             }
         }
 
-        //add benchmark with scrore aggregated across selected tracker surveys
-        if(!state.Parameters.IsNull('p_Trends_trackerSurveys')) {
-            tableBenchmarks_addAggregatedSurveyBasedComparison(context);
-        }
-
         //add Benchmarks from benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
@@ -988,28 +976,6 @@ class PageResults {
         newHeaders[1].SubHeaders.Add(surveySegment);
     }
 
-    /*
-     * Adds segment with proper filter by surveys selected in Combine Survey drop down
-     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-     */
-    static function tableBenchmarks_addAggregatedSurveyBasedComparison(context) {
-
-        var log = context.log;
-        var aggSurveySegment: HeaderSegment = new HeaderSegment();
-        var trackerSurveys = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
-
-        aggSurveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
-        aggSurveySegment.SegmentType = HeaderSegmentType.Expression;
-        aggSurveySegment.HideData = true;
-        aggSurveySegment.Expression = Filters.getFilterExpressionByAnswerRange(context, 'source_projectid', trackerSurveys);
-
-        aggSurveySegment.Label = TextAndParameterUtil.getLabelByKey(context, 'AggregatedResults');
-        //calc score
-        var newHeaders = addScore(context);
-        newHeaders[0].Title = aggSurveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
-        newHeaders[1].SubHeaders.Add(aggSurveySegment);
-    }
-
     /**
      *  gets previous wave column
      *  @param {object} context: {state: state, report: report, log: log, table: table}
@@ -1086,9 +1052,8 @@ class PageResults {
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         var surveysToCompare = getBenchmarkSurveys(context).length;
-        var aggSurveysComparison = !context.state.Parameters.IsNull('p_Trends_trackerSurveys');
 
-        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare || aggSurveysComparison) {
+        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare) {
             return true;
         }
         return false;
