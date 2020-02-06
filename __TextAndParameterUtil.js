@@ -41,10 +41,11 @@ class TextAndParameterUtil {
      * Get translation for text by key
      * @param {object} context {state: state, report: report, log: log}
      * @param {string} keyName
+     * @param {boolean} throw error if translation not found or not? --- replace with smth better?
      * @returns {object} property value
      */
 
-    static function getTextTranslationByKey(context, keyName) {
+    static function getTextTranslationByKey(context, keyName, skipWarning) {
 
         var report = context.report;
         var log = context.log;
@@ -52,14 +53,14 @@ class TextAndParameterUtil {
         var translation = TextAndParameterLibrary.TextLibrary[keyName];
 
         if(translation != null) {
-            translation = translation[currentLanguage];
+            return translation[currentLanguage];
         }
 
-        if(translation == null) {
+        if(!skipWarning && translation == null) {
             throw new Error('TextAndParameterTextLibrary.getParameterValuesByKey: No translation for '+keyName+' for language "'+currentLanguage+'" was found');
         }
 
-        return translation;
+        return keyName;
     }
 
 
