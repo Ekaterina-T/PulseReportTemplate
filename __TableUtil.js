@@ -375,8 +375,8 @@ class TableUtil {
 
             var catLabel = TextAndParameterUtil.getTextTranslationByKey(context, 'Cat_'+catId, true);
 
-            hs.Texts.Average = new Label(catLabel+' (AVG)');
-            hs.Texts.Count = new Label(catLabel+' (N)');
+            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' (AVG)');
+            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' (N)');
 
             row.HideHeader = true;
             row.SubHeaders.Add(hs);
