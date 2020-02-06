@@ -354,6 +354,7 @@ class TableUtil {
     static function getTrendCategorizationHeader(context, catId) {
 
         var report = context.report;
+        var rowAVG: HeaderCategorization = new HeaderCategorization();
         var row: HeaderCategorization = new HeaderCategorization();
 
         row.CategorizationId = String(catId).replace(/[ ,&]/g, '');
@@ -365,7 +366,7 @@ class TableUtil {
         row.Collapsed = true;
         row.Totals = true;
         maskOutNA(context, row);
-        
+
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             var hs : HeaderStatistics = new HeaderStatistics();
             hs.Statistics.Avg = true;
@@ -373,6 +374,8 @@ class TableUtil {
             hs.HideHeader = false;
             hs.Texts.Average = new Label(report.CurrentLanguage, catId+' (AVG)');
             hs.Texts.Count = new Label(report.CurrentLanguage, catId+' (N)');
+
+            row.HideHeader = true;
             row.SubHeaders.Add(hs);
         }
 

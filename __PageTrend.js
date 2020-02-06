@@ -44,7 +44,6 @@ class PageTrend {
      */
     static function tableTrend_Render(context) {
 
-        var state = context.state;
         var table = context.table;
         var suppressSettings = context.suppressSettings;
         var log = context.log;
