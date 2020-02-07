@@ -232,7 +232,6 @@ class ParamUtil {
 
         //set default pulse baby project
         if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
-
             var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
             //user unchecked "show all pulse surveys" checkbox while some survey was selected
             if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
