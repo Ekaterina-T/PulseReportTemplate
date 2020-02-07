@@ -213,7 +213,7 @@ class ParamUtil {
 
         var state = context.state;
         var page = context.page;
-        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        var selectedPulseSurvey = DataSourceUtil.getSelectedPulseSurvey(context);
 
         //TODO: there's some mess around selectedPulseSurvey[0] values
         if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable

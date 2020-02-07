@@ -207,4 +207,18 @@ class DataSourceUtil {
         }
         return ifHide;
     }
+
+    /**
+     *
+     */
+    static function getSelectedPulseSurvey(context) {
+
+        var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
+
+        if(Export.isExportMode(context) && pidFromConfig && pidFromConfig.length === 0) {
+            context.state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig);
+        }
+
+        return ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+    }
 }

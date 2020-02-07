@@ -275,7 +275,7 @@ class ParameterOptionsBuilder {
             throw new Error('ParamUtil.getOptions_CustomQuestionList: expected parameter type cannot be used, array of objects was expected.');
         }
 
-        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        var codes = DataSourceUtil.getSelectedPulseSurvey(context);
 
         if (codes.length) {
             var baby_p_number = codes[0];

@@ -62,7 +62,7 @@ class SurveyTracker {
      * @returns {object} survey descriptor {Code pid, Label: pname}
      */
     static public function getComparisonTrackerForSelectedPid(context) {
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        var projectSelected = DataSourceUtil.getSelectedPulseSurvey(context);
         return getComparisonTrackerBySurveyId(context, projectSelected[0]);
     }
 
