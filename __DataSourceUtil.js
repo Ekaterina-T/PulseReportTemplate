@@ -221,7 +221,7 @@ class DataSourceUtil {
 
         if(Export.isExportMode(context) && pidFromConfig && pidFromConfig.length > 0) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
-            log.LogDebug('p_projectSelector='+ParamUtil.GetSelectedCodes(context, 'p_projectSelector');)
+            log.LogDebug('p_projectSelector='+ParamUtil.GetSelectedCodes(context, 'p_projectSelector'))
         }
 
         return ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
