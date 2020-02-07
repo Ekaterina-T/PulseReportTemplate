@@ -26,17 +26,13 @@ class Export {
         var log = context.log;
         var str = '';
 
-        log.LogDebug('displayDataSourceInfo 1');
-
         if(Config.Surveys.length>1) {
             var selectedProject: Project = DataSourceUtil.getProject(context);
             str+='Program Name: '+selectedProject.ProjectName+' ';
             str += System.Environment.NewLine; // for Excel export
         }
-        log.LogDebug('displayDataSourceInfo 2');
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
-            log.LogDebug('displayDataSourceInfo 3 ');
             var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector');
             var pid = context.pageContext.Items['p_projectSelector'];
             var surveyInfo;
@@ -49,14 +45,13 @@ class Export {
                 surveyInfo.Label = pid;
             }
 
-            log.LogDebug('displayDataSourceInfo 4 '+JSON.stringify(selectedSurvey));
             if(surveyInfo && surveyInfo.Code!=='none') {
                 str+= 'Survey Name: '+surveyInfo.Label+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }
         }
-        log.LogDebug('displayDataSourceInfo 5');
+
         return str;
     }
 

@@ -218,13 +218,10 @@ class ParamUtil {
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
         var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
 
-        log.LogDebug('pulseRelatedParamsInit 1');
-
         if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
             context.pageContext.Items['p_projectSelector'] = pidFromConfig[0];
         }
-        log.LogDebug('pulseRelatedParamsInit 2');
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
@@ -232,7 +229,6 @@ class ParamUtil {
         if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
             ParamUtil.ResetParameters(context, ['p_projectSelector']);
         }
-        log.LogDebug('pulseRelatedParamsInit 3');
 
         //set default pulse baby project
         if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
@@ -258,7 +254,6 @@ class ParamUtil {
                 }
             }
         }
-        log.LogDebug('pulseRelatedParamsInit 4');
 
         //in the end project is still undefined -> set default
         if (state.Parameters.IsNull('p_projectSelector')) {
@@ -266,7 +261,6 @@ class ParamUtil {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
             context.pageContext.Items['p_projectSelector'] = defaultVal;
         }
-        log.LogDebug('pulseRelatedParamsInit 5');
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo(context);
