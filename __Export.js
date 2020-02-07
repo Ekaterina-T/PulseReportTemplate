@@ -43,7 +43,7 @@ class Export {
                 var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
                 surveyInfo = {};
                 surveyInfo.Code = pid;
-                surveyInfo.Label = answer.Text;
+                surveyInfo.Label = pid; //answer.Text;
             }
 
             if(surveyInfo && surveyInfo.Code!=='none') {
