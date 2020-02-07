@@ -222,6 +222,8 @@ class DataSourceUtil {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
         }
 
+        log.LogDebug('is null '+state.Parameters.IsNull('p_projectSelector'))
+
         var pid = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         log.LogDebug('pid from getSelectedPulseSurvey='+pid)
 
