@@ -38,7 +38,7 @@ class Export {
         if(!state.Parameters.IsNull('p_projectSelector')) {
             log.LogDebug('displayDataSourceInfo 3 ');
             var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
-            log.LogDebug('displayDataSourceInfo 4');
+            log.LogDebug('displayDataSourceInfo 4 '+JSON.stringify(ParamUtil.GetSelectedOptions(context, 'p_projectSelector')));
             if(selectedSurvey.Code!=='none') {
                 str+= 'Survey Name: '+selectedSurvey.Label+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
