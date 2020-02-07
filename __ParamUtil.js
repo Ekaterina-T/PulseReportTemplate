@@ -220,6 +220,7 @@ class ParamUtil {
 
         if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
+            context.pageContext.Items['p_projectSelector'] = pidFromConfig[0];
         }
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
