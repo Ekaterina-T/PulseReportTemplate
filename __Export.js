@@ -2,7 +2,7 @@ class Export {
 
     static function isExportMode (context) {
         var state = context.state;
-        return (state.ReportExecutionMode === ReportExecutionMode.PdfExport || state.ReportExecutionMode === ReportExecutionMode.ExcelExport);
+        return (state.ReportExecutionMode == ReportExecutionMode.PdfExport || state.ReportExecutionMode == ReportExecutionMode.ExcelExport);
     }
 
     static function isExcelExportMode (context) {
