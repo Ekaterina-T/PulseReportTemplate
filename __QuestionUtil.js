@@ -142,9 +142,6 @@ class QuestionUtil {
      */
     static function getQuestionAnswers (context, questionId) {
 
-        var state = context.state;
-        var report = context.report;
-        var log = context.log;
         var project : Project = DataSourceUtil.getProject(context);
         var questionInfo = getQuestionInfo(context, questionId);
         var question : Question = project.GetQuestion(questionInfo.questionId);
@@ -157,6 +154,29 @@ class QuestionUtil {
 
         if (questionInfo.type == 'singleFromGrid') { // probably it's an sub-question of a grid
             return question.GetScale();
+        }
+
+        // answers are not found
+        throw new Error('QuestionUtil.getQuestionAnswers: Question '+questionId+' has no answer list. Check if it\'s open text question without \'single in reporting\' property.');
+
+    }
+
+    /*
+   * Get question answer list.
+   * @param {object} context object {state: state, report: report, log: log}
+   * @param {string} questionId
+   * @returns Answer []
+   */
+    static function getQuestionAnswerByCode (context, questionId, precode) {
+
+        var project : Project = DataSourceUtil.getProject(context);
+        var questionInfo = getQuestionInfo(context, questionId);
+        var question : Question = project.GetQuestion(questionInfo.questionId);
+        var qType = question.QuestionType;
+        var answers : Answer[];
+
+        if(questionInfo.type==='general' && !questionInfo.precode && qType!= QuestionType.OpenText && qType!= QuestionType.Numeric && qType!= QuestionType.Date) {
+            return question.GetAnswer(precode);
         }
 
         // answers are not found
