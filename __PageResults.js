@@ -85,8 +85,13 @@ class PageResults {
              return true;
            }
        }
-       else if (showCustomQuestions && isNormalizedTable) { //always hide normalized table on custom questions tab
-               return true;
+       else if (showCustomQuestions) { 
+               if (isNormalizedTable) {
+                return true; //always hide normalized table on custom questions tab
+               }
+               else {
+                return false;
+               }               
        }
   
         if (resultArr.length > 0){ 
