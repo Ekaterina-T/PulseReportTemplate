@@ -37,10 +37,21 @@ class Export {
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
             log.LogDebug('displayDataSourceInfo 3 ');
-            var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
-            log.LogDebug('displayDataSourceInfo 4 '+JSON.stringify(ParamUtil.GetSelectedOptions(context, 'p_projectSelector')));
-            if(selectedSurvey.Code!=='none') {
-                str+= 'Survey Name: '+selectedSurvey.Label+' ';
+            var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector');
+            var pid = context.pageContext.Items['p_projectSelector'];
+            var surveyInfo;
+
+            if(selectedSurvey.length >0) {
+                surveyInfo = selectedSurvey[0];
+            } else if(pid){
+                surveyInfo = {};
+                surveyInfo.Code = pid;
+                surveyInfo.Label = pid;
+            }
+
+            log.LogDebug('displayDataSourceInfo 4 '+JSON.stringify(selectedSurvey));
+            if(surveyInfo && surveyInfo.Code!=='none') {
+                str+= 'Survey Name: '+surveyInfo.Label+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }

@@ -45,9 +45,7 @@ class FilterSummary {
         var str = '';
 
         // data source
-        log.LogDebug('globalReportFilterSummaryText_Render 1');
         str += Export.displayDataSourceInfo(context);
-        log.LogDebug('globalReportFilterSummaryText_Render 2');
 
         //hierarchy
         str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
