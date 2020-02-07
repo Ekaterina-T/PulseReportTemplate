@@ -41,18 +41,19 @@ class FilterSummary {
     static function globalReportFilterSummaryText_Render (context) {
 
         var log = context.log;
-        var state = context.state;
         var user = context.user;
-        var pageContext = context.pageContext;
         var str = '';
 
         // data source
+        log.LogDebug('globalReportFilterSummaryText_Render 1');
         str += Export.displayDataSourceInfo(context);
+        log.LogDebug('globalReportFilterSummaryText_Render 2');
 
         //hierarchy
         str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'ReportBase')+' '+user.PersonalizedReportBaseText+'</div>';
         str += System.Environment.NewLine;
 
+        log.LogDebug('globalReportFilterSummaryText_Render 3');
         //selected date period
         if(DataSourceUtil.isProjectSelectorNotNeeded(context) && !DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion')) { // no date filter in pulse programs
             var datePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
@@ -62,6 +63,7 @@ class FilterSummary {
             str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
             str += System.Environment.NewLine;
         }
+        log.LogDebug('globalReportFilterSummaryText_Render 4');
 
         //selected wave
         if(DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'WaveQuestion')) {
@@ -70,6 +72,7 @@ class FilterSummary {
             str += System.Environment.NewLine;
         }
 
+        log.LogDebug('globalReportFilterSummaryText_Render 5');
         //filter panel filters
         var filterOptions = Filters.GetFiltersValues(context, 'global');
 
@@ -83,6 +86,7 @@ class FilterSummary {
             str += '<div>'+filterOptions[i].Label+': '+options.join(', ')+'</div>';
             str += System.Environment.NewLine;
         }
+        log.LogDebug('globalReportFilterSummaryText_Render 6');
 
         return '<div class="material-card material-card_global-filter-summary">'+str+'</div>'
 
@@ -96,12 +100,11 @@ class FilterSummary {
     static function globalReportFilterSummaryText_Hide(context) {
 
         var log = context.log;
-        var state = context.state;
         var pageContext = context.pageContext;
         var isDefaultPage = pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
-        var str = '';
+        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
 
-        return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context));
+        return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context) || configurableExportMode);
     }
 
 }
