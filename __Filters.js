@@ -441,12 +441,14 @@ class Filters {
         var log = context.log;
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
 
+        log.LogDebug('filter pidFromPageContext='+pidFromPageContext)
+
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
         }
 
         if (pidFromPageContext) {
-            return 'pid = "' + pidFromPageContext + '"'; //'source_projectid = "' + pidFromPageContext + '"';
+            return 'source_projectid = "' + pidFromPageContext + '"'; //'source_projectid = "' + pidFromPageContext + '"';
         }
 
         var val = DataSourceUtil.getSelectedPulseSurvey(context)
