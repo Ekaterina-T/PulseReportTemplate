@@ -218,7 +218,7 @@ class DataSourceUtil {
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
 
         if(Export.isExportMode(context) && pidFromConfig && pidFromConfig.length > 0) {
-            log.LogDebug('pidFromConfig'=pidFromConfig[0])
+            log.LogDebug('pidFromConfig='+pidFromConfig[0])
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
         }
 
