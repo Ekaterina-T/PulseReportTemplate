@@ -211,12 +211,17 @@ class DataSourceUtil {
     /**
      *
      */
-    static function getSelectedPulseSurvey(context) {
+    static function getSelectedPulseSurvey(context, from) {
 
+        var log = context.log;
+        var state = context.state;
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
 
+        log.LogDebug('pidFromConfig='+pidFromConfig)
+
         if(Export.isExportMode(context) && pidFromConfig && pidFromConfig.length === 0) {
-            context.state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig);
+            state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig);
+            log.LogDebug('p_projectSelector='+ParamUtil.GetSelectedCodes(context, 'p_projectSelector');)
         }
 
         return ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
