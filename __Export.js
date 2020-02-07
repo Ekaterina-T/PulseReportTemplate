@@ -40,7 +40,7 @@ class Export {
             if(selectedSurvey.length >0) {
                 surveyInfo = selectedSurvey[0];
             } else if(pid){
-                var answer: Answer = QuestionUtil.getQuestionAnswerByCode(pid);
+                var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
                 surveyInfo = {};
                 surveyInfo.Code = pid;
                 surveyInfo.Label = answer.Text;
