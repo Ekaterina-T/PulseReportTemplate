@@ -219,6 +219,7 @@ class DataSourceUtil {
 
         log.LogDebug(JSON.stringify(pidFromConfig));
         log.LogDebug(Export.isExportMode(context));
+        log.LogDebug(state.ReportExecutionMode);
         log.LogDebug('pdf'+state.ReportExecutionMode === ReportExecutionMode.PdfExport);
         log.LogDebug('excel'+state.ReportExecutionMode === ReportExecutionMode.ExcelExport);
 
