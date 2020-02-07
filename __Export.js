@@ -7,7 +7,7 @@ class Export {
 
     static function isExcelExportMode (context) {
         var state = context.state;
-        return displayDataSourceInfo;
+        return state.ReportExecutionMode == ReportExecutionMode.ExcelExport;
     }
 
     static function isPdfExportMode (context) {
