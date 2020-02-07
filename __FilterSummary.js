@@ -41,9 +41,7 @@ class FilterSummary {
     static function globalReportFilterSummaryText_Render (context) {
 
         var log = context.log;
-        var state = context.state;
         var user = context.user;
-        var pageContext = context.pageContext;
         var str = '';
 
         // data source
@@ -96,12 +94,11 @@ class FilterSummary {
     static function globalReportFilterSummaryText_Hide(context) {
 
         var log = context.log;
-        var state = context.state;
         var pageContext = context.pageContext;
         var isDefaultPage = pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
-        var str = '';
+        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
 
-        return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context));
+        return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context) || configurableExportMode);
     }
 
 }

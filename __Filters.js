@@ -449,7 +449,7 @@ class Filters {
             return 'source_projectid = "' + pidFromPageContext + '"'; //'pid = "' + pidFromPageContext + '"';
         }
 
-        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector')
+        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         return 'source_projectid = "' + val[0] + '"';
     }
 

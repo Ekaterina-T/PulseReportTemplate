@@ -2,12 +2,12 @@ class Export {
 
     static function isExportMode (context) {
         var state = context.state;
-        return (state.ReportExecutionMode === ReportExecutionMode.PdfExport || state.ReportExecutionMode === ReportExecutionMode.ExcelExport);
+        return (state.ReportExecutionMode == ReportExecutionMode.PdfExport || state.ReportExecutionMode == ReportExecutionMode.ExcelExport);
     }
 
     static function isExcelExportMode (context) {
         var state = context.state;
-        return state.ReportExecutionMode === ReportExecutionMode.ExcelExport;
+        return state.ReportExecutionMode == ReportExecutionMode.ExcelExport;
     }
 
     static function isPdfExportMode (context) {
@@ -33,13 +33,29 @@ class Export {
         }
 
         if(!state.Parameters.IsNull('p_projectSelector')) {
-            var selectedSurvey = ParamUtil.GetSelectedOptions (context, 'p_projectSelector')[0];
-            if(selectedSurvey.Code!=='none') {
-                str+= 'Survey Name: '+selectedSurvey.Label+' ';
+            var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector');
+            var pid = context.pageContext.Items['p_projectSelector'];
+            var surveyInfo;
+
+            log.LogDebug(JSON.stringify(selectedSurvey));
+            log.LogDebug(pid);
+
+            if(pid){
+                var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
+                surveyInfo = {};
+                surveyInfo.Code = pid;
+                surveyInfo.Label = pid; //answer.Text;
+            } else if(selectedSurvey.length >0) {
+                surveyInfo = selectedSurvey[0];
+            }
+
+            if(surveyInfo && surveyInfo.Code!=='none') {
+                str+= 'Survey Name: '+surveyInfo.Label+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }
         }
+
         return str;
     }
 

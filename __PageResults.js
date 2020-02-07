@@ -241,7 +241,7 @@ class PageResults {
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-            var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
             var dimensions = table.GetColumnValues('__l9', 'id', selectedProject[0]); //only one or none
 
             if (dimensions && dimensions.Count > 0) {
@@ -281,7 +281,7 @@ class PageResults {
 
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher') !== 'noDims'
             // display a categorisation object as a dimension
-        if (isDimensionVisible) {
+        if (isDimensionVisible && !DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             var categorization: HeaderCategorization = new HeaderCategorization();
             categorization.CategorizationId = 'Custom';
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
@@ -754,7 +754,7 @@ class PageResults {
         // add formula to calculate score vs. prev wave
         var formula_ScoreVsPrevNorm: HeaderFormula = new HeaderFormula();
         formula_ScoreVsPrevNorm.Type = FormulaType.Expression;
-        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), 0, cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
+        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), emptyv(), cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
         table.ColumnHeaders.Add(formula_ScoreVsPrevNorm);
 
         // add barchart
