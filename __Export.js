@@ -37,13 +37,16 @@ class Export {
             var pid = context.pageContext.Items['p_projectSelector'];
             var surveyInfo;
 
-            if(selectedSurvey.length >0) {
-                surveyInfo = selectedSurvey[0];
-            } else if(pid){
+            log.LogDebug(JSON.stringify(selectedSurvey));
+            log.LogDebug(pid);
+
+            if(pid){
                 var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
                 surveyInfo = {};
                 surveyInfo.Code = pid;
                 surveyInfo.Label = pid; //answer.Text;
+            } else if(selectedSurvey.length >0) {
+                surveyInfo = selectedSurvey[0];
             }
 
             if(surveyInfo && surveyInfo.Code!=='none') {
