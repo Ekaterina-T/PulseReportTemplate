@@ -24,7 +24,7 @@ class PageResults {
     }
 
     /*
-     * Hide Statements table because of suppress or absence of dimensions
+     * Hide Statements table because of suppress or absence of dimensions/statements
      * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
      * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
@@ -33,7 +33,7 @@ class PageResults {
     }
 
     /*
-     * Checks if Statements tablse has dimensions
+     * Checks if Statements table has dimensions/statements
      * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
      * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
@@ -45,8 +45,17 @@ class PageResults {
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
+        var resultArr = [];
  
-         if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {           
+         if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {    
+             
+            for (var i = 0; i < resultStatements.length; i++) {
+
+                var isNormalizedQuestion = resultStatements[i].indexOf('_normalized') != -1;
+                if ((isNormalizedTable && isNormalizedQuestion) || (!isNormalizedTable && !isNormalizedQuestion)) {
+                    resultArr.push(resultStatements[i]);
+                }
+            }
          } 
          else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
          
@@ -57,23 +66,16 @@ class PageResults {
            var activeCats = getActiveCategorizations(context);
            if (activeCats) {
              var normalizedCats = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
-             var resultCats = [];
+             
              if (normalizedCats) {
                var normalizedCatsStr = normalizedCats.join('$') + '$';
                for (var i = 0; i < activeCats.length; i++) {
                  var ind = normalizedCatsStr.indexOf(activeCats[i] + '$');
                  
                  if((ind >= 0 && isNormalizedTable) || (ind == -1 && !isNormalizedTable)) {
-                   resultCats.push(activeCats[i]);
+                   resultArr.push(activeCats[i]);
                  }
               }
-             
-               if (resultCats.length > 0){ 
-                 return false;
-               }
-               else { //no active regular dimensions for Statements table, no active normalized dimensions for StatementsNorm table
-                 return true;
-               }
              }
              else {  //active dimensions exist, no normalized dimensions in conig
                return false;
@@ -87,7 +89,12 @@ class PageResults {
                return true;
        }
   
-       return false;
+        if (resultArr.length > 0){ 
+            return false;
+        }
+        else { //no active regular dimensions/statements for Statements table, no active normalized dimensions/satements for StatementsNorm table
+            return true;
+        }
      }
 
     /*
