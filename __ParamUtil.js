@@ -223,8 +223,7 @@ class ParamUtil {
             context.pageContext.Items['p_projectSelector'] = pidFromConfig[0];
         }
 
-        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
-        log.LogDebug('selectedPulseSurvey='+selectedPulseSurvey);
+        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
         //TODO: there's some mess around selectedPulseSurvey[0] values
         if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
@@ -235,7 +234,6 @@ class ParamUtil {
         if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
 
             var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-
             //user unchecked "show all pulse surveys" checkbox while some survey was selected
             if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
 
@@ -260,12 +258,12 @@ class ParamUtil {
 
         //in the end project is still undefined -> set default
         if (state.Parameters.IsNull('p_projectSelector')) {
-
-            log.LogDebug('p_projectSelector is null')
             var defaultVal = getDefaultParameterValue(context, 'p_projectSelector');
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
             context.pageContext.Items['p_projectSelector'] = defaultVal;
         }
+
+        log.LogDebug('selectedPulseSurvey='+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo(context);
