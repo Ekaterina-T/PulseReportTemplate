@@ -441,8 +441,6 @@ class Filters {
         var log = context.log;
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
 
-        log.LogDebug('filter pidFromPageContext='+pidFromPageContext)
-
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
         }
