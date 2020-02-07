@@ -213,8 +213,17 @@ class ParamUtil {
 
         var state = context.state;
         var page = context.page;
-        var selectedPulseSurvey = DataSourceUtil.getSelectedPulseSurvey(context);
-        log.LogDebug('selectedPulseSurvey='+selectedPulseSurvey)
+
+        // mass export by pid
+        var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
+        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
+
+        if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
+            state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
+        }
+
+        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
+        log.LogDebug('selectedPulseSurvey='+selectedPulseSurvey);
 
         //TODO: there's some mess around selectedPulseSurvey[0] values
         if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
@@ -222,12 +231,12 @@ class ParamUtil {
         }
 
         //set default pulse baby project
-        if (!state.Parameters.IsNull('p_projectSelector')) {
+        if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
 
             var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
 
             //user unchecked "show all pulse surveys" checkbox while some survey was selected
-            if (!Export.isExportMode(context) && selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
+            if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
 
                 var selectedProject = selectedPulseSurvey[0];
                 var availableProjects = ParameterOptionsBuilder.GetOptions(context, 'p_projectSelector', 'available proj');

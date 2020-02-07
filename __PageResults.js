@@ -166,7 +166,7 @@ class PageResults {
 
             var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
             var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-            var selectedProject = DataSourceUtil.getSelectedPulseSurvey(context);
+            var selectedProject = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
             var dimensions = table.GetColumnValues('__l9', 'id', selectedProject[0]); //only one or none
 
             if (dimensions && dimensions.Count > 0) {

@@ -283,7 +283,7 @@ class QuestionUtil {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
 
-        var codes = DataSourceUtil.getSelectedPulseSurvey(context);
+        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
         if (codes.length == 0) {
             return null;
         }

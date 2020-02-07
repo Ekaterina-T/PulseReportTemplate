@@ -208,26 +208,4 @@ class DataSourceUtil {
         return ifHide;
     }
 
-    /**
-     *
-     */
-    static function getSelectedPulseSurvey(context, from) {
-
-        var log = context.log;
-        var state = context.state;
-        var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
-        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
-
-        if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
-            log.LogDebug('pidFromConfig='+pidFromConfig[0])
-            state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
-        }
-
-        log.LogDebug('is null '+state.Parameters.IsNull('p_projectSelector'))
-
-        var pid = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        log.LogDebug('pid from getSelectedPulseSurvey='+pid)
-
-        return pid;
-    }
 }
