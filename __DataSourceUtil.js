@@ -216,17 +216,9 @@ class DataSourceUtil {
         var log = context.log;
         var state = context.state;
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
+        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
 
-        log.LogDebug(JSON.stringify(pidFromConfig));
-        log.LogDebug(Export.isExportMode(context));
-        log.LogDebug(state.ReportExecutionMode);
-        log.LogDebug('pdf='+(state.ReportExecutionMode === ReportExecutionMode.PdfExport));
-        log.LogDebug('excel='+(state.ReportExecutionMode === ReportExecutionMode.ExcelExport));
-
-        log.LogDebug(pidFromConfig);
-        log.LogDebug(pidFromConfig.length);
-
-        if(Export.isExportMode(context) && pidFromConfig && pidFromConfig.length > 0) {
+        if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
             log.LogDebug('pidFromConfig='+pidFromConfig[0])
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
         }
