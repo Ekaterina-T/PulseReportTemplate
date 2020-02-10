@@ -71,7 +71,7 @@ class PageResults {
             var normalizedCats = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
             //active dimensions exist, no normalized dimensions in conig
             if (!normalizedCats) {
-                return false;
+                return isNormalizedTable;
             }
 
             var normalizedCatsStr = normalizedCats.join('$') + '$';
