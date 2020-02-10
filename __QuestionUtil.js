@@ -298,54 +298,40 @@ class QuestionUtil {
         var state = context.state;
         var report = context.report;
 
-        log.LogDebug('getCustomQuestionTextById 1: '+qId);
-
         if(!qId) {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
-        log.LogDebug('getCustomQuestionTextById 2: '+qId);
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
         if (codes.length == 0) {
             return null;
         }
-        log.LogDebug('getCustomQuestionTextById 3: '+JSON.stringify(codes));
 
         var baby_p_number = codes[0];
         var cacheKey = baby_p_number+"_"+qId+"_"+report.CurrentLanguage;
-        log.LogDebug('getCustomQuestionTextById 4: '+cacheKey);
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web ) {
-            log.LogDebug('getCustomQuestionTextById 5 1: ');
             var cachedTxt = confirmit.ReportDataCache(cacheKey);
-            log.LogDebug('getCustomQuestionTextById 5 2: ');
             if(cachedTxt) {
                 return cachedTxt;
             }
         }
 
-        log.LogDebug('getCustomQuestionTextById 6: ');
 
         // if Redis doesn't have cached question or Excel Export mode, look it up in the DB table
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-        log.LogDebug('getCustomQuestionTextById 7: '+schemaId+ '; '+tableName);
 
         if(!schemaId && !tableName) { // storage for baby survey custom questions
             throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
         }
-        log.LogDebug('getCustomQuestionTextById 8: ');
 
         var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-        log.LogDebug('getCustomQuestionTextById 8 1: ');
         var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
-        log.LogDebug('getCustomQuestionTextById 8 2: ');
         var custom_id = baby_p_number+"_"+qId;
-        log.LogDebug('getCustomQuestionTextById 8 3: '+custom_id);
         var custom_texts;
         var customTextIsEmpty;
-        log.LogDebug('getCustomQuestionTextById 9: ');
 
         try {
             custom_texts= table.GetColumnValues("__l9l"+report.CurrentLanguage, "id", custom_id);
@@ -355,12 +341,9 @@ class QuestionUtil {
                 custom_texts= table.GetColumnValues("__l9l9", "id", custom_id);
             }
 
-            log.LogDebug('getCustomQuestionTextById 10: ');
-
         } catch(e) { // no translation found -> try label as in old reports
             custom_texts= table.GetColumnValues("__l9", "id", custom_id);
         }
-        log.LogDebug('getCustomQuestionTextById 11: ');
 
         customTextIsEmpty = custom_texts.Count==0 || (custom_texts[0]===undefined || custom_texts[0]==='' || custom_texts[0]===null);
         if (!customTextIsEmpty) {
@@ -369,7 +352,6 @@ class QuestionUtil {
                 confirmit.ReportDataCache(cacheKey, cachedTxt); // save the found value to the cache
             }
         }
-        log.LogDebug('getCustomQuestionTextById 12: ');
 
         //if empty cell or no such row in db custom table, show qid as label
         return cachedTxt  || qId;
