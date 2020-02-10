@@ -31,9 +31,7 @@ class PageTrend {
      * @returns {Boolean}
      */
     static function tableTrend_Hide(context){
-
         return context.state.Parameters.IsNull("p_TrendQs") || SuppressUtil.isGloballyHidden(context);
-
     }
 
     /**

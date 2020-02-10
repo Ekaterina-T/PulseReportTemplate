@@ -1,6 +1,5 @@
 class QuestionUtil {
 
-
     /*
      * Get question info:
      * - Type: general, singleFromGrid, otherOpenText.
