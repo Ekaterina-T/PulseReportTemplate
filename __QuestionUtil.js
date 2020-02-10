@@ -317,9 +317,9 @@ class QuestionUtil {
 
         // Redis is not available in export
         if (state.ReportExecutionMode == ReportExecutionMode.Web ) {
-            log.LogDebug('getCustomQuestionTextById 5: ');
+            log.LogDebug('getCustomQuestionTextById 5 1: ');
             var cachedTxt = confirmit.ReportDataCache(cacheKey);
-            log.LogDebug('getCustomQuestionTextById 5: '+cachedTxt);
+            log.LogDebug('getCustomQuestionTextById 5 2: ');
             if(cachedTxt) {
                 return cachedTxt;
             }
@@ -327,11 +327,10 @@ class QuestionUtil {
 
         log.LogDebug('getCustomQuestionTextById 6: ');
 
-
         // if Redis doesn't have cached question or Excel Export mode, look it up in the DB table
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsSchemaId');
         var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'CustomQuestionsTable');
-        log.LogDebug('getCustomQuestionTextById 7: ');
+        log.LogDebug('getCustomQuestionTextById 7: '+schemaId+ '; '+tableName);
 
         if(!schemaId && !tableName) { // storage for baby survey custom questions
             throw new Error('QuestionUtil.getCustomQuestionTextById: schema and table for custom question titles are not specified')
@@ -339,8 +338,11 @@ class QuestionUtil {
         log.LogDebug('getCustomQuestionTextById 8: ');
 
         var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+        log.LogDebug('getCustomQuestionTextById 8 1: ');
         var table: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+        log.LogDebug('getCustomQuestionTextById 8 2: ');
         var custom_id = baby_p_number+"_"+qId;
+        log.LogDebug('getCustomQuestionTextById 8 3: '+custom_id);
         var custom_texts;
         var customTextIsEmpty;
         log.LogDebug('getCustomQuestionTextById 9: ');
