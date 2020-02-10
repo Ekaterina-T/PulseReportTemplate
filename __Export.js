@@ -37,9 +37,6 @@ class Export {
             var pid = context.pageContext.Items['p_projectSelector'];
             var surveyInfo;
 
-            log.LogDebug(JSON.stringify(selectedSurvey));
-            log.LogDebug(pid);
-
             if(pid){
                 var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
                 surveyInfo = {};
