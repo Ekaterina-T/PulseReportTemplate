@@ -37,69 +37,54 @@ class PageResults {
      * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
      * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-
     static function tableStatementsHasNoDimensions(context, isNormalizedTable) {
 
         var log = context.log;
+        var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
+        var resultArr = [];
+
+        if (showCustomQuestions) {
+            return isNormalizedTable; //always hide normalized table on custom questions tab
+        }
+
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
-        var resultArr = [];
- 
-         if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {    
-             
-            for (var i = 0; i < resultStatements.length; i++) {
 
+        if (resultStatements && resultStatements.length > 0) {
+            for (var i = 0; i < resultStatements.length; i++) {
                 var isNormalizedQuestion = resultStatements[i].indexOf('_normalized') != -1;
                 if ((isNormalizedTable && isNormalizedQuestion) || (!isNormalizedTable && !isNormalizedQuestion)) {
                     resultArr.push(resultStatements[i]);
                 }
             }
-         } 
-         else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
-         
-           if (!isNormalizedTable && Export.isExcelExportMode(context)) { //never hide first table for excel export - custom questions are added there
-             return false;
-           }
-           
-           var activeCats = getActiveCategorizations(context);
-           if (activeCats) {
-             var normalizedCats = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
-             
-             if (normalizedCats) {
-               var normalizedCatsStr = normalizedCats.join('$') + '$';
-               for (var i = 0; i < activeCats.length; i++) {
-                 var ind = normalizedCatsStr.indexOf(activeCats[i] + '$');
-                 
-                 if((ind >= 0 && isNormalizedTable) || (ind == -1 && !isNormalizedTable)) {
-                   resultArr.push(activeCats[i]);
-                 }
-              }
-             }
-             else {  //active dimensions exist, no normalized dimensions in conig
-               return false;
-             }
-           }
-           else { //no active dimensions
-             return true;
-           }
-       }
-       else if (showCustomQuestions) { 
-               if (isNormalizedTable) {
-                return true; //always hide normalized table on custom questions tab
-               }
-               else {
+        } else if (dimensions && dimensions.length > 0) {
+            if (!isNormalizedTable && Export.isExcelExportMode(context)) { //never hide first table for excel export - custom questions are added there
                 return false;
-               }               
-       }
-  
-        if (resultArr.length > 0){ 
-            return false;
+            }
+
+            var activeCats = getActiveCategorizations(context);
+            if(!activeCats) { //no active dimensions
+                return true;
+            }
+
+            var normalizedCats = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions');
+            //active dimensions exist, no normalized dimensions in conig
+            if (!normalizedCats) {
+                return false;
+            }
+
+            var normalizedCatsStr = normalizedCats.join('$') + '$';
+            for (var i = 0; i < activeCats.length; i++) {
+                var ind = normalizedCatsStr.indexOf(activeCats[i] + '$');
+                if((ind >= 0 && isNormalizedTable) || (ind == -1 && !isNormalizedTable)) {
+                    resultArr.push(activeCats[i]);
+                }
+            }
         }
-        else { //no active regular dimensions/statements for Statements table, no active normalized dimensions/satements for StatementsNorm table
-            return true;
-        }
+
+        //no active regular dimensions/statements for Statements table, no active normalized dimensions/satements for StatementsNorm table
+        return resultArr.length > 0 ? false : true;
      }
 
     /*
