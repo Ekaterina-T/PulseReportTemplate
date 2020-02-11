@@ -55,7 +55,6 @@ class SuppressUtil {
             else table.SuppressData.CellDisplay = BaseDisplayOption.Show;
         }
     
-    
         static function buildHierarchyTable(context) {
     
             var report = context.report;
@@ -124,8 +123,6 @@ class SuppressUtil {
     
         }
     
-    
-    
         static function buildReportBaseTable(context) {
     
             var report = context.report;
@@ -150,8 +147,7 @@ class SuppressUtil {
     
             table.RowHeaders.Add(hq);
         }
-    
-    
+
         // Hide small units: a node should not show if it has less than X
         static function reportBaseIsLow (context) {
     
@@ -202,8 +198,7 @@ class SuppressUtil {
             for (var i=2; i<bases.Length; i++) {
                 allSiblingsBase += bases[i].Value;
             }
-    
-    
+            
             // 2. Hide a unit when there are small siblings next to it or few people are connected directly to its parent node
             if (parentBase - selfUnitBase && parentBase - selfUnitBase <= delta) {
                 return true;
@@ -213,8 +208,7 @@ class SuppressUtil {
             if (parentBase - allSiblingsBase && parentBase - allSiblingsBase <= delta) {
                 return true;
             }
-    
-    
+            
             // Additional check for Results table with breakdown by child hierarchy level
             var pageId = pageContext.Items['CurrentPageId'];
             if (pageId === 'Results' && !state.Parameters.IsNull('p_Results_BreakBy'))  {  // break by option is active
@@ -239,15 +233,11 @@ class SuppressUtil {
             }
             return false;
         }
-    
-    
+        
         static function isGloballyHidden (context) {
-    
             return reportBaseIsLow (context) || hierarchyUnitIsSensitive (context);
-    
         }
-    
-    
+        
         static function message (context) {
     
             if (reportBaseIsLow (context))
@@ -258,8 +248,7 @@ class SuppressUtil {
     
             return '';
         }
-    
-    
+        
         /**
          * @memberof SuppressUtil
          * @function message_Hide
@@ -278,7 +267,7 @@ class SuppressUtil {
             }
             return !(SuppressUtil.reportBaseIsLow (context) || SuppressUtil.hierarchyUnitIsSensitive (context));
         }
-      
+
          /**
       * @memberof SuppressUtil
       * @function buildReportBaseTableForHitlist
@@ -324,3 +313,4 @@ class SuppressUtil {
     
     
     }
+

@@ -207,40 +207,32 @@ class HierarchyUtil {
         return levels;
     }
 
-    /*
-      static function getLevel(user) {
-        return getParents(user).length;
-      }
+    static function setHierarchyMaskOneLevelDown (context) {
 
-      static function isLowestLevelInHierarchy(user, confirmit) {
-        var reportBase = user.PersonalizedReportBase;
-        var rows = dbTable.Rows;
-        var isLowest = true;
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+        var dataTable = HierarchyUtil.getDataTable();
+        var hierLevels = dataTable.Rows;
+        var reportBase = context.user.PersonalizedReportBase;
 
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === reportBase) {
-            isLowest = false;
-            break;
-          }
+        var currentParent = dbTableNew.GetColumnValues("parent", "id", reportBase)[0];
+
+        var parentsToMask = [];
+        var mask : MaskHierarchy = new MaskHierarchy();
+
+        for (var i = 0; i < hierLevels.Count; i++) {
+            var dRow : DataRow = hierLevels[i];
+            if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
+                parentsToMask.push(dRow['id']);
+                var hn : HierarchyNode = new HierarchyNode();
+                hn.Code = dRow['id']
+                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
+                mask.Nodes.Add(hn);
+            }
         }
-        return isLowest;
-      }
+        return mask;
+    }
 
-      static function isLowestLevelInHierarchyAnyUser(userID, confirmit) {
-        var rows = dbTable.Rows;
-        var isLowest = true;
-
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === userID) {
-            isLowest = false;
-            break;
-          }
-        }
-        return isLowest;
-      }
-     */
 
 
 }

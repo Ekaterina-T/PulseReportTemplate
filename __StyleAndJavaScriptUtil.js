@@ -15,6 +15,7 @@ class StyleAndJavaScriptUtil {
     
             return str;
         }
+
     
         /** TO DO: organize better to support flexibility for other reports
          * all js variables and functions that
@@ -104,6 +105,9 @@ class StyleAndJavaScriptUtil {
                 //properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
                 properties.push('gaugeData: '+JSON.stringify(PageActions.getKPIResult(context)));
                 properties.push('tagColumnNumbers: '+JSON.stringify(PageActions.getTagColumnNumbers (context)));
+                properties.push('isResponsibleVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'Delegation')));
+                properties.push('isAdvancedReportingVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'AdvancedReporting')));
+                properties.push('isShowOwnActionsSelectorVisible: '+JSON.stringify(PageActions.isFeatureAvailableForUserRole(context,'ReportLevelAccess')));
             }
     
             globalVarScript.push('<script>');
@@ -126,9 +130,6 @@ class StyleAndJavaScriptUtil {
             var kpiColor_dark = Config.kpiColor_dark;
             var logo = Config.logo;
             var headerBackground = Config.headerBackground;
-            var primaryGreyColor = Config.primaryGreyColor;
-            var pieColors = Config.pieColors;
-            var barChartColors = Config.barChartColors_Distribution;
             var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
             var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
     
@@ -196,7 +197,11 @@ class StyleAndJavaScriptUtil {
             if(!isThreeDotsMenuNeeded) {
                 css_string += '.material-card__title .kebab-menu { display: none; }';
             }
-    
+
+            // hide hitlist in PDF
+            if(PageActions.hitlistActions_Hide(context)) {
+                css_string += '.material-card.material-card--hitlist { display: none; }';
+            }
     
             //CSS to show only the latest n rows with comments
             if(numberOfVerbatimComments) {

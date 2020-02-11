@@ -62,6 +62,14 @@ class Filters {
     static function GetGlobalFilterList(context) {
 
         var log = context.log;
+        var pageSpecificFilters = GetPageSpecificFilterList(context);
+
+        /* not sure if that's needed
+        if(pageSpecificFilters.length > 0) {
+            return pageSpecificFilters;
+        }
+        */
+
         var filterFromRespondentData = GetBackgroundDataFilterList(context);
         var filterFromSurveyData = GetSurveyDataFilterList(context);
 
@@ -254,6 +262,7 @@ class Filters {
                 for (var j = 0; j < responses.length; j++) {
                     individualFilterExpr.push('IN(' + DataSourceUtil.getDsId(context) + ':' + filters[i] + ', "' + responses[j] + '")');
                 }
+
                 filterExpr.push('(' + individualFilterExpr.join(' OR ') + ')');
             }
 
@@ -320,7 +329,7 @@ class Filters {
      */
     static function isTimePeriodFilterHidden(context) {
 
-        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden')
+        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden');
     }
 
     /**
@@ -349,9 +358,6 @@ class Filters {
 
         var timePeriod = DateUtil.defineDateRangeBasedOnFilters(context);
         var expression = [];
-        var year;
-        var month;
-        var day;
 
         // example: interview_start >= TODATE("2019-03-31")
         if (timePeriod.hasOwnProperty('startDateString') && timePeriod.startDateString) {
@@ -406,12 +412,12 @@ class Filters {
         return expressions.join(' OR ');
     }
 
-    /**
-     * not empty comments filter
-     * @param {context}
-     * @param {string} KPIGroupName: KPIPositiveAnswerCodes, KPINegativeAnswerCodes (as in Config)
-     * @returns {string} filter expression
-     */
+    /*
+      * not empty comments filter
+      * @param {context}
+      * @param {string} KPIGroupName: KPIPositiveAnswerCodes, KPINegativeAnswerCodes (as in Config)
+      * @return {string} filter expression
+      */
     static function filterByKPIGroup(context, KPIGroupName) {
 
         var kpiQids = ParamUtil.GetSelectedCodes(context, 'p_QsToFilterBy');
@@ -430,12 +436,69 @@ class Filters {
 
     }
 
-    /**
-     * filter by particular project in pulse program
-     * @param {context} {state: state, report: report}
-     * @param {string}
-     * @returns {string} filter expression
-     */
+    /*
+* @function getOnlyOwnActionsExpression
+* @description function to generate a script expression to filter Actions page to only show own actions (where actionowner = current end user viewing the report).
+* Checkbox is available for user roles specified for "ReportLevelAccess" feature in Config (for other end users only own actions are shown on default).
+* @param {Object} context
+* @return {String} filter script expression
+*/
+
+    static function getOnlyOwnActionsExpression (context) {
+
+        var state = context.state;
+
+        if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
+            var userId = context.user.UserId;
+            return 'IN(actionowner, "' + userId + '")';
+        }
+
+        return '';
+    }
+
+    /*
+    * @function getOnlyOwnActionsinHitlistExpression
+    * @description function to switch on the possibility to edit/delete comments (all comments for roles specified in 'EditorDeleteOthersActions' feature, only own for others)
+    * @param {Object} context
+    * @return {String} filter script expression
+    */
+
+    static function getOnlyOwnActionsinHitlistExpression (context) {
+
+        var state = context.state;
+
+        if(!PageActions.isFeatureAvailableForUserRole(context, "EditorDeleteOthersActions") && !state.Parameters.IsNull("p_SwitchHitlistMode")) {
+            return 'IN(actionowner, "' + context.user.UserId + '")';
+        }
+        return '';
+    }
+
+    /*
+    * @function getSelectedEndUsersExpression
+    * @description function to generate a script expression to filter EndUserStatistics_Hidden and EndUserStatistics tables by end users selected from dropdown.
+    * On default all users are filtered out.
+    * @param {Object} context
+    * @return {String} filter script expression
+    */
+
+    static function getSelectedEndUsersExpression (context) {
+
+        var log = context.log;
+        var answerCodes = ParamUtil.GetSelectedCodes(context, 'p_EndUserSelection');
+        var qId = DataSourceUtil.getPagePropertyValueFromConfig (context, 'Page_Actions', 'EndUserSelection');
+
+        if (answerCodes.length) {
+            return getFilterExpressionByAnswerRange(context, qId, answerCodes);
+        }
+        return 'NOT IN(' + qId +', PValStrArr("p_EndUserSelection"))';
+    }
+
+    /*
+	* filter by particular project in pulse program
+	* @param {context} {state: state, report: report}
+	* @param {string}
+	* @return {string} filter expression
+    */
     static function projectSelectorInPulseProgram(context) {
 
         var log = context.log;
@@ -446,7 +509,7 @@ class Filters {
         }
 
         if (pidFromPageContext) {
-            return 'source_projectid = "' + pidFromPageContext + '"'; //'source_projectid = "' + pidFromPageContext + '"';
+            return 'source_projectid = "' + pidFromPageContext + '"';
         }
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');

@@ -30,8 +30,6 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
-        var currentPage = context.pageContext.Items['CurrentPageId'];
-
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
@@ -128,18 +126,27 @@ class ParamUtil {
         var state = context.state;
         var page = context.page;
         var log = context.log;
+        var pageContext = context.pageContext;
         var i;
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
         //log.LogDebug('param init start')
-
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
 
-        // reset all parameters (=null) if a page refreshes when switching surveys
+        //TODO: check another way of giving default value for wave at 1st load
+        // initialising help parameter to detect if it is the first time the report loads or not
+        if (state.Parameters.IsNull('p_IsOpenForFirstTime')){
+           state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('true');
+        } else {
+          state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('false');
+        }
+        
+        // reset all parameters if a page refreshes when switching the surveys
+
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
@@ -152,6 +159,14 @@ class ParamUtil {
 
         //log.LogDebug('project selector processing end')
         pulseRelatedParamsInit(context);
+
+       // set default value for wave from Config but only if it is the first time the user open the report. If the user selects the empty row, the default value should not be set      
+       if (state.Parameters.IsNull('p_Wave') && GetSelectedCodes (context, 'p_IsOpenForFirstTime')[0] == 'true') {
+            try {
+                var defaultWave = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'DefaultWave');
+                state.Parameters['p_Wave'] = new ParameterValueResponse(defaultWave);
+            } catch (e) {}
+        }
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
@@ -383,7 +398,6 @@ class ParamUtil {
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
-
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
         if (parameterName === 'p_projectSelector') {

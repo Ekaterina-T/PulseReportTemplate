@@ -145,7 +145,7 @@ class TableUtil {
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
         
         if(!Filters.isTimePeriodFilterHidden(context)) {
- 
+
             var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
 
             if(dateRange) {
@@ -428,6 +428,5 @@ class TableUtil {
         var Qs = QuestionUtil.getQuestionIdsByCategories(context, categories);
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
-
 
 }
