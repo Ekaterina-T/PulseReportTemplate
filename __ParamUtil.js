@@ -70,6 +70,17 @@ class ParamUtil {
         }
 
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
+
+            // set default value for wave from Config but only if it is the first time the user open the report.
+            // If the user selects the empty row, the default value should not be set
+            // Needed for Action Planner initially
+            if (parameterName === 'p_Wave' && state.Parameters.IsNull('p_Wave')) {
+                try {
+                    var defaultWave = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'DefaultWave');
+                    return defaultWave;
+                } catch (e) {}
+            }
+
             return parameterOptions.length > 0 ? parameterOptions[0].Code : ''; // return the 1st option
         }
 
@@ -139,11 +150,14 @@ class ParamUtil {
 
         //TODO: check another way of giving default value for wave at 1st load
         // initialising help parameter to detect if it is the first time the report loads or not
+        // remove if report is ok
+        /*
         if (state.Parameters.IsNull('p_IsOpenForFirstTime')){
            state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('true');
         } else {
           state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('false');
         }
+        */
         
         // reset all parameters if a page refreshes when switching the surveys
 
@@ -159,14 +173,6 @@ class ParamUtil {
 
         //log.LogDebug('project selector processing end')
         pulseRelatedParamsInit(context);
-
-       // set default value for wave from Config but only if it is the first time the user open the report. If the user selects the empty row, the default value should not be set      
-       if (state.Parameters.IsNull('p_Wave') && GetSelectedCodes (context, 'p_IsOpenForFirstTime')[0] == 'true') {
-            try {
-                var defaultWave = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'DefaultWave');
-                state.Parameters['p_Wave'] = new ParameterValueResponse(defaultWave);
-            } catch (e) {}
-        }
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
