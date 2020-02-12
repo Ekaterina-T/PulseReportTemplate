@@ -93,7 +93,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('isCustomQuestionsTabVisible: false');
             }
 
-            var isDimensionsVisible = PageResultsNEW.isDimensionsMode(context);
+            var isDimensionsVisible = PageResults.isDimensionsMode(context);
             properties.push('isDimensionsTabVisible: ' + isDimensionsVisible);
         }
 
