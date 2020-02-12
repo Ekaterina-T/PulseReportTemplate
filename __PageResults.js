@@ -113,19 +113,15 @@ class PageResults {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
-        var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var showCustomQuestions = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
         var numberOfAddedBanners = 0;
 
-        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
-            throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
-        }
+        var showDimensions = isDimensionsMode(context);
 
-        if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {
+        if (!showCustomQuestions && !showDimensions) {
             tableStatements_AddRows_Banner0(context, isNormalizedTable);
             numberOfAddedBanners++;
-        } else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
+        } else if (!showCustomQuestions && showDimensions) {
             tableStatements_AddRows_Banner1(context, isNormalizedTable);
             numberOfAddedBanners++;
         }
@@ -133,10 +129,6 @@ class PageResults {
         if (showCustomQuestions || (Export.isExcelExportMode(context) && !isNormalizedTable)) {
             tableStatements_AddRows_Banner2(context, isNormalizedTable);
             numberOfAddedBanners++;
-        }
-
-        if (!numberOfAddedBanners) { //otherwise cannot add several banners
-            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
         }
 
     }
@@ -1102,5 +1094,29 @@ class PageResults {
         }
         return false; 
       }
+
+     /*
+     * Checks either Dimensions or ResultStatements are specified in config
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function isDimensionsMode(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
+        var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+       
+        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
+            throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
+        }
+     
+        if (resultStatements && resultStatements.length > 0) {
+            return false;
+        } else if (dimensions && dimensions.length > 0) {
+            return true;
+        } else { 
+            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+        }
+    }
 
 }

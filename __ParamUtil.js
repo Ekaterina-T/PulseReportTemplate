@@ -401,9 +401,10 @@ class ParamUtil {
 
         // TO DO: pageNames are specified explicitly - this is very bad
         // think how to pass load condition differently, so that LCL would call some func and would be more flexible
-        if (parameterName === 'p_Results_TableTabSwitcher') {
+        
+        /*if (parameterName === 'p_Results_TableTabSwitcher') {
             return isPulseProgram; // only needed for pulse programs
-        }
+        }*/
 
         if(parameterName === 'p_TimeUnitWithDefault' && pageId === 'Page_Trends') {
             return !isPulseProgram;
