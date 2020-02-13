@@ -433,9 +433,9 @@ class PageActions {
             var project : Project = DataSourceUtil.getProject(context);
             for (var index = 1; index < trendSeries.length; index++) {
                 var hc : HeaderContent = new HeaderContent();
-                var dpArray : Datapoint[] = report.TableUtils.GetRowValues('ActionsTrend_Hidden' + index, 1);
-                for (var i=0; i<dpArray.Length; i++) {
-                    var notStartValue = dpArray[i].Value;
+				var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
+				for (var i=0; i<dpArray.length; i++) {
+                    var notStartValue = dpArray[i];
                     if (!notStartValue.Equals(Double.NaN)) {
                         hc.SetCellValue(i, notStartValue);
                     }
@@ -732,5 +732,130 @@ class PageActions {
         text.Output.Append(link);
 
     }
+	
+	/* SMART VIEW HIDDEN TABLES */
+	static function getActionTrendHiddenTableRowDataArray(context, tableIndex, rowIndex){
+    var log = context.log;
+    var report = context.report;
+    
+    var result = [];	
+	var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
+    
+	var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, "Actions", 'Source');
+    var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
+    var smTrendTableJSON = JSON.parse(smTrendTable);
+	
+	var l = smTrendTableJSON.data[rowIndex].length;
+	
+	for(var i=0; i<l; i++){
+		result.push(smTrendTableJSON.data[rowIndex][i].values.count);
+	}
+	return result;
+  }
+  
+  
+  static function generateActionTrandHiddenTableSmartView(context, seriesParam){
+    return generateActionTrendSeriesByParam_SVText(context, seriesParam);
+  }
+  static function generatetableEndUsertStatisticsHiddenTableSmartView(context, seriesParam){
+	var resultSmartViewQuery = "";
+	  
+	var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+	resultSmartViewQuery += actionOwner+ "{total: false;}";
+	resultSmartViewQuery += "\/";
+	resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
+	
+	return resultSmartViewQuery;
+  }
+  
+  
+  //ActionsPage_SmartView.generateActionTrandTableSmartView(,)
+  static function generateActionTrendSeriesByParam_SVText(context, seriesParam){
+    var log = context.log;
+    var resultSmartViewQuery = "";
+    
+    var pageContext = context.pageContext;
+    var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    
+    var index = seriesParam.order; //1
+    
+    var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+    var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+       
+    if (trendSeries.length > index) {
+      
+      // add row with action status
+      context.isCustomSource = true;
+      
+      resultSmartViewQuery+= trendSeries[index].qId;
+      resultSmartViewQuery+="{dsnid: "+sourceId+"; collapsed: false; total: true; distribution: count; hideheader: true; filterbymask: true;  xmask: ";
+      for (var i = 0; i<trendSeries.length; i++) {
+        if(i!=0) resultSmartViewQuery+=",";
+        resultSmartViewQuery+=trendSeries[i].code;
+      }
+      resultSmartViewQuery+=";}";
+      
+      
+      //add columns with tranding
+      var timeUnits = ParamUtil.GetSelectedOptions (context, 'p_TimeUnitWithDefault');
+      
+      if (timeUnits.length) {
+        // though it can be multi-parameter, use only 1 option for trend
+        var timeUnit = timeUnits[0];              
+        
+        resultSmartViewQuery+=" ^ ";
+        // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
+        if (timeUnit.TimeUnit) {
+          
+          resultSmartViewQuery+=trendSeries[index].date + "{";
+          resultSmartViewQuery+=getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
+          resultSmartViewQuery+="flatlayout: true; ";
+          
+        }
+        else {
+          
+          //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
+          resultSmartViewQuery+= timeUnit.Code + "{";
+          
+        }
+        var toDate : DateTime = DateTime.Now;
+        resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
+      }
+      
+      
+      
+    }
+    return resultSmartViewQuery
+  }		
+  
+  static function getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit){
+    var timeUnitCode = timeUnit.Code;
+    var resultSmartViewQuery = "";
+    switch (timeUnitCode) {
+      case 'Y':
+        resultSmartViewQuery+="time1: year; ";
+        break;
+        
+      case 'Q':
+        resultSmartViewQuery+="time1: year; ";
+        resultSmartViewQuery+="time2: quarter; ";
+        break;
+        
+      case 'M':
+        resultSmartViewQuery+="time1: year; ";
+        resultSmartViewQuery+="time2: month; ";
+        break;
+      case 'D':
+        resultSmartViewQuery+="time1: year; ";
+        resultSmartViewQuery+="time2: month; ";
+        resultSmartViewQuery+="time3: day; ";
+        break;
+        
+      default:
+        resultSmartViewQuery+="time1: year; ";
+    }
+    return resultSmartViewQuery;
+  }
 
 }
