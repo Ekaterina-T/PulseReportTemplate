@@ -212,9 +212,8 @@ class PageActions {
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
      */
 
-    static function getHierarchyMask (context) {
-
-        var state = context.state;
+    static function getHierarchyMaskIdsStringList(context){
+		var state = context.state;
         var user = context.user;
         var reportBase = user.PersonalizedReportBase;
         var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
@@ -223,18 +222,39 @@ class PageActions {
         var hierLevels = dataTable.Rows;
 
         var currentParent = dbTableNew.GetColumnValues('parent', 'id', reportBase)[0];
-
-        var parentsToMask = [];
-        var mask : MaskHierarchy = new MaskHierarchy();
-        for (var i = 0; i < hierLevels.Count; i++) {
+		
+		var idsToMask = "";
+		
+		for (var i = 0; i < hierLevels.Count; i++) {
+			if(i!=0) idsToMask+=",";
+			
             var dRow : DataRow = hierLevels[i];
             if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
-                parentsToMask.push(dRow['id']);
-                var hn : HierarchyNode = new HierarchyNode();
-                hn.Code = dRow['id'];
-                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
-                mask.Nodes.Add(hn);
+                idsToMask+=dRow['id'];
             }
+        }
+		
+		return idsToMask;
+
+	}
+     
+    static function getHierarchyMask (context) {
+
+        var state = context.state;
+		
+		var idsToMask = [];
+		
+		if(!state.Parameters.IsNull("p_HierMaskIds"))
+			idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
+		else idsToMask = getHierarchyMaskIdsStringList(context).split(',');
+        
+        var mask : MaskHierarchy = new MaskHierarchy();
+        for (var i = 0; i < ids.length; i++) {
+            
+                var hn : HierarchyNode = new HierarchyNode();
+                hn.Code = idsToMask[i];
+                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
+                mask.Nodes.Add(hn);  
         }
         return mask;
     }
