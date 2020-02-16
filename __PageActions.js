@@ -249,7 +249,7 @@ class PageActions {
 		else idsToMask = getHierarchyMaskIdsStringList(context).split(',');
         
         var mask : MaskHierarchy = new MaskHierarchy();
-        for (var i = 0; i < ids.length; i++) {
+        for (var i = 0; i < idsToMask.length; i++) {
             
                 var hn : HierarchyNode = new HierarchyNode();
                 hn.Code = idsToMask[i];
