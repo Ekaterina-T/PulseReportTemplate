@@ -532,12 +532,13 @@ class PageActions {
 		
         var DsId = DataSourceUtil.getDsId(context);
         
-		var jsonTables = [];
-		for(var index = 0; index<trendSeries.length; index++)
+	var jsonTables = [];
+	if(chosenUsersN > 0){
+	 for(var index = 0; index<trendSeries.length; index++)
 		{
 			jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
 		}
-		
+	}	
         if (trendSeries.length > 1) {
             for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
