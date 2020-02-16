@@ -15,6 +15,14 @@ class Export {
         return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
     }
 
+    static function isMassExportMode(context) {
+        if(DataSourceUtil.DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return false;
+        } else {
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
+        }
+    }
+
     /**
      * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} {state: state, report: report, text: text, log: log}

@@ -197,7 +197,7 @@ class ParamUtil {
 
         // mass export by pid
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
-        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
+        var configurableExportMode = Export.isMassExportMode(context);
 
         if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);

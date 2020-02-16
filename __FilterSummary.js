@@ -96,7 +96,7 @@ class FilterSummary {
         var log = context.log;
         var pageContext = context.pageContext;
         var isDefaultPage = pageContext.Items['CurrentPageId'] === DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
-        var configurableExportMode = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
+        var configurableExportMode = Export.isMassExportMode(context);
 
         return !((Export.isPdfExportMode(context) && isDefaultPage) || Export.isExcelExportMode (context) || configurableExportMode);
     }
