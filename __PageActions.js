@@ -514,6 +514,7 @@ class PageActions {
         var state = context.state;
         var report = context.report;
         var table = context.table;
+	var log = context.log;
         var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
@@ -532,7 +533,7 @@ class PageActions {
         var DsId = DataSourceUtil.getDsId(context);
         
 		var jsonTables = [];
-		for(var index = 0; i<trendSeries.length; index++)
+		for(var index = 0; index<trendSeries.length; index++)
 		{
 			jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
 		}
