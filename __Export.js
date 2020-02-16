@@ -16,7 +16,7 @@ class Export {
     }
 
     static function isMassExportMode(context) {
-        if(DataSourceUtil.DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return false;
         } else {
             return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
