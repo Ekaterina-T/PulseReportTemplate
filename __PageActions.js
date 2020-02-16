@@ -511,7 +511,7 @@ class PageActions {
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
      */
     static function tableEndUsertStatistics_Render(context){
-
+        var state = context.state;
         var report = context.report;
         var table = context.table;
         var pageContext = context.pageContext;
@@ -525,19 +525,30 @@ class PageActions {
 
         var qActionOwner : Question = p.GetQuestion(actionOwner);
         var actionOwners = qActionOwner.GetAnswers();
+		
+		var chosenUsers: ParameterValueMultiSelect = state.Parameters["p_EndUserSelection"];
+		var chosenUsersN = chosenUsers.Count;
+		
         var DsId = DataSourceUtil.getDsId(context);
-
+        
+		var jsonTables = [];
+		for(var index = 0; i<trendSeries.length; index++)
+		{
+			jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
+		}
+		
         if (trendSeries.length > 1) {
-            for (var j=0; j<qActionOwner.AnswerCount; j++) {
+            for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
                 hcUser.DataSourceNodeId = DsId;
-                hcUser.Label = new Label(9, actionOwners[j].Text);
+                hcUser.Label = new Label(9, (ParameterValueResponse)(chosenUsers[j]).DisplayValue);
 
                 for (var index = 0; index < trendSeries.length; index++) {
                     var hc : HeaderContent = new HeaderContent();
-                    var dpArray : Datapoint[] = report.TableUtils.GetRowValues('EndUserStatistics_Hidden' + index, j+1);
-                    for (var i=0; i<dpArray.Length; i++) {
-                        var notStartValue = dpArray[i].Value;
+                    var dpArray = getJSONTableRowDataArray(jsonTables[index], j);
+					//var dpArray : Datapoint[] = report.TableUtils.GetRowValues('EndUserStatistics_Hidden' + index, j+1);
+                    for (var i=0; i<dpArray.length; i++) {
+                        var notStartValue = dpArray[i];
                         if (!notStartValue.Equals(Double.NaN)) {
                             hc.SetCellValue(i, notStartValue);
                         }
@@ -753,19 +764,63 @@ class PageActions {
 	return result;
   }
   
+  static function getActionTrendHiddenTableJSON(context, tableIndex){
+	var log = context.log;
+    var report = context.report;
+	
+	var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
+    
+	var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, "Actions", 'Source');
+    var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
+    var smTableJSON = JSON.parse(smTable);
+	
+	return smTableJSON; 
+  }
+  static function getEndUserStatHiddenTableJSON(context, tableIndex){
+	var log = context.log;
+    var report = context.report;
+        
+	var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
+    
+	var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, "Actions", 'Source');
+    var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
+    var smTableJSON = JSON.parse(smTable);
+	
+	return smTableJSON;
+  }
+  
+  static function getJSONTableRowDataArray(jsonTable, rowIndex){
+    var result = [];	
+	var l = jsonTable.data[rowIndex].length;	
+	for(var i=0; i<l; i++){
+		result.push(jsonTable.data[rowIndex][i].values.count);
+	}
+	return result;
+  }
+  
   
   static function generateActionTrandHiddenTableSmartView(context, seriesParam){
     return generateActionTrendSeriesByParam_SVText(context, seriesParam);
   }
-  static function generatetableEndUsertStatisticsHiddenTableSmartView(context, seriesParam){
+  
+   static function generatetableEndUsertStatisticsHiddenTableSmartView(context, seriesParam){
 	var resultSmartViewQuery = "";
-	  
+	var log = context.log;
+    var state = context.state;
 	var pageId = PageUtil.getCurrentPageIdInConfig(context);
     var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-	resultSmartViewQuery += actionOwner+ "{total: false;}";
-	resultSmartViewQuery += "\/";
+    resultSmartViewQuery += actionOwner+ "{total: false; filterbymask: true; ";
+       
+    var chosenUsers: ParameterValueMultiSelect = state.Parameters["p_EndUserSelection"];
+	var chosenUsersN = chosenUsers.Count;
+    for(var i=0; i<chosenUsersN; i++){
+      if(i==0) resultSmartViewQuery+="mask: '";
+      else resultSmartViewQuery+="','";
+      resultSmartViewQuery+=(ParameterValueResponse)(chosenUsers[i]).StringValue;    
+      if(i==chosenUsersN-1) resultSmartViewQuery +="';";
+    }
+    resultSmartViewQuery += "}\/";
 	resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
-	
 	return resultSmartViewQuery;
   }
   
