@@ -519,26 +519,30 @@ class PageActions {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+        //var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
         context.isCustomSource = true;
         var p : Project = DataSourceUtil.getProject(context);
 
 
-        var qActionOwner : Question = p.GetQuestion(actionOwner);
-        var actionOwners = qActionOwner.GetAnswers();
+        //var qActionOwner : Question = p.GetQuestion(actionOwner);
+        //var actionOwners = qActionOwner.GetAnswers();
 		
-		var chosenUsers: ParameterValueMultiSelect = state.Parameters["p_EndUserSelection"];
-		var chosenUsersN = chosenUsers.Count;
+		var chosenUsers: ParameterValueMultiSelect;
+		var chosenUsersN = 0;
 		
+		if(!state.Parameters.IsNull("p_EndUserSelection")){
+			chosenUsers = state.Parameters["p_EndUserSelection"];
+			chosenUsersN = chosenUsers.Count;
+		}
         var DsId = DataSourceUtil.getDsId(context);
         
-	var jsonTables = [];
-	if(chosenUsersN > 0){
-	 for(var index = 0; index<trendSeries.length; index++)
-		{
-			jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
-		}
-	}	
+	    var jsonTables = [];
+		if(chosenUsersN > 0){
+			for(var index = 0; index<trendSeries.length; index++){
+					jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
+			}
+		}	
+		
         if (trendSeries.length > 1) {
             for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
