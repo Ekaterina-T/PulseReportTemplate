@@ -28,7 +28,7 @@ class PageResults {
      * @param {object} context: {confirmit: confirmit, state: state, report: report, log: log, table: table}
      * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
-    static function tableStatements_Hide(context) {
+    static function tableStatements_Hide(context, isNormalizedTable) {
         return SuppressUtil.isGloballyHidden(context) || tableStatementsHasNoDimensions(context, isNormalizedTable);
     }
 
