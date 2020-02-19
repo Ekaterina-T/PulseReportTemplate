@@ -302,8 +302,8 @@ class QuestionUtil {
             throw new Error('QuestionUtil.getCustomQuestionTextById: expected custom question Id');
         }
 
-        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
-        if (codes.length == 0) {
+        var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        if (codes.length != 1) {
             return null;
         }
 

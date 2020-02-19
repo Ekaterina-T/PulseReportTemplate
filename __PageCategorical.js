@@ -40,8 +40,19 @@ class PageCategorical {
         }
 
         var Qs1 = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, questionConfigParamName);
-        var Qs2 = TableUtil.getActiveQuestionsListByCategories(context, pageId, categoriesConfigNames);
 
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return Qs1;
+        }
+
+        var selectedProjects = ParamUtil.GetSelectedCodes(context,'p_projectSelector');
+
+        if(selectedProjects.length > 1) {
+            return Qs1;
+        }
+
+        //for now custom questions are only defined for 1 pulse project
+        var Qs2 = TableUtil.getActiveQuestionsListByCategories(context, pageId, categoriesConfigNames);
         return Qs1.concat(Qs2);
     }
 

@@ -53,9 +53,9 @@ class SurveyTracker {
      * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
      * @returns {object} survey descriptor {Code pid, Label: pname}
      */
-    static public function getComparisonTrackerForSelectedPid(context) {
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
-        return getComparisonTrackerBySurveyId(context, projectSelected[0]);
+    static public function getComparisonTrackerForSelectedPid(context) {        
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');        
+        return projectSelected.length === 1 ? getComparisonTrackerBySurveyId(context, projectSelected[0]) : null;
     }
 
     /**
@@ -87,8 +87,8 @@ class SurveyTracker {
      * @returns {Array} - array of pids
      */
     static public function getTrackersForSelectedPid(context) {
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        return getTrackersBySurveyId(context, projectSelected[0]);
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');     
+        return projectSelected.length === 1 ? getTrackersBySurveyId(context, projectSelected[0]) : null;
     }
 
 }

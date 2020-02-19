@@ -44,7 +44,7 @@ class StyleAndJavaScriptUtil {
         // logo: \'some url\';
         properties.push('questionsWithData: ' + JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context)));
 
-        properties.push('executionMode: ' + JSON.stringify(state.ReportExecutionMode));
+        properties.push('executionMode: "' + JSON.stringify(state.ReportExecutionMode)+'"');
 
         properties.push('pagesToShow: ' + JSON.stringify(PageUtil.getPageNamesToShow(context).join(';').toLowerCase() + ';'));
 
@@ -81,8 +81,9 @@ class StyleAndJavaScriptUtil {
         if (pageId === 'Results') {
             var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+            var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
-            if (isPulseProgram && !!custom_category) {
+            if (isPulseProgram && codes.length === 1 && !!custom_category) {
                 var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
                 if (custom_questions.length > 0) {
                     properties.push('isCustomQuestionsTabVisible: true');
@@ -132,9 +133,6 @@ class StyleAndJavaScriptUtil {
         var kpiColor_dark = Config.kpiColor_dark;
         var logo = Config.logo;
         var headerBackground = Config.headerBackground;
-        var primaryGreyColor = Config.primaryGreyColor;
-        var pieColors = Config.pieColors;
-        var barChartColors = Config.barChartColors_Distribution;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
         var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
 

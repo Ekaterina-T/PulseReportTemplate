@@ -40,27 +40,22 @@ class Export {
             str += System.Environment.NewLine; // for Excel export
         }
 
+
         if(!state.Parameters.IsNull('p_projectSelector')) {
-            var selectedSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector');
-            var pid = context.pageContext.Items['p_projectSelector'];
-            var surveyInfo;
 
-            if(pid){
-                var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
-                surveyInfo = {};
-                surveyInfo.Code = pid;
-                surveyInfo.Label = answer.Text;
-            } else if(selectedSurvey.length >0) {
-                surveyInfo = selectedSurvey[0];
-            }
+            var selectedSurveys = ParamUtil.GetSelectedOptions (context, 'p_projectSelector');
+            if(selectedSurveys.length > 0) {
 
-            if(surveyInfo && surveyInfo.Code!=='none') {
-                str+= 'Survey Name: '+surveyInfo.Label+' ';
+                var selectedSurveysNames = [];
+                for(var i=0; i<selectedSurveys.length; i++) {
+                    selectedSurveysNames.push(selectedSurveys[i].Label)
+                }
+
+                str += 'Survey(-s): '+selectedSurveysNames.join(',')+' ';
                 str = '<div class="data-source-info">'+str+'</div>';
                 str += System.Environment.NewLine; // for Excel export
             }
         }
-
         return str;
     }
 

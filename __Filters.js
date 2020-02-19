@@ -439,18 +439,20 @@ class Filters {
     static function projectSelectorInPulseProgram(context) {
 
         var log = context.log;
-        var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
+        var pidsFromPageContext = context.pageContext.Items['p_projectSelector'];
+        var selectedPids = [];
 
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
         }
 
-        if (pidFromPageContext) {
-            return 'source_projectid = "' + pidFromPageContext + '"'; //'pid = "' + pidFromPageContext + '"';
+        if (pidsFromPageContext) {
+            selectedPids = JSON.parse(pidsFromPageContext);
+        } else {
+            selectedPids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         }
 
-        var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        return 'source_projectid = "' + val[0] + '"';
+        return Filters.getFilterExpressionByAnswerRange(context, 'source_projectid', selectedPids);
     }
 
     /**

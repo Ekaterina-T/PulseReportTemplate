@@ -7,8 +7,7 @@ class ParameterOptions {
      *@param {String} parameterId
      *@return {Object} parameterInfo - reportParameterValuesMap object
      */
-    static private
-    function GetParameterInfoObject(context, parameterId) {
+    static private function GetParameterInfoObject(context, parameterId) {
 
         var parameterInfo = {};
 
@@ -34,8 +33,7 @@ class ParameterOptions {
      * @param {String} parameterId
      * @returns {Object} resourceInfo
      */
-    static private
-    function generateResourceObjectForFilterPanelParameter(context, parameterId) {
+    static private function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
         var resourceInfo = {};
         var filterList = Filters.GetFullConfigFilterList(context);
@@ -57,8 +55,7 @@ class ParameterOptions {
      * @param {object} parameterInfo with locationType and other data to retrieve the resource
      * @return {object} - depends on parameter
      */
-    static private
-    function getParameterValuesResourceByLocation(context, parameterInfo) {
+    static private function getParameterValuesResourceByLocation(context, parameterInfo) {
 
         // fetch propertyValue and then transform into needed format
         // locationType will tell where to fetch value from
@@ -138,18 +135,16 @@ class ParameterOptions {
      *@param {object} storageInfo
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_PulseSurveyInfo(context, storageInfo) {
+    static private function getOptions_PulseSurveyInfo(context, storageInfo) {
         return PulseSurveysInfoFabric.getPulseSurveysInfo(context, storageInfo).getPulseSurveys(context);
     }
 
     /**
-     *Populates p_projectSelector based on pid and pname questions.
+     *Populates parameter based on pid and pname questions.
      *@param {object} context - contains Reportal scripting state, log, report, parameter objects
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_CombinationOfQuestionsSelector(context, locationObj) {
+    static private function getOptions_CombinationOfQuestionsSelector(context, locationObj) {
 
         var log = context.log;
         var codes: Answer[] = QuestionUtil.getQuestionAnswers(context, locationObj['Codes']);
@@ -172,8 +167,7 @@ class ParameterOptions {
      *@param {string} qid
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_QuestionAnswersSelector(context, qid) {
+    static private function getOptions_QuestionAnswersSelector(context, qid) {
 
         var parameterOptions = [];
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
@@ -193,8 +187,7 @@ class ParameterOptions {
      *@param {array} arary of objevts {Code:, Label:}
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_StaticArrayOfObjectsSelector(context, ArrayOfObjects) {
+    static private function getOptions_StaticArrayOfObjectsSelector(context, ArrayOfObjects) {
 
         var parameterOptions = [];
         var report = context.report;
@@ -220,8 +213,7 @@ class ParameterOptions {
      *@param {array} arary of questions
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_QuestionList(context, qList) {
+    static private function getOptions_QuestionList(context, qList) {
 
         var parameterOptions = [];
 
@@ -244,8 +236,7 @@ class ParameterOptions {
      *@param {array} arary of questions
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
+    static private function getOptions_QuestionAndCategoriesList(context, qIdsAndCatList) {
 
         var report = context.report;
         var parameterOptions = [];
@@ -279,8 +270,7 @@ class ParameterOptions {
      *@param {array} array of question Ids
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_CustomQuestionList(context, qList) {
+    static private function getOptions_CustomQuestionList(context, qList) {
 
         var log = context.log;
         var parameterOptions = [];
@@ -291,8 +281,7 @@ class ParameterOptions {
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
 
-        if (codes.length) {
-            var baby_p_number = codes[0];
+        if (codes.length === 1) {
             for (var i = 0; i < qList.length; i++) {
                 var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
                 if (customTxt) {
@@ -311,8 +300,7 @@ class ParameterOptions {
      *@param {array} array of parameter Ids
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_ParameterList(context, parameterNameList) {
+    static private function getOptions_ParameterList(context, parameterNameList) {
 
         var log = context.log;
         var combinedOptions = [];
@@ -329,8 +317,7 @@ class ParameterOptions {
      *@param {string} unique 'path' to call proper function
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getOptions_DynamicList(context, path) {
+    static private function getOptions_DynamicList(context, path) {
 
         if (path === 'SurveyTracker.getAllSurveyDescriptors') {
             return SurveyTracker.getAllSurveyDescriptors(context);
@@ -347,8 +334,7 @@ class ParameterOptions {
      *@param {String} type: see reportParameterValuesMap object, property type
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function getRawOptions(context, resource, type) {
+    static private function getRawOptions(context, resource, type) {
 
         var log = context.log;
 
@@ -400,8 +386,7 @@ class ParameterOptions {
      *@param {Object} parameterInfo - reportParameterValuesMap object
      *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function modifyOptionsOrder(context, options, parameterInfo) {
+    static private function modifyOptionsOrder(context, options, parameterInfo) {
 
         if (parameterInfo.isInReverseOrder) {
 
@@ -422,8 +407,7 @@ class ParameterOptions {
      *@param {Object} parameterInfo - reportParameterValuesMap object
      *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function modifyOptions(context, options, parameterInfo) {
+    static private function modifyOptions(context, options, parameterInfo) {
         return modifyOptionsOrder(context, options, parameterInfo);
     }
 
@@ -433,8 +417,7 @@ class ParameterOptions {
      * @param {String} parameterId
      * @return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static private
-    function GetProcessedList(context, parameterId) {
+    static private function GetProcessedList(context, parameterId) {
 
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
@@ -456,8 +439,7 @@ class ParameterOptions {
      * @param {String} parameterId
      * @returns {Boolean}
      */
-    static public
-    function isCachable(context, parameterId) {
+    static public function isCachable(context, parameterId) {
 
         var parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
         return !(parameterInfo && parameterInfo.hasOwnProperty('CachingDisabled') && parameterInfo['CachingDisabled']);
@@ -468,8 +450,7 @@ class ParameterOptions {
      * @param {Object} context
      * @param {String} parameterId
      */
-    static private
-    function CacheParameterOptions(context, parameterId) {
+    static private function CacheParameterOptions(context, parameterId) {
 
         var log = context.log;
         var key = CacheUtil.getParameterCacheKey(context, parameterId);
@@ -487,8 +468,7 @@ class ParameterOptions {
      * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
      * @returns: {array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
-    static public
-    function GetOptions(context, parameterName, from) {
+    static public function GetOptions(context, parameterName, from) {
 
         var log = context.log;
         var parameterId = parameterName || context.parameter.ParameterId;
@@ -512,24 +492,6 @@ class ParameterOptions {
 
     //------------------------------------------------------------------------------------------
 
-    static
-    function convertCodeToParameterValueResponse(context, code) {
-        return new ParameterValueResponse(code);
-    }
-
-    static
-    function convertCodeArrayToParameterValueResponseArray(context, codes) {
-
-        var log = context.log;
-        var defaultVals = [];
-
-        for (var i = 0; i < codes.length; i++) {
-            defaultVals.push(new ParameterValueResponse(codes[i]));
-        }
-        return defaultVals;
-    }
-
-
     /**
      * TODO: replace with some class maybe that would allow defining def values from outside (not using paramNames in code)
      * Get defaultParameterValue for parameter
@@ -537,8 +499,7 @@ class ParameterOptions {
      * @param {string} parameterName
      * @returns default values: 1 code, array of codes, null
      */
-    static
-    function getDefaultValue(context, parameterName) {
+    static function getDefaultValue(context, parameterName) {
 
         var log = context.log;
         var parameterOptions = ParameterOptions.GetOptions(context, parameterName, 'get default'); // get all options
@@ -563,20 +524,14 @@ class ParameterOptions {
                     }
                 }
             }
-
         }
 
         // not pulse program or not question based parameter
         // return the 1st option as default value
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : null;
-            //if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
-
+            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';            
             return code;
         }
-
-        //log.LogDebug(parameterName+': default value = null');
-
         return null;
     }
 }

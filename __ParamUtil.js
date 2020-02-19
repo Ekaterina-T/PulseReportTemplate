@@ -93,13 +93,12 @@ class ParamUtil {
     */
     static function Initialise(context) {
 
+        var log = context.log;
         var state = context.state;
         var page = context.page;
-        var log = context.log;
         var i;
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
-        //log.LogDebug('param init start')
 
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
@@ -113,17 +112,11 @@ class ParamUtil {
             Filters.ResetAllFilters(context);
         }
 
-        // pulse survey iss changed -> tracker surveys changed
-        if (page.SubmitSource === 'projectSelector') {
-            ResetParameters(context, ['p_Trends_trackerSurveys']);
-        }
-
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
 
-        //log.LogDebug('project selector processing end')
         pulseInit(context);
 
         // set default values for mandatory page parameters
@@ -160,21 +153,62 @@ class ParamUtil {
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
-            var valArr = [];
+            var valArr;
             if(typeof defaultParameterValue === 'string') {
-                valArr = [new ParameterValueResponse(defaultParameterValue)];
+                valArr = [defaultParameterValue];
             } else {
-                valArr = ParameterOptions.convertCodeArrayToParameterValueResponseArray(context, defaultParameterValue);
+                valArr = defaultParameterValue;
             }
-            if(valArr.length>0) {
-                var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
-                state.Parameters[paramId] = multiResponse;
-            }
-        }
-            //if not, set it as single select parameter
-        catch (e) {
+            setMultiSelectParameter(context, paramId, valArr);
+
+        } catch (e) { //if not, set it as single select parameter
             state.Parameters[paramId] = new ParameterValueResponse(defaultParameterValue);
         }
+        
+    }
+
+    /**
+     * returns key previous pulse surveys
+     * @param {Object} context
+     * @returns {String}: array of prev pulse surveys
+     */
+    static public function getPreviousPulseSurveys(context) {
+
+        var log = context.log;
+        var state = context.state;
+        var previousPulseSurveys = [];
+
+        if(!state.Parameters.IsNull('p_previousProjects')) {
+            previousPulseSurveys = JSON.parse(state.Parameters.GetString('p_previousProjects'));
+        }
+        return previousPulseSurveys;
+    }
+
+    /**
+     * returns key previous pulse surveys
+     * @param {Object} context
+     * @param {String} array of prev pulse surveys
+     */
+    static public function savePreviousPulseSurveys(context, previousPulseSurveys) {
+        var log = context.log;
+        var state = context.state;
+        state.Parameters['p_previousProjects'] = new ParameterValueResponse(JSON.stringify(previousPulseSurveys));
+    }
+
+    /**
+     * 
+     */
+    static function selectedPulseSurveysHaveChanged(context) {
+
+        var log = context.log;
+        var oldPids = getPreviousPulseSurveys(context);
+        var newPids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+        if(oldPids) {
+           return !ArrayUtil.ifArraysIdentical(oldPids, newPids);
+        }
+
+        return false;
     }
 
     /**
@@ -183,25 +217,21 @@ class ParamUtil {
      */
     static function pulseInit(context) {
 
-        var log = context.log;
-        var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
-        var optionalPageParameters = SystemConfig.optionalPageParameters;
-
         // pulse program handler
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return;
         }
-
+        
+        var log = context.log;
         var state = context.state;
-        var page = context.page;
 
         // mass export by pid
-        var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
+        var pidsFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
         var configurableExportMode = Export.isMassExportMode(context);
 
-        if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
-            state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
-            context.pageContext.Items['p_projectSelector'] = pidFromConfig[0];
+        if(configurableExportMode && pidsFromConfig && pidsFromConfig.length > 0) {
+            setMultiSelectParameter(context, 'p_projectSelector', pidsFromConfig);
+            context.pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
         }
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
@@ -213,45 +243,60 @@ class ParamUtil {
 
         //set default pulse baby project
         if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
-            var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-            //user unchecked "show all pulse surveys" checkbox while some survey was selected
-            if (selectedPulseSurvey.length > 0 && selectedPulseSurvey[0] !== 'none' && showAll[0] !== 'showAll') {
 
-                var selectedProject = selectedPulseSurvey[0];
-                var availableProjects = ParameterOptions.GetOptions(context, 'p_projectSelector', 'available proj');
-                var doReset = true;
+            var pageContext = context.pageContext;
+            var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
+            var optionalPageParameters = SystemConfig.optionalPageParameters;
 
-                //if available list does include selected project, then don't reset pulse project selector
-                for (var i = 0; i < availableProjects.length; i++) {
-                    if (selectedProject === availableProjects[i].Code) {
-                        doReset = false;
-                        break;
+            //set default pulse baby project
+            if (!state.Parameters.IsNull('p_projectSelector')) {
+
+                var selectedPulseSurveys = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+                var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+                //user unchecked "show all pulse surveys" checkbox while some survey was selected
+                if (selectedPulseSurveys[0] !== 'none' && showAll[0] !== 'showAll') {
+
+                    var availableProjects = ParameterOptions.GetOptions(context, 'p_projectSelector', 'available proj');
+                    var surveysThatRemainSelected = [];
+
+                    //if available list does include selected project, then don't reset pulse project selector
+                    for(var i=0; i<selectedPulseSurveys.length; i++) {
+                        for (var j = 0; j < availableProjects.length; j++) {
+                            if (selectedPulseSurveys[i] === availableProjects[j].Code) {
+                                surveysThatRemainSelected.push(selectedPulseSurveys[i]);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (surveysThatRemainSelected.length === 0) {
+                        ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                    } else {
+                        setMultiSelectParameter(context, 'p_projectSelector', surveysThatRemainSelected);
+                        pageContext.Items['p_projectSelector'] = JSON.stringify(surveysThatRemainSelected);
                     }
                 }
-
-                if (doReset) {
-                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                    context.pageContext.Items['p_projectSelector'] = 'nothing_selected';
-                }
             }
-        }
 
-        //in the end project is still undefined -> set default
-        if (state.Parameters.IsNull('p_projectSelector')) {
-            var defaultVal = ParameterOptions.getDefaultValue(context, 'p_projectSelector');
-            state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
-            context.pageContext.Items['p_projectSelector'] = defaultVal;
-        }
+            //in the end project is still undefined -> set default
+            if (state.Parameters.IsNull('p_projectSelector')) {
+                var defaultVal = ParameterOptions.getDefaultValue(context, 'p_projectSelector');
+                setMultiSelectParameter(context, 'p_projectSelector', [defaultVal]);
+                pageContext.Items['p_projectSelector'] = JSON.stringify([defaultVal]);
+            }
 
-        //set up object holding questions available on current page
-        PulseProgramUtil.setPulseSurveyContentInfo(context);
-        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+            //reset question and category based params when baby surveys change
+            if (selectedPulseSurveysHaveChanged(context)) {
+                ResetParameters(context, ['p_Trends_trackerSurveys']);
+                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+                Filters.ResetAllFilters(context);
+            }
 
-        //reset question and category based params when baby survey changes
-        if (page.SubmitSource === 'projectSelector') {
-            ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
-            Filters.ResetAllFilters(context);
-        }
+            savePreviousPulseSurveys(context, ParamUtil.GetSelectedCodes(context, 'p_projectSelector'));
+
+            //set up object holding questions available on current page
+            PulseProgramUtil.setPulseSurveyContentInfo(context);
+            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
@@ -269,7 +314,6 @@ class ParamUtil {
         //log.LogDebug('---- GetSelectedCodes START for '+parameterName+' ----'); 
 
         if (state.Parameters.IsNull(parameterName)) {
-            //log.LogDebug('param is null')
             return [];
         }
 
@@ -278,7 +322,6 @@ class ParamUtil {
 
             // single select parameter
             if (param instanceof ParameterValueResponse) {
-                //log.LogDebug('SINGLE: stringKeyValue='+param.StringKeyValue+'; stringValue='+state.Parameters.GetString(parameterName));
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
@@ -286,22 +329,16 @@ class ParamUtil {
             if (param instanceof ParameterValueMultiSelect) {
                 //log.LogDebug('MULTI')
                 var selectedCodes = [];
-                var param = state.Parameters[parameterName];
-                //log.LogDebug('count='+param.Count);
 
                 for (var i = 0; i < param.Count; i++) {
                     var response: ParameterValueResponse = param[i];
                     var skv = response.StringKeyValue;
                     var sv = response.StringValue;
-                    //log.LogDebug('skv='+skv+'; sv='+sv)
                     selectedCodes.push(!skv ? sv : skv);      //surprisingly, StringKeyValue can be empty for first page load and the key (i.e. Question Id) can be extracted via StringValue
                 }
                 return selectedCodes;
-
             }
-
-        }
-        catch (e) {
+        } catch (e) {
             throw new Error('ParamUtil.GetSelectedCodes: undefined parameter type or value for "' + parameterName + '".')
         }
     }
@@ -447,7 +484,30 @@ class ParamUtil {
             return false;
         }
 
+        if(parameterName === 'p_CustomOpenTextQs') {
+            var isOnePulseProjectSelected = ParamUtil.GetSelectedCodes(context,'p_projectSelector').length === 1;
+            return isPulseProgram && isOnePulseProjectSelected;
+        }
+
         return true;
+    }
+
+    /**
+     * sets value for multi-select string parameter based on array of values
+     * @param {Object} context
+     * @param {String} parameterId
+     * @param {Array} array of strings, i.e. options' codes
+     */
+    static function setMultiSelectParameter(context, parameterId, parameterValues) {
+        // multi string response parameter
+        var valArr = [];
+        var log = context.log;
+
+        for(var i=0; i<parameterValues.length; i++) {
+            valArr.push(new ParameterValueResponse(parameterValues[i]));
+        }
+
+        context.state.Parameters[parameterId] = new ParameterValueMultiSelect(valArr);
     }
 
 }
