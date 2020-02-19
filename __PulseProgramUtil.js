@@ -239,12 +239,12 @@ class PulseProgramUtil {
         log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         log.LogDebug('key='+key)
+        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
+        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
 
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
-        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
 
         if(resources.length > resourcesBase.length) {
             setPulseSurveyContentBaseValues(context);
