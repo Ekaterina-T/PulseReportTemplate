@@ -226,23 +226,22 @@ class ParamUtil {
         var state = context.state;
 
         // mass export by pid
-        var pidsFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
         var configurableExportMode = Export.isMassExportMode(context);
 
-        if (configurableExportMode && pidsFromConfig && pidsFromConfig.length > 0) {
+        if (configurableExportMode) {
+
+            var pidsFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
+
+            if(!pidsFromConfig || pidsFromConfig.length === 0) {
+                throw new Error('ParamUtil.pulseInit: mass export is enabled but pids are not provided');
+            }
+
             setMultiSelectParameter(context, 'p_projectSelector', pidsFromConfig);
             context.pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
         }
 
-        var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-
-        //TODO: there's some mess around selectedPulseSurvey[0] values
-        if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
-            ParamUtil.ResetParameters(context, ['p_projectSelector']);
-        }
-
         //set default pulse baby project
-        if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
+        if (!configurableExportMode && !state.Parameters.IsNull('p_projectSelector')) {
 
             var pageContext = context.pageContext;
             var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
@@ -277,27 +276,28 @@ class ParamUtil {
                     }
                 }
             }
-
-            //in the end project is still undefined -> set default
-            if (state.Parameters.IsNull('p_projectSelector')) {
-                var defaultVal = ParameterOptions.getDefaultValue(context, 'p_projectSelector');
-                setMultiSelectParameter(context, 'p_projectSelector', [defaultVal]);
-                pageContext.Items['p_projectSelector'] = JSON.stringify([defaultVal]);
-            }
-
-            //reset question and category based params when baby surveys change
-            if (selectedPulseSurveysHaveChanged(context)) {
-                ResetParameters(context, ['p_Trends_trackerSurveys']);
-                ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
-                Filters.ResetAllFilters(context);
-            }
-
-            savePreviousPulseSurveys(context, ParamUtil.GetSelectedCodes(context, 'p_projectSelector'));
-
-            //set up object holding questions available on current page
-            PulseProgramUtil.setPulseSurveyContentInfo(context);
-            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
         }
+
+        //in the end project is still undefined -> set default
+        if (state.Parameters.IsNull('p_projectSelector')) {
+            var defaultVal = ParameterOptions.getDefaultValue(context, 'p_projectSelector');
+            setMultiSelectParameter(context, 'p_projectSelector', [defaultVal]);
+            pageContext.Items['p_projectSelector'] = JSON.stringify([defaultVal]);
+        }
+
+        //reset question and category based params when baby surveys change
+        if (selectedPulseSurveysHaveChanged(context)) {
+            ResetParameters(context, ['p_Trends_trackerSurveys']);
+            ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
+            Filters.ResetAllFilters(context);
+        }
+
+        savePreviousPulseSurveys(context, ParamUtil.GetSelectedCodes(context, 'p_projectSelector'));
+
+        //set up object holding questions available on current page
+        PulseProgramUtil.setPulseSurveyContentInfo(context);
+        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
