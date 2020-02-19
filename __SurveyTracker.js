@@ -92,7 +92,7 @@ class SurveyTracker {
         var trackers = [];  
         
         for(var i = 0; i< projectSelected.length; i++) {
-            trackers = trackers.concat(getTrackersBySurveyId(context, projectSelected[0]));
+            trackers = trackers.concat(getTrackersBySurveyId(context, projectSelected[i]));
         }
         
         return ArrayUtil.removeDuplicatesFromArray(trackers);
