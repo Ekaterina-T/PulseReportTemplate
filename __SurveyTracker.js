@@ -87,8 +87,15 @@ class SurveyTracker {
      * @returns {Array} - array of pids
      */
     static public function getTrackersForSelectedPid(context) {
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');     
-        return projectSelected.length === 1 ? getTrackersBySurveyId(context, projectSelected[0]) : null;
+
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+        var trackers = [];  
+        
+        for(var i = 0; i< projectSelected.length; i++) {
+            trackers = trackers.concat(getTrackersBySurveyId(context, projectSelected[0]));
+        }
+        
+        return ArrayUtil.removeDuplicatesFromArray(trackers);
     }
 
 }
