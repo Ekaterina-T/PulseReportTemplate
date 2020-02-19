@@ -221,7 +221,7 @@ class ParamUtil {
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return;
         }
-        
+
         var log = context.log;
         var state = context.state;
 
@@ -229,7 +229,7 @@ class ParamUtil {
         var pidsFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
         var configurableExportMode = Export.isMassExportMode(context);
 
-        if(configurableExportMode && pidsFromConfig && pidsFromConfig.length > 0) {
+        if (configurableExportMode && pidsFromConfig && pidsFromConfig.length > 0) {
             setMultiSelectParameter(context, 'p_projectSelector', pidsFromConfig);
             context.pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
         }
@@ -260,7 +260,7 @@ class ParamUtil {
                     var surveysThatRemainSelected = [];
 
                     //if available list does include selected project, then don't reset pulse project selector
-                    for(var i=0; i<selectedPulseSurveys.length; i++) {
+                    for (var i = 0; i < selectedPulseSurveys.length; i++) {
                         for (var j = 0; j < availableProjects.length; j++) {
                             if (selectedPulseSurveys[i] === availableProjects[j].Code) {
                                 surveysThatRemainSelected.push(selectedPulseSurveys[i]);
@@ -297,6 +297,7 @@ class ParamUtil {
             //set up object holding questions available on current page
             PulseProgramUtil.setPulseSurveyContentInfo(context);
             PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        }
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
