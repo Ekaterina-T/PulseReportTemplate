@@ -224,6 +224,9 @@ class ParamUtil {
 
         var log = context.log;
         var state = context.state;
+        var pageContext = context.pageContext;
+        var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
+        var optionalPageParameters = SystemConfig.optionalPageParameters;
 
         // mass export by pid
         var configurableExportMode = Export.isMassExportMode(context);
@@ -237,45 +240,39 @@ class ParamUtil {
             }
 
             setMultiSelectParameter(context, 'p_projectSelector', pidsFromConfig);
-            context.pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
+            pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
         }
 
         //set default pulse baby project
         if (!configurableExportMode && !state.Parameters.IsNull('p_projectSelector')) {
 
-            var pageContext = context.pageContext;
-            var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
-            var optionalPageParameters = SystemConfig.optionalPageParameters;
+            var selectedPulseSurveys = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+            var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
 
-            //set default pulse baby project
-            if (!state.Parameters.IsNull('p_projectSelector')) {
+            //user unchecked "show all pulse surveys" checkbox while some survey was selected
+            if (selectedPulseSurveys[0] !== 'none' && showAll[0] !== 'showAll') {
 
-                var selectedPulseSurveys = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-                var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
-                //user unchecked "show all pulse surveys" checkbox while some survey was selected
-                if (selectedPulseSurveys[0] !== 'none' && showAll[0] !== 'showAll') {
+                var availableProjects = ParameterOptions.GetOptions(context, 'p_projectSelector', 'available proj');
+                var surveysThatRemainSelected = [];
 
-                    var availableProjects = ParameterOptions.GetOptions(context, 'p_projectSelector', 'available proj');
-                    var surveysThatRemainSelected = [];
-
-                    //if available list does include selected project, then don't reset pulse project selector
-                    for (var i = 0; i < selectedPulseSurveys.length; i++) {
-                        for (var j = 0; j < availableProjects.length; j++) {
-                            if (selectedPulseSurveys[i] === availableProjects[j].Code) {
-                                surveysThatRemainSelected.push(selectedPulseSurveys[i]);
-                                break;
-                            }
+                //if available list does include selected project, then don't reset pulse project selector
+                for(var i=0; i<selectedPulseSurveys.length; i++) {
+                    for (var j = 0; j < availableProjects.length; j++) {
+                        if (selectedPulseSurveys[i] === availableProjects[j].Code) {
+                            surveysThatRemainSelected.push(selectedPulseSurveys[i]);
+                            break;
                         }
                     }
+                }
 
-                    if (surveysThatRemainSelected.length === 0) {
-                        ParamUtil.ResetParameters(context, ['p_projectSelector']);
-                    } else {
-                        setMultiSelectParameter(context, 'p_projectSelector', surveysThatRemainSelected);
-                        pageContext.Items['p_projectSelector'] = JSON.stringify(surveysThatRemainSelected);
-                    }
+                if (surveysThatRemainSelected.length === 0) {
+                    ParamUtil.ResetParameters(context, ['p_projectSelector']);
+                } else {
+                    setMultiSelectParameter(context, 'p_projectSelector', surveysThatRemainSelected);
+                    pageContext.Items['p_projectSelector'] = JSON.stringify(surveysThatRemainSelected);
                 }
             }
+            
         }
 
         //in the end project is still undefined -> set default

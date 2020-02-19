@@ -236,11 +236,11 @@ class PulseProgramUtil {
             return null;
         }
 
-        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
+        //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
-        log.LogDebug('key='+key)
-        log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
-        log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
+        //log.LogDebug('key='+key)
+        //log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
+        //log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
@@ -256,7 +256,7 @@ class PulseProgramUtil {
                 resourcesWithData[resources[i].Code] = { Type: resources[i].Type};
             }
         }
-        log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
+        //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
 
         return resourcesWithData;
     }
