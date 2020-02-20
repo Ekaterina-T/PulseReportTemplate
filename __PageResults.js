@@ -583,6 +583,7 @@ class PageResults {
         var log = context.log;
         var table = context.table;
         var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm" : "Benchmarks" ;
+        log.LogDebug('benchmarkTable='+benchmarkTable);
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
         var baseValues: Datapoint[];
@@ -592,6 +593,9 @@ class PageResults {
         } else {
             baseValues = baseValuesForOriginalScores;
         }
+
+        log.LogDebug('bmValues.length='+bmValues.length);
+        log.LogDebug('baseValues.length='+baseValues.length);
 
         for (var i = 0; i < bmValues.length; i++) {
             var bmVal: Datapoint = bmValues[i];
@@ -629,7 +633,6 @@ class PageResults {
         var base: Datapoint;
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
-        log.LogDebug('1 '+bmColumn);
 
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
@@ -657,8 +660,6 @@ class PageResults {
             bmColumn += 1;
         }
 
-        log.LogDebug('2 '+bmColumn);
-
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         if (tabSwitcher[0] !== 'custom') {
@@ -670,7 +671,6 @@ class PageResults {
                 bmColumn += 1;
             }
         }
-        log.LogDebug('3 '+bmColumn);
 
         // add benchmark data based on benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
@@ -681,22 +681,23 @@ class PageResults {
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
             bmColumn += 1;
         }
-        log.LogDebug('4 '+bmColumn);
 
         //add hierarchy comparison benchmarks
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-            log.LogDebug(JSON.stringify(hierCompCols));
+            log.LogDebug('START'+JSON.stringify(hierCompCols));
 
             for (var i = 0; i < hierCompCols.length; i++) {
+                log.LogDebug('i='+i);
                 var hierCompContent: HeaderContent = new HeaderContent();
                 copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                log.LogDebug('i='+i);
                 bmColumn += 1;
             }
+            log.LogDebug('END'+JSON.stringify(hierCompCols));
         }
-        log.LogDebug('5 '+bmColumn);
 
     }
 
