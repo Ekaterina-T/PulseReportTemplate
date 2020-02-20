@@ -583,7 +583,6 @@ class PageResults {
         var log = context.log;
         var table = context.table;
         var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm" : "Benchmarks" ;
-        log.LogDebug('benchmarkTable='+benchmarkTable);
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
         var baseValues: Datapoint[];
@@ -593,9 +592,6 @@ class PageResults {
         } else {
             baseValues = baseValuesForOriginalScores;
         }
-
-        log.LogDebug('bmValues.length='+bmValues.length);
-        log.LogDebug('baseValues.length='+baseValues.length);
 
         for (var i = 0; i < bmValues.length; i++) {
             var bmVal: Datapoint = bmValues[i];
@@ -627,6 +623,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var bmColumn = 2; // 1st coulumn always exists - it's base
         var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm" : "Benchmarks" ;
+        log.LogDebug('benchmarkTable'+benchmarkTable)
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, 1);
         var suppressValue = SuppressConfig.TableSuppressValue;
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles(benchmarkTable);
@@ -687,16 +684,11 @@ class PageResults {
         if (reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-            log.LogDebug('START'+JSON.stringify(hierCompCols));
-
             for (var i = 0; i < hierCompCols.length; i++) {
-                log.LogDebug('i='+i);
                 var hierCompContent: HeaderContent = new HeaderContent();
-                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
-                log.LogDebug('i='+i);
+                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
                 bmColumn += 1;
             }
-            log.LogDebug('END'+JSON.stringify(hierCompCols));
         }
 
     }
