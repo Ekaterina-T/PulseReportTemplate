@@ -68,7 +68,7 @@ class HierarchyUtil {
             for(var i=0; i< bases.length; i++) {
                 filterExpr.push(getHierarchyFilterExpressionForNode (context, bases[i]))
             }
-            return filterExpr.join(' OR ');
+            return '(' + filterExpr.join(' OR ') + ')';
         }
 
         return '';
