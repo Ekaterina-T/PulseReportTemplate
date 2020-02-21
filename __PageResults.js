@@ -114,7 +114,7 @@ class PageResults {
     static function tableStatements_AddRows(context, isNormalizedTable) {
 
         var log = context.log;
-        var isPulseProgram = DataSourceUtil.isProjectSelectorNotNeeded(context);
+        var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
         var isOnePulseProjectSelected = isPulseProgram && ParamUtil.GetSelectedCodes(context,'p_projectSelector').length === 1;
         var showCustomQuestions = isOnePulseProjectSelected && ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher')[0] === 'custom';
         var numberOfAddedBanners = 0;
