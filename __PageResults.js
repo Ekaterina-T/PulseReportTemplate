@@ -226,6 +226,7 @@ class PageResults {
                 }
                 return activeDimesions.length > 0 ? activeDimesions : dimensionsInConfig; //return something to avoid table crush
             }
+            return [];
     }
 
 
