@@ -56,6 +56,8 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
+        var state = context.state;
+        var page = context.page;
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
 
