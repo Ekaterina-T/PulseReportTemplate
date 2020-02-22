@@ -10,7 +10,7 @@ public class SystemConfig {
     static var reportParameterValuesMap = {
 
         'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
-        'p_Trends_trackerSurveys': { type: 'DynamicList', locationType: 'FunctionCall', path: 'SurveyTracker.getAllSurveyDescriptors', CachingDisabled: true}, //temporary
+        'p_Trends_trackerSurveys': { type: 'QuestionId', locationType: 'QuestionId', ID: 'source_projectid', CachingDisabled: true}, //temporary
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
         'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
@@ -46,7 +46,7 @@ public class SystemConfig {
     // mandatory parameters can be single or multi. Must have default value when a page opens
     static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
-                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher'];
+                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher', 'p_Trends_trackerSurveys'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead

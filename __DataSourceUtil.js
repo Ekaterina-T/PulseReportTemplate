@@ -73,7 +73,6 @@ class DataSourceUtil {
      */
     static function getSurveyConfig (context) {
 
-        var state = context.state;
         var log = context.log;
         var isCustomSource_copy = context.isCustomSource;
         context.isCustomSource = false;
@@ -198,7 +197,6 @@ class DataSourceUtil {
     static function isProjectSelectorNotNeeded (context) {
 
         var log = context.log;
-        var report = context.report;
 
         context.isCustomSource = false;  // here always use the global source, so reset the custom source property for safety reasons
         var surveyConfig = getSurveyConfig(context);

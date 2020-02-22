@@ -31,9 +31,7 @@ class PageTrend {
      * @returns {Boolean}
      */
     static function tableTrend_Hide(context){
-
-        return SuppressUtil.isGloballyHidden(context);
-
+        return context.state.Parameters.IsNull("p_TrendQs") || SuppressUtil.isGloballyHidden(context);
     }
 
     /**
@@ -44,7 +42,6 @@ class PageTrend {
      */
     static function tableTrend_Render(context) {
 
-        var state = context.state;
         var table = context.table;
         var suppressSettings = context.suppressSettings;
         var log = context.log;
@@ -59,30 +56,35 @@ class PageTrend {
         // in pulse program Trend shows comparison between surveys
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
-            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'pname');
-            var projectHQ: HeaderQuestion = new HeaderQuestion(qe);
-            projectHQ.IsCollapsed = false;
-            projectHQ.Sorting.Enabled = false;
-            projectHQ.ShowTotals = false;
+            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'source_projectid');
+            var pidHQ: HeaderQuestion = new HeaderQuestion(pid);
 
-            if(!state.Parameters.IsNull('p_AcrossAllSurveys')) { //need to show average over all surveys
-                projectHQ.ShowTotals = true;
-                var qMask : MaskFlat = new MaskFlat();
-                qMask.IsInclusive = true;
-                projectHQ.AnswerMask = qMask;
-            }
-            table.ColumnHeaders.Add(projectHQ);
+            //take values from config
+            var projectsToShow = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys'); 
+            var qMask : MaskFlat = new MaskFlat();
+            qMask.IsInclusive = true;
+            qMask.Codes.AddRange(projectsToShow);
+
+            pidHQ.AnswerMask = qMask;
+            pidHQ.FilterByMask = false;
+            pidHQ.IsCollapsed = false;
+            pidHQ.ShowTotals = false;
+            pidHQ.HideHeader = true;
+
+            table.ColumnHeaders.Add(pidHQ);
+            table.RemoveEmptyHeaders.Rows = false;
+            table.RemoveEmptyHeaders.Columns = false;
 
         } else {
             // add column - trending by Date variable
             var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
             TableUtil.addTrending(context, dateQId);
+            table.RemoveEmptyHeaders.Rows = true;
         }
 
 
         // global table settings
         table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Rows = true;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 
@@ -95,7 +97,7 @@ class PageTrend {
      */
     static function chartTrend_Hide(context){
 
-        return SuppressUtil.isGloballyHidden(context) || Export.isExcelExportMode(context);
+        return !DataSourceUtil.isProjectSelectorNotNeeded(context) || SuppressUtil.isGloballyHidden(context) || Export.isExcelExportMode(context);
 
     }
 

@@ -366,6 +366,21 @@ class TableUtil {
         row.Totals = true;
         maskOutNA(context, row);
 
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            var hs : HeaderStatistics = new HeaderStatistics();
+            hs.Statistics.Avg = true;
+            hs.Statistics.Count = true;
+            hs.HideHeader = false;
+
+            var catLabel = TextAndParameterUtil.getTextTranslationByKey(context, 'Cat_'+catId, true);
+
+            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' (AVG)');
+            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' (N)');
+
+            row.HideHeader = true;
+            row.SubHeaders.Add(hs);
+        }
+
         return row;
     }
     

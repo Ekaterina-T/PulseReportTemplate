@@ -116,7 +116,7 @@ class PagePulseSurveyData {
     }
 
     /*
-     * Sets up properties of question headers
+     * Sets up properties of row question headers in table
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
     static function setRowHeadersProperties(context) {
@@ -125,15 +125,23 @@ class PagePulseSurveyData {
         var log = context.log;
 
         var headers = table.RowHeaders;
-        var cnt = headers.Count;
+        setHeadersProperties(headers);
+        
+    }
+  
+     /*
+     * Sets up properties of specified headers
+     *  @param {HeaderCollection} headers
+     */
+     static function setHeadersProperties(headers) {
+       var cnt = headers.Count;
 
-        while (cnt > 0) {
-            var hd: HeaderQuestion = headers[0];
+       for (var i = 0; i < cnt; i++) {
+            var hd: HeaderQuestion = headers[i];
             hd.ShowTotals = false;
             hd.Sorting.Enabled = false;
 
-            headers = hd.SubHeaders;
-            cnt = headers.Count;
+            setHeadersProperties(headers[i].SubHeaders);
         }
-    }
+     }
 }

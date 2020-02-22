@@ -1,6 +1,5 @@
 class QuestionUtil {
 
-
     /*
      * Get question info:
      * - Type: general, singleFromGrid, otherOpenText.
@@ -341,6 +340,7 @@ class QuestionUtil {
             if(customTextIsEmpty) { //no translation in current lang -> try English
                 custom_texts= table.GetColumnValues("__l9l9", "id", custom_id);
             }
+
         } catch(e) { // no translation found -> try label as in old reports
             custom_texts= table.GetColumnValues("__l9", "id", custom_id);
         }

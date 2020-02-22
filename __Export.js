@@ -15,6 +15,14 @@ class Export {
         return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
     }
 
+    static function isMassExportMode(context) {
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return false;
+        } else {
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'configurableExportMode');
+        }
+    }
+
     /**
      * diaplay Program/Survey infor pdf export (dropdowns are not rendered in pdf exports)
      * @param {object} {state: state, report: report, text: text, log: log}
@@ -37,14 +45,11 @@ class Export {
             var pid = context.pageContext.Items['p_projectSelector'];
             var surveyInfo;
 
-            log.LogDebug(JSON.stringify(selectedSurvey));
-            log.LogDebug(pid);
-
             if(pid){
                 var answer: Answer = QuestionUtil.getQuestionAnswerByCode(context, 'source_projectid', pid);
                 surveyInfo = {};
                 surveyInfo.Code = pid;
-                surveyInfo.Label = pid; //answer.Text;
+                surveyInfo.Label = answer.Text;
             } else if(selectedSurvey.length >0) {
                 surveyInfo = selectedSurvey[0];
             }
