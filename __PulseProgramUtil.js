@@ -232,7 +232,7 @@ class PulseProgramUtil {
 
         var log = context.log;
 
-        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) { //not pulse program
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context) || DataSourceUtil.getProgramDsId(context) !== DataSourceUtil.getPageDsId(context)) { //not pulse program
             return null;
         }
 
