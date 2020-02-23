@@ -101,14 +101,11 @@ class ParamUtil {
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
         //log.LogDebug('param init start')
-        
-        log.LogDebug('param init 0')
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        log.LogDebug('param init 1')
         
         // reset all parameters if a page refreshes when switching the surveys
 
@@ -116,13 +113,11 @@ class ParamUtil {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init 2')
 
         // pulse survey iss changed -> tracker surveys changed
         if (page.SubmitSource === 'projectSelector') {
             ResetParameters(context, ['p_Trends_trackerSurveys']);
         }
-        log.LogDebug('param init 3')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
@@ -196,22 +191,27 @@ class ParamUtil {
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
+        log.LogDebug('pulseInit 0')
+
         // pulse program handler
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return;
         }
 
+        log.LogDebug('pulseInit 1')
         var state = context.state;
         var page = context.page;
 
         // mass export by pid
         var pidFromConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'pulsePidToExportBy');
         var configurableExportMode = Export.isMassExportMode(context);
+        log.LogDebug('pulseInit 2')
 
         if(configurableExportMode && pidFromConfig && pidFromConfig.length > 0) {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(pidFromConfig[0]);
             context.pageContext.Items['p_projectSelector'] = pidFromConfig[0];
         }
+        log.LogDebug('pulseInit 3')
 
         var selectedPulseSurvey = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
 
@@ -219,6 +219,7 @@ class ParamUtil {
         if (selectedPulseSurvey[0] === "") { //needed because report return values are not stable
             ParamUtil.ResetParameters(context, ['p_projectSelector']);
         }
+        log.LogDebug('pulseInit 4')
 
         //set default pulse baby project
         if (!state.Parameters.IsNull('p_projectSelector') && !configurableExportMode) {
@@ -244,6 +245,7 @@ class ParamUtil {
                 }
             }
         }
+        log.LogDebug('pulseInit 5')
 
         //in the end project is still undefined -> set default
         if (state.Parameters.IsNull('p_projectSelector')) {
@@ -251,16 +253,20 @@ class ParamUtil {
             state.Parameters['p_projectSelector'] = new ParameterValueResponse(defaultVal);
             context.pageContext.Items['p_projectSelector'] = defaultVal;
         }
+        log.LogDebug('pulseInit 6')
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo(context);
+        log.LogDbug('pulseInit 7')
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        log.LogDebug('pulseInit 8')
 
         //reset question and category based params when baby survey changes
         if (page.SubmitSource === 'projectSelector') {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
+        log.LogDebug('pulseInit 9')
     }
 
     // --------------------------------- WORKING WITH ONE PARAMETER ---------------------------------
