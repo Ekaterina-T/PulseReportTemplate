@@ -51,7 +51,7 @@ class DataSourceUtil {
         
         var log = context.log;
         var pageContext = context.pageContext;
-        
+
         //ds is defined page-wide
         if (!!pageContext.Items['PageSource']) {
             return pageContext.Items['PageSource'];
@@ -119,11 +119,7 @@ class DataSourceUtil {
      */
     static function getSurveyPropertyValueFromConfig (context, propertyName) {
 
-        var state = context.state;
         var log = context.log;
-
-        context.isCustomSource = false;  // for survey properties we always use the global source, so reset the custom source property for safety reasons
-
         var surveyConfig = getSurveyConfig(context);
 
         if(surveyConfig[propertyName] === undefined) {
