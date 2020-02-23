@@ -15,16 +15,19 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        //log.LogDebug('page init start');
+
+        log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-        //log.LogDebug('page init start: '+page.CurrentPageId);
+        log.LogDebug('page init 1: CurrentPageId='+page.CurrentPageId);
 
         //save page source to page context
         var pageSource = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
+        log.LogDebug('page init 2 pageSource=: '+pageSource);
         
         ParamUtil.Initialise(context); // initialise parameters
+        log.LogDebug('page init 3 ');
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -32,16 +35,18 @@ class PageUtil {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
+        log.LogDebug('page init 4 ');
 
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
             // populate cached hierarchy if needed
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
+        log.LogDebug('page init 5 ');
 
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
-        //log.LogDebug('page init end');
+        log.LogDebug('page init end');
     }
 
     /*

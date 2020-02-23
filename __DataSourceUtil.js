@@ -81,14 +81,15 @@ class DataSourceUtil {
         return getPageDsId(context);
     }
 
-    /*
+    /**
      * Get current Project from Config library on basis of p_SurveyType.
      * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} dsId - optional, if provided project for this dsId is returned
      * @returns {object}
      */
-    static function getProject (context) {
+    static function getProject (context, dsId) {
         var report = context.report;
-        return report.DataSource.GetProject(getDsId(context));
+        return !dsId ? report.DataSource.GetProject(getDsId(context)) : report.DataSource.GetProject(dsId);
     }
 
     /*
