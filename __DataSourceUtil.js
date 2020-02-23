@@ -212,10 +212,12 @@ class DataSourceUtil {
 
         var log = context.log;
         var surveyConfig = getSurveyConfig(context);
-        var ifHide = false;
+        var ifHide = true;
 
-        if (!surveyConfig.hasOwnProperty('PulseSurveyData') || DataSourceUtil.getProgramDsId(context) !== DataSourceUtil.getPageDsId(context)) { // not pulse program -> hide baby survey selector
-            ifHide = true;
+        // not pulse program -> hide baby survey selector
+        // page with another ds inside pulse program 
+        if (surveyConfig.hasOwnProperty('PulseSurveyData') && DataSourceUtil.getProgramDsId(context) === DataSourceUtil.getPageDsId(context)) { 
+            ifHide = false;
         }
         return ifHide;
     }
