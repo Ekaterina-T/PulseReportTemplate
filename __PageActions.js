@@ -938,5 +938,61 @@ class PageActions {
     }
     return resultSmartViewQuery;
   }
+	
+   static function inactiveUsersHiddenTable_Render(context){
+	var table = context.table;
+	var log = context.log;
+	
+	var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    
+	var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+    context.isCustomSource = true;
 
+    var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
+    var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
+    hqActionOwner.ShowTotals = false;
+    table.RowHeaders.Add(hqActionOwner);
+	
+	var actionCreator = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionCreatorsList');
+    var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
+    var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
+    hqActionCreator.ShowTotals = false;
+    table.RowHeaders.Add(hqActionCreator);
+	
+	var hb : HeaderBase = new HeaderBase();
+    hb.HideData = true;
+	hb.HideHeader = true;
+
+	var hf : HeaderFormula = new HeaderFormula();
+	hf.HideHeader = true;
+	hf.Type = FormulaType.Expression;
+	hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
+
+	table.ColumnHeaders.Add(hb);	
+	table.ColumnHeaders.Add(hf);
+	
+	//table settings
+	table.RemoveEmptyHeaders.Rows = true;
+	table.Caching.Enabled = false;
+    table.Sorting.Rows.Enabled = true;
+    table.Sorting.Rows.SortByType = TableSortByType.Position;
+    table.Sorting.Rows.Position = 2;
+}
+
+static function inactiveUsersList_Render(context, tableName){
+	var log = context.log;
+	var report = context.report;
+	
+	var inactiveUsers = [];
+	
+	var data = report.TableUtils.GetColumnValues(tableName, 1);
+	var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
+
+	for(var i=0; i<data.length; i++){
+		if(data[i].Value == 0) continue;
+		if(data[i].Value > 0) inactiveUsers.push(labels[i]);		
+	}	
+	
+	return inactiveUsers;
+ }
 }
