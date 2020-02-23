@@ -78,6 +78,7 @@ public class SystemConfig {
                             {type: 'QuestionsCategories', propertyWithCategories: 'CustomCategoriesMulti'}
                         ],
         Page_CategoricalDrilldown: ['BreakVariables'],
-        Page_Response_Rate: ['DemographicsQuestions']
+        Page_Response_Rate: ['DemographicsQuestions'],
+        Page_Actions: []
     }
 }
