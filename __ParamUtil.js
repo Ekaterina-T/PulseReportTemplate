@@ -96,27 +96,19 @@ class ParamUtil {
         var state = context.state;
         var page = context.page;
         var log = context.log;
-        var pageContext = context.pageContext;
         var i;
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
+
         //log.LogDebug('param init start')
+        
+        log.LogDebug('param init 0')
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-
-        //TODO: check another way of giving default value for wave at 1st load
-        // initialising help parameter to detect if it is the first time the report loads or not
-        // remove if report is ok
-        /*
-        if (state.Parameters.IsNull('p_IsOpenForFirstTime')){
-           state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('true');
-        } else {
-          state.Parameters['p_IsOpenForFirstTime'] = new ParameterValueResponse('false');
-        }
-        */
+        log.LogDebug('param init 1')
         
         // reset all parameters if a page refreshes when switching the surveys
 
@@ -124,24 +116,29 @@ class ParamUtil {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
+        log.LogDebug('param init 2')
 
         // pulse survey iss changed -> tracker surveys changed
         if (page.SubmitSource === 'projectSelector') {
             ResetParameters(context, ['p_Trends_trackerSurveys']);
         }
+        log.LogDebug('param init 3')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
+        log.LogDebug('param init 4')
 
         //log.LogDebug('project selector processing end')
         pulseInit(context);
+        log.LogDebug('param init 5')
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
+        log.LogDebug('param init 6')
         //log.LogDebug('param init end')
     }
 
