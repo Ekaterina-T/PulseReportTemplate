@@ -21,7 +21,7 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         //save page source to page context
-        var pageSource = !!pageContext.pageSourceId ? pageContext.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
+        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
 
         var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFilters', false);
