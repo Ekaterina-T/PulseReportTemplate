@@ -2,13 +2,14 @@ class PageUtil {
 
 
 
-    /*
+    /**
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
      * @param {object} context object {state: state, report: report, page: page, user:user, pageContext: pageContext, log: log}
+     * @param {string} pageSourceId - explicitly specified page's ds id
      */
 
-    static function Initialise(context) {
+    static function Initialise(context, pageSourceId) {
 
         var state = context.state;
         var page = context.page;
@@ -21,8 +22,13 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         //save page source to page context
-        var pageSource = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
+        var pageSource = pageSourceId ? pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
+
+        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFilters', false);
+        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFromSurveyData', false);
+        pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
+
         
         ParamUtil.Initialise(context); // initialise parameters
 
