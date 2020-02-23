@@ -65,7 +65,7 @@ class PageActions {
         }
 
         if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
-            throw new Error('DataSourceUtil.hitlistActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getDsId (context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
+            throw new Error('DataSourceUtil.hitlistActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
         }
 
         if (!state.Parameters.IsNull("p_SwitchHitlistMode")) {

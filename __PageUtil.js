@@ -1,5 +1,7 @@
 class PageUtil {
 
+
+
     /*
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
@@ -18,12 +20,10 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
         //log.LogDebug('page init start: '+page.CurrentPageId);
 
-        try {
-            var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig (context), 'Source');
-            pageContext.Items.Add('Source', add_in_source);
-        }
-        catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
-
+        //save page source to page context
+        var pageSource = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
+        pageContext.Items.Add('PageSource', pageSource);
+        
         ParamUtil.Initialise(context); // initialise parameters
 
         // if in current DS a page shouldn't be visible, than redirect to default page
