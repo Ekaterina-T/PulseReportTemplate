@@ -214,7 +214,7 @@ class DataSourceUtil {
         var surveyConfig = getSurveyConfig(context);
         var ifHide = false;
 
-        if (!surveyConfig.hasOwnProperty('PulseSurveyData')) { // not pulse program -> hide baby survey selector
+        if (!surveyConfig.hasOwnProperty('PulseSurveyData') || DataSourceUtil.getProgramDsId(context) !== DataSourceUtil.getPageDsId(context)) { // not pulse program -> hide baby survey selector
             ifHide = true;
         }
         return ifHide;
