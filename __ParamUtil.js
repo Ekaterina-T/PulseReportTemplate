@@ -245,8 +245,11 @@ class ParamUtil {
         }
 
         //set up object holding questions available on current page
-        PulseProgramUtil.setPulseSurveyContentInfo(context);
-        PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        // if this page has the same ds as main program (not Action Planner)
+        if(DataSourceUtil.getProgramDsId(context) === DataSourceUtil.getPageDsId(context)) {
+            PulseProgramUtil.setPulseSurveyContentInfo(context);
+            PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        }
 
         //reset question and category based params when baby survey changes
         if (page.SubmitSource === 'projectSelector') {

@@ -154,19 +154,14 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentInfo (context) {
 
         var log = context.log; 
-        log.LogDebug('setPulseSurveyContentInfo 0') 
         var key = getKeyForPulseSurveyContentInfo(context);
-        log.LogDebug('setPulseSurveyContentInfo 1') 
 
         if(Export.isExcelExportMode(context) && pulseSurveyContentInfo.hasOwnProperty(key)) {
             return pulseSurveyContentInfo[key];
         }
-        log.LogDebug('setPulseSurveyContentInfo 2') 
 
         delete pulseSurveyContentInfo.key;
-        log.LogDebug('setPulseSurveyContentInfo 4') 
         pulseSurveyContentInfo[key] = getResourcesList(context);
-        log.LogDebug('setPulseSurveyContentInfo 3') 
 
         return;
     }
