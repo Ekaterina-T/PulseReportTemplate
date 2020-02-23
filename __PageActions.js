@@ -55,7 +55,6 @@ class PageActions {
 
 
         /* add columns to Hiltlist using custom source */
-        context.isCustomSource = true;
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }
@@ -114,7 +113,6 @@ class PageActions {
     static function getKPIResult(context){
 
         var report = context.report;
-        context.isCustomSource = false;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var cell : Datapoint = report.TableUtils.GetCellValue("ActionsKPI",1,1);
@@ -162,7 +160,6 @@ class PageActions {
 
         // the number of Implemented actions.
         var metric  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPI');
-        context.isCustomSource = true;
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, metric.qId);
         var hq: HeaderQuestion = new HeaderQuestion(qe);
         hq.IsCollapsed = false;
@@ -251,7 +248,6 @@ class PageActions {
         var table = context.table;
         var pageContext = context.pageContext;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-        context.isCustomSource = true;
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_Actions_BreakBy');
 
         var qERow: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedBreakVar[0]);
@@ -286,7 +282,6 @@ class PageActions {
         var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-        context.isCustomSource = true;
 
         var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
         var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
@@ -312,7 +307,6 @@ class PageActions {
      */
     static function widgetInactiveUsers_Render(context) {
 
-        context.isCustomSource = true;
         var report = context.report;
         var actionOwners = report.TableUtils.GetRowHeaderCategoryIds('InactiveUsers_Hidden');
         var actionCreaters = report.TableUtils.GetColumnHeaderCategoryIds('InactiveUsers_Hidden');
@@ -362,7 +356,6 @@ class PageActions {
         if (trendSeries.length > index) {
 
             // add row with action status
-            context.isCustomSource = true;
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, trendSeries[index].qId);
             var hq: HeaderQuestion = new HeaderQuestion(qe);
             hq.IsCollapsed = false;
@@ -408,7 +401,6 @@ class PageActions {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
-        context.isCustomSource = true;
         var customProject : Project = DataSourceUtil.getProject(context);
 
 
@@ -418,7 +410,6 @@ class PageActions {
         var firstSeriesNameQid: Question = customProject.GetQuestion(trendSeries[0].qId);
         firstSeriesName.Label = new Label(report.CurrentLanguage, firstSeriesNameQid.GetAnswer(trendSeries[0].code).Text);
 
-        context.isCustomSource = false;
         setActionTrendSeriesByParam(context, {order: 0});
         var nestedRowHeader = table.RowHeaders[0];
 
@@ -519,7 +510,6 @@ class PageActions {
 
         var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
         var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-        context.isCustomSource = true;
         var p : Project = DataSourceUtil.getProject(context);
 
 
@@ -582,8 +572,6 @@ class PageActions {
         var pageContext = context.pageContext;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
 
-        context.isCustomSource = true;
-
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
         var hq : HeaderQuestion = new HeaderQuestion(qe);
         hq.Distributions.Enabled = true;
@@ -602,7 +590,6 @@ class PageActions {
         var table = context.table;
         var pageContext = context.pageContext;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-        context.isCustomSource = true;
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_ActionCost_BreakBy');
         table.RemoveEmptyHeaders.Rows = true;
 
