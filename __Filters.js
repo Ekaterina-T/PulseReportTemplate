@@ -252,7 +252,7 @@ class Filters {
         var state = context.state;
         var log = context.log;
 
-        if(filterType !== 'pageSpecific' && PageUtil.PageHasSpefcificDS(context)) {
+        if(filtersType !== 'pageSpecific' && PageUtil.PageHasSpefcificDS(context)) {
             return '';
         }
 
