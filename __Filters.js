@@ -258,8 +258,6 @@ class Filters {
         var startNum = (filtersType === 'background') ? 0 : bgFilters.length;
         var filterExpr = [];
 
-        context.isCustomSource = (filtersType === 'pageSpecific') ? true : false;
-
         for (var i = 0; i < filters.length; i++) {
 
             var paramId = paramName + (i + startNum + 1);
@@ -273,7 +271,6 @@ class Filters {
                 }
                 filterExpr.push('(' + individualFilterExpr.join(' OR ') + ')');
             }
-
         }
 
         return filterExpr.join(' AND ');
@@ -336,7 +333,6 @@ class Filters {
      * @returns {Boolean} true or false
      */
     static function isTimePeriodFilterHidden(context) {
-
         return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'IsTimePeriodFilterHidden');
     }
 

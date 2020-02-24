@@ -378,7 +378,7 @@ class ParamUtil {
             return false;
         }
 
-        //global filter panel param 
+        //page specific filter panel param 
         if(parameterName.indexOf('p_ScriptedPageFilterPanelParam')===0 && !pageHasSpecificFilters) {
             return false;
         }
