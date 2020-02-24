@@ -43,7 +43,6 @@ class PageActions {
      */
     static function hitlistActions_Render(context){
 
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
         var state = context.state;
@@ -70,7 +69,6 @@ class PageActions {
         if (!state.Parameters.IsNull("p_SwitchHitlistMode")) {
 
             Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
-
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }
 
@@ -86,16 +84,12 @@ class PageActions {
      */
     static function getTagColumnNumbers (context) {
 
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var tagColumnNumbers = [];
 
         var numberOfStaticColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns').length;
         var numberOfTagColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist').length;
-
         var numberOfColumnsAtStart = 2 + numberOfStaticColumns; // Hitlist always contains 1 first hidden column with the system field Respondent ID
-
-
 
         for (var i=0; i<numberOfTagColumns; i++) {
             tagColumnNumbers.push(i + numberOfColumnsAtStart);
@@ -135,8 +129,6 @@ class PageActions {
     }
 
 
-
-
     /**
      * @memberof PageActions
      * @function tableKPI_Render
@@ -146,7 +138,6 @@ class PageActions {
     static function tableKPI_Render(context){
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // % of Implemented actions.
@@ -209,9 +200,8 @@ class PageActions {
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
      */
 
-    static function getHierarchyMask (context) {
-
-        var state = context.state;
+    static function getHierarchyMaskIdsStringList(context){
+		var state = context.state;
         var user = context.user;
         var reportBase = user.PersonalizedReportBase;
         var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
@@ -220,18 +210,39 @@ class PageActions {
         var hierLevels = dataTable.Rows;
 
         var currentParent = dbTableNew.GetColumnValues('parent', 'id', reportBase)[0];
-
-        var parentsToMask = [];
-        var mask : MaskHierarchy = new MaskHierarchy();
-        for (var i = 0; i < hierLevels.Count; i++) {
+		
+		var idsToMask = "";
+		
+		for (var i = 0; i < hierLevels.Count; i++) {
+			if(i!=0) idsToMask+=",";
+			
             var dRow : DataRow = hierLevels[i];
             if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
-                parentsToMask.push(dRow['id']);
-                var hn : HierarchyNode = new HierarchyNode();
-                hn.Code = dRow['id'];
-                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
-                mask.Nodes.Add(hn);
+                idsToMask+=dRow['id'];
             }
+        }
+		
+		return idsToMask;
+
+	}
+     
+    static function getHierarchyMask (context) {
+
+        var state = context.state;
+		
+		var idsToMask = [];
+		
+		if(!state.Parameters.IsNull("p_HierMaskIds"))
+			idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
+		else idsToMask = getHierarchyMaskIdsStringList(context).split(',');
+        
+        var mask : MaskHierarchy = new MaskHierarchy();
+        for (var i = 0; i < idsToMask.length; i++) {
+            
+                var hn : HierarchyNode = new HierarchyNode();
+                hn.Code = idsToMask[i];
+                hn.Level = new HierarchyLevel(Config.tableName, 'parent');
+                mask.Nodes.Add(hn);  
         }
         return mask;
     }
@@ -246,7 +257,6 @@ class PageActions {
     static function tableActionsByDemographics_Render (context) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_Actions_BreakBy');
 
@@ -396,8 +406,6 @@ class PageActions {
 
         var report = context.report;
         var table = context.table;
-
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
@@ -424,9 +432,9 @@ class PageActions {
             var project : Project = DataSourceUtil.getProject(context);
             for (var index = 1; index < trendSeries.length; index++) {
                 var hc : HeaderContent = new HeaderContent();
-                var dpArray : Datapoint[] = report.TableUtils.GetRowValues('ActionsTrend_Hidden' + index, 1);
-                for (var i=0; i<dpArray.Length; i++) {
-                    var notStartValue = dpArray[i].Value;
+				var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
+				for (var i=0; i<dpArray.length; i++) {
+                    var notStartValue = dpArray[i];
                     if (!notStartValue.Equals(Double.NaN)) {
                         hc.SetCellValue(i, notStartValue);
                     }
@@ -476,7 +484,6 @@ class PageActions {
     static function tableEndUsertStatisticsHidden_Render(context, seriesParam) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
 
@@ -502,32 +509,43 @@ class PageActions {
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
      */
     static function tableEndUsertStatistics_Render(context){
-
+        var state = context.state;
         var report = context.report;
         var table = context.table;
-        var pageContext = context.pageContext;
+	    var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+        var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
         var p : Project = DataSourceUtil.getProject(context);
-
-
-        var qActionOwner : Question = p.GetQuestion(actionOwner);
-        var actionOwners = qActionOwner.GetAnswers();
+		
+		var chosenUsers: ParameterValueMultiSelect;
+		var chosenUsersN = 0;
+		
+		if(!state.Parameters.IsNull("p_EndUserSelection")){
+			chosenUsers = state.Parameters["p_EndUserSelection"];
+			chosenUsersN = chosenUsers.Count;
+		}
         var DsId = DataSourceUtil.getDsId(context);
-
+        
+	    var jsonTables = [];
+		if(chosenUsersN > 0){
+			for(var index = 0; index<trendSeries.length; index++){
+					jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
+			}
+		}	
+		
         if (trendSeries.length > 1) {
-            for (var j=0; j<qActionOwner.AnswerCount; j++) {
+            for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
                 hcUser.DataSourceNodeId = DsId;
-                hcUser.Label = new Label(9, actionOwners[j].Text);
+                hcUser.Label = new Label(9, (ParameterValueResponse)(chosenUsers[j]).DisplayValue);
 
                 for (var index = 0; index < trendSeries.length; index++) {
                     var hc : HeaderContent = new HeaderContent();
-                    var dpArray : Datapoint[] = report.TableUtils.GetRowValues('EndUserStatistics_Hidden' + index, j+1);
-                    for (var i=0; i<dpArray.Length; i++) {
-                        var notStartValue = dpArray[i].Value;
+                    var dpArray = getJSONTableRowDataArray(jsonTables[index], j);
+					//var dpArray : Datapoint[] = report.TableUtils.GetRowValues('EndUserStatistics_Hidden' + index, j+1);
+                    for (var i=0; i<dpArray.length; i++) {
+                        var notStartValue = dpArray[i];
                         if (!notStartValue.Equals(Double.NaN)) {
                             hc.SetCellValue(i, notStartValue);
                         }
@@ -569,11 +587,10 @@ class PageActions {
     static function tableBreakdown_Render (context) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
 
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
-        var hq : HeaderQuestion = new HeaderQuestion(qe);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
         hq.Distributions.Enabled = true;
         hq.Distributions.HorizontalPercents = true;
         hq.ShowTotals = false;
@@ -588,7 +605,6 @@ class PageActions {
     static function tableActionCost_Render(context) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_ActionCost_BreakBy');
         table.RemoveEmptyHeaders.Rows = true;
@@ -610,26 +626,22 @@ class PageActions {
         hQCost.HideHeader = true;
         hQRow.SubHeaders.Add(hQCost);
 
-
         var HSAvg: HeaderStatistics = new HeaderStatistics();
         HSAvg.Statistics.Avg = true;
         HSAvg.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Average');
+
         var HSSum: HeaderStatistics = new HeaderStatistics();
         HSSum.Statistics.Sum = true;
         HSSum.Texts.Sum = TextAndParameterUtil.getLabelByKey(context, 'Total');
 
         table.ColumnHeaders.Add(HSAvg);
         table.ColumnHeaders.Add(HSSum);
-
-
     }
 
 
     static function getActionLink(context){
 
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
     }
 
@@ -643,8 +655,9 @@ class PageActions {
         var isAvailable = false;
         var rolesForCurrentFeature = [];
 
-        if (user.UserType == ReportUserType.Confirmit) isAvailable = true;
-        else if(user.UserType == ReportUserType.Enduser) {
+        if (user.UserType == ReportUserType.Confirmit) {
+            isAvailable = true;
+        } else if(user.UserType == ReportUserType.Enduser) {
 
             for (var i=0; i<featuresByRoles.length; i++) {
                 if (featuresByRoles[i].feature == feature) {
@@ -652,13 +665,11 @@ class PageActions {
                 }
             }
 
-
             for (var i=0; i<rolesForCurrentFeature.length; i++) {
                 if (user.HasRole(rolesForCurrentFeature[i])) {
                     isAvailable = true;
                     break;
                 }
-
             }
         }
         return isAvailable;
@@ -667,57 +678,233 @@ class PageActions {
 
     static function ActionBtn_Render(context) {
 
-        var report = context.report;
-        var state = context.state;
         var user = context.user;
         var text = context.text;
         var log = context.log;
 
-        // End user
+
         var userid = user.UserId;
-
-        // Hierarchy
         var hier = !HierarchyUtil.Hide(context) ? user.PersonalizedReportBase : null;
-
-
-        // Project
         var project : Project = DataSourceUtil.getProject(context);
+
         var pid = project.ConfirmitProjectId;
         var pname = project.ProjectName;
 
-        // Wave
-
-        var qId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-
         var wave = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'DefaultWave');
-
-
-        // Dimension
         var dimensionId = ParamUtil.GetSelectedCodes(context, 'p_Dimensions').length ? ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0] : null;
-
-        // Dimension Text
-        var dimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
-
-        // Statement
-        var questionId = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
-
-        // Statement text
-        var questionText = ParamUtil.GetSelectedOptions(context, 'p_Statements').length ? ParamUtil.GetSelectedOptions(context, 'p_Statements')[0].Label : null;
-
-        // Link
+        var dimensionText = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
+        var statement = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
+        var statementText = ParamUtil.GetSelectedOptions(context, 'p_Statements').length ? ParamUtil.GetSelectedOptions(context, 'p_Statements')[0].Label : null;
         var actionLink = PageActions.getActionLink(context);
 
         // Flag if delegation is available
         var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context,'Delegation');
-
-        // Report currency
         var currency = DataSourceUtil.getPagePropertyValueFromConfig (context, PageUtil.getCurrentPageIdInConfig(context), 'Currency');
 
         var link = '<a href="'+ actionLink + '?U=' + userid + '&hier=' + hier + '&pid=' + pid + '&pname=' + pname +  '&isResponsibleVisible=' + isResponsibleVisible +
-            '&wave=' + wave +'&dimensionId='+ dimensionId +'&dimension=' + dimension + '&questionId=' + questionId +'&questionText=' + questionText + '&currency=' + currency +
+            '&wave=' + wave +'&dimensionId='+ dimensionId +'&dimension=' + dimensionText + '&questionId=' + statement +'&questionText=' + statementText + '&currency=' + currency +
             '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';
         text.Output.Append(link);
+    }
+    
+    
+    /**
+     * SMART VIEW HIDDEN TABLES
+     */
+	static function getActionTrendHiddenTableRowDataArray(context, tableIndex, rowIndex) {
 
+        var log = context.log;
+        var report = context.report;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        
+        var result = [];	
+        var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
+        
+        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
+        var smTrendTableJSON = JSON.parse(smTrendTable);
+        
+        var l = smTrendTableJSON.data[rowIndex].length;
+        
+        for(var i=0; i<l; i++) {
+            result.push(smTrendTableJSON.data[rowIndex][i].values.count);
+        }
+
+        return result;
+  }
+
+  /**
+   * 
+   */  
+    static function getActionTrendHiddenTableJSON(context, tableIndex) {
+
+        var log = context.log;
+        var report = context.report;
+
+        var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
+        var smTableJSON = JSON.parse(smTable);
+
+        return smTableJSON; 
+    }
+
+
+    /**
+     * 
+     */
+    static function getEndUserStatHiddenTableJSON(context, tableIndex) {
+        var log = context.log;
+        var report = context.report;
+
+        var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
+
+        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
+        var smTableJSON = JSON.parse(smTable);
+
+        return smTableJSON;
+    }
+  
+    /**
+     * ?? context ??
+     */
+    static function getJSONTableRowDataArray(jsonTable, rowIndex){
+        var result = [];	
+        var l = jsonTable.data[rowIndex].length;	
+        for(var i=0; i<l; i++){
+            result.push(jsonTable.data[rowIndex][i].values.count);
+        }
+        return result;
+    }
+  
+  
+    /**
+     * 
+     */
+    static function generateActionTrandHiddenTableSmartView(context, seriesParam){
+        return generateActionTrendSeriesByParam_SVText(context, seriesParam);
+    }
+  
+    /**
+     * 
+     */
+    static function generatetableEndUsertStatisticsHiddenTableSmartView(context, seriesParam){
+        var resultSmartViewQuery = "";
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+        resultSmartViewQuery += actionOwner+ "{total: false; filterbymask: true; ";
+            
+        var chosenUsers = ParamUtil.GetSelectedCodes(context, "p_EndUserSelection");
+        var chosenUsersN = chosenUsers.length;
+
+        for(var i=0; i<chosenUsersN; i++) {
+
+            // move out of loop?
+            if(i==0) {
+                resultSmartViewQuery+="mask: '";
+             } else {
+                resultSmartViewQuery+="','";
+             } 
+
+            resultSmartViewQuery+=chosenUsers[i];    
+            if (i==chosenUsersN-1) {
+                resultSmartViewQuery +="';";
+            }
+        }
+        resultSmartViewQuery += "}\/";
+        resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
+        return resultSmartViewQuery;
+    }
+  
+  /**
+   * 
+   */
+  //ActionsPage_SmartView.generateActionTrandTableSmartView(,)
+    static function generateActionTrendSeriesByParam_SVText(context, seriesParam) {
+
+        var log = context.log;
+        var resultSmartViewQuery = "";
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var index = seriesParam.order; //1
+
+        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+            
+        if (trendSeries.length <= index) {
+            return resultSmartViewQuery;
+        }
+            
+        // add row with action status        
+        resultSmartViewQuery+= trendSeries[index].qId;
+        resultSmartViewQuery+="{dsnid: "+sourceId+"; collapsed: false; total: true; distribution: count; hideheader: true; filterbymask: true;  xmask: ";
+
+        for (var i = 0; i<trendSeries.length; i++) {
+            if(i!=0) resultSmartViewQuery+=",";
+            resultSmartViewQuery+=trendSeries[i].code;
+        }
+        resultSmartViewQuery+=";}";
+            
+            
+        //add columns with trending
+        var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
+        
+        if (timeUnits.length) {
+            // though it can be multi-parameter, use only 1 option for trend
+            var timeUnit = timeUnits[0];              
+            
+            resultSmartViewQuery+=" ^ ";
+            // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
+            if (timeUnit.TimeUnit) {                    
+                resultSmartViewQuery+=trendSeries[index].date + "{";
+                resultSmartViewQuery+=getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
+                resultSmartViewQuery+="flatlayout: true; ";                    
+            } else {    
+                //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
+                resultSmartViewQuery+= timeUnit.Code + "{";
+            }
+            // we've got date util for dates, can it help?
+            var toDate : DateTime = DateTime.Now;
+            resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
+        }
+        
+        return resultSmartViewQuery
+    }		
+  
+    /**
+     * 
+     */
+    static function getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit){
+        var timeUnitCode = timeUnit.Code;
+        var resultSmartViewQuery = "";
+        switch (timeUnitCode) {
+            case 'Y':
+            resultSmartViewQuery+="time1: year; ";
+            break;
+
+            case 'Q':
+            resultSmartViewQuery+="time1: year; ";
+            resultSmartViewQuery+="time2: quarter; ";
+            break;
+
+            case 'M':
+            resultSmartViewQuery+="time1: year; ";
+            resultSmartViewQuery+="time2: month; ";
+            break;
+            case 'D':
+            resultSmartViewQuery+="time1: year; ";
+            resultSmartViewQuery+="time2: month; ";
+            resultSmartViewQuery+="time3: day; ";
+            break;
+
+            default:
+            resultSmartViewQuery+="time1: year; ";
+        }
+        return resultSmartViewQuery;
     }
 
 }
