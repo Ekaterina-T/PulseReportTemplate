@@ -758,6 +758,7 @@ class PageActions {
     static function getEndUserStatHiddenTableJSON(context, tableIndex) {
         var log = context.log;
         var report = context.report;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
 
