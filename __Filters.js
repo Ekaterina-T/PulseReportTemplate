@@ -253,10 +253,13 @@ class Filters {
         var log = context.log;
 
         var paramName = GetPanelFilterPrefixByType(context, filtersType);
-        var bgFilters = GetFilterListByType(context, 'background');
-        var filters = (filtersType === 'background') ? bgFilters : GetFilterListByType(context, filtersType);
-        var startNum = (filtersType === 'background') ? 0 : bgFilters.length;
-        var filterExpr = [];
+        var filters = GetFilterListByType(context, filtersType);
+        var startNum = 0;
+
+        if(filtersType === 'survey') {
+            var bgFilters = GetFilterListByType(context, 'background');
+            startNum = bgFilters.length;
+        }
 
         for (var i = 0; i < filters.length; i++) {
 
