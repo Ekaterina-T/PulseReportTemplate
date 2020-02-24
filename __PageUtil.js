@@ -14,6 +14,7 @@ class PageUtil {
         var page = context.page;
         var log = context.log;
         var pageContext = context.pageContext;
+        var pageId = getCurrentPageIdInConfig(context);
 
 
         //log.LogDebug('page init start');
@@ -21,11 +22,11 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         //save page source to page context
-        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
+        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
 
-        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFilters', false);
-        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFromSurveyData', false);
+        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
+        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
         
@@ -132,5 +133,13 @@ class PageUtil {
         }
 
         return 'Page_'+pageId;
+    }
+
+
+    /**
+     * 
+     */
+    static function PageIsBasedOnSpecoficDS(context) {
+        return !!pageContext.Items['PageSource'];
     }
 }

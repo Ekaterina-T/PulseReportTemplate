@@ -53,7 +53,7 @@ class DataSourceUtil {
         var pageContext = context.pageContext;
 
         //ds is defined page-wide
-        if (!!pageContext.Items['PageSource']) {
+        if (PageUtil.PageHasSpefcificDS(context)) {
             return pageContext.Items['PageSource'];
         }
 
@@ -216,7 +216,7 @@ class DataSourceUtil {
 
         // not pulse program -> hide baby survey selector
         // page with another ds inside pulse program 
-        if (surveyConfig.hasOwnProperty('PulseSurveyData') ||  getProgramDsId(context) !== getPageDsId(context)) { 
+        if (surveyConfig.hasOwnProperty('PulseSurveyData') /*||  getProgramDsId(context) !== getPageDsId(context)*/) { 
             ifHide = false;
         }
         return ifHide;

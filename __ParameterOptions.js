@@ -40,7 +40,7 @@ class ParameterOptions {
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
-        resourceInfo.locationType = 'FilterPanel'
+        resourceInfo.locationType = 'FilterPanel';
 
         if (paramNumber <= filterList.length) {
             resourceInfo.FilterQid = filterList[paramNumber - 1];

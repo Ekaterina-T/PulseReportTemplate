@@ -42,16 +42,16 @@ class Filters {
     static function GetPageSpecificFilterList(context) {
 
         var log = context.log;
-        var pageContext = context.pageContext;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // If the custom source is defined => the global filters cannot be applied
-        if (!!pageContext.Items['Source']) { // i.e. a page with custom source -> can use only custom filters
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageContext.Items['CurrentPageId'], 'PageSpecificFilters');
+        if (PageUtil.PageHasSpefcificDS(context)) { // i.e. a page with custom source -> can use only custom filters
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData');
         }
 
         return []; // i.e. no page specific source => no filters
-
     }
+
 
     /**
      * Get the list of filters defined on the survey level (including background and survey data variables) that should be displayed.
@@ -62,14 +62,6 @@ class Filters {
     static function GetGlobalFilterList(context) {
 
         var log = context.log;
-        var pageSpecificFilters = GetPageSpecificFilterList(context);
-
-        /* not sure if that's needed
-        if(pageSpecificFilters.length > 0) {
-            return pageSpecificFilters;
-        }
-        */
-
         var filterFromRespondentData = GetBackgroundDataFilterList(context);
         var filterFromSurveyData = GetSurveyDataFilterList(context);
 
@@ -103,10 +95,8 @@ class Filters {
         var log = context.log;
 
         //if filter type is not set it is either global or pageSpecific 
-        //page specificness can be defined by context
         if (!filtersType) {
-            var isPageSpecific = context.pageSpecific;
-            filtersType = isPageSpecific ? 'pageSpecific' : 'global';
+            filtersType = PageUtil.PageHasSpefcificDS(context) ? 'pageSpecific' : 'global';
         }
 
         if (filtersType === 'background') {
@@ -116,10 +106,7 @@ class Filters {
         } else if (filtersType === 'global') {
             return GetGlobalFilterList(context);
         } else if (filtersType === 'pageSpecific') {
-            context.isCustomSource = false; // to get page specific filters from config we always use main source
-            var filters = GetPageSpecificFilterList(context);
-            context.isCustomSource = true; // then set it back to true
-            return filters;
+            return GetPageSpecificFilterList(context);
         }
 
         throw new Error('Filters.GetFilterListByType: filter type ' + filtersType + ' cannot be handled.')
@@ -132,7 +119,6 @@ class Filters {
     static function ResetAllFilters(context) {
 
         var log = context.log;
-
         var filterNames = [];
         var i;
 
@@ -147,7 +133,6 @@ class Filters {
         }
 
         ParamUtil.ResetParameters(context, filterNames);
-
         return;
     }
 
@@ -189,17 +174,42 @@ class Filters {
     static function hideScriptedFilterByOrder(context, paramNum) {
 
         var log = context.log;
-        var numberOfBackgroundDataFilters = GetBackgroundDataFilterList(context).length;
-        var filterList = GetFilterListByType(context);
-        var CurrentPageId = PageUtil.getCurrentPageIdInConfig(context);
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var pageHasSpecificFilters = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
 
-        // paramNum should be less than number of filter components on all pages
-        // paramNum should be less than number of filters based on BG vars on Response Rate page
-        if (paramNum > filterList.length || (CurrentPageId === 'Page_Response_Rate' && paramNum > numberOfBackgroundDataFilters)) {
-            return true; // hide
+        //page level parameter on page without specific filters
+        if(!!context.pageSpecific && !pageHasSpecificFilters) {
+            return true;
         }
 
-        return false; // don't hide
+        //survey level parameter on page with specific filters
+        if(!context.pageSpecific && pageHasSpecificFilters) {
+            return true;
+        }
+       
+        var filterList = GetFilterListByType(context);//global or page specific
+
+        //survey level parameter on page with specific filters
+        if(!context.pageSpecific && !pageHasSpecificFilters) {
+
+            var numberOfBackgroundDataFilters = GetBackgroundDataFilterList(context).length;
+            var CurrentPageId = PageUtil.getCurrentPageIdInConfig(context);
+
+            // paramNum should be less than number of filter components on all pages
+            // paramNum should be less than number of filters based on BG vars on Response Rate page
+            if (paramNum > filterList.length || (CurrentPageId === 'Page_Response_Rate' && paramNum > numberOfBackgroundDataFilters)) {
+                return true; // hide
+            }
+            return false;
+        }
+
+        //page level parameter on page with specific filters
+        if(!!context.pageSpecific && pageHasSpecificFilters) {
+            return paramNum > filterList.length;
+        }
+
+        throw new Error('Fiters.hideScriptedFilterByOrder: unknown combination of filter type and page');
+
     }
 
     /**
@@ -255,14 +265,12 @@ class Filters {
             var paramId = paramName + (i + startNum + 1);
 
             if (!state.Parameters.IsNull(paramId)) {
-
                 // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
                 var responses = ParamUtil.GetSelectedCodes(context, paramId);
                 var individualFilterExpr = [];
                 for (var j = 0; j < responses.length; j++) {
                     individualFilterExpr.push('IN(' + DataSourceUtil.getDsId(context) + ':' + filters[i] + ', "' + responses[j] + '")');
                 }
-
                 filterExpr.push('(' + individualFilterExpr.join(' OR ') + ')');
             }
 
