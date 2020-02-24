@@ -370,6 +370,19 @@ class ParamUtil {
         var log = context.log;
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var pageHasSpecificFilters = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
+
+        //global filter panel param 
+        if(parameterName.indexOf('p_ScriptedFilterPanelParameter')===0 && pageHasSpecificFilters) {
+            return false;
+        }
+
+        //global filter panel param 
+        if(parameterName.indexOf('p_ScriptedPageFilterPanelParam')===0 && !pageHasSpecificFilters) {
+            return false;
+        }
+
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
         }
