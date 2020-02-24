@@ -252,6 +252,10 @@ class Filters {
         var state = context.state;
         var log = context.log;
 
+        if(filterType !== 'pageSpecific' && PageUtil.PageHasSpefcificDS(context)) {
+            return '';
+        }
+
         var filterExpr = [];
         var paramName = GetPanelFilterPrefixByType(context, filtersType);
         var filters = GetFilterListByType(context, filtersType);
@@ -306,6 +310,7 @@ class Filters {
 
         return filterValues;
     }
+
 
     /**
      * @function getFilterExpressionByAnswerRange
