@@ -1,7 +1,5 @@
 class PageUtil {
 
-
-
     /**
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
@@ -139,7 +137,7 @@ class PageUtil {
     /**
      * 
      */
-    static function PageIsBasedOnSpecoficDS(context) {
-        return !!pageContext.Items['PageSource'];
+    static function PageHasSpefcificDS(context) {
+        return !!context.pageContext.Items['PageSource'];
     }
 }
