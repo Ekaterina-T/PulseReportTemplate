@@ -47,7 +47,7 @@ class DataSourceUtil {
       * @param {object} context object {state: state, report: report, log: log, pageContext: pageContext}
       * @returns {string} surveyType : ds5
       */
-     static function  {
+     static function getPageDsId(context) {
         
         var log = context.log;
         var pageContext = context.pageContext;
