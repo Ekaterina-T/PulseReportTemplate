@@ -47,7 +47,7 @@ class DataSourceUtil {
       * @param {object} context object {state: state, report: report, log: log, pageContext: pageContext}
       * @returns {string} surveyType : ds5
       */
-     static function getPageDsId(context) {
+     static function  {
         
         var log = context.log;
         var pageContext = context.pageContext;
@@ -64,7 +64,7 @@ class DataSourceUtil {
       * Gets ds id for a component, i.e the one to get reportal Project instance 
       * that contains project name, all questions and their information.
       * This is the ds to be used for HeaderSegments and HeaderCategorizations
-      * @param {object} context object {state: state, report: report, log: log}
+      * @param {object} context object {state: state, report: report, log: log}getPageDsId(context)
       * @returns {string} surveyType : ds0
       */
     static function getDsId(context) {
@@ -216,7 +216,7 @@ class DataSourceUtil {
 
         // not pulse program -> hide baby survey selector
         // page with another ds inside pulse program 
-        if (surveyConfig.hasOwnProperty('PulseSurveyData')) { 
+        if (surveyConfig.hasOwnProperty('PulseSurveyData') ||  getProgramDsId(context) !== getPageDsId(context)) { 
             ifHide = false;
         }
         return ifHide;

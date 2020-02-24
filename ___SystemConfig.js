@@ -34,7 +34,7 @@ public class SystemConfig {
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},  
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
 
-        'p_Statements':         { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', isQuestionBased: true},
+        'p_Statements':         { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions'},
         'p_Dimensions':         { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
         'p_Actions_BreakBy':    { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
