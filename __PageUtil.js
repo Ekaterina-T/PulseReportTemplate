@@ -1,7 +1,5 @@
 class PageUtil {
 
-
-
     /**
      * Collection of initialse page scripts.
      * Put here the code that needs to run when page loads.
@@ -15,17 +13,18 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-
         //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
+        var pageId = getCurrentPageIdInConfig(context);
+
         //save page source to page context
-        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'Source', false);
+        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
 
-        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFilters', false);
-        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, getCurrentPageIdInConfig(context), 'PageSpecificFromSurveyData', false);
+        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
+        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
         
@@ -132,5 +131,13 @@ class PageUtil {
         }
 
         return 'Page_'+pageId;
+    }
+
+
+    /**
+     * 
+     */
+    static function PageHasSpefcificDS(context) {
+        return !!context.pageContext.Items['PageSource'];
     }
 }
