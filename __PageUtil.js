@@ -12,12 +12,12 @@ class PageUtil {
         var page = context.page;
         var log = context.log;
         var pageContext = context.pageContext;
-        var pageId = getCurrentPageIdInConfig(context);
-
 
         //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
+
+        var pageId = getCurrentPageIdInConfig(context);
 
         //save page source to page context
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
