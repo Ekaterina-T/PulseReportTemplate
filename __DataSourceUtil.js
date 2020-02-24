@@ -216,7 +216,7 @@ class DataSourceUtil {
 
         // not pulse program -> hide baby survey selector
         // page with another ds inside pulse program 
-        if (surveyConfig.hasOwnProperty('PulseSurveyData') && DataSourceUtil.getProgramDsId(context) === DataSourceUtil.getPageDsId(context)) { 
+        if (surveyConfig.hasOwnProperty('PulseSurveyData')) { 
             ifHide = false;
         }
         return ifHide;
