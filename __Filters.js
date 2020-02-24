@@ -252,6 +252,7 @@ class Filters {
         var state = context.state;
         var log = context.log;
 
+        var filterExpr = [];
         var paramName = GetPanelFilterPrefixByType(context, filtersType);
         var filters = GetFilterListByType(context, filtersType);
         var startNum = 0;
