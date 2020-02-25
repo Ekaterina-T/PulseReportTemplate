@@ -14,10 +14,13 @@ class QuestionUtil {
     static function getQuestionInfo (context, questionId) {
 
         var log = context.log;
+
+        log.LogDebug('getQuestionInfo 0:  questionId ='+questionId)
         var project : Project = DataSourceUtil.getProject(context);
         var question : Question = project.GetQuestion(questionId);
         var questionInfo = {};
         var splittedQuestionId;
+        log.LogDebug('getQuestionInfo 1')
 
         if(question!=null) { // single, multi, open, numeric, grid itself, open text list, numeric list
 
