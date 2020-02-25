@@ -33,8 +33,8 @@ class ParamUtil {
 
         'p_BenchmarkSet': { propertyName: 'BenchmarkSet', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results'},
         'p_Wave':         { propertyName: 'WaveQuestion', type: 'QuestionId',           locationType: 'Survey', isInReverseOrder: true},
-        'p_Dimensions':   { propertyName: 'Dimensions', type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions'},
-        'p_Statements':   { propertyName: 'Statements', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
+        'p_Dimensions':   { propertyName: 'DimensionsQId', type: 'QuestionId', locationType: 'Page', page: 'Page_Actions'},
+        'p_Statements':   { propertyName: 'StatementsQId', type: 'QuestionId', locationType: 'Page', page: 'Page_Actions'},
         'p_Actions_BreakBy': { propertyName: 'BreakVariables', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
         'p_ActionCost_BreakBy': { propertyName: 'BreakVariables', type: 'QuestionList', locationType: 'Page', page: 'Page_Actions'},
         'p_OnlyOwnActions':	{ propertyName: 'ShowOnlyOwnActions', type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary'},
