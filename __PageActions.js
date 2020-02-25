@@ -590,7 +590,7 @@ class PageActions {
         var table = context.table;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
 
-        log.LogDebug('options='+JSON.stringify(ParamUtil.GetOptions(context, 'p_ActionAllocation')));
+        log.LogDebug('options='+JSON.stringify(ParameterOptions.GetOptions(context, 'p_ActionAllocation')));
         log.LogDebug('selectedCodes='+selectedCodes);
 
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
