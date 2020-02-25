@@ -589,12 +589,9 @@ class PageActions {
         var log = context.log;
         var table = context.table;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
-
-        log.LogDebug('options='+JSON.stringify(ParameterOptions.GetOptions(context, 'p_ActionAllocation')));
-        log.LogDebug('selectedCodes='+selectedCodes);
-
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
         var hq: HeaderQuestion = new HeaderQuestion(qe);
+
         hq.Distributions.Enabled = true;
         hq.Distributions.HorizontalPercents = true;
         hq.ShowTotals = false;
