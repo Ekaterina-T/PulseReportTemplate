@@ -586,6 +586,7 @@ class PageActions {
      */
     static function tableBreakdown_Render (context) {
 
+        var log = context.log;
         var table = context.table;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
 
