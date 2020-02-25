@@ -34,9 +34,9 @@ public class SystemConfig {
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},  
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
 
-        'p_Statements':         { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions'},
+        'p_Statements':         { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'StatementsQId'},
         'p_Dimensions':         { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'DimensionsQId'},
-        'p_Actions_BreakBy':    { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'StatementsQId'},
+        'p_Actions_BreakBy':    { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionAllocation':   { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'Breakdown'},
         'p_EndUserSelection':   { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
