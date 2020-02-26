@@ -42,7 +42,6 @@ public class SystemConfig {
         'p_EndUserSelection':   { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
         'p_SwitchHitlistMode':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'SwitchHitlistMode'},
         'p_OnlyOwnActions':     { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ShowOnlyOwnActions'},
-        
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true}
