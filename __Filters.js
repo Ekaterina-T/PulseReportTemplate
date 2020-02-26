@@ -474,17 +474,18 @@ class Filters {
 
         var log = context.log;
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
+        var ds = DataSourceUtil.getProgramDsId(context);
 
         if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return '';
         }
 
         if (pidFromPageContext) {
-            return 'source_projectid = "' + pidFromPageContext + '"';
+            return ds+':source_projectid = "' + pidFromPageContext + '"';
         }
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
-        return 'source_projectid = "' + val[0] + '"';
+        return ds+':source_projectid = "' + val[0] + '"';
     }
 
     /**

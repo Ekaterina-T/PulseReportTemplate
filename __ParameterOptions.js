@@ -192,7 +192,13 @@ class ParameterOptions {
     static private function getOptions_QuestionAnswersSelector(context, qid) {
 
         var parameterOptions = [];
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
+        var ds;
+
+        if(qid === 'source_project') {
+            ds = DataSourceUtil.getProgramDsId(context);
+        }
+        
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid, ds);
 
         for (var i = 0; i < answers.length; i++) {
             var option = {};
