@@ -33,6 +33,19 @@ class Filters {
     }
 
     /**
+     *
+     */
+    static function GetNumberOfBGFiltersByType(context, filterType) {
+
+        if(filterType === 'global') {
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters').length;
+        } else if (filterType === 'pageSpecific') {
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters').length;
+        }
+    }
+
+    /**
      * Hide filter placeholder if there's no filter question.
      * @param {object} context object {state: state, report: report, pageContext: pageContext, log: log}
      * @param {string} paramNum number of scripted filter
