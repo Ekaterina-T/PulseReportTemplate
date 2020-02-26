@@ -38,6 +38,8 @@ class ParameterOptions {
         var log = context.log;
         var resourceInfo = {};
         var filterList = Filters.GetFilterQuestionsListByType(context, true);
+        
+        log.LogDebug('load paramNumber:'+JSON.stringify(filterList));
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
@@ -47,7 +49,7 @@ class ParameterOptions {
             resourceInfo.ID = filterList[paramNumber - 1];
         }
 
-        log.LogDebug('load paramNumber='+paramNumber+': resourceInfo.ID');
+        log.LogDebug('load paramNumber='+paramNumber+': '+resourceInfo.ID);
 
         return resourceInfo;
     }
