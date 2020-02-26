@@ -167,11 +167,7 @@ class PageActions {
         table.RowHeaders.Add(hq);
 
     }
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 919161244178986b30f35a296929b91886681f65
     /**
      * @memberof PageActions
      * @function getHierarchyMask
