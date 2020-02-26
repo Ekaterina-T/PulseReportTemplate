@@ -135,8 +135,24 @@ class Filters {
     /**
      * 
      */
-    static function getHiddenFilterNumbers(context) {
+    static function getHiddenFilterIndexes(context) {
 
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context) || PageUtil.PageHasSpefcificFilters(context)) {
+            return [];
+        }
+
+        //pulse program, one of main pages
+        var activeQids = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var filters =  GetFilterQuestionsListByType(context, 'global');
+        var invalidIndexes = [];
+
+        for(var i=0; i<filters.length; i++) {
+            if(!activeQids.hasOwnProperty(filters[i])) {
+                invalidIndexes.push(i+1);
+            }
+        }
+
+        return invalidIndexes;
 
     }
 
@@ -196,9 +212,7 @@ class Filters {
 
         var log = context.log;
         var filterType = explicitFilterType ? explicitFilterType : (PageUtil.PageHasSpefcificFilters(context) ? 'pageSpecific' : 'global');
-        log.LogDebug('filterType='+filterType)
         var filterList = GetFilterQuestionsListByType(context, filterType); //global or page specifics
-        log.LogDebug('filterList='+filterList)
         var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
