@@ -223,8 +223,8 @@ class Filters {
         var log = context.log;
 
         var filterValues = [];
-        var filters = GetFilterListByType(context, filtersType);
-        var filterPrefix = GetPanelFilterPrefixByType(context, filtersType);
+        var filters = GetFilterQuestionsListByType(context, filtersType);
+        var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
 
         for (var i = 0; i < filters.length; i++) {
             // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
