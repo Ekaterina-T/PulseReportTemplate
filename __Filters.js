@@ -137,13 +137,21 @@ class Filters {
      */
     static function getHiddenFilterIndexes(context) {
 
+        var log = context.log;
+
+        log.LogDebug('getHiddenFilterIndexes 1');
+
         if(DataSourceUtil.isProjectSelectorNotNeeded(context) || PageUtil.PageHasSpefcificFilters(context)) {
             return [];
         }
 
+        log.LogDebug('getHiddenFilterIndexes 2');
+
         //pulse program, one of main pages
         var activeQids = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        log.LogDebug('getHiddenFilterIndexes 3 activeQids='+JSON.stringify(activeQids));
         var filters =  GetFilterQuestionsListByType(context, 'global');
+        log.LogDebug('getHiddenFilterIndexes 4 filters='+JSON.stringify(filters));
         var invalidIndexes = [];
 
         for(var i=0; i<filters.length; i++) {
@@ -151,6 +159,7 @@ class Filters {
                 invalidIndexes.push(i+1);
             }
         }
+        log.LogDebug('getHiddenFilterIndexes 5');
 
         return invalidIndexes;
 
@@ -473,17 +482,23 @@ class Filters {
     static function projectSelectorInPulseProgram(context) {
 
         var log = context.log;
+
+        log.LogDebug('projectSelectorInPulseProgram 1')
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
+        log.LogDebug('projectSelectorInPulseProgram 2')
         var ds = DataSourceUtil.getProgramDsId(context);
+        log.LogDebug('projectSelectorInPulseProgram 3')
 
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || ds === DataSourceUtil.getPageDsId(context)) {
             return '';
         }
+        log.LogDebug('projectSelectorInPulseProgram 4')
         
 
         if (pidFromPageContext) {
             return ds+':source_projectid = "' + pidFromPageContext + '"';
         }
+        log.LogDebug('projectSelectorInPulseProgram 5')
 
         var val = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         return ds+':source_projectid = "' + val[0] + '"';
