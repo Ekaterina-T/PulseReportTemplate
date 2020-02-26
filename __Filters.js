@@ -195,7 +195,10 @@ class Filters {
 
         if(pageId === 'Page_Response_Rate') { //apply only bg based filters
             numberOfFiltersToApply = GetNumberOfBGFiltersByType(context, filterType);
+            log.LogDebug('numberOfFiltersToApply='+numberOfFiltersToApply);
+            log.LogDebug('filterList 1='+filterList);
             filterList = filterList.slice(0,numberOfFiltersToApply);
+            log.LogDebug('filterList 2='+filterList);
         }
 
         var filterExpr =  [];
