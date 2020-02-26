@@ -167,11 +167,7 @@ class PageActions {
         table.RowHeaders.Add(hq);
 
     }
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 919161244178986b30f35a296929b91886681f65
     /**
      * @memberof PageActions
      * @function getHierarchyMask
@@ -265,7 +261,7 @@ class PageActions {
      * @param {Object} context - {confirmit: confirmit, state: state, report: report, log: log, table: table, user:user, pageContext: pageContext}
      */
 
-    static function tableInactiveUsersHidden_Render(context) {
+   /* static function tableInactiveUsersHidden_Render(context) {
 
         var table = context.table;
         var pageContext = context.pageContext;
@@ -286,7 +282,7 @@ class PageActions {
         table.RemoveEmptyHeaders.Rows = false;
         table.Caching.Enabled = false;
 
-    }
+    }*/
 
     /**
      * @memberof PageActions
@@ -294,7 +290,7 @@ class PageActions {
      * @description function returns an array of Inactive users.
      * @param {Object} context - {confirmit: confirmit, state: state, report: report, log: log, user:user, pageContext: pageContext, text: text}
      */
-    static function widgetInactiveUsers_Render(context) {
+    /*static function widgetInactiveUsers_Render(context) {
 
         var report = context.report;
         var actionOwners = report.TableUtils.GetRowHeaderCategoryIds('InactiveUsers_Hidden');
@@ -324,7 +320,7 @@ class PageActions {
         }
         return inactiveUsers;
     }
-
+  */
     /**
      * @memberof PageActions
      * @function addActionTrendSeriesByParam
@@ -973,9 +969,5 @@ static function inactiveUsersList_Render(context, tableName){
         jsCode +="</script>";
 		
 	text.Output.Append(jsCode);
-<<<<<<< HEAD
 }	
-=======
-}
->>>>>>> 919161244178986b30f35a296929b91886681f65
 }
