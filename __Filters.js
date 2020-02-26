@@ -186,6 +186,7 @@ class Filters {
      */
     static function GetFilterPanelExpression(context, explicitFilterType) {
 
+        var logg = context.log;
         var filterList = GetFilterQuestionsListByType(context, explicitFilterType); //global or page specifics
         var filterType = explicitFilterType ? explicitFilterType : getFilterParameterType(context);
         var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
