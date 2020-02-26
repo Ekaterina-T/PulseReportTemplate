@@ -37,8 +37,32 @@ class ParameterOptions {
 
         var log = context.log;
         var resourceInfo = {};
-        var filterList = Filters.GetFilterQuestionsListByType(context);
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'global');
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
+
+        resourceInfo.type = 'QuestionId';
+        resourceInfo.locationType = 'QuestionId';
+
+        if (paramNumber <= filterList.length) {
+            resourceInfo.ID = filterList[paramNumber - 1];
+        }
+
+        return resourceInfo;
+    }
+
+    /**
+     * This function generates object similar to SysemConfig.reportParameterValuesMap.
+     * Since filter panel are not described in this object we generate it ourselves.
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Object} resourceInfo
+     */
+    static private function generateResourceObjectForPageSpecificFilterPanelParameter(context, parameterId) {
+
+        var log = context.log;
+        var resourceInfo = {};
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'pageSpecific');
+        var paramNumber = parseInt(parameterId.substr('p_ScriptedPageFilterPanelParam'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
         resourceInfo.locationType = 'QuestionId';

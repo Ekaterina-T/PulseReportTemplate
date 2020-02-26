@@ -118,11 +118,6 @@ class ParamUtil {
             ResetParameters(context, ['p_Trends_trackerSurveys']);
         }
 
-        // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
-       /* if (page.SubmitSource === 'p_Dimensions') {
-            ResetParameters(context, ['p_Statements']);
-        }*/
-
         //log.LogDebug('project selector processing end')
         pulseInit(context);
 

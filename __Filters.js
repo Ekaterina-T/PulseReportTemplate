@@ -10,11 +10,11 @@ class Filters {
     /**
      *
      */
-    static function GetFilterQuestionsListByType(context, type) {
+    static function GetFilterQuestionsListByType(context, explicitFilterType) {
 
         var bgLevelQids = [];
         var surveyLevelQids = [];
-        var filterType = !type ? getFilterParameterType(context) : type;
+        var filterType = !explicitFilterType ? getFilterParameterType(context) : explicitFilterType;
 
         if(filterType === 'pageSpecific') {
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -132,7 +132,7 @@ class Filters {
         return;
     }
 
-    //============================================================================
+    //================================ FILTER PANEL EXPR START ====================================
 
     /**
      * Reset filter parameters.
@@ -160,195 +160,57 @@ class Filters {
     }
 
     /**
-     * Get the list of all filters defined on the survey level based on survey data variables
-     * @param {object} context object {state: state, report: report, log: log}
-     * @param {boolean} includeNotAnsweredQid - flag, needed run filter hide script
-     * @returns {Array} - array of questions to filter survey data by (not page specific)
+     *
      */
-    static function GetSurveyDataFilterList(context, includeNotAnsweredQid) {
-
-        var log = context.log;
-        var filterFromSurveyData = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-
-        if (!filterFromSurveyData) {
-            return [];
-        }
-
-        if (includeNotAnsweredQid) {
-            return filterFromSurveyData;
-        }
-
-        return PulseProgramUtil.excludeItemsWithoutData(context, filterFromSurveyData);
-
-    }
-
-    /**
-     * Get the list of all filters defined on the survey level based on background variables
-     * @param {object} context object {state: state, report: report, log: log}
-     * @returns {Array} - array of questions to filter background data by (not page specific)
-     */
-    static function GetBackgroundDataFilterList(context) {
-
-        var log = context.log;
-        return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
-    }
-
-    /** 
-     * Get the list of filters defined as custom page levels
-     * @param {object} context object {state: state, report: report, log: log}
-     * @returns {Array} - array of questions to filter page specific data by
-     */
-    static function GetPageSpecificFilterList(context) {
-
-        var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-        // If the custom source is defined => the global filters cannot be applied
-        if (PageUtil.PageHasSpefcificDS(context)) { // i.e. a page with custom source -> can use only custom filters
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData');
-        }
-
-        return []; // i.e. no page specific source => no filters
-    }
-
-
-    /**
-     * Get the list of filters defined on the survey level (including background and survey data variables) that should be displayed.
-     * I.e. include only questions with answers.
-     * @param {object} context object {state: state, report: report, log: log}
-     * @returns {Array} - array of questions to filter both background and survey data by (not page specific)
-     */
-    static function GetGlobalFilterList(context) {
-
-        var log = context.log;
-        var filterFromRespondentData = GetBackgroundDataFilterList(context);
-        var filterFromSurveyData = GetSurveyDataFilterList(context);
-
-        return filterFromRespondentData.concat(filterFromSurveyData);
-    }
-
-    /**
-     * Get the list of all filters defined on the survey level (including background and survey data variables).
-     * I.e. all questions no matter if they have answers or not.
-     * @param {object} context object {state: state, report: report, log: log}
-     * @returns {Array} - array of questions to filter both background and survey data by (not page specific)
-     */
-    static function GetFullConfigFilterList(context) {
-
-        var log = context.log;
-        var filterFromRespondentData = GetBackgroundDataFilterList(context);
-        var filterFromSurveyData = GetSurveyDataFilterList(context, true);
-
-        return filterFromRespondentData.concat(filterFromSurveyData);
-    }
-
-    /**
-     * Get list of filters by type: 
-     * background - global background; survey - global survey data vars, pageSpecific - survey data from pageSpecific ds
-     * @param {object} context object {state: state, report: report, log: log}
-     * @param {string} filtersType - type of filter list
-     * @returns {Array} filters - array of questions o filter by
-     */
-    static function GetFilterListByType(context, filtersType, from) {
-
-        var log = context.log;
-
-        //if filter type is not set it is either global or pageSpecific 
-        if (!filtersType) {
-            filtersType = PageUtil.PageHasSpefcificDS(context) ? 'pageSpecific' : 'global';
-        }
-
-        if (filtersType === 'background') {
-            return GetBackgroundDataFilterList(context);
-        } else if (filtersType === 'survey') {
-            return GetSurveyDataFilterList(context);
-        } else if (filtersType === 'global') {
-            return GetGlobalFilterList(context);
-        } else if (filtersType === 'pageSpecific') {
-            return GetPageSpecificFilterList(context);
-        }
-
-        throw new Error('Filters.GetFilterListByType: filter type ' + filtersType + ' cannot be handled.')
-    }
-
-    /**
-     * Reset filter parameters.
-     * @param {object} context object {state: state, report: report, log: log}
-     */
-    /*static function ResetAllFilters(context) {
-
-        var log = context.log;
-        var filterNames = [];
-        var i;
-
-        var filterSurveyLevelParameters = GetGlobalFilterList(context);
-        for (i = 0; i < filterSurveyLevelParameters.length; i++) {
-            filterNames.push('p_ScriptedFilterPanelParameter' + (i + 1));
-        }
-
-        var filterPageLevelParameters = GetPageSpecificFilterList(context);
-        for (i = 0; i < filterPageLevelParameters.length; i++) {
-            filterNames.push('p_ScriptedPageFilterPanelParam' + (i + 1));
-        }
-
-        ParamUtil.ResetParameters(context, filterNames);
-        return;
-    }*/
-
-
-    /**
-     * get filter panel prefix by filtersType
-     * @param {Object} context
-     * @param {String} filtersType - background - global background; survey - global survey data vars, pageSpecific - survey data from pageSpecific ds
-     * @returns {String} filterPrefix: p_ScriptedPageFilterPanelParam or p_ScriptedFilterPanelParameter
-     */
-    static function GetPanelFilterPrefixByType(context, filtersType) {
-        return (filtersType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
-    }
-
-    /**
-     * @function GeneratePanelFilterExpression
-     * @description function to generate filter expression for the 'FilterPanel' filter. Filter parameters can be both single and multi selects
-     * @param {Object} context
-     * @param {String} filtersType - background - global background; survey - global survey data vars, pageSpecific - survey data from pageSpecific ds
-     * @returns {String} filter script expression
-     */
-    static function GeneratePanelFilterExpression(context, filtersType) {
+    static function GetIndividualFilterExpression(context, paramId, qId) {
 
         var state = context.state;
-        var log = context.log;
+        var ds = DataSourceUtil.getPageDsId(context);
 
-        if(filtersType !== 'pageSpecific' && PageUtil.PageHasSpefcificDS(context)) {
-            return '';
+        if (!state.Parameters.IsNull(paramId)) {
+            // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
+            var responses = ParamUtil.GetSelectedCodes(context, paramId);
+            var individualFilterExpr = [];
+            for (var j = 0; j < responses.length; j++) {
+                individualFilterExpr.push('IN(' + ds + ':' + qId + ', "' + responses[j] + '")');
+            }
+            return '(' + individualFilterExpr.join(' OR ') + ')';
         }
 
-        var filterExpr = [];
-        var paramName = GetPanelFilterPrefixByType(context, filtersType);
-        var filters = GetFilterListByType(context, filtersType);
-        var startNum = 0;
+        return null;
+    }
 
-        if(filtersType === 'survey') {
-            var bgFilters = GetFilterListByType(context, 'background');
-            startNum = bgFilters.length;
+
+    /**
+     * 
+     */
+    static function GetFilterPanelExpression(context, explicitFilterType) {
+
+        var filterList = GetFilterQuestionsListByType(context, explicitFilterType); //global or page specifics
+        var filterType = explicitFilterType ? explicitFilterType : getFilterParameterType(context);
+        var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var numberOfFiltersToApply = filterList.length;
+
+        if(pageId === 'Page_Response_Rate') { //apply only bg based filters
+            numberOfFiltersToApply = GetNumberOfBGFiltersByType(context, filterType);
+            filterList = filterList.slice(0,numberOfFiltersToApply);
         }
 
-        for (var i = 0; i < filters.length; i++) {
+        var filterExpr =  [];
 
-            var paramId = paramName + (i + startNum + 1);
-
-            if (!state.Parameters.IsNull(paramId)) {
-                // support for multi select. If you need multi-selectors, no code changes are needed, change only parameter setting + ? list css class
-                var responses = ParamUtil.GetSelectedCodes(context, paramId);
-                var individualFilterExpr = [];
-                for (var j = 0; j < responses.length; j++) {
-                    individualFilterExpr.push('IN(' + DataSourceUtil.getDsId(context) + ':' + filters[i] + ', "' + responses[j] + '")');
-                }
-                filterExpr.push('(' + individualFilterExpr.join(' OR ') + ')');
+        for(var i=0; i<filterList.length; i++) {
+            var indExpr = GetIndividualFilterExpression(context, filterPrefix+'_'+(i+1), filterList[i]);
+            if(indExpr) {
+                filterExpr.push(indExpr);
             }
         }
 
         return filterExpr.join(' AND ');
     }
+
+   //================================ FILTER PANEL EXPR END ====================================
 
     /**
      * @function GetFilterValues
