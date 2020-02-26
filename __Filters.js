@@ -474,11 +474,12 @@ class Filters {
 
         var log = context.log;
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
-        var ds = DataSourceUtil.getProgramDsId(context);
 
-        if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || getProgramDsId(context) === getPageDsId(context)) {
             return '';
         }
+        
+        var ds = DataSourceUtil.getProgramDsId(context);
 
         if (pidFromPageContext) {
             return ds+':source_projectid = "' + pidFromPageContext + '"';
@@ -496,7 +497,8 @@ class Filters {
      */
     static function getProjectExpression(context, projectId) {
 
-        return 'source_projectid = "' + projectId + '"';
+        var ds = DataSourceUtil.getProgramDsId(context);
+        return ds+':source_projectid = "' + projectId + '"';
     }
 
     /**
