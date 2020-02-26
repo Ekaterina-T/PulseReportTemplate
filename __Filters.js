@@ -54,25 +54,33 @@ class Filters {
     static function hideScriptedFilterByOrder(context, paramNum) {
 
         var log = context.log;
+        log.LogDebug('hideScriptedFilterByOrder 1');
         var pageHasSpecificFilters = PageUtil.PageHasSpefcificFilters(context);
+        log.LogDebug('hideScriptedFilterByOrder 2');
         var isPageSpecificParameter = !!context.pageSpecific;
+        log.LogDebug('hideScriptedFilterByOrder 3');
         var filterList = [];
 
         if(!isPageSpecificParameter) {
+            log.LogDebug('hideScriptedFilterByOrder 4');
 
             if(pageHasSpecificFilters) {
                 return true;
             }
+            log.LogDebug('hideScriptedFilterByOrder 5');
 
             filterList = GetFilterQuestionsListByType(context, 'global');
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            log.LogDebug('hideScriptedFilterByOrder 6');
             var numberOfBGFilters = GetNumberOfBGFiltersByType(context, 'global');
+            log.LogDebug('hideScriptedFilterByOrder 7');
 
             // paramNum should be less than number of filter components on all pages
             // paramNum should be less than number of filters based on BG vars on Response Rate page
             if (paramNum > filterList.length || (pageId === 'Page_Response_Rate' && paramNum > numberOfBGFilters)) {
                 return true; // hide
             }
+            log.LogDebug('hideScriptedFilterByOrder 8');
             return false;
         }
 
