@@ -102,6 +102,7 @@ class Filters {
 
         var log = context.log;
         var filterList = GetFilterQuestionsListByType(context);
+        log.LogDebug('filter names: '+JSON.stringify(filterList));
 
         if (paramNum <= filterList.length) {
             return QuestionUtil.getQuestionTitle(context, filterList[paramNum - 1]);
