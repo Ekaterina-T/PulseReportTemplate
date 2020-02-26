@@ -11,7 +11,7 @@ class Filters {
     /**
      *
      */
-    static function GetFilterQuestionsListByType(context, type) {
+    static function GetFilterQuestionsListByType(context, inludeNotAnswered, type) {
 
         var bgLevelQids = [];
         var surveyLevelQids = [];
@@ -24,7 +24,10 @@ class Filters {
         } else {
             bgLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
             surveyLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-            //PulseProgramUtil.excludeItemsWithoutData(context, surveyLevelQids);
+
+            if(!inludeNotAnswered) {
+                surveyLevelQids = PulseProgramUtil.excludeItemsWithoutData(context, surveyLevelQids);
+            }
         }
 
         return bgLevelQids.concat(surveyLevelQids);
