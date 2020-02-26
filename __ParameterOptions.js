@@ -35,15 +35,40 @@ class ParameterOptions {
      */
     static private function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
+        var log = context.log;
         var resourceInfo = {};
-        var filterList = Filters.GetFullConfigFilterList(context);
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'global');
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
-        resourceInfo.locationType = 'FilterPanel'
+        resourceInfo.locationType = 'QuestionId';
 
         if (paramNumber <= filterList.length) {
-            resourceInfo.FilterQid = filterList[paramNumber - 1];
+            resourceInfo.ID = filterList[paramNumber - 1];
+        }
+
+        return resourceInfo;
+    }
+
+    /**
+     * This function generates object similar to SysemConfig.reportParameterValuesMap.
+     * Since filter panel are not described in this object we generate it ourselves.
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Object} resourceInfo
+     */
+    static private function generateResourceObjectForPageSpecificFilterPanelParameter(context, parameterId) {
+
+        var log = context.log;
+        var resourceInfo = {};
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'pageSpecific');
+        var paramNumber = parseInt(parameterId.substr('p_ScriptedPageFilterPanelParam'.length, parameterId.length));
+
+        resourceInfo.type = 'QuestionId';
+        resourceInfo.locationType = 'QuestionId';
+
+        if (paramNumber <= filterList.length) {
+            resourceInfo.ID = filterList[paramNumber - 1];
         }
 
         return resourceInfo;
@@ -100,9 +125,6 @@ class ParameterOptions {
             return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
         }
 
-        if (parameterInfo.locationType === 'FilterPanel') {
-            return parameterInfo.FilterQid;
-        }
 
         if (parameterInfo.locationType === 'QuestionCategory') {
             var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
@@ -140,7 +162,7 @@ class ParameterOptions {
     }
 
     /**
-     *Populates parameter based on pid and pname questions.
+     *Populates p_projectSelector based on pid and pname questions.
      *@param {object} context - contains Reportal scripting state, log, report, parameter objects
      *@return {Array} - [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
@@ -170,7 +192,13 @@ class ParameterOptions {
     static private function getOptions_QuestionAnswersSelector(context, qid) {
 
         var parameterOptions = [];
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
+        var ds;
+
+        if(qid === 'source_project') {
+            ds = DataSourceUtil.getProgramDsId(context);
+        }
+        
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid, ds);
 
         for (var i = 0; i < answers.length; i++) {
             var option = {};
@@ -281,7 +309,8 @@ class ParameterOptions {
 
         var codes = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
 
-        if (codes.length === 1) {
+        if (codes.length) {
+            var baby_p_number = codes[0];
             for (var i = 0; i < qList.length; i++) {
                 var customTxt = QuestionUtil.getCustomQuestionTextById(context, qList[i]);
                 if (customTxt) {
@@ -492,6 +521,22 @@ class ParameterOptions {
 
     //------------------------------------------------------------------------------------------
 
+    static function convertCodeToParameterValueResponse(context, code) {
+        return new ParameterValueResponse(code);
+    }
+
+    static function convertCodeArrayToParameterValueResponseArray(context, codes) {
+
+        var log = context.log;
+        var defaultVals = [];
+
+        for (var i = 0; i < codes.length; i++) {
+            defaultVals.push(new ParameterValueResponse(codes[i]));
+        }
+        return defaultVals;
+    }
+
+
     /**
      * TODO: replace with some class maybe that would allow defining def values from outside (not using paramNames in code)
      * Get defaultParameterValue for parameter
@@ -524,14 +569,20 @@ class ParameterOptions {
                     }
                 }
             }
+
         }
 
         // not pulse program or not question based parameter
         // return the 1st option as default value
         if (DataSourceUtil.isProjectSelectorNotNeeded(context) || !paramInfo.hasOwnProperty('isQuestionBased')) {
-            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : '';            
+            var code = parameterOptions.length > 0 ? parameterOptions[0].Code : null;
+            //if(code ==='') {log.LogDebug(parameterName+': default value = ""');} 
+
             return code;
         }
+
+        //log.LogDebug(parameterName+': default value = null');
+
         return null;
     }
 }
