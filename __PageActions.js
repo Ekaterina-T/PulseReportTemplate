@@ -167,32 +167,7 @@ class PageActions {
         table.RowHeaders.Add(hq);
 
     }
-
-
-    /**
-     * @memberof PageActions
-     * @function tableQuestionsByDimension_Render
-     * @description function to render the QuestionsByDimension table. It's a hidden table used to filter the list of statements by the selected dimension
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     */
-
-    static function tableQuestionsByDimension_Render(context){
-
-        var table = context.table;
-        var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
-        var categorization : HeaderCategorization = new HeaderCategorization();
-        categorization.CategorizationId = dimension;
-        categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
-        categorization.DefaultStatistic = StatisticsType.Average;
-        categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-        categorization.Preaggregation = PreaggregationType.Average;
-        categorization.SampleRule = SampleEvaluationRule.Max;
-        categorization.Collapsed = false;
-        categorization.Totals = false;
-        table.RowHeaders.Add(categorization);
-
-    }
-
+  
     /**
      * @memberof PageActions
      * @function getHierarchyMask
@@ -908,5 +883,88 @@ class PageActions {
         }
         return resultSmartViewQuery;
     }
+   static function inactiveUsersHiddenTable_Render(context){
+	var table = context.table;
+	var log = context.log;
+	
+	var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    
+	var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+    context.isCustomSource = true;
 
+    var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
+    var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
+    hqActionOwner.ShowTotals = false;
+    table.RowHeaders.Add(hqActionOwner);
+	
+	var actionCreator = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionCreatorsList');
+    var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
+    var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
+    hqActionCreator.ShowTotals = false;
+    table.RowHeaders.Add(hqActionCreator);
+	
+	var hb : HeaderBase = new HeaderBase();
+    hb.HideData = true;
+	hb.HideHeader = true;
+
+	var hf : HeaderFormula = new HeaderFormula();
+	hf.HideHeader = true;
+	hf.Type = FormulaType.Expression;
+	hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
+
+	table.ColumnHeaders.Add(hb);	
+	table.ColumnHeaders.Add(hf);
+	
+	//table settings
+	table.RemoveEmptyHeaders.Rows = true;
+	table.Caching.Enabled = false;
+    table.Sorting.Rows.Enabled = true;
+    table.Sorting.Rows.SortByType = TableSortByType.Position;
+    table.Sorting.Rows.Position = 2;
+}
+
+static function inactiveUsersList_Render(context, tableName){
+	var log = context.log;
+	var report = context.report;
+	
+	var inactiveUsers = [];
+	
+	var data = report.TableUtils.GetColumnValues(tableName, 1);
+	var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
+
+	for(var i=0; i<data.length; i++){
+		if(data[i].Value == 0) continue;
+		if(data[i].Value > 0) inactiveUsers.push(labels[i]);		
+	}	
+	
+	return inactiveUsers;
+ }
+	
+ static function maskStatementsScript_Render(context){
+	var log = context.log;
+	var text = context.text;
+	
+	var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    var jsonStatementsByDimensions = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension');
+
+    var jsCode = "<script>";
+        jsCode +="function maskStatements(){";
+        jsCode +="var jsonStatementsByDimensions = " + jsonStatementsByDimensions + ";";
+        jsCode +=" var dimensionSelect = document.querySelector('#dimensionDropdown select');";
+        jsCode +=" var selectedDimension = document.querySelectorAll('#dimensionDropdown select option')[dimensionSelect.selectedIndex].value.split(':')[2];";
+        jsCode +="  var statementsSelect = document.querySelector('#statementDropdown select');";
+        jsCode +=" var statements = document.querySelectorAll('#statementDropdown select option');";
+        jsCode +=" for (var i=statements.length-1; i>0; i--){";
+        jsCode +=" var stId = statements[i].value.split(':')[2];";
+        jsCode +=" if(jsonStatementsByDimensions[selectedDimension].indexOf(stId) == -1) {";
+        jsCode +="        statements[i].style.display = 'none';";
+        jsCode +="        if( statementsSelect.selectedIndex == i) {statementsSelect.selectedIndex = 0;}}";
+        jsCode +=" else { statements[i].style.display = 'inherit';}";
+        jsCode +="}}";
+        jsCode +=" maskStatements();";
+        jsCode +=" document.querySelector('#dimensionDropdown select').addEventListener('change', maskStatements);";
+        jsCode +="</script>";
+		
+	text.Output.Append(jsCode);
+}
 }
