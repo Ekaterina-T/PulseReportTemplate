@@ -10,7 +10,7 @@ class Filters {
     /**
      *
      */
-    static function GetFilterQuestionsListByType(context, inludeNotAnswered, type) {
+    static function GetFilterQuestionsListByType(context, type) {
 
         var bgLevelQids = [];
         var surveyLevelQids = [];
@@ -23,10 +23,6 @@ class Filters {
         } else {
             bgLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
             surveyLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
-
-            if(!inludeNotAnswered) {
-                surveyLevelQids = PulseProgramUtil.excludeItemsWithoutData(context, surveyLevelQids);
-            }
         }
 
         return bgLevelQids.concat(surveyLevelQids);
@@ -64,11 +60,9 @@ class Filters {
                 return true;
             }
 
-            filterList = GetFilterQuestionsListByType(context, false, 'global');
+            filterList = GetFilterQuestionsListByType(context, 'global');
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            var numberOfBGFilters = GetNumberOfBGFiltersByType(context, false, 'global');
-
-            log.LogDebug('hide param paramNum='+paramNum+': '+filterList[paramNum-1])
+            var numberOfBGFilters = GetNumberOfBGFiltersByType(context, 'global');
 
             // paramNum should be less than number of filter components on all pages
             // paramNum should be less than number of filters based on BG vars on Response Rate page
@@ -83,7 +77,7 @@ class Filters {
             if(!pageHasSpecificFilters) {
                 return true;
             }
-            filterList = GetFilterQuestionsListByType(context, false, 'pageSpecific');
+            filterList = GetFilterQuestionsListByType(context, 'pageSpecific');
             return paramNum > filterList.length;
         }
 
@@ -102,7 +96,6 @@ class Filters {
 
         var log = context.log;
         var filterList = GetFilterQuestionsListByType(context);
-        log.LogDebug('filter names: '+JSON.stringify(filterList));
 
         if (paramNum <= filterList.length) {
             return QuestionUtil.getQuestionTitle(context, filterList[paramNum - 1]);
