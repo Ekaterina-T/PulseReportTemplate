@@ -218,12 +218,12 @@ class Filters {
      * @param {Object} context
      * @returns {Array} Array of objects {Label: label, selectedOptions: [{Label: label, Code: code}]}
      */
-    static function GetFiltersValues(context, filtersType) {
+    static function GetFiltersValues(context, filterType) {
 
         var log = context.log;
 
         var filterValues = [];
-        var filters = GetFilterQuestionsListByType(context, filtersType);
+        var filters = GetFilterQuestionsListByType(context, filterType);
         var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
 
         for (var i = 0; i < filters.length; i++) {
