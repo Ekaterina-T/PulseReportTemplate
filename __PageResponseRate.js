@@ -363,7 +363,7 @@ class PageResponseRate {
      * 
      */
     static function ifResponseRateInfoNeededOnPage(context) {
-        return !PageUtil.PageHasSpefcificDS(context);
+        return PageUtil.PageHasSpefcificDS(context);
     }
 
 }
