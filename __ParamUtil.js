@@ -1,5 +1,4 @@
 class ParamUtil {
-
     /**
   * Populates p_SurveyType parameter based on surveys from Config.
   * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
