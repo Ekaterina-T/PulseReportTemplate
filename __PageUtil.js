@@ -119,12 +119,54 @@ class PageUtil {
 
         if(!!pageContext.Items['CurrentPageId']) { // if pageContext contains page id info take from there
             pageId = pageContext.Items['CurrentPageId'];
-        } else if(context.hasOwnProperty('CurrentPageId') && context.CurrentPageId) { // try to find it in context
+        } else if(context.hasOwnPr/**
+     * 
+     */
+    static function PageHasSpefcificDS(context) {
+        return !!context.pageContext.Items['PageSource'];
+    }
+
+    /**
+     * @param {object} context
+     * @returns {boolean} if page has specific DS
+     */
+    static function PageHasSpefcificFilters(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var bgLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
+        var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
+        var union = bgLevel || surveyLevel ? bgLevel.concat(surveyLevel) : null;
+
+        return union && union.length>0;
+    }operty('CurrentPageId') && context.CurrentPageId) { // try to find it in context
             pageId = context.CurrentPageId;
         } else { //it's nowhere
             throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')
         }
 
         return 'Page_'+pageId;
+    }
+    
+    /**
+     * 
+     */
+    static function PageHasSpefcificDS(context) {
+        return !!context.pageContext.Items['PageSource'];
+    }
+
+    /**
+     * @param {object} context
+     * @returns {boolean} if page has specific DS
+     */
+    static function PageHasSpefcificFilters(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var bgLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
+        var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
+        var union = bgLevel || surveyLevel ? bgLevel.concat(surveyLevel) : null;
+
+        return union && union.length>0;
     }
 }
