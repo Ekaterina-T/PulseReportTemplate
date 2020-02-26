@@ -491,7 +491,7 @@ class Filters {
         var ds = DataSourceUtil.getProgramDsId(context);
         log.LogDebug('projectSelectorInPulseProgram 3')
 
-        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || ds === DataSourceUtil.getPageDsId(context)) {
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || ds !== DataSourceUtil.getPageDsId(context)) {
             return '';
         }
         log.LogDebug('projectSelectorInPulseProgram 4')
