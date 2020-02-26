@@ -187,8 +187,10 @@ class Filters {
     static function GetFilterPanelExpression(context, explicitFilterType, varType) {
 
         var logg = context.log;
-        var filterList = GetFilterQuestionsListByType(context, explicitFilterType); //global or page specifics
         var filterType = explicitFilterType ? explicitFilterType : getFilterParameterType(context);
+        log.LogDebug('filterType='+filterType)
+        var filterList = GetFilterQuestionsListByType(context, filterType); //global or page specifics
+        log.LogDebug('filterList='+filterList)
         var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
