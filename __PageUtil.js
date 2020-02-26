@@ -156,6 +156,8 @@ class PageUtil {
         var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
         log.LogDebug('PageHasSpefcificFilters 4')
         var union = bgLevel.concat(surveyLevel);
+        log.LogDebug('PageHasSpefcificFilters 4')
+        log.LogDebug(JSON.stringify(union))
 
         return union && union.length>0;
     }
