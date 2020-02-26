@@ -184,7 +184,7 @@ class Filters {
     /**
      * 
      */
-    static function GetFilterPanelExpression(context, explicitFilterType) {
+    static function GetFilterPanelExpression(context, explicitFilterType, varType) {
 
         var logg = context.log;
         var filterList = GetFilterQuestionsListByType(context, explicitFilterType); //global or page specifics
@@ -192,14 +192,15 @@ class Filters {
         var filterPrefix = (filterType === 'pageSpecific') ? 'p_ScriptedPageFilterPanelParam' : 'p_ScriptedFilterPanelParameter';
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var numberOfFiltersToApply = filterList.length;
 
-        if(pageId === 'Page_Response_Rate') { //apply only bg based filters
-            numberOfFiltersToApply = GetNumberOfBGFiltersByType(context, filterType);
-            log.LogDebug('numberOfFiltersToApply='+numberOfFiltersToApply);
-            log.LogDebug('filterList 1='+filterList);
+        if(pageId === 'Page_Response_Rate' || varType === 'background') { //apply only bg based filters
+            var numberOfFiltersToApply = GetNumberOfBGFiltersByType(context, filterType);
             filterList = filterList.slice(0,numberOfFiltersToApply);
-            log.LogDebug('filterList 2='+filterList);
+        }
+
+        if(varType === 'survey') {
+            var numberOfFiltersToExclude = GetNumberOfBGFiltersByType(context, filterType); 
+            filterList = filterList.slice(numberOfFiltersToExclude, filterList.length);
         }
 
         var filterExpr =  [];
