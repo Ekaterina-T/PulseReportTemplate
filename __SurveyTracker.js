@@ -7,7 +7,8 @@ class SurveyTracker {
      */
     static function getAllSurveyDescriptors(context) {
 
-        var project : Project = DataSourceUtil.getProject(context);
+        var ds = DataSourceUtil.getProgramDsId(context);
+        var project : Project = DataSourceUtil.getProject(context, ds);
         var source_projectid: Question = project.GetQuestion('source_projectid');
         return source_projectid.GetAnswers();
     }
@@ -20,7 +21,8 @@ class SurveyTracker {
      */
     static function getSurveyDescriptorByPid(context, pid) {
 
-        var project : Project = DataSourceUtil.getProject(context);
+        var ds = DataSourceUtil.getProgramDsId(context);
+        var project : Project = DataSourceUtil.getProject(context, ds);
         var source_projectid: Question = project.GetQuestion('source_projectid');
         var info: Answer = source_projectid.GetAnswer(pid);
         return {Code: info.Precode, Label: info.Text};

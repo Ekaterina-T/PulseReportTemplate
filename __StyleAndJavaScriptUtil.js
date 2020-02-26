@@ -42,6 +42,8 @@ class StyleAndJavaScriptUtil {
         // pagesToHide: [\'page1\', \'page2\']
         // logo: \'some url\';
         properties.push('questionsWithData: ' + JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context)));
+        
+        properties.push('hiddenFilterIndexes: ' + JSON.stringify(Filters.getHiddenFilterIndexes(context)));
 
         properties.push('executionMode: "' + JSON.stringify(state.ReportExecutionMode)+'"');
 

@@ -359,4 +359,11 @@ class PageResponseRate {
         return Export.isExcelExportMode(context);
     }
 
+    /**
+     * 
+     */
+    static function ifResponseRateInfoNeededOnPage(context) {
+        return PageUtil.PageHasSpefcificDS(context);
+    }
+
 }

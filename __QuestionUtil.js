@@ -66,11 +66,11 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {QuestionnaireElement} qe
      */
-    static function getQuestionnaireElement(context, questionId) {
+    static function getQuestionnaireElement(context, questionId, dsId) {
 
         var log = context.log;
         var questionInfo =  getQuestionInfo (context, questionId);
-        var project : Project = DataSourceUtil.getProject(context);
+        var project : Project = DataSourceUtil.getProject(context, dsId);
 
         var qe: QuestionnaireElement;
 
@@ -95,10 +95,10 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {string} title question title
      */
-    static function getQuestionTitle (context, questionId) {
+    static function getQuestionTitle (context, questionId, dsId) {
 
         var log = context.log;
-        var project : Project = DataSourceUtil.getProject(context);
+        var project : Project = DataSourceUtil.getProject(context, dsId);
         var questionInfo = getQuestionInfo(context, questionId);
         var question : Question = project.GetQuestion(questionInfo.questionId);
         var title;
@@ -139,9 +139,9 @@ class QuestionUtil {
      * @param {string} questionId
      * @returns {Answer []} answers or scale for grids
      */
-    static function getQuestionAnswers (context, questionId) {
+    static function getQuestionAnswers (context, questionId, dsId) {
 
-        var project : Project = DataSourceUtil.getProject(context);
+        var project : Project = DataSourceUtil.getProject(context, dsId);
         var questionInfo = getQuestionInfo(context, questionId);
         var question : Question = project.GetQuestion(questionInfo.questionId);
         var qType = question.QuestionType;
@@ -166,9 +166,9 @@ class QuestionUtil {
    * @param {string} questionId
    * @returns Answer []
    */
-    static function getQuestionAnswerByCode (context, questionId, precode) {
+    static function getQuestionAnswerByCode (context, questionId, precode, dsId) {
 
-        var project : Project = DataSourceUtil.getProject(context);
+        var project : Project = DataSourceUtil.getProject(context, dsId);
         var questionInfo = getQuestionInfo(context, questionId);
         var question : Question = project.GetQuestion(questionInfo.questionId);
         var qType = question.QuestionType;
@@ -190,12 +190,12 @@ class QuestionUtil {
      * @param {string} answerCode
      * @returns {boolean}
      */
-    static function hasAnswer (context, questionId, answerCode) {
+    static function hasAnswer (context, questionId, answerCode, dsId) {
         var state = context.state;
         var report = context.report;
         var log = context.log;
 
-        var answers = getQuestionAnswers(context, questionId);
+        var answers = getQuestionAnswers(context, questionId, dsId);
         for (var k=0; k<answers.length; k++) {
             if (answers[k].Precode === answerCode) {
                 return true;
@@ -232,7 +232,7 @@ class QuestionUtil {
        * @param {string} category
        * @returns {array} - Question[]
        */
-    static function getQuestionsByCategory (context, category) {
+    static function getQuestionsByCategory (context, category, dsId) {
         var state = context.state;
         var report = context.report;
         var log = context.log;
@@ -241,7 +241,7 @@ class QuestionUtil {
         // how grids would be processed? and other questions?
         // how to standardise this to work with
         if (category) {
-            var project : Project = DataSourceUtil.getProject(context);
+            var project : Project = DataSourceUtil.getProject(context, dsId);
             return project.GetQuestions({'InCategories': [category]});
         }
         return [];
@@ -253,11 +253,11 @@ class QuestionUtil {
      * @param {string} category
      * @returns {array} - String[]
      */
-    static function getQuestionIdsByCategory (context, category) {
+    static function getQuestionIdsByCategory (context, category, dsId) {
 
         // see EN-430
         var log = context.log;
-        var questions = getQuestionsByCategory (context, category);
+        var questions = getQuestionsByCategory (context, category, dsId);
         var questionIds = [];
 
         for(var i=0; i<questions.length; i++) {
@@ -273,7 +273,7 @@ class QuestionUtil {
      * @param {Array} categoryList
      * @returns {array} - String[]
      */
-    static function getQuestionIdsByCategories(context, categoryList) {
+    static function getQuestionIdsByCategories(context, categoryList, dsId) {
 
         var log = context.log;
         var questions = [];
@@ -292,7 +292,7 @@ class QuestionUtil {
     * @param {string} qId
     * @returns {string} - custom question text / title
     */
-    static function getCustomQuestionTextById(context, qId) {
+    static function getCustomQuestionTextById(context, qId, dsId) {
         var log = context.log;
         var confirmit = context.confirmit;
         var state = context.state;

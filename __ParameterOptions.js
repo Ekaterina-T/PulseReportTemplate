@@ -35,15 +35,40 @@ class ParameterOptions {
      */
     static private function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
+        var log = context.log;
         var resourceInfo = {};
-        var filterList = Filters.GetFullConfigFilterList(context);
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'global');
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
-        resourceInfo.locationType = 'FilterPanel';
+        resourceInfo.locationType = 'QuestionId';
 
         if (paramNumber <= filterList.length) {
-            resourceInfo.FilterQid = filterList[paramNumber - 1];
+            resourceInfo.ID = filterList[paramNumber - 1];
+        }
+
+        return resourceInfo;
+    }
+
+    /**
+     * This function generates object similar to SysemConfig.reportParameterValuesMap.
+     * Since filter panel are not described in this object we generate it ourselves.
+     * @param {Object} context
+     * @param {String} parameterId
+     * @returns {Object} resourceInfo
+     */
+    static private function generateResourceObjectForPageSpecificFilterPanelParameter(context, parameterId) {
+
+        var log = context.log;
+        var resourceInfo = {};
+        var filterList = Filters.GetFilterQuestionsListByType(context, 'pageSpecific');
+        var paramNumber = parseInt(parameterId.substr('p_ScriptedPageFilterPanelParam'.length, parameterId.length));
+
+        resourceInfo.type = 'QuestionId';
+        resourceInfo.locationType = 'QuestionId';
+
+        if (paramNumber <= filterList.length) {
+            resourceInfo.ID = filterList[paramNumber - 1];
         }
 
         return resourceInfo;
@@ -100,9 +125,6 @@ class ParameterOptions {
             return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
         }
 
-        if (parameterInfo.locationType === 'FilterPanel') {
-            return parameterInfo.FilterQid;
-        }
 
         if (parameterInfo.locationType === 'QuestionCategory') {
             var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
@@ -170,7 +192,13 @@ class ParameterOptions {
     static private function getOptions_QuestionAnswersSelector(context, qid) {
 
         var parameterOptions = [];
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid);
+        var ds;
+
+        if(qid === 'source_project') {
+            ds = DataSourceUtil.getProgramDsId(context);
+        }
+        
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, qid, ds);
 
         for (var i = 0; i < answers.length; i++) {
             var option = {};
