@@ -54,7 +54,7 @@ class SurveyTracker {
      * @returns {object} survey descriptor {Code pid, Label: pname}
      */
     static public function getComparisonTrackerForSelectedPid(context) {
-        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');;
+        var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         return getComparisonTrackerBySurveyId(context, projectSelected[0]);
     }
 
@@ -87,6 +87,12 @@ class SurveyTracker {
      * @returns {Array} - array of pids
      */
     static public function getTrackersForSelectedPid(context) {
+
+        //only relevant for pulse programs
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return [];
+        }
+
         var projectSelected = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         return getTrackersBySurveyId(context, projectSelected[0]);
     }
