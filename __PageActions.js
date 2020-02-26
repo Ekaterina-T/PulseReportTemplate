@@ -167,7 +167,11 @@ class PageActions {
         table.RowHeaders.Add(hq);
 
     }
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 919161244178986b30f35a296929b91886681f65
     /**
      * @memberof PageActions
      * @function getHierarchyMask
@@ -881,10 +885,10 @@ class PageActions {
             default:
             resultSmartViewQuery+="time1: year; ";
         }
+        return resultSmartViewQuery;
+    }
 
-    return resultSmartViewQuery;
-  }
-	
+
    static function inactiveUsersHiddenTable_Render(context){
 	var table = context.table;
 	var log = context.log;
@@ -892,6 +896,7 @@ class PageActions {
 	var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
 	var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+    context.isCustomSource = true;
 
     var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
     var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
@@ -923,6 +928,7 @@ class PageActions {
     table.Sorting.Rows.SortByType = TableSortByType.Position;
     table.Sorting.Rows.Position = 2;
 }
+
 
 static function inactiveUsersList_Render(context, tableName){
 	var log = context.log;
@@ -967,5 +973,9 @@ static function inactiveUsersList_Render(context, tableName){
         jsCode +="</script>";
 		
 	text.Output.Append(jsCode);
+<<<<<<< HEAD
 }	
+=======
+}
+>>>>>>> 919161244178986b30f35a296929b91886681f65
 }
