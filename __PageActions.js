@@ -970,4 +970,32 @@ static function inactiveUsersList_Render(context, tableName){
 	
 	return inactiveUsers;
  }
+	
+ static function maskStatementsScript_Render(context){
+	var log = context.log;
+	var text = context.text;
+	
+	var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    var jsonStatementsByDimensions = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension');
+
+    var jsCode = "<script>";
+        jsCode +="function maskStatements(){";
+        jsCode +="var jsonStatementsByDimensions = " + jsonStatementsByDimensions + ";";
+        jsCode +=" var dimensionSelect = document.querySelector('#dimensionDropdown select');";
+        jsCode +=" var selectedDimension = document.querySelectorAll('#dimensionDropdown select option')[dimensionSelect.selectedIndex].value.split(':')[2];";
+        jsCode +="  var statementsSelect = document.querySelector('#statementDropdown select');";
+        jsCode +=" var statements = document.querySelectorAll('#statementDropdown select option');";
+        jsCode +=" for (var i=statements.length-1; i>0; i--){";
+        jsCode +=" var stId = statements[i].value.split(':')[2];";
+        jsCode +=" if(jsonStatementsByDimensions[selectedDimension].indexOf(stId) == -1) {";
+        jsCode +="        statements[i].style.display = 'none';";
+        jsCode +="        if( statementsSelect.selectedIndex == i) {statementsSelect.selectedIndex = 0;}}";
+        jsCode +=" else { statements[i].style.display = 'inherit';}";
+        jsCode +="}}";
+        jsCode +=" maskStatements();";
+        jsCode +=" document.querySelector('#dimensionDropdown select').addEventListener('change', maskStatements);";
+        jsCode +="</script>";
+		
+	text.Output.Append(jsCode);
+}	
 }
