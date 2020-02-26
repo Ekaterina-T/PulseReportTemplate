@@ -135,7 +135,7 @@ class Filters {
     /**
      * 
      */
-    static function getVisibleFilterNumbers(context) {
+    static function getHiddenFilterNumbers(context) {
 
 
     }
@@ -195,7 +195,7 @@ class Filters {
     static function GetFilterPanelExpression(context, explicitFilterType, varType) {
 
         var log = context.log;
-        var filterType = explicitFilterType ? explicitFilterType : (PageUtil.PageHasSpefcificFilters(context) ? 'pageSpecific' : global);
+        var filterType = explicitFilterType ? explicitFilterType : (PageUtil.PageHasSpefcificFilters(context) ? 'pageSpecific' : 'global');
         log.LogDebug('filterType='+filterType)
         var filterList = GetFilterQuestionsListByType(context, filterType); //global or page specifics
         log.LogDebug('filterList='+filterList)
