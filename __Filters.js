@@ -68,6 +68,8 @@ class Filters {
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
             var numberOfBGFilters = GetNumberOfBGFiltersByType(context, false, 'global');
 
+            log.LogDebug('hide param paramNum='+paramNum+': '+filterList[paramNum-1])
+
             // paramNum should be less than number of filter components on all pages
             // paramNum should be less than number of filters based on BG vars on Response Rate page
             if (paramNum > filterList.length || (pageId === 'Page_Response_Rate' && paramNum > numberOfBGFilters)) {

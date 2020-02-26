@@ -35,8 +35,9 @@ class ParameterOptions {
      */
     static private function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
+        var log = context.log;
         var resourceInfo = {};
-        var filterList = Filters.GetFilterQuestionsListByType(context, true);//GetFullConfigFilterList(context);
+        var filterList = Filters.GetFilterQuestionsListByType(context, true);
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
@@ -45,6 +46,8 @@ class ParameterOptions {
         if (paramNumber <= filterList.length) {
             resourceInfo.ID = filterList[paramNumber - 1];
         }
+
+        log.LogDebug('load paramNumber='+paramNumber+': resourceInfo.ID');
 
         return resourceInfo;
     }
