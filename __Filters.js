@@ -154,12 +154,14 @@ class Filters {
         log.LogDebug('getHiddenFilterIndexes 4 filters='+JSON.stringify(filters));
         var invalidIndexes = [];
 
-        for(var i=0; i<filters.length; i++) {
+        var startIndex = GetNumberOfBGFiltersByType(context, 'global'); 
+
+        for(var i=startIndex; i<filters.length; i++) {
             if(!activeQids.hasOwnProperty(filters[i])) {
                 invalidIndexes.push(i+1);
             }
         }
-        log.LogDebug('getHiddenFilterIndexes 5');
+        log.LogDebug('getHiddenFilterIndexes 5 invalidIndexes='+invalidIndexes);
 
         return invalidIndexes;
 
