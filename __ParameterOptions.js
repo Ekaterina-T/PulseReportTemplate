@@ -36,7 +36,7 @@ class ParameterOptions {
     static private function generateResourceObjectForFilterPanelParameter(context, parameterId) {
 
         var resourceInfo = {};
-        var filterList = Filters.GetFullConfigFilterList(context);
+        var filterList = Filters.GetFilterQuestionsListByType(context);//GetFullConfigFilterList(context);
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';

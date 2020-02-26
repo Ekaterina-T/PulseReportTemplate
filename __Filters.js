@@ -1,6 +1,37 @@
 class Filters {
 
     /**
+     *
+     */
+    static function getFilterParameterType(context) {
+        return !!context.pageSpecific ? 'pageSpecific' : 'global';
+    }
+
+
+    /**
+     *
+     */
+    static function GetFilterQuestionsListByType(context, type) {
+
+        var bgLevelQids = [];
+        var surveyLevelQids = [];
+        var filterType = !type ? getFilterParameterType(context) : type;
+
+        if(filterType === 'pageSpecific') {
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            bgLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters');
+            surveyLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData');
+        } else {
+            bgLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
+            surveyLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
+            //PulseProgramUtil.excludeItemsWithoutData(context, surveyLevelQids);
+        }
+
+        return bgLevelQids.concat(surveyLevelQids);
+    }
+
+    //============================================================================
+    /**
      * Get the list of all filters defined on the survey level based on survey data variables
      * @param {object} context object {state: state, report: report, log: log}
      * @param {boolean} includeNotAnsweredQid - flag, needed run filter hide script
