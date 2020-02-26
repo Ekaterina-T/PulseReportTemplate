@@ -132,6 +132,14 @@ class Filters {
         return;
     }
 
+    /**
+     * 
+     */
+    static function getVisibleFilterNumbers(context) {
+
+
+    }
+
     //================================ FILTER PANEL EXPR START ====================================
 
     /**
