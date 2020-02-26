@@ -113,9 +113,7 @@ class Filters {
 
         var log = context.log;
         var parameter = context.parameter;
-        var filterList = GetFilterQuestionsListByType(context)
-        //log.LogDebug('paramNum: '+paramNum)
-        //log.LogDebug('pop scr l b o: '+JSON.stringify(filterList))
+        var filterList = GetFilterQuestionsListByType(context);
 
         // no question for this parameter placeholder
         if (filterList.length < paramNum) {
@@ -123,7 +121,6 @@ class Filters {
         }
 
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum - 1]);
-        //log.LogDebug(answers.length)
 
         for (var i = 0; i < answers.length; i++) {
             var val = new ParameterValueResponse();
@@ -136,6 +133,32 @@ class Filters {
     }
 
     //============================================================================
+
+    /**
+     * Reset filter parameters.
+     * @param {object} context object {state: state, report: report, log: log}
+     */
+    static function ResetAllFilters(context) {
+
+        var log = context.log;
+        var filterNames = [];
+        var i;
+
+        var filterSurveyLevelParameters = GetFilterQuestionsListByType(context, 'global');
+        for (i = 0; i < filterSurveyLevelParameters.length; i++) {
+            filterNames.push('p_ScriptedFilterPanelParameter' + (i + 1));
+        }
+
+        //hardcoded because pages may have different amount of page specific filters
+        var maxNumberOfPageSpecificFilters = 10;
+        for (i = 0; i < maxNumberOfPageSpecificFilters; i++) {
+            filterNames.push('p_ScriptedPageFilterPanelParam' + (i + 1));
+        }
+
+        ParamUtil.ResetParameters(context, filterNames);
+        return;
+    }
+
     /**
      * Get the list of all filters defined on the survey level based on survey data variables
      * @param {object} context object {state: state, report: report, log: log}
@@ -252,7 +275,7 @@ class Filters {
      * Reset filter parameters.
      * @param {object} context object {state: state, report: report, log: log}
      */
-    static function ResetAllFilters(context) {
+    /*static function ResetAllFilters(context) {
 
         var log = context.log;
         var filterNames = [];
@@ -269,35 +292,6 @@ class Filters {
         }
 
         ParamUtil.ResetParameters(context, filterNames);
-        return;
-    }
-
-    /**
-     * Populate filter parameters.
-     * @param {object} context object {state: state, report: report, log: log}
-     * @param {number} paramNum number of filter
-     */
-    /*static function populateScriptedFilterByOrder(context, paramNum) {
-
-        var log = context.log;
-        var parameter = context.parameter;
-        var filterList = GetFilterListByType(context);
-
-        // no question for this parameter placeholder
-        if (filterList.length < paramNum) {
-            return;
-        }
-
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum - 1]);
-
-        for (var i = 0; i < answers.length; i++) {
-
-            var val = new ParameterValueResponse();
-            val.StringValue = answers[i].Text;
-            val.StringKeyValue = answers[i].Precode;
-            parameter.Items.Add(val);
-        }
-
         return;
     }*/
 
