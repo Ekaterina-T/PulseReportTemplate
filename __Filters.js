@@ -114,8 +114,8 @@ class Filters {
         var log = context.log;
         var parameter = context.parameter;
         var filterList = GetFilterQuestionsListByType(context)
-        log.LogDebug('paramNum: '+paramNum)
-        log.LogDebug('pop scr l b o: '+JSON.stringify(filterList))
+        //log.LogDebug('paramNum: '+paramNum)
+        //log.LogDebug('pop scr l b o: '+JSON.stringify(filterList))
 
         // no question for this parameter placeholder
         if (filterList.length < paramNum) {
@@ -123,7 +123,7 @@ class Filters {
         }
 
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum - 1]);
-        log.LogDebug(answers.length)
+        //log.LogDebug(answers.length)
 
         for (var i = 0; i < answers.length; i++) {
             var val = new ParameterValueResponse();
