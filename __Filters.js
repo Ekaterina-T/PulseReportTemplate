@@ -474,12 +474,12 @@ class Filters {
 
         var log = context.log;
         var pidFromPageContext = context.pageContext.Items['p_projectSelector'];
+        var ds = DataSourceUtil.getProgramDsId(context);
 
-        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || getProgramDsId(context) === getPageDsId(context)) {
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context) || ds === DataSourceUtil.getPageDsId(context)) {
             return '';
         }
         
-        var ds = DataSourceUtil.getProgramDsId(context);
 
         if (pidFromPageContext) {
             return ds+':source_projectid = "' + pidFromPageContext + '"';
