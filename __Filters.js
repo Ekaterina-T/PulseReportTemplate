@@ -193,19 +193,20 @@ class Filters {
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
+        var startIndex = 0;
+        var lastIndex = filterList.length;
+
         if(pageId === 'Page_Response_Rate' || varType === 'background') { //apply only bg based filters
-            var numberOfFiltersToApply = GetNumberOfBGFiltersByType(context, filterType);
-            filterList = filterList.slice(0,numberOfFiltersToApply);
+            lastIndex = GetNumberOfBGFiltersByType(context, filterType)-1;
         }
 
         if(varType === 'survey') {
-            var numberOfFiltersToExclude = GetNumberOfBGFiltersByType(context, filterType); 
-            filterList = filterList.slice(numberOfFiltersToExclude, filterList.length);
+            startIndex = GetNumberOfBGFiltersByType(context, filterType); 
         }
 
         var filterExpr =  [];
 
-        for(var i=0; i<filterList.length; i++) {
+        for(var i=startIndex; i<lastIndex; i++) {
             var indExpr = GetIndividualFilterExpression(context, filterPrefix+''+(i+1), filterList[i]);
             if(indExpr) {
                 filterExpr.push(indExpr);
