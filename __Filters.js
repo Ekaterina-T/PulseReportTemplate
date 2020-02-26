@@ -104,6 +104,37 @@ class Filters {
         return '';
     }
 
+    /**
+     * Populate filter parameters.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {number} paramNum number of filter
+     */
+    static function populateScriptedFilterByOrder(context, paramNum) {
+
+        var log = context.log;
+        var parameter = context.parameter;
+        var filterList = GetFilterQuestionsListByType(context)
+        log.LogDebug('paramNum: '+paramNum)
+        log.LogDebug('pop scr l b o: '+JSON.stringify(filterList))
+
+        // no question for this parameter placeholder
+        if (filterList.length < paramNum) {
+            return;
+        }
+
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, filterList[paramNum - 1]);
+        log.LogDebug(answers.length)
+
+        for (var i = 0; i < answers.length; i++) {
+            var val = new ParameterValueResponse();
+            val.StringValue = answers[i].Text;
+            val.StringKeyValue = answers[i].Precode;
+            parameter.Items.Add(val);
+        }
+
+        return;
+    }
+
     //============================================================================
     /**
      * Get the list of all filters defined on the survey level based on survey data variables
@@ -246,7 +277,7 @@ class Filters {
      * @param {object} context object {state: state, report: report, log: log}
      * @param {number} paramNum number of filter
      */
-    static function populateScriptedFilterByOrder(context, paramNum) {
+    /*static function populateScriptedFilterByOrder(context, paramNum) {
 
         var log = context.log;
         var parameter = context.parameter;
@@ -268,72 +299,8 @@ class Filters {
         }
 
         return;
-    }
-
-    /**
-     * Hide filter placeholder if there's no filter question.
-     * @param {object} context object {state: state, report: report, pageContext: pageContext, log: log}
-     * @param {string} paramNum number of scripted filter
-     * @returns {boolean} indicates if filter exists
-     */
-    /*static function hideScriptedFilterByOrder_old(context, paramNum) {
-
-        var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var pageHasSpecificFilters = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
-
-        //page level parameter on page without specific filters
-        if(!!context.pageSpecific && !pageHasSpecificFilters) {
-            return true;
-        }
-
-        //survey level parameter on page with specific filters
-        if(!context.pageSpecific && pageHasSpecificFilters) {
-            return true;
-        }
-       
-        var filterList = GetFilterListByType(context);//global or page specific
-
-        //survey level parameter on page with specific filters
-        if(!context.pageSpecific && !pageHasSpecificFilters) {
-
-            var numberOfBackgroundDataFilters = GetBackgroundDataFilterList(context).length;
-            var CurrentPageId = PageUtil.getCurrentPageIdInConfig(context);
-
-            // paramNum should be less than number of filter components on all pages
-            // paramNum should be less than number of filters based on BG vars on Response Rate page
-            if (paramNum > filterList.length || (CurrentPageId === 'Page_Response_Rate' && paramNum > numberOfBackgroundDataFilters)) {
-                return true; // hide
-            }
-            return false;
-        }
-
-        //page level parameter on page with specific filters
-        if(!!context.pageSpecific && pageHasSpecificFilters) {
-            return paramNum > filterList.length;
-        }
-
-        throw new Error('Fiters.hideScriptedFilterByOrder: unknown combination of filter type and page');
-
     }*/
 
-    /**
-     * Get scripted filter title.
-     * @param {object} context object {state: state, report: report, log: log}
-     * @param {string} paramNum number of scripted filter
-     * @returns {string} question title
-     */
-    /*static function getScriptedFilterNameByOrder_old(context, paramNum) {
-
-        var log = context.log;
-        var filterList = GetFilterListByType(context);
-
-        if (filterList.length >= paramNum) {
-            return QuestionUtil.getQuestionTitle(context, filterList[paramNum - 1]);
-        }
-
-        return '';
-    }*/
 
     /**
      * get filter panel prefix by filtersType
