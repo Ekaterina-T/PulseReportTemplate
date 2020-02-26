@@ -40,10 +40,10 @@ class ParameterOptions {
         var paramNumber = parseInt(parameterId.substr('p_ScriptedFilterPanelParameter'.length, parameterId.length));
 
         resourceInfo.type = 'QuestionId';
-        resourceInfo.locationType = 'FilterPanel';
+        resourceInfo.locationType = 'QuestionId';
 
         if (paramNumber <= filterList.length) {
-            resourceInfo.FilterQid = filterList[paramNumber - 1];
+            resourceInfo.ID = filterList[paramNumber - 1];
         }
 
         return resourceInfo;
@@ -100,9 +100,6 @@ class ParameterOptions {
             return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
         }
 
-        if (parameterInfo.locationType === 'FilterPanel') {
-            return parameterInfo.FilterQid;
-        }
 
         if (parameterInfo.locationType === 'QuestionCategory') {
             var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
