@@ -1,37 +1,5 @@
 class DataSourceUtil {
 
-    /**
-      * Get current ds id from Config library on basis of p_SurveyType.
-      * Return add-in source from the page context if the source is defined on the page level.
-      * If the page config doesn't have any custom source, the report uses the global one defined on the survey level.
-      * @param {object} context object {state: state, report: report, log: log}
-      * @returns {string} surveyType : ds0
-      */
-    static function getDsId (context) {
-        
-        var state = context.state;
-        var log = context.log;
-        var pageContext = context.pageContext;
-
-        //ds is defined for particular element (table for instance)
-        if(context['Source']) { 
-            return context['Source'];
-        }
-        
-        //ds is defined page-wide
-        if (context.isCustomSource && !!pageContext.Items['Source']) {
-            return pageContext.Items['Source'];
-        }
-        
-        //ds is defined report-wide
-        if (!state.Parameters.IsNull('p_SurveyType')) {
-            return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey
-        }
-
-        return getDefaultDSFromConfig(context);
-    }
-
-
     /*
      * Since data source can be hidden (isHidden property is true),
      * need to define 1st not hidden ds as default ds.
@@ -55,15 +23,73 @@ class DataSourceUtil {
         return surveys[i].Source;
     }
 
-    /*
+    /**
+      * Get current ds id from Config library on basis of p_SurveyType.
+      * @param {object} context object {state: state, report: report, log: log}
+      * @returns {string} surveyType : ds0
+      */
+     static function getProgramDsId(context) {
+        
+        var state = context.state;
+        var log = context.log;
+        
+        //ds is defined report-wide
+        if (!state.Parameters.IsNull('p_SurveyType')) {
+            return state.Parameters.GetDataSourceNodeId("p_SurveyType"); // selected survey/program
+        }
+
+        return getDefaultDSFromConfig(context);
+    }
+
+    /**
+      * Get current page's ds id.
+      * In general case matches program ds, but in some cases can dbe different (for built-in Action Planner for instance)
+      * @param {object} context object {state: state, report: report, log: log, pageContext: pageContext}
+      * @returns {string} surveyType : ds5
+      */
+     static function getPageDsId(context) {
+        
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        //ds is defined page-wide
+        if (PageUtil.PageHasSpefcificDS(context)) {
+            return pageContext.Items['PageSource'];
+        }
+
+        return getProgramDsId(context);
+    }
+
+    /**
+      * Gets ds id for a component, i.e the one to get reportal Project instance 
+      * that contains project name, all questions and their information.
+      * This is the ds to be used for HeaderSegments and HeaderCategorizations
+      * @param {object} context object {state: state, report: report, log: log}getPageDsId(context)
+      * @returns {string} surveyType : ds0
+      */
+    static function getDsId(context) {
+        
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        //ds is defined for particular element (table for instance)
+        if(context['ComponentSource']) { 
+            return context['ComponentSource'];
+        }   
+
+        //else return page ds id which in turn will go to program ds id if there's no specific page ds specified
+        return getPageDsId(context);
+    }
+
+    /**
      * Get current Project from Config library on basis of p_SurveyType.
      * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} dsId - optional, if provided project for this dsId is returned
      * @returns {object}
      */
-    static function getProject (context) {
-
+    static function getProject (context, dsId) {
         var report = context.report;
-        return report.DataSource.GetProject(getDsId(context));
+        return !dsId ? report.DataSource.GetProject(getDsId(context)) : report.DataSource.GetProject(dsId);
     }
 
     /*
@@ -73,9 +99,8 @@ class DataSourceUtil {
      */
     static function getSurveyConfig (context) {
 
-        var state = context.state;
         var log = context.log;
-        var surveyType = getDsId(context);
+        var surveyType = getProgramDsId(context);
         var surveys = Config.Surveys;
         var i = 0;
 
@@ -83,12 +108,11 @@ class DataSourceUtil {
         while (i<surveys.length && surveys[i].Source != surveyType) {
             i++;
         }
-
+        
         return surveys[i];
     }
 
-
-    /*
+    /**
      * Get property value for the current project.
      * @param {object} context object with two mandotary fields: state and report
      * @param {string} propertyName
@@ -96,15 +120,11 @@ class DataSourceUtil {
      */
     static function getSurveyPropertyValueFromConfig (context, propertyName) {
 
-        var state = context.state;
         var log = context.log;
-
-        context.isCustomSource = false;  // for survey properties we always use the global source, so reset the custom source property for safety reasons
-
         var surveyConfig = getSurveyConfig(context);
 
         if(surveyConfig[propertyName] === undefined) {
-            throw new Error('DataSourceUtil.getSurveyPropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for '+getDsId (context));
+            throw new Error('DataSourceUtil.getSurveyPropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for '+ getProgramDsId(context));
         }
 
         if(surveyConfig[propertyName]) {
@@ -114,15 +134,15 @@ class DataSourceUtil {
         return null;
     }
 
-    /*
+    /**
      * Get property value for the current page in the current project.
      * @param {object} context object with two mandotary fields: state and report
      * @param {string} pageId - should match config page property
      * @param {string} propertyName
+     * @param {boolean} isMandatory - throw error if prop is not found or not
      * @returns {string} property value
      */
-
-    static function getPagePropertyValueFromConfig (context, pageId, propertyName) {
+    static function getPagePropertyValueFromConfig(context, pageId, propertyName, isMandatory) {
 
         var state = context.state;
         var log = context.log;
@@ -132,14 +152,18 @@ class DataSourceUtil {
             pageId = 'Page_'+pageId; // transfrmation to match Config naming convence
         }
 
-        if(surveyConfig[pageId] === undefined || !surveyConfig[pageId].hasOwnProperty(propertyName)) {
-            throw new Error('DataSourceUtil.getPagePropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for page "'+pageId+'", '+getDsId (context));
+        if(surveyConfig.hasOwnProperty(pageId) && surveyConfig[pageId].hasOwnProperty(propertyName)) {
+            return surveyConfig[pageId][propertyName];
         }
 
-        return surveyConfig[pageId][propertyName];
+        //property is not found but it's mandatory for that case
+        if(isMandatory) {
+            throw new Error('DataSourceUtil.getPagePropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for page "'+pageId+'", '+ getProgramDsId(context));
+        }
+
+        return null;
 
     }
-
 
     /*
      * Get property value from config. Performs double check: if a property exists on a page level, get it from the page config.
@@ -149,20 +173,13 @@ class DataSourceUtil {
      * @param {string} propertyName
      * @returns {string} property value
      */
-
     static function getPropertyValueFromConfig (context, pageId, propertyName) {
 
-        var state = context.state;
         var log = context.log;
-        var value;
-
-        try {
-            value = getPagePropertyValueFromConfig (context, pageId, propertyName);
-        }
-        catch (e) {};
+        var value = getPagePropertyValueFromConfig (context, pageId, propertyName, false);
 
         // if the property isn't defined on the page level, grab it from the survey config
-        if(pageId === null || !value) {
+        if(!value) {
             value = getSurveyPropertyValueFromConfig (context, propertyName);
         }
 
