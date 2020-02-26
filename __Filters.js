@@ -32,6 +32,50 @@ class Filters {
         return bgLevelQids.concat(surveyLevelQids);
     }
 
+    /**
+     * Hide filter placeholder if there's no filter question.
+     * @param {object} context object {state: state, report: report, pageContext: pageContext, log: log}
+     * @param {string} paramNum number of scripted filter
+     * @returns {boolean} indicates if filter exists
+     */
+    static function hideScriptedFilterByOrder(context, paramNum) {
+
+        var log = context.log;
+        var pageHasSpecificFilters = PageUtil.PageHasSpefcificFilters(context);
+        var isPageSpecificParameter = !!context.pageSpecific;
+        var filterList = [];
+
+        if(!isPageSpecificParameter) {
+
+            if(pageHasSpecificFilters) {
+                return true;
+            }
+
+            filterList = GetFilterQuestionsListByType(context, 'global');
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            var numberOfBGFilters = GetNumberOfBGFiltersByType(context, 'global');
+
+            // paramNum should be less than number of filter components on all pages
+            // paramNum should be less than number of filters based on BG vars on Response Rate page
+            if (paramNum > filterList.length || (pageId === 'Page_Response_Rate' && paramNum > numberOfBGFilters)) {
+                return true; // hide
+            }
+            return false;
+        }
+
+        if(isPageSpecificParameter) {
+
+            if(!pageHasSpecificFilters) {
+                return true;
+            }
+            filterList = GetFilterQuestionsListByType(context, 'pageSpecific');
+            return paramNum > filterList.length;
+        }
+
+        throw new Error('Fiters.hideScriptedFilterByOrder: unknown combination of filter type and page');
+
+    }
+
 
     /**
      * Get scripted filter title.
@@ -43,8 +87,6 @@ class Filters {
 
         var log = context.log;
         var filterList = GetFilterQuestionsListByType(context);
-
-        log.LogDebug(JSON.stringify(filterList));
 
         if (paramNum <= filterList.length) {
             return QuestionUtil.getQuestionTitle(context, filterList[paramNum - 1]);
@@ -225,7 +267,7 @@ class Filters {
      * @param {string} paramNum number of scripted filter
      * @returns {boolean} indicates if filter exists
      */
-    static function hideScriptedFilterByOrder(context, paramNum) {
+    /*static function hideScriptedFilterByOrder_old(context, paramNum) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -264,7 +306,7 @@ class Filters {
 
         throw new Error('Fiters.hideScriptedFilterByOrder: unknown combination of filter type and page');
 
-    }
+    }*/
 
     /**
      * Get scripted filter title.
