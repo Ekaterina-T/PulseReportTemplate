@@ -148,16 +148,10 @@ class PageUtil {
     static function PageHasSpefcificFilters(context) {
 
         var log = context.log;
-        log.LogDebug('PageHasSpefcificFilters 1')
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        log.LogDebug('PageHasSpefcificFilters 2')
         var bgLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
-        log.LogDebug('PageHasSpefcificFilters 3')
         var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
-        log.LogDebug('PageHasSpefcificFilters 4')
-        var union = bgLevel.concat(surveyLevel);
-        log.LogDebug('PageHasSpefcificFilters 4')
-        log.LogDebug(JSON.stringify(union))
+        var union = bgLevel || surveyLevel ? bgLevel.concat(surveyLevel) : null;
 
         return union && union.length>0;
     }
