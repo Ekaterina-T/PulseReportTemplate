@@ -7,7 +7,6 @@ class Filters {
         return !!context.pageSpecific ? 'pageSpecific' : 'global';
     }
 
-
     /**
      *
      */
@@ -31,6 +30,27 @@ class Filters {
         }
 
         return bgLevelQids.concat(surveyLevelQids);
+    }
+
+
+    /**
+     * Get scripted filter title.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} paramNum number of scripted filter
+     * @returns {string} question title
+     */
+    static function getScriptedFilterNameByOrder(context, paramNum) {
+
+        var log = context.log;
+        var filterList = GetFilterQuestionsListByType(context);
+
+        log.LogDebug(JSON.stringify(filterList));
+
+        if (paramNum <= filterList.length) {
+            return QuestionUtil.getQuestionTitle(context, filterList[paramNum - 1]);
+        }
+
+        return '';
     }
 
     //============================================================================
@@ -252,7 +272,7 @@ class Filters {
      * @param {string} paramNum number of scripted filter
      * @returns {string} question title
      */
-    static function getScriptedFilterNameByOrder(context, paramNum) {
+    /*static function getScriptedFilterNameByOrder_old(context, paramNum) {
 
         var log = context.log;
         var filterList = GetFilterListByType(context);
@@ -262,7 +282,7 @@ class Filters {
         }
 
         return '';
-    }
+    }*/
 
     /**
      * get filter panel prefix by filtersType
