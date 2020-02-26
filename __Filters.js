@@ -186,7 +186,7 @@ class Filters {
      */
     static function GetFilterPanelExpression(context, explicitFilterType, varType) {
 
-        var logg = context.log;
+        var log = context.log;
         var filterType = explicitFilterType ? explicitFilterType : getFilterParameterType(context);
         log.LogDebug('filterType='+filterType)
         var filterList = GetFilterQuestionsListByType(context, filterType); //global or page specifics
