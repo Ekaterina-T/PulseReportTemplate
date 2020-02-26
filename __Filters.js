@@ -201,7 +201,7 @@ class Filters {
         var filterExpr =  [];
 
         for(var i=0; i<filterList.length; i++) {
-            var indExpr = GetIndividualFilterExpression(context, filterPrefix+'_'+(i+1), filterList[i]);
+            var indExpr = GetIndividualFilterExpression(context, filterPrefix+''+(i+1), filterList[i]);
             if(indExpr) {
                 filterExpr.push(indExpr);
             }
