@@ -17,12 +17,17 @@ class PageUtil {
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
-        try {
-            var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
-            pageContext.Items.Add('Source', add_in_source);
-        }
-        catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
+        var pageId = getCurrentPageIdInConfig(context);
 
+        //save page source to page context
+        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
+        pageContext.Items.Add('PageSource', pageSource);
+
+        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
+        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
+        pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
+        
+        
         ParamUtil.Initialise(context); // initialise parameters
 
         // if in current DS a page shouldn't be visible, than redirect to default page
