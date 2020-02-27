@@ -40,7 +40,7 @@ public class SystemConfig {
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionAllocation':   { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'Breakdown'},
         'p_EndUserSelection':   { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
-        'p_SwitchHitlistMode':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'SwitchHitlistMode'},
+        'p_ActionsHitlistSettings':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ActionsHitlistSettings'},
         'p_OnlyOwnActions':     { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ShowOnlyOwnActions'},
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
