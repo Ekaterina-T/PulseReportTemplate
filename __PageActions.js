@@ -559,7 +559,7 @@ class PageActions {
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function tableBreakdown_Render (context) {
+   /* static function tableBreakdown_Render (context) {
 
         var log = context.log;
         var table = context.table;
@@ -576,7 +576,7 @@ class PageActions {
         table.RemoveEmptyHeaders.Columns = false;
         table.Caching.Enabled = false;
 
-    }
+    }*/
 
     static function tableActionCost_Render(context) {
 
@@ -1000,5 +1000,29 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
             Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }
+    }
+	
+/**
+     * @memberof PageActions
+     * @function tableTrend_Render
+     * @description function to render the trend table
+     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function tablesBreakdown_Render (context, selectedCode) {
+
+        var log = context.log;
+        var table = context.table;
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCode);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
+
+        hq.Distributions.Enabled = true;
+        hq.Distributions.HorizontalPercents = true;
+        hq.ShowTotals = false;
+        table.ColumnHeaders.Add(hq);
+
+        // global table settings
+        table.RemoveEmptyHeaders.Columns = false;
+        table.Caching.Enabled = false;
+
     }
 }
