@@ -108,9 +108,9 @@ class StyleAndJavaScriptUtil {
         }
 
         if (pageId === 'Actions') {
-            //properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
-            //properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
-            //properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
+            properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
+            properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
+            properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
         }
 
         globalVarScript.push('<script>');
