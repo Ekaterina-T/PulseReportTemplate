@@ -120,7 +120,7 @@ class PageCategorical {
             var newAnswerCount = QuestionUtil.getQuestionAnswers(context, Qs[i]);
             var answerCount = Int32.Parse(newAnswerCount.length);
 
-            if (QuestionUtil.hasAnswer (context, Qs[i], naCode)) {
+            if (QuestionUtil.hasAnswer(context, Qs[i], naCode)) {
                 answerCount--;
             }
 
@@ -138,6 +138,7 @@ class PageCategorical {
                 dummyHeader.SegmentType = HeaderSegmentType.Expression;
                 dummyHeader.Label = new Label(context.report.CurrentLanguage, QuestionUtil.getQuestionTitle(context, Qs[i]));
                 dummyHeader.HideData = false;
+                row.HideHeader = false;
                 row.SubHeaders.Add(dummyHeader);
             }
 
@@ -148,6 +149,7 @@ class PageCategorical {
                 row.Sorting.Position = 1;
                 row.Sorting.TopN = System.Math.Min(topN, answerCount);
             }
+
             TableUtil.maskOutNA(context, row);
             table.RowHeaders.Add(row);
         }
