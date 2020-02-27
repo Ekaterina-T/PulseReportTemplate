@@ -41,19 +41,19 @@ class PageActions {
      * @description function to render the hitlist
      * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function hitlistActions_Render(context){
+    /*static function hitlistActions_Render(context){
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
         var state = context.state;
 
-        /* retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) */
+        // retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
 
 
 
-        /* add columns to Hiltlist using custom source */
+        // add columns to Hiltlist using custom source 
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }
@@ -72,7 +72,7 @@ class PageActions {
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }
 
-    }
+    }*/
 
 
     /**
@@ -972,7 +972,6 @@ static function inactiveUsersList_Render(context, tableName){
 }
 static function hitlistsActions_Render(context, isEditDeleteMode){
 
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
         var state = context.state;
@@ -984,7 +983,6 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
 
 
         /* add columns to Hiltlist using custom source */
-        context.isCustomSource = true;
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }
@@ -994,15 +992,13 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         }
 
         if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
-            throw new Error('DataSourceUtil.hitlistActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getDsId (context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
+            throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
         }
 
         if (isEditDeleteMode) {
 
             Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
-
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }
-
     }
 }
