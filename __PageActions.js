@@ -42,36 +42,26 @@ class PageActions {
      * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     /*static function hitlistActions_Render(context){
-
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
         var state = context.state;
-
         // retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-
-
-
         // add columns to Hiltlist using custom source 
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
         }
-
         for (var i=0; i<tagCols.length; i++) {
             Hitlist.AddColumn(context, tagCols[i], {sortable: false, searchable: false});
         }
-
         if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
             throw new Error('DataSourceUtil.hitlistActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
         }
-
         if (!state.Parameters.IsNull("p_SwitchHitlistMode")) {
-
             Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }
-
     }*/
 
 
@@ -262,26 +252,21 @@ class PageActions {
      */
 
    /* static function tableInactiveUsersHidden_Render(context) {
-
         var table = context.table;
         var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-
         var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
         var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
         hqActionOwner.ShowTotals = true;
         table.RowHeaders.Add(hqActionOwner);
-
         var qeActionCreater: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'userId');
         var hqActionCreater: HeaderQuestion = new HeaderQuestion(qeActionCreater);
         hqActionCreater.ShowTotals = true;
         table.ColumnHeaders.Add(hqActionCreater);
-
         table.RemoveEmptyHeaders.Columns = true;
         table.RemoveEmptyHeaders.Rows = false;
         table.Caching.Enabled = false;
-
     }*/
 
     /**
@@ -291,13 +276,11 @@ class PageActions {
      * @param {Object} context - {confirmit: confirmit, state: state, report: report, log: log, user:user, pageContext: pageContext, text: text}
      */
     /*static function widgetInactiveUsers_Render(context) {
-
         var report = context.report;
         var actionOwners = report.TableUtils.GetRowHeaderCategoryIds('InactiveUsers_Hidden');
         var actionCreaters = report.TableUtils.GetColumnHeaderCategoryIds('InactiveUsers_Hidden');
         var actionOwnersNames = report.TableUtils.GetRowHeaderCategoryTitles('InactiveUsers_Hidden');
         var inactiveUsers = [];
-
         if (actionCreaters.length > 0) {
             for (var i=0; i<actionOwners.length-1; i++) {
                 var row = report.TableUtils.GetRowValues('InactiveUsers_Hidden', i+1);
@@ -560,22 +543,18 @@ class PageActions {
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
    /* static function tableBreakdown_Render (context) {
-
         var log = context.log;
         var table = context.table;
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
         var hq: HeaderQuestion = new HeaderQuestion(qe);
-
         hq.Distributions.Enabled = true;
         hq.Distributions.HorizontalPercents = true;
         hq.ShowTotals = false;
         table.ColumnHeaders.Add(hq);
-
         // global table settings
         table.RemoveEmptyHeaders.Columns = false;
         table.Caching.Enabled = false;
-
     }*/
 
     static function tableActionCost_Render(context) {
@@ -887,13 +866,14 @@ class PageActions {
     }
 
 
- static function inactiveUsersHiddenTable_Render(context){
+   static function inactiveUsersHiddenTable_Render(context){
 	var table = context.table;
 	var log = context.log;
 	
 	var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
 	var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+    context.isCustomSource = true;
 
     var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
     var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
@@ -909,20 +889,13 @@ class PageActions {
 	var hb : HeaderBase = new HeaderBase();
     hb.HideData = true;
 	hb.HideHeader = true;
-	
-	var waveFilter : HeaderSegment = new HeaderSegment();
-    waveFilter.Expression = Filters.getCurrentWaveExpression(context);
-    waveFilter.HideHeader = true;
-    waveFilter.HideData = true;
-
-    waveFilter.SubHeaders.Add(hb);
 
 	var hf : HeaderFormula = new HeaderFormula();
 	hf.HideHeader = true;
 	hf.Type = FormulaType.Expression;
 	hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
 
-	table.ColumnHeaders.Add(waveFilter);	
+	table.ColumnHeaders.Add(hb);	
 	table.ColumnHeaders.Add(hf);
 	
 	//table settings
