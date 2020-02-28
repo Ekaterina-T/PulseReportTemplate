@@ -657,7 +657,7 @@ class PageActions {
         var user = context.user;
         var text = context.text;
         var log = context.log;
-
+        var report = context.report;
 
         var userid = user.UserId;
 	var userRoles : String = user.Roles;
@@ -679,7 +679,8 @@ class PageActions {
         var currency = DataSourceUtil.getPagePropertyValueFromConfig (context, PageUtil.getCurrentPageIdInConfig(context), 'Currency');
 
         var link = '<a href="'+ actionLink + '?U=' + userid + (userRoles==""?'':('&role='+ userRoles)) + (hier==null?'':('&hier='+ hier)) + '&pid=' + pid + '&pname=' + pname +  '&isResponsibleVisible=' + isResponsibleVisible +
-            '&wave=' + wave +(dimensionId==null?'':('&dimensionId='+ dimensionId))  + (dimensionText==null?'':('&dimension='+ dimensionText)) + (statement==null?'':('&questionId=' + statement)) + (statementText==null?'':('&questionText=' + statementText)) + '&currency=' + currency +
+            '&wave=' + wave +(dimensionId==null?'':('&dimensionId='+ dimensionId))  + (dimensionText==null?'':('&dimension='+ dimensionText)) + (statement==null?'':('&questionId=' + statement)) + 
+	    (statementText==null?'':('&questionText=' + statementText)) + '&currency=' + currency + '&l='+ report.CurrentLanguage +
             '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';  
 	text.Output.Append(link);
     }
