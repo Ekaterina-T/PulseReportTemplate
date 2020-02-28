@@ -887,14 +887,13 @@ class PageActions {
     }
 
 
-   static function inactiveUsersHiddenTable_Render(context){
+ static function inactiveUsersHiddenTable_Render(context){
 	var table = context.table;
 	var log = context.log;
 	
 	var pageId = PageUtil.getCurrentPageIdInConfig(context);
     
 	var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-    context.isCustomSource = true;
 
     var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
     var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
@@ -910,13 +909,20 @@ class PageActions {
 	var hb : HeaderBase = new HeaderBase();
     hb.HideData = true;
 	hb.HideHeader = true;
+	
+	var waveFilter : HeaderSegment = new HeaderSegment();
+    waveFilter.Expression = Filters.getCurrentWaveExpression(context);
+    waveFilter.HideHeader = true;
+    waveFilter.HideData = true;
+
+    waveFilter.SubHeaders.Add(hb);
 
 	var hf : HeaderFormula = new HeaderFormula();
 	hf.HideHeader = true;
 	hf.Type = FormulaType.Expression;
 	hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
 
-	table.ColumnHeaders.Add(hb);	
+	table.ColumnHeaders.Add(waveFilter);	
 	table.ColumnHeaders.Add(hf);
 	
 	//table settings
