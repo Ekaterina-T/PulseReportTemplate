@@ -678,8 +678,8 @@ class PageActions {
         var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context,'Delegation');
         var currency = DataSourceUtil.getPagePropertyValueFromConfig (context, PageUtil.getCurrentPageIdInConfig(context), 'Currency');
 
-        var link = '<a href="'+ actionLink + '?U=' + userid + '&role=' + userRoles==""?"''":userRoles + '&hier=' + (hier==null?"''":hier) + '&pid=' + pid + '&pname=' + pname +  '&isResponsibleVisible=' + isResponsibleVisible +
-            '&wave=' + wave +'&dimensionId='+ (dimensionId==null?"''":dimensionId) +'&dimension=' + (dimensionText==null?"''":dimensionText) + '&questionId=' + (statement==null?"''":statement) +'&questionText=' + (statementText==null?"''":statementText) + '&currency=' + currency +
+        var link = '<a href="'+ actionLink + '?U=' + userid + '&role=' + userRoles==""?'""':userRoles + '&hier=' + (hier==null?'""':hier) + '&pid=' + pid + '&pname=' + pname +  '&isResponsibleVisible=' + isResponsibleVisible +
+            '&wave=' + wave +'&dimensionId='+ (dimensionId==null?'""':dimensionId) +'&dimension=' + (dimensionText==null?'""':dimensionText) + '&questionId=' + (statement==null?'""':statement) +'&questionText=' + (statementText==null?'""':statementText) + '&currency=' + currency +
             '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';  
 	text.Output.Append(link);
     }
