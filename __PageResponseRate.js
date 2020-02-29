@@ -172,7 +172,6 @@ class PageResponseRate {
     static function getResponseRateSummary (context) {
 
         var report = context.report;
-        var state = context.state;
         var log = context.log;
 
         var cell1 : Datapoint = report.TableUtils.GetCellValue("Response_Rate:ResponseRate",1,1);
@@ -198,8 +197,6 @@ class PageResponseRate {
      */
     static function tableNumberOfResponses_Render(context){
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
@@ -241,8 +238,6 @@ class PageResponseRate {
      */
     static function tableByTime_Render (context) {
 
-        var report = context.report;
-        var state = context.state;
         var log = context.log;
         var table = context.table;
 
@@ -363,7 +358,12 @@ class PageResponseRate {
      * 
      */
     static function ifResponseRateInfoNeededOnPage(context) {
-        return PageUtil.PageHasSpefcificDS(context);
+
+        var invite = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Invitation');
+        var response = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+        var mailingDate = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'MailingDateQuestion');
+
+        return PageUtil.PageHasSpefcificDS(context) || !invite || !response || !mailingDate;
     }
 
 }

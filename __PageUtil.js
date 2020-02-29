@@ -20,11 +20,11 @@ class PageUtil {
         var pageId = getCurrentPageIdInConfig(context);
 
         //save page source to page context
-        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
+        var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', true);
         pageContext.Items.Add('PageSource', pageSource);
 
-        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
-        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
+        var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', true);
+        var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', true);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
         
@@ -149,8 +149,8 @@ class PageUtil {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var bgLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
-        var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
+        var bgLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', true);
+        var surveyLevel = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', true);
         var union = bgLevel || surveyLevel ? bgLevel.concat(surveyLevel) : null;
 
         return union && union.length>0;

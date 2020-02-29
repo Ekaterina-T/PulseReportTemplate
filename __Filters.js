@@ -12,20 +12,21 @@ class Filters {
      */
     static function GetFilterQuestionsListByType(context, explicitFilterType) {
 
+        var log = context.log;
         var bgLevelQids = [];
         var surveyLevelQids = [];
         var filterType = !explicitFilterType ? getFilterParameterType(context) : explicitFilterType;
 
         if(filterType === 'pageSpecific') {
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            bgLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters');
-            surveyLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData');
+            bgLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', true);
+            surveyLevelQids = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', true);
         } else {
             bgLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters');
             surveyLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
         }
 
-        return bgLevelQids.concat(surveyLevelQids);
+        return bgLevelQids && surveyLevelQids ? bgLevelQids.concat(surveyLevelQids) : [];
     }
 
     /**
@@ -37,7 +38,7 @@ class Filters {
             return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'Filters').length;
         } else if (filterType === 'pageSpecific') {
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters').length;
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', true).length;
         }
     }
 
@@ -116,7 +117,7 @@ class Filters {
         var filterList = GetFilterQuestionsListByType(context);
 
         // no question for this parameter placeholder
-        if (filterList.length < paramNum) {
+        if (filterList && filterList.length < paramNum) {
             return;
         }
 

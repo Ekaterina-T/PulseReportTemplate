@@ -142,7 +142,7 @@ class DataSourceUtil {
      * @param {boolean} isMandatory - throw error if prop is not found or not
      * @returns {string} property value
      */
-    static function getPagePropertyValueFromConfig(context, pageId, propertyName, isMandatory) {
+    static function getPagePropertyValueFromConfig(context, pageId, propertyName, notMandatory) {
 
         var state = context.state;
         var log = context.log;
@@ -157,7 +157,7 @@ class DataSourceUtil {
         }
 
         //property is not found but it's mandatory for that case
-        if(isMandatory) {
+        if(!notMandatory) {
             throw new Error('DataSourceUtil.getPagePropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for page "'+pageId+'", '+ getProgramDsId(context));
         }
 
@@ -176,7 +176,7 @@ class DataSourceUtil {
     static function getPropertyValueFromConfig (context, pageId, propertyName) {
 
         var log = context.log;
-        var value = getPagePropertyValueFromConfig (context, pageId, propertyName, false);
+        var value = getPagePropertyValueFromConfig (context, pageId, propertyName, true);
 
         // if the property isn't defined on the page level, grab it from the survey config
         if(!value) {
@@ -194,13 +194,20 @@ class DataSourceUtil {
     static function ifSingleSurveyTypeUsed (context) {
 
         var surveys = Config.Surveys;
-        var ifHide = false;
+        var numOfVisibleSurveys = 0;
 
         if(surveys.length == 1) {
-            ifHide = true;
+            return true;
         }
 
-        return ifHide;
+        for(var i=0; i<surveys.length; i++) {
+            if(surveys[i].isHidden) {
+                numOfVisibleSurveys++;
+            }
+
+        }
+
+        return numOfVisibleSurveys>1;
     }
 
     /*

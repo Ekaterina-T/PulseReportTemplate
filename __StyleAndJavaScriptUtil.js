@@ -70,16 +70,16 @@ class StyleAndJavaScriptUtil {
 
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
 
-        if (pageId === 'Comments') {
+        if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
             properties.push('score_columns: ' + JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_ScoreQs')));
         }
 
-        if (pageId === 'KPI') {
+        if (pageId === 'KPI' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'isHidden')) {
             properties.push('gaugeData: ' + JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
-        if (pageId === 'Results') {
+        if (pageId === 'Results' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'isHidden')) {
             var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
 
@@ -98,16 +98,16 @@ class StyleAndJavaScriptUtil {
             properties.push('isDimensionsTabVisible: ' + isDimensionsVisible);
         }
 
-        if (pageId === 'Categorical_') {
+        if (pageId === 'Categorical_' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Categorical_', 'isHidden')) {
             properties.push('pieData: ' + JSON.stringify(PageCategorical.getPieCollection(context, 'jsutil')));
             properties.push('pieColors: ' + JSON.stringify(Config.pieColors));
         }
 
-        if (pageId === 'CategoricalDrilldown') {
+        if (pageId === 'CategoricalDrilldown' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_CategoricalDrilldown', 'isHidden')) {
             properties.push('isProjectSelectorDisabled: ' + true);
         }
 
-        if (pageId === 'Actions') {
+        if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Actions', 'isHidden')) {
             properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
@@ -133,11 +133,8 @@ class StyleAndJavaScriptUtil {
         var kpiColor_dark = Config.kpiColor_dark;
         var logo = Config.logo;
         var headerBackground = Config.headerBackground;
-        var primaryGreyColor = Config.primaryGreyColor;
-        var pieColors = Config.pieColors;
-        var barChartColors = Config.barChartColors_Distribution;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
-        var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
+        var numberOfVerbatimComments = !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'isHidden') && DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
 
         var css_string = '';
 

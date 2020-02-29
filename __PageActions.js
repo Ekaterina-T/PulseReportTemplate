@@ -8,18 +8,7 @@ class PageActions {
      * @returns {Boolean}
      */
     static function Hide(context){
-
         return false;
-    }
-
-    /**
-     * @memberof PageActions
-     * @function Render
-     * @description function to render the page
-     * @param {Object} context - {component: page, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-    static function Render(context){
-
     }
 
     /**
@@ -29,10 +18,8 @@ class PageActions {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-    static function hitlistActions_Hide(context){
-
-        var state = context.state; 
-        return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
+    static function hitlistActions_Hide(context) {
+        return Export.isPdfExportMode(context);
     }
 
     /**
@@ -166,19 +153,19 @@ class PageActions {
      */
 
     static function getHierarchyMaskIdsStringList(context){
-		var state = context.state;
+
+        //TO DO: re-write using hierarchy util
         var user = context.user;
         var reportBase = user.PersonalizedReportBase;
         var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
         var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
         var dataTable = dbTableNew.GetDataTable();
         var hierLevels = dataTable.Rows;
-
-        var currentParent = dbTableNew.GetColumnValues('parent', 'id', reportBase)[0];
 		
 		var idsToMask = "";
 		
 		for (var i = 0; i < hierLevels.Count; i++) {
+            //ET: extra check each loop iteration move out of loop
 			if(i!=0) idsToMask+=",";
 			
             var dRow : DataRow = hierLevels[i];
@@ -193,10 +180,11 @@ class PageActions {
      
     static function getHierarchyMask (context) {
 
-        var state = context.state;
-		
+        var state = context.state;		
 		var idsToMask = [];
-		
+        
+        //ET: is and else must have {}
+        //ET: why p_HierMaskIds is not described in SystemConfig?
 		if(!state.Parameters.IsNull("p_HierMaskIds"))
 			idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
 		else idsToMask = getHierarchyMaskIdsStringList(context).split(',');
@@ -314,13 +302,13 @@ class PageActions {
     static function setActionTrendSeriesByParam(context, seriesParam, target) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
         var index = seriesParam.order;
-
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
+        //ET: what happens if condition is false? should we hide widget if series are not specified?
+        // or throw error demanding to populate this property?
+        // if we return when it's false, than code will have less {}, less spagetti like
         if (trendSeries.length > index) {
 
             // add row with action status
@@ -339,6 +327,8 @@ class PageActions {
             }
             hq.AnswerMask = qmask;
 
+            //ET: if else must have {} airbnb clean-code style guide
+            // can be shorter: (target) ? target.Add(hq) : table.RowHeader.Add(hq);
             if (target) target.Add(hq);
             else table.RowHeaders.Add(hq);
 
@@ -372,13 +362,15 @@ class PageActions {
 
         // add 1st series
         var firstSeriesName: HeaderSegment = new HeaderSegment();
+        //ET: dsId can be taken from project as it's build already
+        // we have function  QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId) - can it be used?
+        // if yes, it's better for maintenance (fix in one place for all cases)
         firstSeriesName.DataSourceNodeId = DataSourceUtil.getDsId(context);
         var firstSeriesNameQid: Question = customProject.GetQuestion(trendSeries[0].qId);
         firstSeriesName.Label = new Label(report.CurrentLanguage, firstSeriesNameQid.GetAnswer(trendSeries[0].code).Text);
 
         setActionTrendSeriesByParam(context, {order: 0});
         var nestedRowHeader = table.RowHeaders[0];
-
 
         table.RowHeaders[0] = firstSeriesName;
         firstSeriesName.SubHeaders.Add(nestedRowHeader);
@@ -387,6 +379,7 @@ class PageActions {
         // copy the 2nd series from the hidden table
         if (trendSeries.length > 1) {
 
+            //ET: haven't project been retrieved on line 361?
             var project : Project = DataSourceUtil.getProject(context);
             for (var index = 1; index < trendSeries.length; index++) {
                 var hc : HeaderContent = new HeaderContent();
@@ -398,6 +391,7 @@ class PageActions {
                     }
                 }
 
+                //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
                 var question : Question = project.GetQuestion(trendSeries[index].qId);
                 var series_name = question.GetAnswer(trendSeries[index].code).Text;
 
@@ -423,8 +417,6 @@ class PageActions {
     static function tableTrendHidden_Render(context, seriesParam) {
 
         var table = context.table;
-        var pageContext = context.pageContext;
-
         setActionTrendSeriesByParam(context, seriesParam);
 
         // global table settings
@@ -475,14 +467,18 @@ class PageActions {
 
         var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
         var p : Project = DataSourceUtil.getProject(context);
-		
+        
+        //ET: ParamUtil.GetSelectedOptions?
 		var chosenUsers: ParameterValueMultiSelect;
 		var chosenUsersN = 0;
-		
+        
+        //ET: ParamUtil.GetSelectedOptions?
 		if(!state.Parameters.IsNull("p_EndUserSelection")){
 			chosenUsers = state.Parameters["p_EndUserSelection"];
 			chosenUsersN = chosenUsers.Count;
-		}
+        }
+        
+        //ET: can it be retrieved from p, line 470?
         var DsId = DataSourceUtil.getDsId(context);
         
 	    var jsonTables = [];
@@ -509,6 +505,7 @@ class PageActions {
                         }
                     }
 
+                    //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
                     var question : Question = p.GetQuestion(trendSeries[index].qId);
                     var series_name = question.GetAnswer(trendSeries[index].code).Text;
 
@@ -529,6 +526,7 @@ class PageActions {
 
         var hd : HeaderQuestion = table.ColumnHeaders[0];
         var toDate : DateTime = DateTime.Now;
+        //ET: why start date is hard coded?
         hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
         hd.TimeSeries.EndDate = toDate;
 
@@ -606,7 +604,6 @@ class PageActions {
         var user = context.user;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var featuresByRoles = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'FeaturesByRoles');
-        var userRoles = user.Roles;
         var isAvailable = false;
         var rolesForCurrentFeature = [];
 
@@ -639,14 +636,16 @@ class PageActions {
         var report = context.report;
 
         var userid = user.UserId;
-	var userRoles : String = user.Roles;
+	    var userRoles : String = user.Roles;
         var hier = !HierarchyUtil.Hide(context) ? user.PersonalizedReportBase : null;
         var project : Project = DataSourceUtil.getProject(context);
 
         var pid = project.ConfirmitProjectId;
         var pname = project.ProjectName;
 
-        var wave = DataSourceUtil.getPagePropertyValueFromConfig(context, PageUtil.getCurrentPageIdInConfig(context), 'DefaultWave');
+        //ET: wave should be taken from parameter, if from DefaultWave property - it'll always be the same
+        var wave = !context.state.Parameters.IsNull('p_Wave') ? ParamUtil.GetSelectedCodes(context, 'p_Wave')[0] : null;
+        //we can get selected options[0] and then code and label from there via 1 request to paramutil
         var dimensionId = ParamUtil.GetSelectedCodes(context, 'p_Dimensions').length ? ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0] : null;
         var dimensionText = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
         var statement = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
@@ -677,7 +676,7 @@ class PageActions {
         var result = [];	
         var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
         
-        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
         var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
         var smTrendTableJSON = JSON.parse(smTrendTable);
         
@@ -701,7 +700,7 @@ class PageActions {
         var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var sourceId  = DataSourceUtil.getDsId(context);//getDSId allows to avoid need of Source property on page level; getPagePropertyValueFromConfig (context, pageId, 'Source');
         var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
         var smTableJSON = JSON.parse(smTable);
 
@@ -719,7 +718,7 @@ class PageActions {
 
         var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
 
-        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
         var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
         var smTableJSON = JSON.parse(smTable);
 
@@ -761,7 +760,8 @@ class PageActions {
 
         for(var i=0; i<chosenUsersN; i++) {
 
-            // move out of loop?
+            // move out of loop? start loop from 1 - otherwise extra checks
+            // can be replaces with shorter expression: !i? resultSmartViewQuery+="mask: '" : other alternative
             if(i==0) {
                 resultSmartViewQuery+="mask: '";
              } else {
@@ -791,7 +791,7 @@ class PageActions {
         var index = seriesParam.order; //1
 
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
-        var sourceId  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Source');
+        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
             
         if (trendSeries.length <= index) {
             return resultSmartViewQuery;
@@ -802,6 +802,7 @@ class PageActions {
         resultSmartViewQuery+="{dsnid: "+sourceId+"; collapsed: false; total: true; distribution: count; hideheader: true; filterbymask: true;  xmask: ";
 
         for (var i = 0; i<trendSeries.length; i++) {
+            //ET: the same as before; extra operation every iteration
             if(i!=0) resultSmartViewQuery+=",";
             resultSmartViewQuery+=trendSeries[i].code;
         }
@@ -825,7 +826,8 @@ class PageActions {
                 //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
                 resultSmartViewQuery+= timeUnit.Code + "{";
             }
-            // we've got date util for dates, can it help?
+            //ET: we've got date util for dates, can it help?
+            // please use it
             var toDate : DateTime = DateTime.Now;
             resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
         }
@@ -917,7 +919,8 @@ static function inactiveUsersList_Render(context, tableName){
 	var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
 
 	for(var i=0; i<data.length; i++){
-		if(data[i].Value == 0) continue;
+        if(data[i].Value == 0) continue;
+        // ET: is the below if needed? or the above one?
 		if(data[i].Value > 0) inactiveUsers.push(labels[i]);		
 	}	
 	
@@ -955,13 +958,10 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
-        var state = context.state;
 
         /* retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) */
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-
-
 
         /* add columns to Hiltlist using custom source */
         for (var i=0; i<staticCols.length; i++) {
@@ -977,7 +977,6 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         }
 
         if (isEditDeleteMode) {
-
             Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
             Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
         }

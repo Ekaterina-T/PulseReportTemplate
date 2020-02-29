@@ -365,7 +365,7 @@ class ParamUtil {
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var pageHasSpecificFilters = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', false);
+        var pageHasSpecificFilters = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFiltersFromSurveyData', true);
 
         //global filter panel param 
         if(parameterName.indexOf('p_ScriptedFilterPanelParameter')===0 && pageHasSpecificFilters) {
