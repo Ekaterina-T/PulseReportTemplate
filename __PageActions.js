@@ -520,131 +520,7 @@ class PageActions {
         return isAvailable;
     }
 
-    
-    /**
-     * ET: is this function call really needed?
-     * can it be useful several times?
-     */
-    static function getActionLink(context) {
-
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
-    }
-
-    /**
-     * @param {Object} context
-     * @returns {Object} {pid: currentPid, pname: currentPname}
-     */
-    static function getProjectInfoForActionsSurvey(context) {
-
-        var log = context.log;
-
-        //not pulse program
-        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-
-            //TO DO: handle case when pid to pass into Actions comes from config
-            var programsDsId = DataSourceUtil.getProgramDsId(context);
-            var project: Project =  DataSourceUtil.getProject(context, programsDsId);
-            return {pid: project.ConfirmitProjectId, pname: project.ProjectName};
-        }
-
-        //TO DO: handle case when many pulse surveys are selected
-        var selectedPulseSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
-        return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
-    }
-
-     /**
-      * @description Assemble link to create new action
-      * @param {Object} context
-      */
-    static function ActionBtn_Render(context) {
-
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var user = context.user;
-        var log = context.log;
-
-        var linkParameters = [];
-        var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink'); 
-
-        //assemble all parameters for the link
-        linkParameters.push('U=' + user.UserId);
-
-        var userRoles: String = user.Roles;
-        if(userRoles!="") linkParameters.push('role='+ userRoles);
-
-        if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
-
-        var projectInfo = getProjectInfoForActionsSurvey(context);
-        linkParameters.push('pid=' + projectInfo.pid);
-        linkParameters.push('pname=' + projectInfo.pname);
-
-        var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
-        if(wave.length) {
-            linkParameters.push('wave=' + wave[0]);
-        }
-
-        // Flag if delegation is available
-        linkParameters.push('isResponsibleVisible=' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
-        linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
-        linkParameters.push('l=' + context.report.CurrentLanguage);
-
-        var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
-        var link = '<a href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>'; 
-
-        context.text.Output.Append(link);
-    }
-
-    /**
-     * 
-     */
-   /* static function ActionBtn_Render_v1 (context) {
-
-        var report = context.report;
-        var state = context.state;
-        var user = context.user;
-        var text = context.text;
-        var log = context.log;
-
-        // End user
-        var userid = user.UserId;
-
-        // Hierarchy
-        var hier = !HierarchyUtil.Hide(context) ? user.PersonalizedReportBase : null;
-
-
-        // Project
-        var project : Project = DataSourceUtil.getProject(context);
-        var pid = project.ConfirmitProjectId;
-        var pname = project.ProjectName;
-
-        // Wave
-        var wave = null;
-        if(!Filters.isWaveFilterHidden(context)) {
-            var qId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-            var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_Wave');
-            if (selectedCodes.length) {
-                wave = selectedCodes[0];
-            }
-        }
-
-        // Dimension
-        var dimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
-
-        // Statement
-        var questionId = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
-
-        // Statement text
-        var questionText = ParamUtil.GetSelectedOptions(context, 'p_Statements').length ? ParamUtil.GetSelectedOptions(context, 'p_Statements')[0].Label : null;
-
-        // Link
-        var actionLink = PageActions.getActionLink(context);
-
-        var link = '<a href="'+ actionLink + '?U=' + userid + '&hier=' + hier + '&pid=' + pid + '&pname=' + pname +
-            '&wave=' + wave +'&dimension=' + dimension + '&questionId=' + questionId +'&questionText=' + questionText +
-            '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';
-        text.Output.Append(link);
-
-    }*/    
+      
     
     /**
      * SMART VIEW HIDDEN TABLES
@@ -677,7 +553,6 @@ class PageActions {
 
         var log = context.log;
         var report = context.report;
-
         var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
 
         var sourceId  = DataSourceUtil.getDsId(context);//getDSId allows to avoid need of Source property on page level; getPagePropertyValueFromConfig (context, pageId, 'Source');
@@ -906,37 +781,6 @@ static function inactiveUsersList_Render(context, tableName){
 	return inactiveUsers;
  }
 	
-	/*
- static function maskStatementsScript_Render(context){
-     
-	var log = context.log;
-	var text = context.text;
-	
-	var pageId = PageUtil.getCurrentPageIdInConfig(context);
-    var jsonStatementsByDimensions = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension');
-
-    var jsCode = "<script>";
-        jsCode +="function maskStatements(){";
-        jsCode +="var jsonStatementsByDimensions = " + jsonStatementsByDimensions + ";";
-        jsCode +="var dimensionSelect = document.querySelector('#dimensionDropdown select');";
-        jsCode +="var selectedDimension = document.querySelectorAll('#dimensionDropdown select option')[dimensionSelect.selectedIndex].value.split(':')[2];";
-        jsCode +="var statementsSelect = document.querySelector('#statementDropdown select');";
-        jsCode +="var statements = document.querySelectorAll('#statementDropdown select option');";
-        jsCode +="for (var i=statements.length-1; i>0; i--){";
-        jsCode +="var stId = statements[i].value.split(':')[2];";
-        jsCode +="if(jsonStatementsByDimensions[selectedDimension].indexOf(stId) == -1) {";
-        jsCode +="        statements[i].style.display = 'none';";
-        jsCode +="        if( statementsSelect.selectedIndex == i) {statementsSelect.selectedIndex = 0;}}";
-        jsCode +=" else { statements[i].style.display = 'inherit';}";
-        jsCode +="}}";
-        jsCode +=" maskStatements();";
-        jsCode +=" document.querySelector('#dimensionDropdown select').addEventListener('change', maskStatements);";
-        jsCode +="</script>";
-		
-	text.Output.Append(jsCode);
-}
-*/
-
 
 static function hitlistsActions_Render(context, isEditDeleteMode){
 
@@ -988,5 +832,69 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         table.RemoveEmptyHeaders.Columns = false;
         table.Caching.Enabled = false;
 
+    }
+
+
+    /**
+     * @param {Object} context
+     * @returns {Object} {pid: currentPid, pname: currentPname}
+     */
+    static function getProjectInfoForActionsSurvey(context) {
+
+        var log = context.log;
+
+        //not pulse program
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            //TO DO: handle case when pid to pass into Actions comes from config
+            var programsDsId = DataSourceUtil.getProgramDsId(context);
+            var project: Project =  DataSourceUtil.getProject(context, programsDsId);
+            return {pid: project.ConfirmitProjectId, pname: project.ProjectName};
+        }
+
+        //TO DO: handle case when many pulse surveys are selected
+        var selectedPulseSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
+        return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
+    }
+
+     /**
+      * @description Assemble link to create new action
+      * @param {Object} context
+      */
+    static function ActionBtn_Render(context) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var user = context.user;
+        var log = context.log;
+
+        var linkParameters = [];
+        var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink'); 
+
+        //assemble all parameters for the link
+        linkParameters.push('U=' + user.UserId);
+
+        var userRoles: String = user.Roles;
+        if(userRoles!="") linkParameters.push('role='+ userRoles);
+
+        if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
+
+        var projectInfo = getProjectInfoForActionsSurvey(context);
+        linkParameters.push('pid=' + projectInfo.pid);
+        linkParameters.push('pname=' + projectInfo.pname);
+
+        var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        if(wave.length) {
+            linkParameters.push('wave=' + wave[0]);
+        }
+
+        // Flag if delegation is available
+        linkParameters.push('isResponsibleVisible=' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+        linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
+        linkParameters.push('l=' + context.report.CurrentLanguage);
+
+        var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
+        var link = '<a id="createNewAction" href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>'; 
+
+        context.text.Output.Append(link);
     }
 }
