@@ -810,7 +810,7 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         }
     }
 	
-/**
+    /**
      * @memberof PageActions
      * @function tableTrend_Render
      * @description function to render the trend table

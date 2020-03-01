@@ -454,6 +454,8 @@ class Filters {
 
         var state = context.state;
 
+        log.LogDebug('feature available: '+!PageActions.isFeatureAvailableForUserRole(context, "EditorDeleteOthersActions"));
+
         if(!PageActions.isFeatureAvailableForUserRole(context, "EditorDeleteOthersActions") && !state.Parameters.IsNull("p_SwitchHitlistMode")) {
             return 'IN(actionowner, "' + context.user.UserId + '")';
         }
