@@ -85,7 +85,7 @@ class DataSourceUtil {
      * Get current Project from Config library on basis of p_SurveyType.
      * @param {object} context object {state: state, report: report, log: log}
      * @param {string} dsId - optional, if provided project for this dsId is returned
-     * @returns {object}
+     * @returns {Project}
      */
     static function getProject (context, dsId) {
         var report = context.report;

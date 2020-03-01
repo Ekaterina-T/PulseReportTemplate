@@ -22,35 +22,6 @@ class PageActions {
         return Export.isPdfExportMode(context);
     }
 
-    /**
-     * @memberof PageActions
-     * @function hitlistActions_Render
-     * @description function to render the hitlist
-     * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-    /*static function hitlistActions_Render(context){
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var hitlist = context.hitlist;
-        var state = context.state;
-        // retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) 
-        var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
-        var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-        // add columns to Hiltlist using custom source 
-        for (var i=0; i<staticCols.length; i++) {
-            Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
-        }
-        for (var i=0; i<tagCols.length; i++) {
-            Hitlist.AddColumn(context, tagCols[i], {sortable: false, searchable: false});
-        }
-        if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
-            throw new Error('DataSourceUtil.hitlistActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
-        }
-        if (!state.Parameters.IsNull("p_SwitchHitlistMode")) {
-            Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
-            Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
-        }
-    }*/
-
 
     /**
      * @memberof PageActions
@@ -73,7 +44,6 @@ class PageActions {
         }
         return tagColumnNumbers;
     }
-
 
     /**
      * @memberof PageActions
@@ -104,7 +74,6 @@ class PageActions {
 
         return null;
     }
-
 
     /**
      * @memberof PageActions
@@ -150,22 +119,24 @@ class PageActions {
      * @function getHierarchyMask
      * @description function to mask hierarchy node to show current selected level and children (of first level).
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @returns {} ???
      */
 
     static function getHierarchyMaskIdsStringList(context){
 
-        //TO DO: re-write using hierarchy util
+        //ET: re-write using hierarchy util
         var user = context.user;
         var reportBase = user.PersonalizedReportBase;
-        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
-        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
-        var dataTable = dbTableNew.GetDataTable();
+        //var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
+        //var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+        var dataTable = HierarchyUtil.getDataTable(); //already cached //dbTableNew.GetDataTable();
         var hierLevels = dataTable.Rows;
 		
 		var idsToMask = "";
 		
 		for (var i = 0; i < hierLevels.Count; i++) {
-            //ET: extra check each loop iteration move out of loop
+            //ET: alternative is idsToMask = []; each iteration idsToMask.push; after loop idsToMask.join()
+            // removes extra if every iteration?
 			if(i!=0) idsToMask+=",";
 			
             var dRow : DataRow = hierLevels[i];
@@ -175,15 +146,17 @@ class PageActions {
         }
 		
 		return idsToMask;
-
 	}
      
+    /**
+     * 
+     */
     static function getHierarchyMask (context) {
 
         var state = context.state;		
 		var idsToMask = [];
         
-        //ET: is and else must have {}
+        //ET: if and else must have {}, airbnb style guide
         //ET: why p_HierMaskIds is not described in SystemConfig?
 		if(!state.Parameters.IsNull("p_HierMaskIds"))
 			idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
@@ -234,71 +207,12 @@ class PageActions {
 
     /**
      * @memberof PageActions
-     * @function tableInactiveUsersHidden_Render.
-     * @description function to render the InactiveUsersHidden table. It's a hidden table used to get the list of users who didn't create nor was assigned an action for wave selected on filter panel
-     * @param {Object} context - {confirmit: confirmit, state: state, report: report, log: log, table: table, user:user, pageContext: pageContext}
-     */
-
-   /* static function tableInactiveUsersHidden_Render(context) {
-        var table = context.table;
-        var pageContext = context.pageContext;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-        var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
-        var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
-        hqActionOwner.ShowTotals = true;
-        table.RowHeaders.Add(hqActionOwner);
-        var qeActionCreater: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'userId');
-        var hqActionCreater: HeaderQuestion = new HeaderQuestion(qeActionCreater);
-        hqActionCreater.ShowTotals = true;
-        table.ColumnHeaders.Add(hqActionCreater);
-        table.RemoveEmptyHeaders.Columns = true;
-        table.RemoveEmptyHeaders.Rows = false;
-        table.Caching.Enabled = false;
-    }*/
-
-    /**
-     * @memberof PageActions
-     * @function widgetInactiveUsers_Render.
-     * @description function returns an array of Inactive users.
-     * @param {Object} context - {confirmit: confirmit, state: state, report: report, log: log, user:user, pageContext: pageContext, text: text}
-     */
-    /*static function widgetInactiveUsers_Render(context) {
-        var report = context.report;
-        var actionOwners = report.TableUtils.GetRowHeaderCategoryIds('InactiveUsers_Hidden');
-        var actionCreaters = report.TableUtils.GetColumnHeaderCategoryIds('InactiveUsers_Hidden');
-        var actionOwnersNames = report.TableUtils.GetRowHeaderCategoryTitles('InactiveUsers_Hidden');
-        var inactiveUsers = [];
-        if (actionCreaters.length > 0) {
-            for (var i=0; i<actionOwners.length-1; i++) {
-                var row = report.TableUtils.GetRowValues('InactiveUsers_Hidden', i+1);
-                var columnIndex = row.length-1;
-                if (row[columnIndex].Value === 0) {
-                    var isCreator = false; // считаем априори всех лентяями, не создавшими ни одного экшенаа
-                    for (var j=0; j<actionCreaters.length-1; j++) {
-                        if (actionOwners[i] === actionCreaters[j]) {
-                            isCreator = true;  // нашли совпадение, сбрасываем флаг и выходим из цикла,тк точно не лентяй
-                            break;
-                        }
-                        // получается, ветка else уже не нужна, в ней нечего делать
-                    }
-                    // если после прохода всего цикла флаг сохранил первоначальное значение, добавляем в список
-                    if (isCreator === false) {
-                        inactiveUsers.push(actionOwnersNames[i]);
-                    }
-                }
-            }
-        }
-        return inactiveUsers;
-    }
-  */
-    /**
-     * @memberof PageActions
      * @function addActionTrendSeriesByParam
      * @description function to add action trend series
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {}
+     * @param {}
      */
-
     static function setActionTrendSeriesByParam(context, seriesParam, target) {
 
         var table = context.table;
@@ -306,8 +220,8 @@ class PageActions {
         var index = seriesParam.order;
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
-        //ET: what happens if condition is false? should we hide widget if series are not specified?
-        // or throw error demanding to populate this property?
+        //ET: what happens if condition === false? should we hide widget if series are not specified?
+        // or throw error demanding to populate this property? i tend to this option
         // if we return when it's false, than code will have less {}, less spagetti like
         if (trendSeries.length > index) {
 
@@ -459,6 +373,7 @@ class PageActions {
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
      */
     static function tableEndUsertStatistics_Render(context){
+
         var state = context.state;
         var report = context.report;
         var table = context.table;
@@ -535,26 +450,8 @@ class PageActions {
     }
 
     /**
-     * @memberof PageActions
-     * @function tableTrend_Render
-     * @description function to render the trend table
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * 
      */
-   /* static function tableBreakdown_Render (context) {
-        var log = context.log;
-        var table = context.table;
-        var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_ActionAllocation');
-        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCodes[0]);
-        var hq: HeaderQuestion = new HeaderQuestion(qe);
-        hq.Distributions.Enabled = true;
-        hq.Distributions.HorizontalPercents = true;
-        hq.ShowTotals = false;
-        table.ColumnHeaders.Add(hq);
-        // global table settings
-        table.RemoveEmptyHeaders.Columns = false;
-        table.Caching.Enabled = false;
-    }*/
-
     static function tableActionCost_Render(context) {
 
         var table = context.table;
@@ -592,13 +489,9 @@ class PageActions {
     }
 
 
-    static function getActionLink(context){
-
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
-    }
-
-
+    /**
+     * 
+     */
     static function isFeatureAvailableForUserRole(context, feature) {
 
         var user = context.user;
@@ -627,42 +520,142 @@ class PageActions {
         return isAvailable;
     }
 
+    
+    /**
+     * 
+     */
+    static function getActionLink(context){
 
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
+    }
+
+    /**
+     * @param {Object} context
+     * @returns {Object} {pid: currentPid, pname: currentPname}
+     */
+    static function getProjectInfoForActionsSurvey(context) {
+
+        var log = context.log;
+
+        //not pulse program
+        if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            //TO DO: handle case when pid to pass into Actions comes from config
+            var programsDsId = DataSourceUtil.getProgramDsId(context);
+            var project: Project =  DataSourceUtil.getProject(context, programsDsId);
+            return {pid: project.ConfirmitProjectId, pname: project.ProjectName};
+        }
+
+        //TO DO: handle case when many pulse surveys are selected
+        var selectedPulseSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
+        return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
+    }
+
+     /**
+      * 
+      * @param {Object} context
+      */
     static function ActionBtn_Render(context) {
 
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var user = context.user;
+        var log = context.log;
+
+        var linkParameters = [];
+        var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink'); 
+
+        //assemble all parameters for the link
+        linkParameters.push('U=' + user.UserId);
+
+        var userRoles: String = user.Roles;
+        if(userRoles!="") linkParameters.push('role='+ userRoles);
+
+        if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
+
+        var projectInfo = getProjectInfoForActionsSurvey(context);
+        linkParameters.push('pid=' + projectInfo.pid);
+        linkParameters.push('pname=' + projectInfo.pname);
+
+        var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        if(wave.length) {
+            linkParameters.push('wave=' + wave[0]);
+        }
+
+        var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
+        if(selectedDimension.length) {
+            linkParameters.push('dimensionId=' + selectedDimension[0].Code);
+            linkParameters.push('dimension=' + selectedDimension[0].Label);
+        }
+
+        var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
+        if(selectedStatement.length) {
+            linkParameters.push('questionId=' + selectedStatement[0].Code);
+            linkParameters.push('questionText=' + selectedStatement[0].Label);
+        }
+
+        // Flag if delegation is available
+        linkParameters.push('isResponsibleVisible=' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+        linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
+        linkParameters.push('l=' + context.report.CurrentLanguage);
+
+        var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
+        var link = '<a href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>'; 
+
+        context.text.Output.Append(link);
+    }
+
+    /**
+     * 
+     */
+   /* static function ActionBtn_Render_v1 (context) {
+
+        var report = context.report;
+        var state = context.state;
         var user = context.user;
         var text = context.text;
         var log = context.log;
-        var report = context.report;
 
+        // End user
         var userid = user.UserId;
-	    var userRoles : String = user.Roles;
-        var hier = !HierarchyUtil.Hide(context) ? user.PersonalizedReportBase : null;
-        var project : Project = DataSourceUtil.getProject(context);
 
+        // Hierarchy
+        var hier = !HierarchyUtil.Hide(context) ? user.PersonalizedReportBase : null;
+
+
+        // Project
+        var project : Project = DataSourceUtil.getProject(context);
         var pid = project.ConfirmitProjectId;
         var pname = project.ProjectName;
 
-        //ET: wave should be taken from parameter, if from DefaultWave property - it'll always be the same
-        var wave = !context.state.Parameters.IsNull('p_Wave') ? ParamUtil.GetSelectedCodes(context, 'p_Wave')[0] : null;
-        //we can get selected options[0] and then code and label from there via 1 request to paramutil
-        var dimensionId = ParamUtil.GetSelectedCodes(context, 'p_Dimensions').length ? ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0] : null;
-        var dimensionText = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
-        var statement = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
-        var statementText = ParamUtil.GetSelectedOptions(context, 'p_Statements').length ? ParamUtil.GetSelectedOptions(context, 'p_Statements')[0].Label : null;
+        // Wave
+        var wave = null;
+        if(!Filters.isWaveFilterHidden(context)) {
+            var qId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+            var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+            if (selectedCodes.length) {
+                wave = selectedCodes[0];
+            }
+        }
+
+        // Dimension
+        var dimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions').length ? ParamUtil.GetSelectedOptions(context, 'p_Dimensions')[0].Label : null;
+
+        // Statement
+        var questionId = ParamUtil.GetSelectedCodes (context, 'p_Statements').length ? ParamUtil.GetSelectedCodes (context, 'p_Statements')[0] : null;
+
+        // Statement text
+        var questionText = ParamUtil.GetSelectedOptions(context, 'p_Statements').length ? ParamUtil.GetSelectedOptions(context, 'p_Statements')[0].Label : null;
+
+        // Link
         var actionLink = PageActions.getActionLink(context);
 
-        // Flag if delegation is available
-        var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context,'Delegation');
-        var currency = DataSourceUtil.getPagePropertyValueFromConfig (context, PageUtil.getCurrentPageIdInConfig(context), 'Currency');
+        var link = '<a href="'+ actionLink + '?U=' + userid + '&hier=' + hier + '&pid=' + pid + '&pname=' + pname +
+            '&wave=' + wave +'&dimension=' + dimension + '&questionId=' + questionId +'&questionText=' + questionText +
+            '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';
+        text.Output.Append(link);
 
-        var link = '<a href="'+ actionLink + '?U=' + userid + (userRoles==""?'':('&role='+ userRoles)) + (hier==null?'':('&hier='+ hier)) + '&pid=' + pid + '&pname=' + pname +  '&isResponsibleVisible=' + isResponsibleVisible +
-            '&wave=' + wave +(dimensionId==null?'':('&dimensionId='+ dimensionId))  + (dimensionText==null?'':('&dimension='+ dimensionText)) + (statement==null?'':('&questionId=' + statement)) + 
-	    (statementText==null?'':('&questionText=' + statementText)) + '&currency=' + currency + '&l='+ report.CurrentLanguage +
-            '" class="icon icon--add" target="_blank" title="'+TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn')+'"></a>';  
-	text.Output.Append(link);
-    }
-    
+    }*/    
     
     /**
      * SMART VIEW HIDDEN TABLES
@@ -671,7 +664,6 @@ class PageActions {
 
         var log = context.log;
         var report = context.report;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         
         var result = [];	
         var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
@@ -698,7 +690,6 @@ class PageActions {
         var report = context.report;
 
         var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var sourceId  = DataSourceUtil.getDsId(context);//getDSId allows to avoid need of Source property on page level; getPagePropertyValueFromConfig (context, pageId, 'Source');
         var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
@@ -714,7 +705,6 @@ class PageActions {
     static function getEndUserStatHiddenTableJSON(context, tableIndex) {
         var log = context.log;
         var report = context.report;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
 
@@ -739,7 +729,7 @@ class PageActions {
   
   
     /**
-     * 
+     * ET: why 2 functions are needed here? they have the same signature and no special logic
      */
     static function generateActionTrandHiddenTableSmartView(context, seriesParam){
         return generateActionTrendSeriesByParam_SVText(context, seriesParam);
