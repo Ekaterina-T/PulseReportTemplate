@@ -892,6 +892,8 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
         linkParameters.push('l=' + context.report.CurrentLanguage);
 
+        //we need to assign default values for dimension and statement
+        //they'll be updated with js when selection changes
         var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
         linkParameters.push('dimension=' + selectedDimension[0].Code);
 
