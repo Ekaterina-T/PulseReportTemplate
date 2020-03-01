@@ -898,7 +898,7 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         linkParameters.push('dimension=' + selectedDimension[0].Code);
 
         var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
-        (selectedStatement.length) ? linkParameters.push('statement=' + selectedStatement[0].Code) : linkParameters.push('null');
+        (selectedStatement.length) ? linkParameters.push('statement=' + selectedStatement[0].Code) : linkParameters.push('statement=null');
 
         var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
         var link = '<a id="createNewAction" href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>'; 
