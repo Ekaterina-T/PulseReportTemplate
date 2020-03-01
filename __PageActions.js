@@ -816,7 +816,7 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function tablesBreakdown_Render (context, selectedCode) {
+    static function tablesBreakdown_Render(context, selectedCode) {
 
         var log = context.log;
         var table = context.table;
@@ -829,7 +829,7 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         table.ColumnHeaders.Add(hq);
 
         // global table settings
-        table.RemoveEmptyHeaders.Columns = false;
+        table.RemoveEmptyHeaders.Columns = true;
         table.Caching.Enabled = false;
 
     }
