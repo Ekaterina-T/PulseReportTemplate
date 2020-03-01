@@ -1,14 +1,17 @@
 class Filters {
 
     /**
-     *
+     * @param {Object} context
+     * @returns {String} type of filter panel parameter: is it is page specific or global
      */
     static function getFilterParameterType(context) {
         return !!context.pageSpecific ? 'pageSpecific' : 'global';
     }
 
     /**
-     *
+     * @param {Object} context
+     * @param {String} explicitFilterType - optional, type of filter panel parameter: is it is page specific or global
+     * @returns {Array} - array of strings with qids for filter panel
      */
     static function GetFilterQuestionsListByType(context, explicitFilterType) {
 
@@ -30,7 +33,9 @@ class Filters {
     }
 
     /**
-     *
+     * @param {Object} context
+     * @param {String} explicitFilterType - type of filter panel parameter: is it is page specific or global
+     * @returns {Number} - number of bakground based filters of specified type
      */
     static function GetNumberOfBGFiltersByType(context, filterType) {
 
@@ -134,7 +139,8 @@ class Filters {
     }
 
     /**
-     * 
+     * @param {Object} context
+     * @returns {Array} - array of filter indexes which questions don't have answers; needed for pulse programs only
      */
     static function getHiddenFilterIndexes(context) {
 
@@ -189,7 +195,9 @@ class Filters {
     }
 
     /**
-     *
+     * @param {Object} context
+     * @param {String} paramId filter panel parameter id
+     * @param {String} qId - question the parameter is based on
      */
     static function GetIndividualFilterExpression(context, paramId, qId) {
 
@@ -211,7 +219,10 @@ class Filters {
 
 
     /**
-     * 
+     * @description - build filter panel expression
+     * @param {Object} context
+     * @param {String} explicitFilterType - optional, 'pageSpecific' or 'global'; needed jic
+     * @param {String} varType - optional, 'background' or 'survey' to handle extra cases of removing of survey based filters on response rate tables
      */
     static function GetFilterPanelExpression(context, explicitFilterType, varType) {
 
