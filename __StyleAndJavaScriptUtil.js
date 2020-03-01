@@ -33,6 +33,7 @@ class StyleAndJavaScriptUtil {
         var state = context.state;
         var pageContext = context.pageContext;
         var pageId = pageContext.Items['CurrentPageId'];
+        var report = context.report;
 
         var globalVarScript = [];
         var properties = []; // array of strings like 'property: propertyValue'
@@ -69,6 +70,8 @@ class StyleAndJavaScriptUtil {
         properties.push('Reset: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
 
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
+        
+        properties.push('currentLanguage: ' + report.CurrentLanguage);
 
         if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
