@@ -222,7 +222,7 @@ class PageActions {
 
         //ET: what happens if condition === false? should we hide widget if series are not specified?
         // or throw error demanding to populate this property? i tend to this option
-        // if we return when it's false, than code will have less {}, less spagetti like
+        // if we do return when condition = false, than code will have less {}, less spagetti like
         if (trendSeries.length > index) {
 
             // add row with action status
