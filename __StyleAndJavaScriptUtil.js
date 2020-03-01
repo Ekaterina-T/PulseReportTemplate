@@ -107,10 +107,11 @@ class StyleAndJavaScriptUtil {
             properties.push('isProjectSelectorDisabled: ' + true);
         }
 
-        if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Actions', 'isHidden')) {
+        if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
             properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
+            properties.push('StatementsByDimension: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension')));
         }
 
         globalVarScript.push('<script>');

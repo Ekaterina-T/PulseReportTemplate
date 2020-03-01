@@ -522,9 +522,10 @@ class PageActions {
 
     
     /**
-     * 
+     * ET: is this function call really needed?
+     * can it be useful several times?
      */
-    static function getActionLink(context){
+    static function getActionLink(context) {
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         return DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
@@ -553,7 +554,7 @@ class PageActions {
     }
 
      /**
-      * 
+      * @description Assemble link to create new action
       * @param {Object} context
       */
     static function ActionBtn_Render(context) {
@@ -580,18 +581,6 @@ class PageActions {
         var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
         if(wave.length) {
             linkParameters.push('wave=' + wave[0]);
-        }
-
-        var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
-        if(selectedDimension.length) {
-            linkParameters.push('dimensionId=' + selectedDimension[0].Code);
-            linkParameters.push('dimension=' + selectedDimension[0].Label);
-        }
-
-        var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
-        if(selectedStatement.length) {
-            linkParameters.push('questionId=' + selectedStatement[0].Code);
-            linkParameters.push('questionText=' + selectedStatement[0].Label);
         }
 
         // Flag if delegation is available
@@ -917,7 +906,9 @@ static function inactiveUsersList_Render(context, tableName){
 	return inactiveUsers;
  }
 	
+	/*
  static function maskStatementsScript_Render(context){
+     
 	var log = context.log;
 	var text = context.text;
 	
@@ -927,13 +918,13 @@ static function inactiveUsersList_Render(context, tableName){
     var jsCode = "<script>";
         jsCode +="function maskStatements(){";
         jsCode +="var jsonStatementsByDimensions = " + jsonStatementsByDimensions + ";";
-        jsCode +=" var dimensionSelect = document.querySelector('#dimensionDropdown select');";
-        jsCode +=" var selectedDimension = document.querySelectorAll('#dimensionDropdown select option')[dimensionSelect.selectedIndex].value.split(':')[2];";
-        jsCode +="  var statementsSelect = document.querySelector('#statementDropdown select');";
-        jsCode +=" var statements = document.querySelectorAll('#statementDropdown select option');";
-        jsCode +=" for (var i=statements.length-1; i>0; i--){";
-        jsCode +=" var stId = statements[i].value.split(':')[2];";
-        jsCode +=" if(jsonStatementsByDimensions[selectedDimension].indexOf(stId) == -1) {";
+        jsCode +="var dimensionSelect = document.querySelector('#dimensionDropdown select');";
+        jsCode +="var selectedDimension = document.querySelectorAll('#dimensionDropdown select option')[dimensionSelect.selectedIndex].value.split(':')[2];";
+        jsCode +="var statementsSelect = document.querySelector('#statementDropdown select');";
+        jsCode +="var statements = document.querySelectorAll('#statementDropdown select option');";
+        jsCode +="for (var i=statements.length-1; i>0; i--){";
+        jsCode +="var stId = statements[i].value.split(':')[2];";
+        jsCode +="if(jsonStatementsByDimensions[selectedDimension].indexOf(stId) == -1) {";
         jsCode +="        statements[i].style.display = 'none';";
         jsCode +="        if( statementsSelect.selectedIndex == i) {statementsSelect.selectedIndex = 0;}}";
         jsCode +=" else { statements[i].style.display = 'inherit';}";
@@ -944,6 +935,9 @@ static function inactiveUsersList_Render(context, tableName){
 		
 	text.Output.Append(jsCode);
 }
+*/
+
+
 static function hitlistsActions_Render(context, isEditDeleteMode){
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
