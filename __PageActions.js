@@ -892,6 +892,12 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
         linkParameters.push('l=' + context.report.CurrentLanguage);
 
+        var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
+        linkParameters.push('dimension=' + selectedDimension[0].Code);
+
+        var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
+        (selectedStatement.length) ? linkParameters.push('statement=' + selectedStatement[0].Code) : linkParameters.push('null');
+
         var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
         var link = '<a id="createNewAction" href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>'; 
 
