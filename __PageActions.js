@@ -870,6 +870,10 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         var linkParameters = [];
         var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink'); 
 
+        //ET: re-wrote this function
+        //each param is grouped, then link gets assembled
+        //that way if we need to add/remove params we just edit this code, not link assemplig and smth. else
+
         //assemble all parameters for the link
         linkParameters.push('U=' + user.UserId);
 
