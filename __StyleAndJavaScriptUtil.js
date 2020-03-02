@@ -138,7 +138,8 @@ class StyleAndJavaScriptUtil {
         var logo = Config.logo;
         var headerBackground = Config.headerBackground;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
-        var numberOfVerbatimComments = !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'isHidden') && DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
+        var pageId = pageContext.Items['CurrentPageId'];
+        var numberOfVerbatimComments = pageId === 'KPI' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'isHidden') && DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
 
         var css_string = '';
 
