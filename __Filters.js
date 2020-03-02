@@ -454,7 +454,8 @@ class Filters {
 
         var state = context.state;
 
-        if(!PageActions.isFeatureAvailableForUserRole(context, "EditOrDeleteOthersActions") && !state.Parameters.IsNull("p_SwitchHitlistMode")) {
+        if(!PageActions.isFeatureAvailableForUserRole(context, "EditOrDeleteOthersActions")){
+	   //&& !state.Parameters.IsNull("p_SwitchHitlistMode")) {
             return 'IN(actionowner, "' + context.user.UserId + '")';
         }
         return '';
