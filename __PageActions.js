@@ -228,8 +228,8 @@ class PageActions {
             // add row with action status
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, trendSeries[index].qId);
             var hq: HeaderQuestion = new HeaderQuestion(qe);
-            hq.IsCollapsed = false;
-            hq.ShowTotals = true;
+            hq.IsCollapsed = true;
+            hq.ShowTotals = false;
             hq.Distributions.Enabled = true;
             hq.Distributions.Count= true;
             hq.HideHeader = true;
@@ -240,6 +240,7 @@ class PageActions {
                 qmask.Codes.Add(trendSeries[i].code);
             }
             hq.AnswerMask = qmask;
+            hq.FilterByMask = true;
 
             //ET: if else must have {} airbnb clean-code style guide
             // can be shorter: (target) ? target.Add(hq) : table.RowHeader.Add(hq);
