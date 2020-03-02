@@ -685,10 +685,9 @@ class PageActions {
             var toDate : DateTime = DateTime.Now;
             resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
         }
-        
-        return resultSmartViewQuery
+        log.LogDebug(resultSmartViewQuery);
+        return resultSmartViewQuery;
     }		
-  
     /**
      * 
      */
