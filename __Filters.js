@@ -25,7 +25,7 @@ class Filters {
             surveyLevelQids = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'FiltersFromSurveyData');
         }
 
-        return bgLevelQids.concat(surveyLevelQids);
+        return bgLevelQids && surveyLevelQids ? bgLevelQids.concat(surveyLevelQids) : [];
     }
 
     /**
