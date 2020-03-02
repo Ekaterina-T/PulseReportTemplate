@@ -234,8 +234,8 @@ class PageActions {
             hq.Distributions.Count= true;
             hq.HideHeader = true;
 
-            var qmask : MaskFlat = new MaskFlat(); //true);
-            qmask.IsInclusive = true; //false;
+            var qmask : MaskFlat = new MaskFlat(true);
+            qmask.IsInclusive = false;
             for (var i = 0; i<trendSeries.length; i++) {
                 qmask.Codes.Add(trendSeries[i].code);
             }
