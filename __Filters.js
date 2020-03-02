@@ -445,7 +445,7 @@ class Filters {
 
     /*
     * @function getOnlyOwnActionsinHitlistExpression
-    * @description function to switch on the possibility to edit/delete comments (all comments for roles specified in 'EditorDeleteOthersActions' feature, only own for others)
+    * @description function to switch on the possibility to edit/delete comments (all comments for roles specified in 'EditOrDeleteOthersActions' feature, only own for others)
     * @param {Object} context
     * @return {String} filter script expression
     */
