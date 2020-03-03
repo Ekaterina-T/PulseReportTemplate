@@ -75,6 +75,9 @@ class StyleAndJavaScriptUtil {
         properties.push('currentLanguage: ' + report.CurrentLanguage);
         
         properties.push('userRoles: "' + user.Roles+'"');
+        
+        properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+        properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
 
         if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
