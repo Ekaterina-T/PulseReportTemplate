@@ -272,11 +272,9 @@ class PageActions {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
-        var customProject : Project = DataSourceUtil.getProject(context);
-
-
+        //var customProject : Project = DataSourceUtil.getProject(context);  
         // add 1st series
-        var firstSeriesName: HeaderSegment = new HeaderSegment();
+        //var firstSeriesName: HeaderSegment = new HeaderSegment();
         //ET: dsId can be taken from project as it's build already
         // we have function  QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId) - can it be used?
         // if yes, it's better for maintenance (fix in one place for all cases)
@@ -301,6 +299,7 @@ class PageActions {
             for (var index = 0; index < trendSeries.length; index++) { // index = ;
                 var hc : HeaderContent = new HeaderContent();
 				var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
+		                log.LogDebug(dpArray);
 				for (var i=0; i<dpArray.length; i++) {
                     var notStartValue = dpArray[i];
                     if (!notStartValue.Equals(Double.NaN)) {
