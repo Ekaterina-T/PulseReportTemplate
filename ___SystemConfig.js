@@ -87,19 +87,19 @@ public class SystemConfig {
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions'],
         Page_Actions: []
-    },
+    };
 
 
     /**
      * stores Action Planner related settings that shouldn't be changed by clients themselves
      * too stable or too complex
      */
-    static var ActionPlannerSettings {
+    static public var ActionPlannerSettings = {
         //used for selector at the top of the page when add a new action:
         DimensionsQId: 'dimension', //id of dimensions question
         StatementsQId: 'statement', //id of statement question
 
         ActionCreatorsList: 'userId', //Qid of action creator question - to determine inactive users
         EndUserSelection: 'actionowner', //Qid which holds the list of end users
-    }
+    };
 }
