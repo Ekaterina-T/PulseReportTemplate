@@ -672,7 +672,7 @@ class PageActions {
             // though it can be multi-parameter, use only 1 option for trend
             var timeUnit = timeUnits[0];
 
-            resultSmartViewQuery+="^ ";
+            resultSmartViewQuery+=" ^ ";
             // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
             if (timeUnit.TimeUnit) {
                 resultSmartViewQuery+=trendSeries[index].date + "{";
