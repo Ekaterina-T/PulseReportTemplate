@@ -652,7 +652,7 @@ class PageActions {
         if (trendSeries.length <= index) {
             return resultSmartViewQuery;
         }
-
+        /*
         // add row with action status
         resultSmartViewQuery+= trendSeries[index].qId;
         resultSmartViewQuery+="{dsnid: "+sourceId+"; collapsed: false; total: true; distribution: count; hideheader: true; filterbymask: true;  xmask: ";
@@ -663,7 +663,7 @@ class PageActions {
             resultSmartViewQuery+=trendSeries[i].code;
         }
         resultSmartViewQuery+=";}";
-
+        */
 
         //add columns with trending
         var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
