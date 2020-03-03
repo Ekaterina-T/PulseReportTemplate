@@ -461,6 +461,16 @@ class Filters {
         return '';
     }
 
+    /**
+     * Actions get registred after Save btn is clicked, before that user can change their mind.
+     * However some data about intended action is stored already and causes discrepan
+     * @param {Object} context
+     * @retu {String}
+     */
+    static function excludeNotRegistredActions(context) {
+        return "NOT ISNULL(regDate)";
+    }
+
     /*
     * @function getSelectedEndUsersExpression
     * @description function to generate a script expression to filter EndUserStatistics_Hidden and EndUserStatistics tables by end users selected from dropdown.
