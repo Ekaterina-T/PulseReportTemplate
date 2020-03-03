@@ -629,7 +629,7 @@ class PageActions {
                 resultSmartViewQuery +="';";
             }
         }
-        resultSmartViewQuery += "}\/";
+        resultSmartViewQuery += "}"; // resultSmartViewQuery += "}\/";
         resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
         return resultSmartViewQuery;
     }
