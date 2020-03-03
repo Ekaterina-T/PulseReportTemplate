@@ -266,7 +266,7 @@ class PageActions {
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     static function tableTrend_Render(context){
-
+        var log = context.log;
         var report = context.report;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
