@@ -588,7 +588,7 @@ class PageActions {
         var result = [];
         var l = jsonTable.data[rowIndex].length;
         for(var i=0; i<l; i++){
-            result.push(jsonTable.data[rowIndex][i].values.count);
+            result.push(jsonTable.data[rowIndex][i].values.basecount);
         }
         return result;
     }
