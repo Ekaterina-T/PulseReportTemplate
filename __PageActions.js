@@ -539,12 +539,10 @@ class PageActions {
         var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
         var smTrendTableJSON = JSON.parse(smTrendTable);
         
-        log.LogDebug(smTrendTable);
-        
         var l = smTrendTableJSON.data[rowIndex].length;
 
         for(var i=0; i<l; i++) {
-            result.push(smTrendTableJSON.data[rowIndex][i].values.count);
+            result.push(smTrendTableJSON.data[rowIndex][i].values.basecount);
         }
 
         return result;
