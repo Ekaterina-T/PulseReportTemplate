@@ -468,7 +468,7 @@ class Filters {
      * @retu {String}
      */
     static function excludeNotRegistredActions(context) {
-        return "NOT ISNULL(regDate)";
+        return "NOT ISNULL("+DataSourceUtil.getDsId(context)+": regDate)";
     }
 
     /*
