@@ -75,7 +75,6 @@ class StyleAndJavaScriptUtil {
         properties.push('currentLanguage: ' + report.CurrentLanguage);
         
         properties.push('userRoles: "' + user.Roles+'"');
-        //log.LogDebug(user.Roles);
 
         if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
