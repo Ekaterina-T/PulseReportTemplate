@@ -793,11 +793,11 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
 
         /* add columns to Hiltlist using custom source */
         for (var i=0; i<staticCols.length; i++) {
-            Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
+            Hitlist.AddColumn(context, staticCols[i].id, staticCols[i].properties);
         }
 
         for (var i=0; i<tagCols.length; i++) {
-            Hitlist.AddColumn(context, tagCols[i], {sortable: false, searchable: false});
+            Hitlist.AddColumn(context, tagCols[i].id, tagCols[i].properties);
         }
 
         if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
