@@ -538,7 +538,9 @@ class PageActions {
         var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
         var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
         var smTrendTableJSON = JSON.parse(smTrendTable);
-
+        
+        log.LogDebug(smTrendTable);
+        
         var l = smTrendTableJSON.data[rowIndex].length;
 
         for(var i=0; i<l; i++) {
