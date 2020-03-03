@@ -280,7 +280,8 @@ class PageActions {
         //ET: dsId can be taken from project as it's build already
         // we have function  QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId) - can it be used?
         // if yes, it's better for maintenance (fix in one place for all cases)
-        firstSeriesName.DataSourceNodeId = DataSourceUtil.getDsId(context);
+       
+	/*firstSeriesName.DataSourceNodeId = DataSourceUtil.getDsId(context);
         var firstSeriesNameQid: Question = customProject.GetQuestion(trendSeries[0].qId);
         firstSeriesName.Label = new Label(report.CurrentLanguage, firstSeriesNameQid.GetAnswer(trendSeries[0].code).Text);
 
@@ -290,13 +291,14 @@ class PageActions {
         table.RowHeaders[0] = firstSeriesName;
         firstSeriesName.SubHeaders.Add(nestedRowHeader);
         table.RowNesting = 'Nesting';
-
+         */
+	setActionTimeSeriesOnlyByParam(context, {order: 0});
         // copy the 2nd series from the hidden table
-        if (trendSeries.length > 1) {
+        if (trendSeries.length > 0) { //>1
 
             //ET: haven't project been retrieved on line 361?
             var project : Project = DataSourceUtil.getProject(context);
-            for (var index = 1; index < trendSeries.length; index++) {
+            for (var index = 0; index < trendSeries.length; index++) { // index = ;
                 var hc : HeaderContent = new HeaderContent();
 				var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
 				for (var i=0; i<dpArray.length; i++) {
@@ -914,4 +916,27 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
 
         context.text.Output.Append(link);
     }
+	static function setActionTimeSeriesOnlyByParam(context, seriesParam, target) {
+
+        var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var index = seriesParam.order;
+        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+
+        //ET: what happens if condition === false? should we hide widget if series are not specified?
+        // or throw error demanding to populate this property? i tend to this option
+        // if we do return when condition = false, than code will have less {}, less spagetti like
+		
+        if (trendSeries.length > index) {
+           // add column - trending by Date variable
+            TableUtil.addTrending(context, trendSeries[index].date);
+
+            var hd : HeaderQuestion = table.ColumnHeaders[0];
+            var toDate : DateTime = DateTime.Now;
+            hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
+            hd.TimeSeries.EndDate = toDate;
+        }
+
+    }
+
 }
