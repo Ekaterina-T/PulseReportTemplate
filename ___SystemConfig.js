@@ -100,6 +100,6 @@ public class SystemConfig {
         StatementsQId: 'statement', //id of statement question
 
         ActionCreatorsList: 'userId', //Qid of action creator question - to determine inactive users
-        EndUserSelection: 'actionowner', //Qid which holds the list of end users
+        EndUserSelection: 'actionowner' //Qid which holds the list of end users
     };
 }
