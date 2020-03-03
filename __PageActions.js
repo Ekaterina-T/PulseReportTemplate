@@ -228,8 +228,8 @@ class PageActions {
             // add row with action status
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, trendSeries[index].qId);
             var hq: HeaderQuestion = new HeaderQuestion(qe);
-            hq.IsCollapsed = true;
-            hq.ShowTotals = false;
+            hq.IsCollapsed = false;
+            hq.ShowTotals = true;
             hq.Distributions.Enabled = true;
             hq.Distributions.Count= true;
             hq.HideHeader = true;
