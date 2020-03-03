@@ -125,6 +125,11 @@ class ParamUtil {
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
+
+        if(page.CurrentPageId === 'Actions' && state.Parameters.IsNull("p_EndUserSelection")) {
+            var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect([new ParameterValueResponse(context.user.UserId)]);
+            state.Parameters["p_EndUserSelection"] = multiResponse;
+        }
         //log.LogDebug('param init end')
     }
 
