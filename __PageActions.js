@@ -892,7 +892,12 @@ static function hitlistsActions_Render(context, isEditDeleteMode){
         }
 
         // Flag if delegation is available
-        linkParameters.push('isResponsibleVisible=' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+	var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context, 'Delegation');
+        if(isResponsibleVisible) {linkParameters.push('isResponsibleVisible=true');}
+	
+	var isWritingCommentsAvailable = PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments');
+	if(isWritingCommentsAvailable) linkParameters.push('isWriting=true');
+	    
         linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
         linkParameters.push('l=' + context.report.CurrentLanguage);
 
