@@ -34,8 +34,8 @@ public class SystemConfig {
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},  
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
 
-        'p_Statements':         { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'StatementsQId'},
-        'p_Dimensions':         { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'DimensionsQId'},
+        'p_Statements':         { type: 'QuestionId',           locationType: 'SystemConfig', section: 'ActionPlannerSettings', propertyName: 'StatementsQId'},
+        'p_Dimensions':         { type: 'QuestionId',           locationType: 'SystemConfig', section: 'ActionPlannerSettings', propertyName: 'DimensionsQId'},
         'p_Actions_BreakBy':    { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionAllocation':   { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'Breakdown'},
@@ -87,5 +87,19 @@ public class SystemConfig {
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions'],
         Page_Actions: []
+    },
+
+
+    /**
+     * stores Action Planner related settings that shouldn't be changed by clients themselves
+     * too stable or too complex
+     */
+    static var ActionPlannerSettings {
+        //used for selector at the top of the page when add a new action:
+        DimensionsQId: 'dimension', //id of dimensions question
+        StatementsQId: 'statement', //id of statement question
+
+        ActionCreatorsList: 'userId', //Qid of action creator question - to determine inactive users
+        EndUserSelection: 'actionowner', //Qid which holds the list of end users
     }
 }

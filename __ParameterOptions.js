@@ -146,6 +146,12 @@ class ParameterOptions {
             return parameterInfo.path; //how to pass functions in JScript?
         }
 
+        if (parameterInfo.locationType === 'SystemConfig') {
+            //hard coded due to time limits
+            //need proper class with func that would return SystemConfic variable's values by var name
+            return SystemConfig.ActionPlannerSettings[parameterInfo.propertyName];
+        }
+
         throw new Error('ParamUtil.getParameterValuesResource: Cannot define parameter value resource by given location.');
     }
 
