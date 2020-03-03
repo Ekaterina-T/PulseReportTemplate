@@ -126,6 +126,8 @@ class ParamUtil {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
 
+        //this is KOSTYL! after merge with 1.3 or when we introduce default values for params
+        //it all MUST BE REFACTORED
         if(page.CurrentPageId === 'Actions' && state.Parameters.IsNull("p_EndUserSelection")) {
             var multiResponse : ParameterValueMultiSelect = new ParameterValueMultiSelect([new ParameterValueResponse(context.user.UserId)]);
             state.Parameters["p_EndUserSelection"] = multiResponse;
