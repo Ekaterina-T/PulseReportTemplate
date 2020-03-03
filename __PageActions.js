@@ -631,6 +631,7 @@ class PageActions {
         }
         resultSmartViewQuery += "}"; // resultSmartViewQuery += "}\/";
         resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
+        log.LogDebug(resultSmartViewQuery);
         return resultSmartViewQuery;
     }
 
