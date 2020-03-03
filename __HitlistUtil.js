@@ -56,17 +56,13 @@ class Hitlist {
             var hitlist = context.hitlist;
             var log = context.log;
     
-            var sortable = columnProps.sortable || false;
-            var searchable = columnProps.searchable || false;
-            var order = columnProps.order;
-    
             var qe : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qId);
             var column : HitListColumn = new HitListColumn();
             column.QuestionnaireElement = qe;
-            column.IsLink = false;
-            column.IsSearchable = searchable;
-            column.IsSortable = sortable;
-            if (order) {
+            column.IsLink = YesNoDefaultValue.No;
+            column.IsSearchable = columnProps.searchable ? YesNoDefaultValue.Yes : YesNoDefaultValue.No;
+            column.IsSortable = columnProps.sortable ? YesNoDefaultValue.Yes : YesNoDefaultValue.No;
+            if (columnProps.order) {
                 hitlist.Columns.Insert(order, column);
             } else {
                 hitlist.Columns.Add(column);
