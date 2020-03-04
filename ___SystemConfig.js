@@ -49,7 +49,7 @@ public class SystemConfig {
     };
 
     static var defaultParameterValues = {
-        'p_Wave': { locationType: 'Survey', propertyName: 'DefaultWave'},
+        'p_Wave': { locationType: 'Survey', propertyName: 'DefaultWave'}
     };
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
