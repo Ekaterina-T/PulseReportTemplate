@@ -439,7 +439,7 @@ class PageActions {
 
         // add column - trending by Date variable
 
-        TableUtil.addTrending(context, trendSeries[1].date);
+        TableUtil.addTrending(context, trendSeries[0].date);
 
         var hd : HeaderQuestion = table.ColumnHeaders[0];
         var toDate : DateTime = DateTime.Now;
