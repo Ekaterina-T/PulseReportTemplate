@@ -347,11 +347,6 @@ class ParameterOptions {
      *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
      */
     static private function getOptions_DynamicList(context, path) {
-
-        if (path === 'SurveyTracker.getAllSurveyDescriptors') {
-            return SurveyTracker.getAllSurveyDescriptors(context);
-        }
-
         throw new Error('ParameterOptions.getOptions_FunctionCall: cannot find handler for path: ' + path);
     }
 
