@@ -405,7 +405,7 @@ class PageActions {
             }
         }
 
-        if (trendSeries.length > 1) {
+        if (trendSeries.length > 0) {
             for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
                 hcUser.DataSourceNodeId = DsId;
