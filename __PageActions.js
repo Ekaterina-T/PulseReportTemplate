@@ -631,7 +631,7 @@ class PageActions {
         }
         resultSmartViewQuery += "}"; // resultSmartViewQuery += "}\/";
         resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
-        log.LogDebug(resultSmartViewQuery);
+        
         return resultSmartViewQuery;
     }
 
@@ -688,7 +688,7 @@ class PageActions {
             var toDate : DateTime = DateTime.Now;
             resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
         }
-        log.LogDebug(resultSmartViewQuery);
+        
         return resultSmartViewQuery;
     }
     /**
