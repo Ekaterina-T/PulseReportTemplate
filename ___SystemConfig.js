@@ -48,6 +48,10 @@ public class SystemConfig {
 
     };
 
+    static var defaultParameterValues = {
+        'p_Wave': { locationType: 'Survey', propertyName: 'DefaultWave'}
+    };
+
     // mandatory parameters can be single or multi. Must have default value when a page opens
     static var mandatoryPageParameters = ['p_ActionAllocation','p_Actions_BreakBy','p_ActionCost_BreakBy',
                                           'p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
