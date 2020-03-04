@@ -555,7 +555,12 @@ class ParameterOptions {
         var log = context.log;
         var parameterOptions = ParameterOptions.GetOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+        var defaultValueFromConfig = SystemConfig.defaultParameterValues[parameterName];
         var code;
+
+        if(defaultValueFromConfig) {
+            return getParameterValuesResourceByLocation(context, defaultValueFromConfig);
+        }
 
         //pulse program
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
