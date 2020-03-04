@@ -542,7 +542,7 @@ class PageActions {
         var l = smTrendTableJSON.data[rowIndex].length;
 
         for(var i=0; i<l; i++) {
-            result.push(smTrendTableJSON.data[rowIndex][i].values.basecount);
+            result.push(smTrendTableJSON.data[rowIndex][i].values.count);
         }
 
         return result;
@@ -588,7 +588,7 @@ class PageActions {
         var result = [];
         var l = jsonTable.data[rowIndex].length;
         for(var i=0; i<l; i++){
-            result.push(jsonTable.data[rowIndex][i].values.basecount);
+            result.push(jsonTable.data[rowIndex][i].values.count);
         }
         return result;
     }
@@ -678,7 +678,7 @@ class PageActions {
             if (timeUnit.TimeUnit) {
                 resultSmartViewQuery+=trendSeries[index].date + "{";
                 resultSmartViewQuery+=getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
-                resultSmartViewQuery+="flatlayout: true; ";
+                resultSmartViewQuery+="flatlayout: true; distribution: count;";
             } else {
                 //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
                 resultSmartViewQuery+= timeUnit.Code + "{";
