@@ -953,7 +953,7 @@ class PageActions {
             for (var i=0; i<inactiveUsers.length; i++) {
                 text.Output.Append('<p class="name">' + inactiveUsers[i] + '</p>');
             }
-            stext.Output.Append('</div><ul class="pagination"></ul></div>');
+            text.Output.Append('</div><ul class="pagination"></ul></div>');
         }
 
     }
