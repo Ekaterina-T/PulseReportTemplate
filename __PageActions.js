@@ -100,7 +100,7 @@ class PageActions {
         hq.Distributions.Enabled = true;
         hq.Distributions.Count = true;
         table.RowHeaders.Add(hq);
-
+        table.Caching.Enabled = false;
     }
 
     /**
