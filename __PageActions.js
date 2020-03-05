@@ -943,4 +943,18 @@ class PageActions {
 
     }
 
+    static fucntion buildInactiveUserList(context) {
+
+        var inactiveUsers = PageActions.inactiveUsersList_Render(context, "InactiveUsers_Hidden");
+
+        if (inactiveUsers.length > 0) {
+            text.Output.Append('<div id="user-list"><div class="list">');
+            for (var i=0; i<inactiveUsers.length; i++) {
+                text.Output.Append('<p class="name">' + inactiveUsers[i] + '</p>');
+            }
+            text.Output.Append('</div><ul class="pagination"></ul></div>');
+        }
+
+    }
+
 }
