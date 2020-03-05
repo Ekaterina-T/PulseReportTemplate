@@ -943,7 +943,7 @@ class PageActions {
 
     }
 
-    static fucntion buildInactiveUserList(context) {
+    static function buildInactiveUserList(context) {
 
         var inactiveUsers = PageActions.inactiveUsersList_Render(context, "InactiveUsers_Hidden");
 
