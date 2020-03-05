@@ -2,17 +2,6 @@ class PageActions {
 
     /**
      * @memberof PageActions
-     * @function Hide
-     * @description function to hide the page
-     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     * @returns {Boolean}
-     */
-    static function Hide(context){
-        return false;
-    }
-
-    /**
-     * @memberof PageActions
      * @function hitlistActions_Hide
      * @description function to hide the hitlist
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
@@ -520,6 +509,17 @@ class PageActions {
             }
         }
         return isAvailable;
+    }
+
+    /**
+     * @memberof PageActions
+     * @function Hide
+     * @description function to hide the page
+     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @returns {Boolean}
+     */
+    static function hideAdvancedReportingWidget(context) {
+        return !isFeatureAvailableForUserRole(context, 'AdvancedReporting');
     }
 
 
