@@ -75,9 +75,7 @@ class StyleAndJavaScriptUtil {
         properties.push('currentLanguage: ' + report.CurrentLanguage);
         
         properties.push('userRoles: "' + user.Roles+'"');
-        
-        properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
-        properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
+
 
         if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
@@ -121,6 +119,8 @@ class StyleAndJavaScriptUtil {
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
             properties.push('StatementsByDimension: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension')));
+            properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+            properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
         }
 
         globalVarScript.push('<script>');
