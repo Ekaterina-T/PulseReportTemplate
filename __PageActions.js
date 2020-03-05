@@ -437,6 +437,10 @@ class PageActions {
         hd.TimeSeries.EndDate = toDate;
 
         table.Decimals = 0;
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Distribution.Enabled = true;
+        table.Distribution.Count = true;
+        table.Distribution.VerticalPercents = false;
         table.Caching.Enabled = false;
     }
 
