@@ -191,6 +191,7 @@ class PageActions {
         hQColumn.ShowTotals = false;
         table.ColumnHeaders.Add(hQColumn);
         table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
 
     }
 
@@ -481,6 +482,7 @@ class PageActions {
 
         table.ColumnHeaders.Add(HSAvg);
         table.ColumnHeaders.Add(HSSum);
+        table.Caching.Enabled = false;
     }
 
 
