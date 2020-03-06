@@ -308,4 +308,98 @@ class PageKPI {
         }
     }
 
+        /**
+     * @memberof PageKPI
+     * @function tableOrgOverview_Hide
+     * @description function to hide the OrgOverview table
+     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @returns {Boolean}
+     */
+    static function tableOrgOverview_Hide(context){
+
+      return SuppressUtil.isGloballyHidden(context);
+
+    }
+
+    /**
+   * @memberof PageKPI
+   * @function tableOrgOverview_Render
+   * @description function to render the OrgOverview table
+   * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+   */
+    static function tableOrgOverview_Render(context){
+      
+      var table = context.table;
+      var log = context.log;
+      var suppressSettings = context.suppressSettings;
+      var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+      var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+      var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierarchyQId);
+      var hh: HeaderQuestion = new HeaderQuestion(qe);
+      hh.ShowTotals = false;
+      hh.HierLayout = HierLayout.Flat;
+      hh.ReferenceGroup.Enabled = true;
+      hh.ReferenceGroup.Self = true;
+      hh.ReferenceGroup.Levels = '+1';
+      table.RowHeaders.Add(hh);
+      
+      var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+      qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
+      var hq: HeaderQuestion = new HeaderQuestion(qe);
+      hq.IsCollapsed = true;
+      hq.FilterByMask = true;
+      hq.ShowTotals = false;
+      hq.Distributions.Enabled = true;
+      hq.Distributions.Count = true;
+      hq.HideHeader = true;
+      if (response.codes.length) {
+          var qmask : MaskFlat = new MaskFlat(true);
+          qmask.Codes.AddRange(response.codes);
+          hq.AnswerMask = qmask;
+      }
+      var hc : HeaderSegment = new HeaderSegment(TextAndParameterUtil.getLabelByKey(context, 'Responses'), '');
+      hc.DataSourceNodeId = DataSourceUtil.getDsId (context);
+      hc.SubHeaders.Add(hq);
+      table.ColumnHeaders.Add(hc);
+      
+
+      var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
+      
+      for (var i=0; i<Qs.length; i++) { 
+        
+        var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
+        var col;
+        
+        if(header.Type === 'Question') {        
+          qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+          col = new HeaderQuestion(qe);
+          col.IsCollapsed = true;
+          col.DefaultStatistic = StatisticsType.Average;
+          
+        } else if(header.Type === 'Dimension') {
+          
+          col = new HeaderCategorization();        
+          col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+          col.DataSourceNodeId = DataSourceUtil.getDsId(context);
+          col.DefaultStatistic = StatisticsType.Average;
+          col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+          col.Preaggregation = PreaggregationType.Average;
+          col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
+          col.Collapsed = true;
+          col.Totals = true;
+        }      
+        
+        TableUtil.maskOutNA(context, col);
+        table.ColumnHeaders.Add(col);
+      }       
+    
+      // global table settings
+      table.Caching.Enabled = false;
+      table.RemoveEmptyHeaders.Rows = true;
+      table.Decimals = Config.Decimal;
+      SuppressUtil.setTableSuppress(table, suppressSettings);
+
+    }
+
 }
