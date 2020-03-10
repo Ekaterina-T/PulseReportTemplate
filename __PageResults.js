@@ -585,8 +585,8 @@ class PageResults {
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
 
-            var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-            for (i = 0; i < hierCompCols.length; i++) {
+            var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context); 
+            if (hierarchyLevel) {
 
                 var hierCompContent: HeaderContent = new HeaderContent();
                 var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
@@ -604,7 +604,7 @@ class PageResults {
 
                 table.ColumnHeaders.Add(hierCompContent);
                 //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
-                bmColumn += 1;
+                
             }
         }
 
@@ -793,11 +793,7 @@ class PageResults {
         var bases = context.user.PersonalizedReportBase.split(',');
 
         if (bases.length === 1) {
-            var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-
-            for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
-                tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
-            }
+            tableBenchmarks_addHierarchyBasedComparison(context);
         }
     }
 
@@ -805,36 +801,25 @@ class PageResults {
     /*
      * Adds segment with proper filter by hierarchy and base and score column for it
      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-     * @param {level} top or number of levels to go up
-     */
-    static function tableBenchmarks_addHierarchyBasedComparison(context, level) {
+    */
+    static function tableBenchmarks_addHierarchyBasedComparison(context) {
 
         var log = context.log;
         var report = context.report;
         var levelSegment: HeaderSegment = new HeaderSegment();
-        var parentsList = [];
-
+        
         levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
         levelSegment.SegmentType = HeaderSegmentType.Expression;
         levelSegment.HideData = true;
 
-        if (level === 'top') {
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
-        } else if (level === 'parent') {
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
-        } else{
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
-        }
+        var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
 
-        if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
-            var parentArr = parentsList[0];
-            var index = parentArr.length - 1;
-
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
-            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+        if (hierarchyLevel) {
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, hierarchyLevel['id'], null);
+            levelSegment.Label = new Label(report.CurrentLanguage, hierarchyLevel['label']);
 
         } else {
-            return; // no such parent in the hierarchy
+            return; 
         }
 
         //calc score
@@ -941,12 +926,12 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
-        var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
         var reportBases = context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         var surveysToCompare = getBenchmarkSurveys(context).length;
 
-        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare) {
+        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevel) || surveysToCompare) {
             return true;
         }
         return false;

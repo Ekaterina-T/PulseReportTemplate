@@ -207,6 +207,33 @@ class HierarchyUtil {
         return levels;
     }
 
+    /**
+     * @memberof HierarchyUtil
+     * @function getHierarchyLevelToCompare
+     * @description gets BA level from DB table for the current node
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @returns {String}
+     */
+    static function getHierarchyLevelToCompare(context) {
+
+        var log = context.log;
+        var level = {};
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var filteredRow: DataRow[] = dbTable.Select("id='"+ bases[0] +"'");
+        
+        if (filteredRow.length > 0) 
+        {
+          level['id'] = filteredRow[0]['upperlevelba'];
+          var BARow: DataRow[] = dbTable.Select("id='"+ level['id'] +"'");
+          if (BARow.length > 0) {
+            level['label'] = BARow[0]['__l9'];
+          }
+          if (level['id']) return level;
+        }
+              
+      	return null;
+    }
+
     /*
       static function getLevel(user) {
         return getParents(user).length;
