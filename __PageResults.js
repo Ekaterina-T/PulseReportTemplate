@@ -1016,10 +1016,11 @@ class PageResults {
     static function isBenchmarkAvailable(context) {
 
         var log = context.log;
+        var user = context.user;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-        var reportBases = context.user.PersonalizedReportBase.split(',');
+        var reportBases = !!user.PersonalizedReportBase ? user.PersonalizedReportBase.split(',') : [];
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         var surveysToCompare = getBenchmarkSurveys(context).length;
 
