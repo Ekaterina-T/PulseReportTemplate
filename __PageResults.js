@@ -491,17 +491,25 @@ class PageResults {
     static function tableStatements_AddBenchmarkColumns_Banner0(context) {
 
         var log = context.log;
+        log.LogDebug('1')
+        log.LogDebug('!isBenchmarkAvailable(context)='+!isBenchmarkAvailable(context));
 
         if (!isBenchmarkAvailable(context)) {
             return;
         }
+        log.LogDebug('2')
         var report = context.report;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        log.LogDebug('3')
         var bmColumn = 2; // 1st coulumn always exists - it's base
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
+        log.LogDebug('4')
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1);
+        log.LogDebug('5')
         var suppressValue = SuppressConfig.TableSuppressValue;
+        log.LogDebug('6')
         var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
+        log.LogDebug('7')
         var base: Datapoint;
 
         // !!!order of how bm cols are added must comply with bm table column order!!!
@@ -531,6 +539,7 @@ class PageResults {
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsPrevWave');
             bmColumn += 1;
         }
+        log.LogDebug('8')
 
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
@@ -558,6 +567,7 @@ class PageResults {
                 bmColumn += 1;
             }
         }
+        log.LogDebug('9')
 
         // add benchmark data based on benchmark project
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
@@ -580,6 +590,7 @@ class PageResults {
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
             bmColumn += 1;
         }
+        log.LogDebug('10')
 
         //add hierarchy comparison benchmarks
         var reportBases = context.user.PersonalizedReportBase.split(',');
@@ -607,6 +618,7 @@ class PageResults {
                 bmColumn += 1;
             }
         }
+        log.LogDebug('11')
 
     }
 
