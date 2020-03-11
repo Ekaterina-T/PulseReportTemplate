@@ -416,6 +416,7 @@ class ParameterOptionsBuilder {
      */
     static private function GetProcessedList(context, parameterId) {
 
+        var log = context.log;
         var parameterInfo = GetParameterInfoObject(context, parameterId); //where to take parameter values from
         var resource = getParameterValuesResourceByLocation(context, parameterInfo);
         var options = [];
@@ -424,7 +425,6 @@ class ParameterOptionsBuilder {
             options = getRawOptions(context, resource, parameterInfo.type);
             options = modifyOptions(context, options, parameterInfo);
         }
-        //context.log.LogDebug(JSON.stringify(options))
 
         return options;
     }

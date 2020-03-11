@@ -13,10 +13,8 @@ class PageUtil {
         var log = context.log;
         var pageContext = context.pageContext;
 
-        //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-        //log.LogDebug('page init start: '+page.CurrentPageId);
 
         try {
             var add_in_source = DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'Source');
@@ -126,10 +124,6 @@ class PageUtil {
             throw new Error('PageUtil.getCurrentPageIdInConfig: CurrentPageId is undefined')
         }
 
-        // not needed anymore
-        if(pageId.indexOf('_ExcelExport')>0) {
-            pageId = pageId.substr(0, pageId.indexOf('_ExcelExport'));
-        }
 
         return 'Page_'+pageId;
     }

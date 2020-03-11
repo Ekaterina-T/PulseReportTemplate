@@ -28,9 +28,10 @@ class ParamUtil {
     static function LoadParameter(context) {
 
         var parameter = context.parameter;
+        var parameterId = parameter.ParameterId;
         var log = context.log;
 
-        var currentPage = context.pageContext.Items['CurrentPageId'];
+        //var currentPage = context.pageContext.Items['CurrentPageId'];
 
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
@@ -383,16 +384,17 @@ class ParamUtil {
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
-
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
         }
-        
+
+        if(parameterName === 'p_OpenTextQs')  log.LogDebug('is load 3')
         //after p_projectSelector to be able to iterate export over it
         //in the above case p_projectSelector runs earlier than page script
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        if(parameterName === 'p_OpenTextQs')  log.LogDebug('is load 4')
         
         if (parameterName === 'p_Results_CountsPercents') {
             var user = context.user;
@@ -424,8 +426,12 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }
 
-        if(parameterName === 'p_TimeUnitWithDefault' && pageId === 'Page_Trends') {
-            return !isPulseProgram;
+        if(parameterName === 'p_TimeUnitWithDefault') {
+            //in export with loop by param it may cause troubles (pageid)
+            //because param load script runs before page script
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            if(pageId === 'Page_Trends')
+                return !isPulseProgram;
         }
 
         if (parameterName === 'p_Trends_trackerSurveys') {
