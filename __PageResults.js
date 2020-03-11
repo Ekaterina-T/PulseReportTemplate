@@ -960,7 +960,7 @@ class PageResults {
         log.LogDebug('isBenchmarkAvailable 4')
         var reportBases = context.user.PersonalizedReportBase.split(',');
         log.LogDebug('isBenchmarkAvailable 5')
-        var showPrevWave = !!Config.HierarchyQuestion && DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
+        var showPrevWave = !!DataSourceUtil.getPropertyValueFromConfig('HierarchyQuestion')  && DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         log.LogDebug('isBenchmarkAvailable 6')
         var surveysToCompare = getBenchmarkSurveys(context).length;
 
