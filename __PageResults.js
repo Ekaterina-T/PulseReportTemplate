@@ -951,11 +951,17 @@ class PageResults {
     static function isBenchmarkAvailable(context) {
 
         var log = context.log;
+        log.LogDebug('isBenchmarkAvailable 1')
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        log.LogDebug('isBenchmarkAvailable 2')
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
+        log.LogDebug('isBenchmarkAvailable 3')
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        log.LogDebug('isBenchmarkAvailable 4')
         var reportBases = context.user.PersonalizedReportBase.split(',');
-        var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
+        log.LogDebug('isBenchmarkAvailable 5')
+        var showPrevWave = !!Config.HierarchyQuestion && DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
+        log.LogDebug('isBenchmarkAvailable 6')
         var surveysToCompare = getBenchmarkSurveys(context).length;
 
         if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevels && hierarchyLevels.length > 0) || surveysToCompare) {
