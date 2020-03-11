@@ -957,8 +957,8 @@ class PageResults {
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
         log.LogDebug('isBenchmarkAvailable 3')
         var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-        log.LogDebug('isBenchmarkAvailable 4 '+!!(DataSourceUtil.getPropertyValueFromConfig(context, 'HierarchyQuestion')))
-        var reportBases = !!DataSourceUtil.getPropertyValueFromConfig(context, 'HierarchyQuestion') ? context.user.PersonalizedReportBase.split(',') : [];
+        log.LogDebug('isBenchmarkAvailable 4 '+!!(DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion')))
+        var reportBases = !!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion') ? context.user.PersonalizedReportBase.split(',') : [];
         log.LogDebug('isBenchmarkAvailable 5')
         var showPrevWave =  DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         log.LogDebug('isBenchmarkAvailable 6')
