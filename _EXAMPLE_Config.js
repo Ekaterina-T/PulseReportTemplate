@@ -196,7 +196,7 @@ public class Config {
         KPIthreshold: [{score: 0, color: '#36842D'}, {score: 1, color: '#7e8286'}, {score: 2, color: '#8B565A'}],
         Breakdown: 'dimension',
         Trend: [{qId: 'actionstatus', code: ['3'], date: 'implementedDate'}, {qId: 'actionstatus', code: ['1'], date: 'regDate'}] // NB: Trend supports only 2 series
-
+        //something new just to test git
       }
 
     }
