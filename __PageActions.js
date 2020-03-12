@@ -1,6 +1,119 @@
 class PageActions {
 
     /**
+     * @description Assembles link to create new action and writes it into text element from context 
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
+     * @requires Parameters: p_Wave, p_Dimensions, p_Statements
+     * @example PageActions.ActionBtn_Render({state: state, report: report, log: log, text: text, user: user, pageContext: pageContext});
+     */
+    static function ActionBtn_Render(context) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var user = context.user;
+        var log = context.log;
+
+        var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
+        var linkParameters = [];
+
+        //assemble all parameters for the link
+        linkParameters.push('U=' + user.UserId);
+
+        if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
+
+        var projectInfo = getProjectInfoForActionsSurvey(context);
+        linkParameters.push('pid=' + projectInfo.pid);
+        linkParameters.push('pname=' + projectInfo.pname);
+
+        var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        if(wave.length) {
+            linkParameters.push('wave=' + wave[0]);
+        }
+
+        // Flag if delegation is available
+        var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context, 'Delegation');
+        if(isResponsibleVisible) {linkParameters.push('isResponsibleVisible=true');}
+        
+        //flag if writing comments is available
+        var isWritingCommentsAvailable = PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments');
+        if(isWritingCommentsAvailable) linkParameters.push('isWriting=true');
+
+        linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
+        linkParameters.push('l=' + context.report.CurrentLanguage);
+
+        //we need to assign default values for dimension and statement
+        //they'll be updated with js when selection changes
+        var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
+        linkParameters.push('dimension=' + selectedDimension[0].Code);
+
+        var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
+        (selectedStatement.length) ? linkParameters.push('statement=' + selectedStatement[0].Code) : linkParameters.push('statement=null');
+
+        var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
+        var link = '<a id="createNewAction" href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>';
+
+        context.text.Output.Append(link);
+    }
+
+    /**
+     * @description function to hide specific widgets from the page
+     * @param {Object} context = {state: state, report: report, log: log, pageContext: pageContext, user: user}
+     * @returns {Boolean}
+     * @example PageActions.hideAdvancedReportingWidget({state: state, report: report, log: log, pageContext: pageContext, user: user})
+     */
+    static function hideAdvancedReportingWidget(context) {
+        return !isFeatureAvailableForUserRole(context, 'AdvancedReporting');
+    }
+
+    /**
+     * @memberof PageActions
+     * @function Render
+     * @description function to render the trend table
+     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function tableTrend_Render(context){
+        var log = context.log;
+        var report = context.report;
+        var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var dsId = DataSourceUtil.getDsId(context);
+        //var project : Project = DataSourceUtil.getProject(context);
+
+        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+  
+        if (trendSeries.length > 0) { 
+
+            setActionTimeSeriesOnlyByParam(context, {order: 0});
+
+            for (var index = 0; index < trendSeries.length; index++) { 
+                var hc : HeaderContent = new HeaderContent();
+
+                var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
+                for (var i=0; i<dpArray.length; i++) {
+                    var currentValue = dpArray[i];
+                    if (!currentValue.Equals(Double.NaN)) {
+                        hc.SetCellValue(i, currentValue);
+                    }
+                }
+                //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
+                //var question : Question = project.GetQuestion(trendSeries[index].qId);
+               // var series_name = question.GetAnswer(trendSeries[index].code).Text;
+                var series_name = QuestionUtil.getQuestionAnswerByCode(context, trendSeries[index].qId, trendSeries[index].code, dsId).Text;
+                hc.Title = new Label(report.CurrentLanguage, series_name);
+
+                table.RowHeaders.Add(hc);
+            }
+        
+        // global table settings
+        table.Decimals = 0;
+        table.RemoveEmptyHeaders.Columns = true;
+        table.Caching.Enabled = false;
+
+        } else {
+            throw new Error('PageActions.tableTrend_Render: сheck Config settings for "Trend" property. Trend series should be defined.');
+        }
+    }
+
+    /**
      * @memberof PageActions
      * @function hitlistActions_Hide
      * @description function to hide the hitlist
@@ -200,7 +313,7 @@ class PageActions {
      * @function addActionTrendSeriesByParam
      * @description function to add action trend series
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {}
+     * @param {Object} 
      * @param {}
      */
     static function setActionTrendSeriesByParam(context, seriesParam, target) {
@@ -249,69 +362,7 @@ class PageActions {
     }
 
 
-    /**
-     * @memberof PageActions
-     * @function tableTrend_Render
-     * @description function to render the trend table
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-    static function tableTrend_Render(context){
-        var log = context.log;
-        var report = context.report;
-        var table = context.table;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
-        //var customProject : Project = DataSourceUtil.getProject(context);  
-        // add 1st series
-        //var firstSeriesName: HeaderSegment = new HeaderSegment();
-        //ET: dsId can be taken from project as it's build already
-        // we have function  QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId) - can it be used?
-        // if yes, it's better for maintenance (fix in one place for all cases)
-
-        /*firstSeriesName.DataSourceNodeId = DataSourceUtil.getDsId(context);
-            var firstSeriesNameQid: Question = customProject.GetQuestion(trendSeries[0].qId);
-            firstSeriesName.Label = new Label(report.CurrentLanguage, firstSeriesNameQid.GetAnswer(trendSeries[0].code).Text);
-
-            setActionTrendSeriesByParam(context, {order: 0});
-            var nestedRowHeader = table.RowHeaders[0];
-
-            table.RowHeaders[0] = firstSeriesName;
-            firstSeriesName.SubHeaders.Add(nestedRowHeader);
-            table.RowNesting = 'Nesting';
-             */
-        setActionTimeSeriesOnlyByParam(context, {order: 0});
-        // copy the 2nd series from the hidden table
-        if (trendSeries.length > 0) { //>1
-
-            //ET: haven't project been retrieved on line 361?
-            var project : Project = DataSourceUtil.getProject(context);
-            for (var index = 0; index < trendSeries.length; index++) { // index = ;
-                var hc : HeaderContent = new HeaderContent();
-
-                var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
-                for (var i=0; i<dpArray.length; i++) {
-                    var notStartValue = dpArray[i];
-                    if (!notStartValue.Equals(Double.NaN)) {
-                        hc.SetCellValue(i, notStartValue);
-                    }
-                }
-
-                //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
-                var question : Question = project.GetQuestion(trendSeries[index].qId);
-                var series_name = question.GetAnswer(trendSeries[index].code).Text;
-
-                hc.Title = new Label(report.CurrentLanguage, series_name);
-                table.RowHeaders.Add(hc);
-            }
-        }
-
-        // global table settings
-        table.Decimals = 0;
-        table.RemoveEmptyHeaders.Columns = true;
-        table.Caching.Enabled = false;
-
-    }
 
 
     /**
@@ -517,16 +568,7 @@ class PageActions {
         return isAvailable;
     }
 
-    /**
-     * @memberof PageActions
-     * @function Hide
-     * @description function to hide the page
-     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     * @returns {Boolean}
-     */
-    static function hideAdvancedReportingWidget(context) {
-        return !isFeatureAvailableForUserRole(context, 'AdvancedReporting');
-    }
+  
 
 
 
@@ -865,63 +907,7 @@ class PageActions {
         return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
     }
 
-    /**
-     * @description Assemble link to create new action
-     * @param {Object} context
-     */
-    static function ActionBtn_Render(context) {
 
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var user = context.user;
-        var log = context.log;
-
-        var linkParameters = [];
-        var actionLink = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'SurveyLink');
-
-        //ET: re-wrote this function
-        //each param is grouped, then link gets assembled
-        //that way if we need to add/remove params we just edit this code, not link assemplig and smth. else
-
-        //assemble all parameters for the link
-        linkParameters.push('U=' + user.UserId);
-
-        var userRoles: String = user.Roles;
-        if(userRoles!="") linkParameters.push('role='+ userRoles);
-
-        if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
-
-        var projectInfo = getProjectInfoForActionsSurvey(context);
-        linkParameters.push('pid=' + projectInfo.pid);
-        linkParameters.push('pname=' + projectInfo.pname);
-
-        var wave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
-        if(wave.length) {
-            linkParameters.push('wave=' + wave[0]);
-        }
-
-        // Flag if delegation is available
-        var isResponsibleVisible = PageActions.isFeatureAvailableForUserRole(context, 'Delegation');
-        if(isResponsibleVisible) {linkParameters.push('isResponsibleVisible=true');}
-
-        var isWritingCommentsAvailable = PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments');
-        if(isWritingCommentsAvailable) linkParameters.push('isWriting=true');
-
-        linkParameters.push('currency=' + DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Currency'));
-        linkParameters.push('l=' + context.report.CurrentLanguage);
-
-        //we need to assign default values for dimension and statement
-        //they'll be updated with js when selection changes
-        var selectedDimension = ParamUtil.GetSelectedOptions(context, 'p_Dimensions');
-        linkParameters.push('dimension=' + selectedDimension[0].Code);
-
-        var selectedStatement = ParamUtil.GetSelectedOptions(context, 'p_Statements');
-        (selectedStatement.length) ? linkParameters.push('statement=' + selectedStatement[0].Code) : linkParameters.push('statement=null');
-
-        var linkTitle = TextAndParameterUtil.getTextTranslationByKey(context, 'ActionAddBtn');
-        var link = '<a id="createNewAction" href="'+ actionLink +'?'+ linkParameters.join('&') + '" class="icon icon--add" target="_blank" title="'+linkTitle+'"></a>';
-
-        context.text.Output.Append(link);
-    }
     static function setActionTimeSeriesOnlyByParam(context, seriesParam, target) {
 
         var table = context.table;
