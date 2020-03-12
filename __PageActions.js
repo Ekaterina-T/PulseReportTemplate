@@ -300,7 +300,7 @@ class PageActions {
         }
 
         // global table settings
-        table.Decimals = 0;
+        table.Decimals = Config.Decimal;
         table.RemoveEmptyHeaders.Columns = true;
         table.Caching.Enabled = false;
 
