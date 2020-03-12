@@ -322,7 +322,7 @@ class PageResponseRate {
 
         // add row - the number of completes. Header Content and subheader are used for having possibility to change column title in Library
         var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
-        qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, response.qId);
         var hq2: HeaderQuestion = new HeaderQuestion(qe);
         hq2.IsCollapsed = true;
         hq2.FilterByMask = true;
