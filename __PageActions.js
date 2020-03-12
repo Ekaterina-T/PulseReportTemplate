@@ -65,10 +65,71 @@ class PageActions {
     }
 
     /**
-     * @memberof PageActions
-     * @function Render
+     * @description help function to add trending column (as used for content crossing no matter what Trend we use) 
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @inner
+     * @example addTrendingColumnByFirstTrend(context);
+     */
+    static function addTrendingColumnByFirstTrend(context) {
+
+        var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+
+        if(trendSeries == null || trendSeries == undefined){
+            throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
+            return;
+        }
+
+        if(trendSeries.length==0){
+            throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
+            return;
+        }
+       
+        var existingColumnsNumber = table.ColumnHeaders.Count;
+        
+        TableUtil.addTrending(context, trendSeries[0].date); // add 1 new column - trending by Date variable
+
+        var hd : HeaderQuestion = table.ColumnHeaders[existingColumnsNumber]; //trending column
+        var toDate : DateTime = DateTime.Now;
+        hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
+        hd.TimeSeries.EndDate = toDate;
+        
+    }
+
+     /**
+     * @description help function to get data for specific trending 
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param int trendIndex - index of given Trend in Trend series list in Config
+     * @inner
+     * @example getSpecificActionTrendDataArray(context, trendIndex);
+     */
+    static function getSpecificActionTrendDataArray(context, trendIndex) {
+
+        var log = context.log;
+        var report = context.report;
+        var sourceId  = DataSourceUtil.getDsId(context);
+
+        var result = [];
+
+        var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: trendIndex});
+        
+        var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
+        var smTrendTableJSON = JSON.parse(smTrendTable);
+        
+        var l = smTrendTableJSON.data[0].length;
+
+        for(var i=0; i<l; i++) {
+            result.push(smTrendTableJSON.data[0][i].values.count);
+        }
+
+        return result;
+    }
+
+    /**
      * @description function to render the trend table
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @example PageActions.tableTrend_Render({state: state, report: report, log: log, table: table, pageContext: pageContext});
      */
     static function tableTrend_Render(context){
         var log = context.log;
@@ -76,41 +137,42 @@ class PageActions {
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dsId = DataSourceUtil.getDsId(context);
-        //var project : Project = DataSourceUtil.getProject(context);
 
         var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
   
-        if (trendSeries.length > 0) { 
+        if(trendSeries == null || trendSeries == undefined){
+            throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
+            return;
+        }
+        if(trendSeries.length==0){
+            throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
+            return;
+        }
+        
+        addTrendingColumnByFirstTrend(context);
 
-            setActionTimeSeriesOnlyByParam(context, {order: 0});
-
-            for (var index = 0; index < trendSeries.length; index++) { 
+        for (var trendIndex = 0; trendIndex < trendSeries.length; trendIndex++) { 
                 var hc : HeaderContent = new HeaderContent();
 
-                var dpArray = getActionTrendHiddenTableRowDataArray(context, index, 0);
+                var dpArray = getSpecificActionTrendDataArray(context, trendIndex);
                 for (var i=0; i<dpArray.length; i++) {
                     var currentValue = dpArray[i];
                     if (!currentValue.Equals(Double.NaN)) {
                         hc.SetCellValue(i, currentValue);
                     }
                 }
-                //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
-                //var question : Question = project.GetQuestion(trendSeries[index].qId);
-               // var series_name = question.GetAnswer(trendSeries[index].code).Text;
-                var series_name = QuestionUtil.getQuestionAnswerByCode(context, trendSeries[index].qId, trendSeries[index].code, dsId).Text;
+
+                var series_name = QuestionUtil.getQuestionAnswerByCode(context, trendSeries[trendIndex].qId, trendSeries[trendIndex].code, dsId).Text;
                 hc.Title = new Label(report.CurrentLanguage, series_name);
 
                 table.RowHeaders.Add(hc);
-            }
+        }
         
-        // global table settings
+        
         table.Decimals = 0;
         table.RemoveEmptyHeaders.Columns = true;
         table.Caching.Enabled = false;
-
-        } else {
-            throw new Error('PageActions.tableTrend_Render: сheck Config settings for "Trend" property. Trend series should be defined.');
-        }
+       
     }
 
     /**
@@ -572,29 +634,7 @@ class PageActions {
 
 
 
-    /**
-     * SMART VIEW HIDDEN TABLES
-     */
-    static function getActionTrendHiddenTableRowDataArray(context, tableIndex, rowIndex) {
 
-        var log = context.log;
-        var report = context.report;
-
-        var result = [];
-        var smTrend1Expression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
-
-        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
-        var smTrendTable = report.TableUtils.GenerateTableFromExpression(sourceId, smTrend1Expression, TableFormat.Json);
-        var smTrendTableJSON = JSON.parse(smTrendTable);
-        
-        var l = smTrendTableJSON.data[rowIndex].length;
-
-        for(var i=0; i<l; i++) {
-            result.push(smTrendTableJSON.data[rowIndex][i].values.count);
-        }
-
-        return result;
-    }
 
     /**
      *
@@ -908,28 +948,7 @@ class PageActions {
     }
 
 
-    static function setActionTimeSeriesOnlyByParam(context, seriesParam, target) {
 
-        var table = context.table;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var index = seriesParam.order;
-        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
-
-        //ET: what happens if condition === false? should we hide widget if series are not specified?
-        // or throw error demanding to populate this property? i tend to this option
-        // if we do return when condition = false, than code will have less {}, less spagetti like
-
-        if (trendSeries.length > index) {
-            // add column - trending by Date variable
-            TableUtil.addTrending(context, trendSeries[index].date);
-
-            var hd : HeaderQuestion = table.ColumnHeaders[0];
-            var toDate : DateTime = DateTime.Now;
-            hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
-            hd.TimeSeries.EndDate = toDate;
-        }
-
-    }
 
     static function buildInactiveUserList(context) {
 
