@@ -69,10 +69,10 @@ class PageResults {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
 
-        if (!showCustomQuestions && resultStatements && resultStatements.length > 0) {
+        if (!showCustomQuestions && !showDimensions) {
             tableStatements_AddRows_Banner0(context);
             numberOfAddedBanners++;
-        } else if (!showCustomQuestions && dimensions && dimensions.length > 0) {
+        } else if (!showCustomQuestions && showDimensions) {
             tableStatements_AddRows_Banner1(context);
             numberOfAddedBanners++;
         }
@@ -960,6 +960,30 @@ class PageResults {
         }
 
         return surveysToCompare;
+    }
+
+     /*
+     * Checks either Dimensions or ResultStatements are specified in config
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     */
+    static function isDimensionsMode(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
+        var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+       
+        if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
+            throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
+        }
+     
+        if (resultStatements && resultStatements.length > 0) {
+            return false;
+        } else if (dimensions && dimensions.length > 0) {
+            return true;
+        } else { 
+            throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
+        }
     }
 
 }

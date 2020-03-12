@@ -89,6 +89,9 @@ class StyleAndJavaScriptUtil {
                 } else {
                     properties.push('isCustomQuestionsTabVisible: false');
                 }
+
+                var isDimensionsVisible = PageResults.isDimensionsMode(context);
+                properties.push('isDimensionsTabVisible: ' + isDimensionsVisible);
             }
     
             if (pageId === 'Categorical_') {
