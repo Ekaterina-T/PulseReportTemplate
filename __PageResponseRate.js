@@ -307,6 +307,49 @@ class PageResponseRate {
         table.UseRespondentData = true;
     }
 
+    /**
+     * @memberof PageResponseRate
+     * @function tableResponsesOverTime_Render
+     * @description function to build the table showing distribution by time unit - days, month, year
+     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function tableResponsesOverTime_Render (context) {
+
+        var report = context.report;
+        var state = context.state;
+        var log = context.log;
+        var table = context.table;
+
+        // add row - the number of completes. Header Content and subheader are used for having possibility to change column title in Library
+        var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+        qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
+        var hq2: HeaderQuestion = new HeaderQuestion(qe);
+        hq2.IsCollapsed = true;
+        hq2.FilterByMask = true;
+        hq2.ShowTotals = false;
+        hq2.Distributions.Enabled = true;
+        hq2.Distributions.Count = true;
+        hq2.HideHeader = true;
+        if (response.codes.length) {
+            var qmask2 : MaskFlat = new MaskFlat(true);
+            qmask2.Codes.AddRange(response.codes);
+            hq2.AnswerMask = qmask2;
+        }
+        var hc2 : HeaderSegment = new HeaderSegment(TextAndParameterUtil.getLabelByKey(context, 'Responses'), '');
+        hc2.DataSourceNodeId = DataSourceUtil.getDsId (context);
+        hc2.SubHeaders.Add(hq2);
+        table.RowHeaders.Add(hc2);
+
+        // add column - trending by Date variable
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'MailingDateQuestion');
+        TableUtil.addTrending(context, dateQId);
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Rows = false;
+        table.UseRespondentData = true;
+    }
+
 
     /**
      * @memberof PageResponseRate
