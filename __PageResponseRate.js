@@ -21,8 +21,6 @@ class PageResponseRate {
      */
     static function tableResponseRate_AddBanner(context, placement) {
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var placement = (placement == 'column') ? table.ColumnHeaders : table.RowHeaders;
@@ -96,6 +94,7 @@ class PageResponseRate {
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
         table.UseRespondentData = true;
+        table.Decimals = Config.Decimal;
     }
 
     /**
@@ -122,6 +121,7 @@ class PageResponseRate {
 
         // global table settings
         table.Caching.Enabled = false;
+        table.Decimals = Config.Decimal;
         table.RemoveEmptyHeaders.Columns = true;
     }
 
@@ -198,8 +198,6 @@ class PageResponseRate {
      */
     static function tableNumberOfResponses_Render(context){
 
-        var report = context.report;
-        var state = context.state;
         var table = context.table;
         var log = context.log;
         var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
@@ -224,6 +222,7 @@ class PageResponseRate {
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
+        table.Decimals = Config.Decimal;
     }
 
     /**
@@ -257,6 +256,7 @@ class PageResponseRate {
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Rows = false;
         table.UseRespondentData = true;
+        table.Decimals = Config.Decimal;
     }
 
 
@@ -305,6 +305,7 @@ class PageResponseRate {
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
         table.UseRespondentData = true;
+        table.Decimals = Config.Decimal;
     }
 
 
@@ -340,7 +341,6 @@ class PageResponseRate {
     static function setChartByTimeSettings (context) {
 
         var report = context.report;
-        var state = context.state;
         var log = context.log;
         var chart = context.chart;
 

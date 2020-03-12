@@ -17,7 +17,7 @@ class PageResults {
         tableStatements_ApplyConditionalFormatting(context);
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
-        table.Decimals = 0;
+        table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
@@ -813,9 +813,10 @@ class PageResults {
             tableBenchmarks_AddColumns_Banner0(context);
             SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
-            table.Decimals = 0;
+            table.Decimals = Config.Decimal;
             table.RowNesting = TableRowNestingType.Nesting;
             table.RemoveEmptyHeaders.Rows = false;
+            table.Decimals = Config.Decimal;
         }
     }
 

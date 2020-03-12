@@ -83,6 +83,7 @@ class PageKPI {
     
     // global table settings
     table.Caching.Enabled = false;
+    table.Decimals = Config.Decimal;
     SuppressUtil.setTableSuppress(table, suppressSettings);
     
   }
@@ -275,6 +276,7 @@ class PageKPI {
         table.RowHeaders.Add(row);
         table.Distribution.Enabled = true;
         table.Distribution.Count = true;
+        table.Decimals = Config.Decimal;
         table.Distribution.VerticalPercents = false;
     }
 

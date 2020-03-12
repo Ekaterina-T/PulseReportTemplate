@@ -169,6 +169,7 @@ class PageCategorical {
 
         // global table settings
         table.Caching.Enabled = false;
+        table.Decimals = Config.Decimal;
         table.RemoveEmptyHeaders.Columns = false;
         table.RemoveEmptyHeaders.Rows = false;
         SuppressUtil.setTableSuppress(table, suppressSettings);

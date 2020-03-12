@@ -89,6 +89,7 @@ class PageCategoricalDrilldown {
         table.Sorting.Rows.Position=2;
         table.Sorting.Rows.Direction = TableSortDirection.Descending;
         table.Sorting.Rows.Enabled = true;
+        table.Decimals = Config.Decimal;
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
     }
