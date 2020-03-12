@@ -82,7 +82,8 @@ class PageTrend {
 
         // global table settings
         table.Caching.Enabled = false;
-        table.RemoveEmptyHeaders.Rows = true;
+        table.RemoveEmptyHeaders.Rows = true;        
+        table.Decimals = Config.Decimal;
         SuppressUtil.setTableSuppress(table, suppressSettings);
     }
 
