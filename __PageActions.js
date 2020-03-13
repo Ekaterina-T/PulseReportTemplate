@@ -154,8 +154,8 @@ class PageActions {
                 var fromDate : DateTime = new DateTime (2019, 1, 1);
    
                 resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
-                resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToString(fromDate)+ "\"; ";
-                resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToString(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";          
+                resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToStringForSmartView(fromDate)+ "\"; ";
+                resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToStringForSmartView(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";          
             
             return resultSmartViewQuery;
         }
