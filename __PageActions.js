@@ -98,6 +98,80 @@ class PageActions {
     }
 
      /**
+     * @description help function to generate SmartView table code for both trending widgets (Action Trend, End User Statistics)
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {Object} {order: int trendIndex} - index of given Trend in Trend series list in Config
+     * @inner
+     * @requires Parameters: p_TimeUnitWithDefault
+     * @example generateTrendingSmartViewTableCodeByTimeUnit(context, {order: trendIndex});
+     * @returns String
+     */
+    static function generateTrendingSmartViewTableCodeByTimeUnit(context, seriesParam) {
+
+            var log = context.log;
+            var resultSmartViewQuery = "";
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            var sourceId  = DataSourceUtil.getDsId(context);
+            var index = seriesParam.order; 
+    
+            var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+
+    
+            if(trendSeries == null || trendSeries == undefined){
+                throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
+                return "";
+            }
+            if(trendSeries.length==0){
+                throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
+                return "";
+            }
+   
+            //add columns with trending
+            var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
+            if(timeUnits == null || timeUnits == undefined){
+                throw new Error('PageActions.generateTrendingSmartViewTableCodeByTimeUnit:  cannot get selected options of p_TimeUnitWithDefault');
+                return "";
+            }
+            if(timeUnits.length==0 || timeUnits.length>1){
+                throw new Error('PageActions.generateTrendingSmartViewTableCodeByTimeUnit: p_TimeUnitWithDefault shoud have selected value and only one selected value');
+                return "";
+            }
+             
+            var timeUnit = timeUnits[0];
+    
+            resultSmartViewQuery+=" ^ "; //add only columns, no rows needed
+
+            // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
+            if (timeUnit.TimeUnit) {
+                    resultSmartViewQuery+=trendSeries[index].date + "{";
+                    resultSmartViewQuery+=getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
+                    resultSmartViewQuery+="flatlayout: true; distribution: count;"; //do not remove distribution it is important for getting data!
+            } else {
+                    //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
+                    resultSmartViewQuery+= timeUnit.Code + "{";
+            }
+                var toDate : DateTime = DateTime.Now;
+                var fromDate : DateTime = new DateTime (2019, 1, 1);
+   
+                resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
+                resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToString(fromDate)+ "\"; ";
+                resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToString(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";          
+            
+            return resultSmartViewQuery;
+        }
+
+     /**
+     * @description help function to generate SmartView table code for Action Trend widget
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param Object {order: int trendIndex} - index of given Trend in Trend series list in Config
+     * @inner
+     * @example generateActionTrandHiddenTableSmartView(context, {order: trendIndex});
+     */
+    static function generateActionTrandHiddenTableSmartView(context, seriesParam){
+        return generateTrendingSmartViewTableCodeByTimeUnit(context, seriesParam);
+    }
+
+     /**
      * @description help function to get data for specific trending 
      * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @param int trendIndex - index of given Trend in Trend series list in Config
@@ -682,12 +756,7 @@ class PageActions {
     }
 
 
-    /**
-     * ET: why 2 functions are needed here? they have the same signature and no special logic
-     */
-    static function generateActionTrandHiddenTableSmartView(context, seriesParam){
-        return generateActionTrendSeriesByParam_SVText(context, seriesParam);
-    }
+
 
     /**
      *
@@ -718,67 +787,12 @@ class PageActions {
             }
         }
         resultSmartViewQuery += "}"; // resultSmartViewQuery += "}\/";
-        resultSmartViewQuery += generateActionTrendSeriesByParam_SVText(context, seriesParam);
+        resultSmartViewQuery += generateTrendingSmartViewTableCodeByTimeUnit(context, seriesParam);
         
         return resultSmartViewQuery;
     }
 
-    /**
-     *
-     */
-        //ActionsPage_SmartView.generateActionTrandTableSmartView(,)
-    static function generateActionTrendSeriesByParam_SVText(context, seriesParam) {
 
-        var log = context.log;
-        var resultSmartViewQuery = "";
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-        var index = seriesParam.order; //1
-
-        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
-        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
-
-        if (trendSeries.length <= index) {
-            return resultSmartViewQuery;
-        }
-        /*
-        // add row with action status
-        resultSmartViewQuery+= trendSeries[index].qId;
-        resultSmartViewQuery+="{dsnid: "+sourceId+"; collapsed: false; total: true; distribution: count; hideheader: true; filterbymask: true;  xmask: ";
-
-        for (var i = 0; i<trendSeries.length; i++) {
-            //ET: the same as before; extra operation every iteration
-            if(i!=0) resultSmartViewQuery+=",";
-            resultSmartViewQuery+=trendSeries[i].code;
-        }
-        resultSmartViewQuery+=";}";
-        */
-
-        //add columns with trending
-        var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
-
-        if (timeUnits.length) {
-            // though it can be multi-parameter, use only 1 option for trend
-            var timeUnit = timeUnits[0];
-
-            resultSmartViewQuery+=" ^ ";
-            // check if time unit for breakdown is specified in TextAndParameterLibrary->ParameterValuesLibrary
-            if (timeUnit.TimeUnit) {
-                resultSmartViewQuery+=trendSeries[index].date + "{";
-                resultSmartViewQuery+=getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
-                resultSmartViewQuery+="flatlayout: true; distribution: count;";
-            } else {
-                //  no time units, so add trending by a single (not a date question!) specified in TextAndParameterLibrary->ParameterValuesLibrary
-                resultSmartViewQuery+= timeUnit.Code + "{";
-            }
-            //ET: we've got date util for dates, can it help?
-            // please use it
-            var toDate : DateTime = DateTime.Now;
-            resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false; start: \"1/1/2019\"; end: \""+ toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";
-        }
-        
-        return resultSmartViewQuery;
-    }
     /**
      *
      */
