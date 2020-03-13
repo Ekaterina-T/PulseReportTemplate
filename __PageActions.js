@@ -250,6 +250,45 @@ class PageActions {
     }
 
     /**
+     * @description function to render ActionBreakdown Dimension/Statement tables
+     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param String "statement" or "dimension"
+     * @example PageActions.tablesBreakdown_Render({state: state, report: report, log: log, table: table, pageContext: pageContext},'dimension');
+     */
+    static function tablesBreakdown_Render(context, breakdownType) {
+
+        var log = context.log;
+        var table = context.table;
+
+        var breakdownQId : String ="";
+
+        switch(breakdownType){
+            case "statement": {breakdownQId = SystemConfig.ActionPlannerSettings.StatementsQId; break;}
+            case "dimension": {breakdownQId = SystemConfig.ActionPlannerSettings.DimensionsQId; break;}
+            default: {
+                throw new Error('PageActions.tablesBreakdown_Render: the second argument should be "statement" or "dimension"');
+                return;
+            }
+        }        
+
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, breakdownQId);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
+
+        hq.Distributions.Enabled = true;
+        hq.Distributions.HorizontalPercents = true;
+        hq.ShowTotals = false;
+        table.ColumnHeaders.Add(hq);
+
+        // global table settings
+        table.RemoveEmptyHeaders.Columns = true;
+        table.Caching.Enabled = false;
+
+    }
+
+
+
+
+    /**
      * @memberof PageActions
      * @function hitlistActions_Hide
      * @description function to hide the hitlist
@@ -914,29 +953,7 @@ class PageActions {
         }
     }
 
-    /**
-     * @memberof PageActions
-     * @function tableTrend_Render
-     * @description function to render the trend table
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-    static function tablesBreakdown_Render(context, selectedCode) {
 
-        var log = context.log;
-        var table = context.table;
-        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedCode);
-        var hq: HeaderQuestion = new HeaderQuestion(qe);
-
-        hq.Distributions.Enabled = true;
-        hq.Distributions.HorizontalPercents = true;
-        hq.ShowTotals = false;
-        table.ColumnHeaders.Add(hq);
-
-        // global table settings
-        table.RemoveEmptyHeaders.Columns = true;
-        table.Caching.Enabled = false;
-
-    }
 
 
     /**

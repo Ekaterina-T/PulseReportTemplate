@@ -91,6 +91,10 @@ class DateUtil {
 
         return '';
     }
+     /* Transform DateTime into smart view reportal suitable string format
+     * @param {DateTime} dateTime
+     * @return {string} '3/22/2011' (m/d/yyyy)
+     */
     static function formatDateTimeToStringForSmartView(dateTime) {
 
         if(dateTime) {
