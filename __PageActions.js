@@ -1,6 +1,21 @@
 class PageActions {
 
     /**
+     * @description Specific part of page Init 
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
+     * @requires Parameters: p_HierMaskIds
+     * @example PageActions.ActionPage_Init({state: state, report: report, log: log, text: text, user: user, pageContext: pageContext});
+     */
+    static function ActionPage_Init(context){
+        var log = context.log;
+        var state = context.state; 
+        
+        if(state.Parameters.IsNull("p_HierMaskIds")){
+            state.Parameters["p_HierMaskIds"] = new ParameterValueResponse(getHierarchyMaskIdsStringList(context));
+         }
+    }
+
+    /**
      * @description Assembles link to create new action and writes it into text element from context 
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
      * @requires Parameters: p_Wave, p_Dimensions, p_Statements
@@ -158,7 +173,7 @@ class PageActions {
                 resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToStringForSmartView(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";          
             
             return resultSmartViewQuery;
-        }
+    }
 
      /**
      * @description help function to generate SmartView table code for Action Trend widget
@@ -284,6 +299,195 @@ class PageActions {
         table.Caching.Enabled = false;
 
     }
+   
+     /**
+     * @description function to mask hierarchy node to show current selected level and children (of first level).
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @returns {String} 'id1,id2,id3' - ids to exclude - except reportbase and its children
+     * @example getHierarchyMaskIdsStringList(context);
+     * @inner
+     */
+     //TODO:  What if report base have several elements?
+     // Maybe use hierarchy level settings instead of masking
+    static function getHierarchyMaskIdsStringList(context){
+
+        var user = context.user;
+        var reportBase = user.PersonalizedReportBase;
+        var dataTable = HierarchyUtil.getDataTable();
+        var hierLevels = dataTable.Rows;
+
+        var idsToMask = [];
+
+        //as it is hierarchy, mask is always exclusive, so we find everything except reportBase and its children
+        for (var i = 0; i < hierLevels.Count; i++) {
+            var dRow : DataRow = hierLevels[i];
+            if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
+                idsToMask.push(dRow['id']);
+            }
+        }
+        var idsToMaskString = idsToMask.join(',');
+
+        return idsToMask;
+    }
+    /**
+     * @description help function to get exclusive mask for hierarchy 
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @inner
+     * @requires Parameters: p_HierMaskIds
+     * @example hierQuestionHeader.AnswerMask = getHierarchyMask (context);
+     * @returns MaskHierarchy
+     */
+    static function getHierarchyMask (context) {
+
+        var state = context.state;
+        var idsToMask = [];
+  
+        if(!state.Parameters.IsNull("p_HierMaskIds")){
+            idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
+        } else {
+            idsToMask = getHierarchyMaskIdsStringList(context).split(',');
+        }
+
+        var mask : MaskHierarchy = new MaskHierarchy();
+        for (var i = 0; i < idsToMask.length; i++) {
+
+            var hn : HierarchyNode = new HierarchyNode();
+            hn.Code = idsToMask[i];
+            hn.Level = new HierarchyLevel(Config.tableName, 'parent');
+            mask.Nodes.Add(hn);
+        }
+        return mask;
+    }
+
+    /**
+     * @description function to render the ActionsByDemographics table.
+     * @requires Parameters: p_Actions_BreakBy
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.tableActionsByDemographics_Render({state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit});
+     */
+    static function tableActionsByDemographics_Render (context) {
+
+        var table = context.table;
+        var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_Actions_BreakBy');
+
+        var qERow: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedBreakVar[0]);
+        var hQRow : HeaderQuestion = new HeaderQuestion(qERow);
+        hQRow.ShowTotals = false;
+
+        if (selectedBreakVar[0] == hierarchyQuestionId) {
+            hQRow.ReferenceGroup.Enabled = false;
+            hQRow.HierLayout = 'Flat';
+            hQRow.AnswerMask = getHierarchyMask (context);
+        }
+        table.RowHeaders.Add(hQRow);
+
+        var qEColumn: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'actionstatus');
+        var hQColumn : HeaderQuestion = new HeaderQuestion(qEColumn);
+        hQColumn.ShowTotals = false;
+        table.ColumnHeaders.Add(hQColumn);
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
+
+    }
+
+    //TODO: use Smart View instead reportal component
+    /**
+     * @description function to render InactiveUsers_Hidden table (help table for building )
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.inactiveUsersHiddenTable_Render({confirmit: confirmit, state: state, report: report, log: log, table: table, user:user, pageContext: pageContext});
+     */
+    static function inactiveUsersHiddenTable_Render(context){
+        var table = context.table;
+        var log = context.log;
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+        var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
+        var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
+        hqActionOwner.ShowTotals = false;
+        table.RowHeaders.Add(hqActionOwner);
+
+        var actionCreator = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionCreatorsList');
+        var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
+        var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
+        hqActionCreator.ShowTotals = false;
+        table.RowHeaders.Add(hqActionCreator);
+
+        var hb : HeaderBase = new HeaderBase();
+        hb.HideData = true;
+        hb.HideHeader = true;
+
+        /* as lists of actionOwner answers (n items) is the same as list of actionCreators (userId) list (n items), 
+        *  we have  2*n = rows, where k-th row is the same person as k+n, so we can sum this values and
+        *  if sum is more then 0, the user was active. Formula returns empty in this case and 1 if sum = 0 and person was inactive
+        *  table is sorted by this formula, so we take from the beginnig everyone who have 1 in this column
+        */
+        var hf : HeaderFormula = new HeaderFormula();
+        hf.HideHeader = true;
+        hf.Type = FormulaType.Expression;
+        hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
+
+        table.ColumnHeaders.Add(hb);
+        table.ColumnHeaders.Add(hf);
+
+        //table settings
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Caching.Enabled = false;
+        table.Sorting.Rows.Enabled = true;
+        table.Sorting.Rows.SortByType = TableSortByType.Position;
+        table.Sorting.Rows.Position = 2;
+    }
+
+    /**
+     * @description help function to get inactive users array based on the table that uses function inactiveUsersHiddenTable_Render
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @param String - name of the table in Reportal that uses function inactiveUsersHiddenTable_Render
+     * @example inactiveUsersList_Render(context, "InactiveUsers_Hidden");
+     * @inner
+     * @returns Array of String
+     */
+    static function inactiveUsersList_Render(context, tableName){
+        var log = context.log;
+        var report = context.report;
+
+        var inactiveUsers = [];
+
+        var data = report.TableUtils.GetColumnValues(tableName, 1); // get formula column values
+        var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
+
+        for(var i=0; i<data.length; i++){
+            if(data[i].Value == 0 || data[i].Value == null || data[i].Value == undefined) {continue;}
+            inactiveUsers.push(labels[i]);
+        }
+
+        return inactiveUsers;
+    }
+
+    /**
+     * @description function to render the InactiveUsersList.
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.buildInactiveUserList({confirmit: confirmit, state: state, report: report, log: log, user:user, pageContext: pageContext, text: text});
+     */
+    static function buildInactiveUserList(context) {
+
+        var inactiveUsers = inactiveUsersList_Render(context, "InactiveUsers_Hidden");
+        var text = context.text;
+
+        text.Output.Append('<div id="user-list"><div class="list">');
+        for (var i=0; i<inactiveUsers.length; i++) {
+            text.Output.Append('<p class="name">' + inactiveUsers[i] + '</p>');
+        }
+        text.Output.Append('</div><ul class="pagination"></ul></div>');
+    }
+
+
+
+
+
+
+
 
 
 
@@ -391,98 +595,11 @@ class PageActions {
         table.Caching.Enabled = false;
     }
 
-    /**
-     * @memberof PageActions
-     * @function getHierarchyMask
-     * @description function to mask hierarchy node to show current selected level and children (of first level).
-     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
-     * @returns {} ???
-     */
 
-    static function getHierarchyMaskIdsStringList(context){
 
-        //ET: re-write using hierarchy util
-        var user = context.user;
-        var reportBase = user.PersonalizedReportBase;
-        //var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
-        //var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
-        var dataTable = HierarchyUtil.getDataTable(); //already cached //dbTableNew.GetDataTable();
-        var hierLevels = dataTable.Rows;
 
-        var idsToMask = "";
 
-        for (var i = 0; i < hierLevels.Count; i++) {
-            //ET: alternative is idsToMask = []; each iteration idsToMask.push; after loop idsToMask.join()
-            // removes extra if every iteration?
-            if(i!=0) idsToMask+=",";
-
-            var dRow : DataRow = hierLevels[i];
-            if (dRow['id']!=reportBase && dRow['parent']!=reportBase) {
-                idsToMask+=dRow['id'];
-            }
-        }
-
-        return idsToMask;
-    }
-
-    /**
-     *
-     */
-    static function getHierarchyMask (context) {
-
-        var state = context.state;
-        var idsToMask = [];
-
-        //ET: if and else must have {}, airbnb style guide
-        //ET: why p_HierMaskIds is not described in SystemConfig?
-        if(!state.Parameters.IsNull("p_HierMaskIds"))
-            idsToMask = state.Parameters.GetString("p_HierMaskIds").split(',');
-        else idsToMask = getHierarchyMaskIdsStringList(context).split(',');
-
-        var mask : MaskHierarchy = new MaskHierarchy();
-        for (var i = 0; i < idsToMask.length; i++) {
-
-            var hn : HierarchyNode = new HierarchyNode();
-            hn.Code = idsToMask[i];
-            hn.Level = new HierarchyLevel(Config.tableName, 'parent');
-            mask.Nodes.Add(hn);
-        }
-        return mask;
-    }
-
-    /**
-     * @memberof PageActions
-     * @function tableActionsByDemographics_Render
-     * @description function to render the ActionsByDemographics table.
-     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
-     */
-
-    static function tableActionsByDemographics_Render (context) {
-
-        var table = context.table;
-        var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-        var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_Actions_BreakBy');
-
-        var qERow: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedBreakVar[0]);
-        var hQRow : HeaderQuestion = new HeaderQuestion(qERow);
-        hQRow.ShowTotals = false;
-
-        if (selectedBreakVar[0] == hierarchyQuestionId) {
-            hQRow.ReferenceGroup.Enabled = false;
-            hQRow.HierLayout = 'Flat';
-            hQRow.AnswerMask = getHierarchyMask (context);
-        }
-        table.RowHeaders.Add(hQRow);
-
-        var qEColumn: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'actionstatus');
-        var hQColumn : HeaderQuestion = new HeaderQuestion(qEColumn);
-        hQColumn.ShowTotals = false;
-        table.ColumnHeaders.Add(hQColumn);
-        table.RemoveEmptyHeaders.Rows = true;
-        table.Caching.Enabled = false;
-
-    }
-
+   
     /**
      * @memberof PageActions
      * @function addActionTrendSeriesByParam
@@ -865,64 +982,7 @@ class PageActions {
     }
 
 
-    static function inactiveUsersHiddenTable_Render(context){
-        var table = context.table;
-        var log = context.log;
 
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-        context.isCustomSource = true;
-
-        var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
-        var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
-        hqActionOwner.ShowTotals = false;
-        table.RowHeaders.Add(hqActionOwner);
-
-        var actionCreator = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionCreatorsList');
-        var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
-        var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
-        hqActionCreator.ShowTotals = false;
-        table.RowHeaders.Add(hqActionCreator);
-
-        var hb : HeaderBase = new HeaderBase();
-        hb.HideData = true;
-        hb.HideHeader = true;
-
-        var hf : HeaderFormula = new HeaderFormula();
-        hf.HideHeader = true;
-        hf.Type = FormulaType.Expression;
-        hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
-
-        table.ColumnHeaders.Add(hb);
-        table.ColumnHeaders.Add(hf);
-
-        //table settings
-        table.RemoveEmptyHeaders.Rows = true;
-        table.Caching.Enabled = false;
-        table.Sorting.Rows.Enabled = true;
-        table.Sorting.Rows.SortByType = TableSortByType.Position;
-        table.Sorting.Rows.Position = 2;
-    }
-
-
-    static function inactiveUsersList_Render(context, tableName){
-        var log = context.log;
-        var report = context.report;
-
-        var inactiveUsers = [];
-
-        var data = report.TableUtils.GetColumnValues(tableName, 1);
-        var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
-
-        for(var i=0; i<data.length; i++){
-            if(data[i].Value == 0) continue;
-            // ET: is the below if needed? or the above one?
-            if(data[i].Value > 0) inactiveUsers.push(labels[i]);
-        }
-
-        return inactiveUsers;
-    }
 
 
     static function hitlistsActions_Render(context, isEditDeleteMode){
@@ -981,19 +1041,6 @@ class PageActions {
 
 
 
-    static function buildInactiveUserList(context) {
 
-        var inactiveUsers = PageActions.inactiveUsersList_Render(context, "InactiveUsers_Hidden");
-        var text = context.text;
-
-        if (inactiveUsers.length > 0) {
-            text.Output.Append('<div id="user-list"><div class="list">');
-            for (var i=0; i<inactiveUsers.length; i++) {
-                text.Output.Append('<p class="name">' + inactiveUsers[i] + '</p>');
-            }
-            text.Output.Append('</div><ul class="pagination"></ul></div>');
-        }
-
-    }
 
 }
