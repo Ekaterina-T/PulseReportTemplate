@@ -91,4 +91,16 @@ class DateUtil {
 
         return '';
     }
+    static function formatDateTimeToStringForSmartView(dateTime) {
+
+        if(dateTime) {
+
+            var year = dateTime.Year;
+            var month = dateTime.Month;
+            var day = dateTime.Day;
+            return month+'/'+day+'/'+year;
+        }
+
+        return '';
+    }
 }
