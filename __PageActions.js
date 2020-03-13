@@ -427,7 +427,7 @@ class PageActions {
         var hf : HeaderFormula = new HeaderFormula();
         hf.HideHeader = true;
         hf.Type = FormulaType.Expression;
-        hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, emptyv(), 1), emptyv() )";
+        hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, 0, 1), 0 )";
 
         table.ColumnHeaders.Add(hb);
         table.ColumnHeaders.Add(hf);
@@ -458,7 +458,7 @@ class PageActions {
         var labels = report.TableUtils.GetRowHeaderCategoryTitles(tableName);
 
         for(var i=0; i<data.length; i++){
-            if(data[i].Value == 0 || data[i].Value == null || data[i].Value == undefined) {continue;}
+            if(data[i].Value == 0) {continue;}
             inactiveUsers.push(labels[i]);
         }
 
