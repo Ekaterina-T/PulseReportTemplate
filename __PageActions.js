@@ -327,7 +327,7 @@ class PageActions {
         }
         var idsToMaskString = idsToMask.join(',');
 
-        return idsToMask;
+        return idsToMaskString;
     }
     /**
      * @description help function to get exclusive mask for hierarchy 
