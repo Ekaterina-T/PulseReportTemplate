@@ -73,8 +73,10 @@ class StyleAndJavaScriptUtil {
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
         
         properties.push('currentLanguage: ' + report.CurrentLanguage);
-        
-        properties.push('userRoles: "' + user.Roles+'"');
+
+        if (user && user.Roles) {
+            properties.push('userRoles: "' + user.Roles + '"');
+        }
 
 
         if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
@@ -115,14 +117,18 @@ class StyleAndJavaScriptUtil {
         }
 
         if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
-            properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
             properties.push('StatementsByDimension: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension')));
-            properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
-            properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
-            properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
-            properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
+
+            if (user && user.UserId) {
+                properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+                properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
+                properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
+                properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
+            } else {
+                properties.push('isAdvancedReportingVisible: true');
+            }
         }
 
         globalVarScript.push('<script>');

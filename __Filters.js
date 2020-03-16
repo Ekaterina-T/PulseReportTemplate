@@ -433,6 +433,10 @@ class Filters {
 
     static function getOnlyOwnActionsExpression (context) {
 
+        if (!context.user || !context.user.UserId) {
+            return '';
+        }
+
         var state = context.state;
 
         if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
@@ -451,6 +455,10 @@ class Filters {
     */
 
     static function getOnlyOwnActionsinHitlistExpression (context) {
+
+        if (!context.user) {
+            return '';
+        }
 
         var state = context.state;
 

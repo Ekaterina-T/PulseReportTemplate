@@ -59,6 +59,10 @@ class HierarchyUtil {
 
     static function getHierarchyFilterExpressionForCurrentRB (context) {
 
+        if (!context.user || !context.user.PersonalizedReportBase) {
+            return '';
+        }
+
         var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
 
         if(hierarchyQId) {
