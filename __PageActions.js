@@ -93,12 +93,10 @@ class PageActions {
 
         if(trendSeries == null || trendSeries == undefined){
             throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
-            return;
         }
 
         if(trendSeries.length==0){
             throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
-            return;
         }
        
         var existingColumnsNumber = table.ColumnHeaders.Count;
@@ -166,25 +164,20 @@ class PageActions {
     
             var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
 
-    
             if(trendSeries == null || trendSeries == undefined){
                 throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
-                return "";
             }
             if(trendSeries.length==0){
                 throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
-                return "";
             }
    
             //add columns with trending
             var timeUnits = ParamUtil.GetSelectedOptions(context, 'p_TimeUnitWithDefault');
             if(timeUnits == null || timeUnits == undefined){
                 throw new Error('PageActions.generateTrendingSmartViewTableCodeByTimeUnit:  cannot get selected options of p_TimeUnitWithDefault');
-                return "";
             }
             if(timeUnits.length==0 || timeUnits.length>1){
                 throw new Error('PageActions.generateTrendingSmartViewTableCodeByTimeUnit: p_TimeUnitWithDefault shoud have selected value and only one selected value');
-                return "";
             }
              
             var timeUnit = timeUnits[0];
@@ -266,11 +259,9 @@ class PageActions {
   
         if(trendSeries == null || trendSeries == undefined){
             throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
-            return;
         }
         if(trendSeries.length==0){
             throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
-            return;
         }
         
         addTrendingColumnByFirstTrend(context);
@@ -391,11 +382,9 @@ class PageActions {
        
         if(trendSeries == null || trendSeries == undefined){
             throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
-            return;
         }
         if(trendSeries.length==0){
             throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
-            return;
         }
 
         addTrendingColumnByFirstTrend(context);  
@@ -458,7 +447,6 @@ class PageActions {
             case "dimension": {breakdownQId = SystemConfig.ActionPlannerSettings.DimensionsQId; break;}
             default: {
                 throw new Error('PageActions.tablesBreakdown_Render: the second argument should be "statement" or "dimension"');
-                return;
             }
         }        
 
