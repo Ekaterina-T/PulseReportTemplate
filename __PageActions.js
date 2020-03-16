@@ -836,23 +836,28 @@ class PageActions {
      * @inner
      */
     static function isFeatureAvailableForUserRole(context, feature) {
-
         var user = context.user;
+       
+        if (user.UserType == ReportUserType.Confirmit) {
+            return true;
+        } 
+
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var featuresByRoles = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'FeaturesByRoles');
         var isAvailable = false;
         var rolesForCurrentFeature = [];
 
-        if (user.UserType == ReportUserType.Confirmit) {
-            isAvailable = true;
-        } else if(user.UserType == ReportUserType.Enduser) {
+        if(user.UserType == ReportUserType.Enduser) {
 
+        //check features in Config to find the one mentioned in func argument
             for (var i=0; i<featuresByRoles.length; i++) {
                 if (featuresByRoles[i].feature == feature) {
                     rolesForCurrentFeature = featuresByRoles[i].roles;
+                    break;
                 }
             }
-
+        // check roles of given feature and find them in user Roles, 
+        // if at least one is found, feature is available
             for (var i=0; i<rolesForCurrentFeature.length; i++) {
                 if (user.HasRole(rolesForCurrentFeature[i])) {
                     isAvailable = true;
