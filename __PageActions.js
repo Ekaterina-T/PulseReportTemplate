@@ -265,6 +265,85 @@ class PageActions {
     }
 
     /**
+     * @description function to render the EndUsertStatistics table
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
+     * @example PageActions.tableEndUsertStatistics_Render({state: state, report: report, log: log, table: table, pageContext: pageContext, user: user});
+     * @requires Parameters: p_EndUserSelection
+     */
+    static function tableEndUsertStatistics_Render(context){
+
+        var state = context.state;
+        var report = context.report;
+        var table = context.table;
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var DsId = DataSourceUtil.getDsId(context);
+
+        var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
+       
+        if(trendSeries == null || trendSeries == undefined){
+            throw new Error('PageActions.addTrendingByFirstTrend:  Config should have "Trend" property.');
+            return;
+        }
+        if(trendSeries.length==0){
+            throw new Error('PageActions.addTrendingByFirstTrend: сheck Config settings for "Trend" property. There should be at least one Trend defined.');
+            return;
+        }
+
+        addTrendingColumnByFirstTrend(context);
+        
+        var chosenUsers = ParamUtil.GetSelectedOptions(context, 'p_EndUserSelection');
+        var chosenUsersN = chosenUsers.length;
+
+        //ET: ParamUtil.GetSelectedOptions?
+       // if(!state.Parameters.IsNull("p_EndUserSelection")){
+       //     chosenUsers = ParamUtil.GetSelectedOptions(context, "p_EndUserSelection");
+       //     chosenUsersN = chosenUsers.length;
+      //  }
+
+        var jsonTables = [];
+        if(chosenUsersN > 0){
+            for(var index = 0; index<trendSeries.length; index++){
+                jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
+            }
+        }
+
+        if (trendSeries.length > 0) {
+            for (var j=0; j<chosenUsersN; j++) {
+                var hcUser: HeaderSegment = new HeaderSegment();
+                hcUser.DataSourceNodeId = DsId;
+                hcUser.Label = new Label(9, chosenUsers[j].Label);
+
+                for (var trendIndex = 0; trendIndex < trendSeries.length; trendIndex++) {
+                    var hc : HeaderContent = new HeaderContent();
+                    var dpArray = getJSONTableRowDataArray(jsonTables[trendIndex], j);
+                    for (var i=0; i<dpArray.length; i++) {
+                        var currentValue = dpArray[i];
+                        if (!currentValue.Equals(Double.NaN)) {
+                            hc.SetCellValue(i, currentValue);
+                        }
+                    }
+
+                    var series_name = QuestionUtil.getQuestionAnswerByCode(context, trendSeries[trendIndex].qId, trendSeries[trendIndex].code, dsId).Text;
+                    hc.Title = new Label(report.CurrentLanguage, series_name);
+
+                    hcUser.SubHeaders.Add(hc);
+                }
+
+                table.RowHeaders.Add(hcUser);
+            }
+
+        }
+
+        table.Decimals = 0;
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Distribution.Enabled = true;
+        table.Distribution.Count = true;
+        table.Distribution.VerticalPercents = false;
+        table.Caching.Enabled = false;
+    }
+
+    /**
      * @description function to render ActionBreakdown Dimension/Statement tables
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @param String "statement" or "dimension"
@@ -482,92 +561,7 @@ class PageActions {
         text.Output.Append('</div><ul class="pagination"></ul></div>');
     }
 
-    /**
-     * @memberof PageActions
-     * @function tableEndUsertStatistics_Render
-     * @description function to render the EndUsertStatistics table
-     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
-     */
-    static function tableEndUsertStatistics_Render(context){
 
-        var state = context.state;
-        var report = context.report;
-        var table = context.table;
-        var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-        var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
-        var p : Project = DataSourceUtil.getProject(context);
-
-        //ET: ParamUtil.GetSelectedOptions?
-        var chosenUsers;
-        var chosenUsersN = 0;
-
-        //ET: ParamUtil.GetSelectedOptions?
-        if(!state.Parameters.IsNull("p_EndUserSelection")){
-            chosenUsers = ParamUtil.GetSelectedOptions(context, "p_EndUserSelection");
-            chosenUsersN = chosenUsers.length;
-        }
-
-        //ET: can it be retrieved from p, line 470?
-        var DsId = DataSourceUtil.getDsId(context);
-
-        var jsonTables = [];
-        if(chosenUsersN > 0){
-            for(var index = 0; index<trendSeries.length; index++){
-                jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
-            }
-        }
-
-        if (trendSeries.length > 0) {
-            for (var j=0; j<chosenUsersN; j++) {
-                var hcUser: HeaderSegment = new HeaderSegment();
-                hcUser.DataSourceNodeId = DsId;
-                hcUser.Label = new Label(9, chosenUsers[j].Label);
-
-                for (var index = 0; index < trendSeries.length; index++) {
-                    var hc : HeaderContent = new HeaderContent();
-                    var dpArray = getJSONTableRowDataArray(jsonTables[index], j);
-                    //var dpArray : Datapoint[] = report.TableUtils.GetRowValues('EndUserStatistics_Hidden' + index, j+1);
-                    for (var i=0; i<dpArray.length; i++) {
-                        var notStartValue = dpArray[i];
-                        if (!notStartValue.Equals(Double.NaN)) {
-                            hc.SetCellValue(i, notStartValue);
-                        }
-                    }
-
-                    //ET: need to replace with QuestionUtil.getQuestionAnswerByCode (context, questionId, precode, dsId)
-                    var question : Question = p.GetQuestion(trendSeries[index].qId);
-                    var series_name = question.GetAnswer(trendSeries[index].code).Text;
-
-                    hc.Title = new Label(report.CurrentLanguage, series_name);
-                    hcUser.SubHeaders.Add(hc);
-
-                }
-
-                table.RowHeaders.Add(hcUser);
-
-            }
-
-        }
-
-        // add column - trending by Date variable
-
-        TableUtil.addTrending(context, trendSeries[0].date);
-
-        var hd : HeaderQuestion = table.ColumnHeaders[0];
-        var toDate : DateTime = DateTime.Now;
-        //ET: why start date is hard coded?
-        hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
-        hd.TimeSeries.EndDate = toDate;
-
-        table.Decimals = 0;
-        table.RemoveEmptyHeaders.Rows = true;
-        table.Distribution.Enabled = true;
-        table.Distribution.Count = true;
-        table.Distribution.VerticalPercents = false;
-        table.Caching.Enabled = false;
-    }
 
 
 
