@@ -311,7 +311,7 @@ class PageActions {
         if (trendSeries.length > 0) {
             for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
-                hcUser.DataSourceNodeId = DsId;
+                hcUser.DataSourceNodeId = dsId;
                 hcUser.Label = new Label(9, chosenUsers[j].Label);
 
                 for (var trendIndex = 0; trendIndex < trendSeries.length; trendIndex++) {
