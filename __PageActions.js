@@ -277,7 +277,7 @@ class PageActions {
         var table = context.table;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var DsId = DataSourceUtil.getDsId(context);
+        var dsId = DataSourceUtil.getDsId(context);
 
         var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
        
