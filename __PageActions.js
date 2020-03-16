@@ -265,6 +265,68 @@ class PageActions {
     }
 
     /**
+     * @description help function to generate SmartView help tables code for End User Statistics widget
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param Object {order: int trendIndex} - index of given Trend in Trend series list in Config
+     * @inner
+     * @example generatetableEndUsertStatisticsHiddenTableSmartView(context, {order: trendIndex});
+     */
+    static function generatetableEndUsertStatisticsHiddenTableSmartView(context, trendIndex){
+        var resultSmartViewQuery = "";
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
+        resultSmartViewQuery += actionOwner+ "{total: false; filterbymask: true; ";
+
+        var chosenUsers = ParamUtil.GetSelectedCodes(context, "p_EndUserSelection");
+        var chosenUsersN = chosenUsers.length;
+
+        if(chosenUsersN >0){
+            resultSmartViewQuery +="mask: '" + chosenUsers.join(',') + ";";
+        }
+        /*for(var i=0; i<chosenUsersN; i++) {
+
+            // move out of loop? start loop from 1 - otherwise extra checks
+            // can be replaces with shorter expression: !i? resultSmartViewQuery+="mask: '" : other alternative
+            if(i==0) {
+                resultSmartViewQuery+="mask: '";
+            } else {
+                resultSmartViewQuery+="','";
+            }
+
+            resultSmartViewQuery+=chosenUsers[i];
+            if (i==chosenUsersN-1) {
+                resultSmartViewQuery +="';";
+            }
+        }*/
+        resultSmartViewQuery += "}"; 
+        resultSmartViewQuery += generateTrendingSmartViewTableCodeByTimeUnit(context, trendIndex);
+        
+        return resultSmartViewQuery;
+    }
+
+
+    /**
+     * @description help function to get JSON table with specific trend by user
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param int trendIndex - index of given Trend in Trend series list in Config
+     * @inner
+     * @example getEndUserStatHiddenTableJSON(context, trendIndex);
+     */
+    static function getEndUserStatHiddenTableJSON(context, trendIndex) {
+        var log = context.log;
+        var report = context.report;
+
+        var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: trendIndex});
+
+        var sourceId  = DataSourceUtil.getDsId(context);
+        var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
+        var smTableJSON = JSON.parse(smTable);
+
+        return smTableJSON;
+    }
+
+    /**
      * @description function to render the EndUsertStatistics table
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
      * @example PageActions.tableEndUsertStatistics_Render({state: state, report: report, log: log, table: table, pageContext: pageContext, user: user});
@@ -272,7 +334,6 @@ class PageActions {
      */
     static function tableEndUsertStatistics_Render(context){
 
-        var state = context.state;
         var report = context.report;
         var table = context.table;
         var log = context.log;
@@ -290,24 +351,21 @@ class PageActions {
             return;
         }
 
-        addTrendingColumnByFirstTrend(context);
-        
         var chosenUsers = ParamUtil.GetSelectedOptions(context, 'p_EndUserSelection');
         var chosenUsersN = chosenUsers.length;
 
-        //ET: ParamUtil.GetSelectedOptions?
-       // if(!state.Parameters.IsNull("p_EndUserSelection")){
-       //     chosenUsers = ParamUtil.GetSelectedOptions(context, "p_EndUserSelection");
-       //     chosenUsersN = chosenUsers.length;
-      //  }
-
-        var jsonTables = [];
-        if(chosenUsersN > 0){
-            for(var index = 0; index<trendSeries.length; index++){
-                jsonTables.push(getEndUserStatHiddenTableJSON(context, index));
-            }
+        if(chosenUsersN==0){
+           return;
         }
 
+        addTrendingColumnByFirstTrend(context);  
+
+        var jsonTables = [];
+        
+        for(var trendIndex = 0; trendIndex<trendSeries.length; trendIndex++){
+                jsonTables.push(getEndUserStatHiddenTableJSON(context, trendIndex));
+            }
+        
         if (trendSeries.length > 0) {
             for (var j=0; j<chosenUsersN; j++) {
                 var hcUser: HeaderSegment = new HeaderSegment();
@@ -877,21 +935,7 @@ class PageActions {
     }
 
 
-    /**
-     *
-     */
-    static function getEndUserStatHiddenTableJSON(context, tableIndex) {
-        var log = context.log;
-        var report = context.report;
 
-        var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: tableIndex});
-
-        var sourceId  = DataSourceUtil.getDsId(context);//getPagePropertyValueFromConfig (context, pageId, 'Source');
-        var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
-        var smTableJSON = JSON.parse(smTable);
-
-        return smTableJSON;
-    }
 
     /**
      * ?? context ??
@@ -908,40 +952,7 @@ class PageActions {
 
 
 
-    /**
-     *
-     */
-    static function generatetableEndUsertStatisticsHiddenTableSmartView(context, seriesParam){
-        var resultSmartViewQuery = "";
-        var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-        resultSmartViewQuery += actionOwner+ "{total: false; filterbymask: true; ";
-
-        var chosenUsers = ParamUtil.GetSelectedCodes(context, "p_EndUserSelection");
-        var chosenUsersN = chosenUsers.length;
-
-        for(var i=0; i<chosenUsersN; i++) {
-
-            // move out of loop? start loop from 1 - otherwise extra checks
-            // can be replaces with shorter expression: !i? resultSmartViewQuery+="mask: '" : other alternative
-            if(i==0) {
-                resultSmartViewQuery+="mask: '";
-            } else {
-                resultSmartViewQuery+="','";
-            }
-
-            resultSmartViewQuery+=chosenUsers[i];
-            if (i==chosenUsersN-1) {
-                resultSmartViewQuery +="';";
-            }
-        }
-        resultSmartViewQuery += "}"; // resultSmartViewQuery += "}\/";
-        resultSmartViewQuery += generateTrendingSmartViewTableCodeByTimeUnit(context, seriesParam);
-        
-        return resultSmartViewQuery;
-    }
-
+ 
 
     /**
      *
