@@ -270,6 +270,7 @@ class PageActions {
      * @param Object {order: int trendIndex} - index of given Trend in Trend series list in Config
      * @inner
      * @example generateTableEndUsertStatisticsHiddenTableSmartView(context, {order: trendIndex});
+     * @requires Parameters: p_EndUserSelection
      */
     static function generateTableEndUsertStatisticsHiddenTableSmartView(context, trendIndex){
         var resultSmartViewQuery = "";
@@ -312,6 +313,22 @@ class PageActions {
         return smTableJSON;
     }
 
+     /**
+     * @description help function to get data from json table with COUNT distribution 
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param int rowIndex - index of the row to take
+     * @inner
+     * @example  var dpArray = getJSONTableWithCountDistributionRowDataArray(jsonTables[trendIndex], j);
+     */
+    static function getJSONTableWithCountDistributionRowDataArray(jsonTable, rowIndex){
+        var result = [];
+        var l = jsonTable.data[rowIndex].length;
+        for(var i=0; i<l; i++){
+            result.push(jsonTable.data[rowIndex][i].values.count);
+        }
+        return result;
+    }
+
     /**
      * @description function to render the EndUsertStatistics table
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user}
@@ -325,6 +342,15 @@ class PageActions {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dsId = DataSourceUtil.getDsId(context);
+
+        //do not move it below because if no enduser chosen function will stop at the middle
+        //but this settings are needed anyway
+        table.Decimals = 0;
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Distribution.Enabled = true;
+        table.Distribution.Count = true;
+        table.Distribution.VerticalPercents = false;
+        table.Caching.Enabled = false;
 
         var trendSeries = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Trend');
        
@@ -358,7 +384,7 @@ class PageActions {
 
                 for (var trendIndex = 0; trendIndex < trendSeries.length; trendIndex++) {
                     var hc : HeaderContent = new HeaderContent();
-                    var dpArray = getJSONTableRowDataArray(jsonTables[trendIndex], j);
+                    var dpArray = getJSONTableWithCountDistributionRowDataArray(jsonTables[trendIndex], j);
                     for (var i=0; i<dpArray.length; i++) {
                         var currentValue = dpArray[i];
                         if (!currentValue.Equals(Double.NaN)) {
@@ -377,12 +403,6 @@ class PageActions {
 
         }
 
-        table.Decimals = 0;
-        table.RemoveEmptyHeaders.Rows = true;
-        table.Distribution.Enabled = true;
-        table.Distribution.Count = true;
-        table.Distribution.VerticalPercents = false;
-        table.Caching.Enabled = false;
     }
 
     /**
@@ -603,8 +623,48 @@ class PageActions {
         text.Output.Append('</div><ul class="pagination"></ul></div>');
     }
 
+    /**
+     * @description function to render the ActionCost table.
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.tableActionCost_Render({confirmit: confirmit, state: state, report: report, log: log, table: table, user:user, pageContext: pageContext});
+     * @requires Parameters: p_ActionCost_BreakBy
+     */
+    static function tableActionCost_Render(context) {
 
+        var table = context.table;
+        var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_ActionCost_BreakBy');
+        table.RemoveEmptyHeaders.Rows = true;
 
+        var qERow: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedBreakVar[0]);
+        var hQRow : HeaderQuestion = new HeaderQuestion(qERow);
+        hQRow.ShowTotals = false;
+
+        if (selectedBreakVar[0] == hierarchyQuestionId) {
+            hQRow.ReferenceGroup.Enabled = false;
+            hQRow.HierLayout = 'Flat';
+            hQRow.AnswerMask = getHierarchyMask (context);
+        }
+        table.RowHeaders.Add(hQRow);
+
+        var qECost: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'cost');
+        var hQCost : HeaderQuestion = new HeaderQuestion(qECost);
+        hQCost.IsCollapsed = true;
+        hQCost.HideHeader = true;
+        hQRow.SubHeaders.Add(hQCost);
+
+        var HSAvg: HeaderStatistics = new HeaderStatistics();
+        HSAvg.Statistics.Avg = true;
+        HSAvg.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Average');
+
+        var HSSum: HeaderStatistics = new HeaderStatistics();
+        HSSum.Statistics.Sum = true;
+        HSSum.Texts.Sum = TextAndParameterUtil.getLabelByKey(context, 'Total');
+
+        table.ColumnHeaders.Add(HSAvg);
+        table.ColumnHeaders.Add(HSSum);
+        table.Caching.Enabled = false;
+    }
 
 
 
@@ -716,11 +776,6 @@ class PageActions {
         table.Caching.Enabled = false;
     }
 
-
-
-
-
-   
     /**
      * @memberof PageActions
      * @function addActionTrendSeriesByParam
@@ -729,7 +784,7 @@ class PageActions {
      * @param {Object} 
      * @param {}
      */
-    static function setActionTrendSeriesByParam(context, seriesParam, target) {
+    /*static function setActionTrendSeriesByParam(context, seriesParam, target) {
 
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -773,10 +828,7 @@ class PageActions {
         }
 
     }
-
-
-
-
+*/
 
     /**
      * @memberof PageActions
@@ -784,7 +836,7 @@ class PageActions {
      * @description function to render the trend table
      * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
-    static function tableTrendHidden_Render(context, seriesParam) {
+   /* static function tableTrendHidden_Render(context, seriesParam) {
 
         var table = context.table;
         setActionTrendSeriesByParam(context, seriesParam);
@@ -793,7 +845,7 @@ class PageActions {
         table.RemoveEmptyHeaders.Columns = false;
         table.Caching.Enabled = false;
 
-    }
+    }*/
 
     /**
      * @memberof PageActions
@@ -801,7 +853,7 @@ class PageActions {
      * @description function to render the EndUsertStatisticsHidden table. End user statistics by action status. Data from hidden tables is combined in EndUsertStatistics table
      * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext}, order
      */
-    static function tableEndUsertStatisticsHidden_Render(context, seriesParam) {
+    /*static function tableEndUsertStatisticsHidden_Render(context, seriesParam) {
 
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -821,48 +873,7 @@ class PageActions {
         table.RemoveEmptyHeaders.Columns = false;
         table.Caching.Enabled = false;
     }
-
-
-
-    /**
-     *
      */
-    static function tableActionCost_Render(context) {
-
-        var table = context.table;
-        var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-        var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_ActionCost_BreakBy');
-        table.RemoveEmptyHeaders.Rows = true;
-
-        var qERow: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, selectedBreakVar[0]);
-        var hQRow : HeaderQuestion = new HeaderQuestion(qERow);
-        hQRow.ShowTotals = false;
-
-        if (selectedBreakVar[0] == hierarchyQuestionId) {
-            hQRow.ReferenceGroup.Enabled = false;
-            hQRow.HierLayout = 'Flat';
-            hQRow.AnswerMask = getHierarchyMask (context);
-        }
-        table.RowHeaders.Add(hQRow);
-
-        var qECost: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'cost');
-        var hQCost : HeaderQuestion = new HeaderQuestion(qECost);
-        hQCost.IsCollapsed = true;
-        hQCost.HideHeader = true;
-        hQRow.SubHeaders.Add(hQCost);
-
-        var HSAvg: HeaderStatistics = new HeaderStatistics();
-        HSAvg.Statistics.Avg = true;
-        HSAvg.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Average');
-
-        var HSSum: HeaderStatistics = new HeaderStatistics();
-        HSSum.Statistics.Sum = true;
-        HSSum.Texts.Sum = TextAndParameterUtil.getLabelByKey(context, 'Total');
-
-        table.ColumnHeaders.Add(HSAvg);
-        table.ColumnHeaders.Add(HSSum);
-        table.Caching.Enabled = false;
-    }
 
 
     /**
@@ -896,16 +907,7 @@ class PageActions {
         return isAvailable;
     }
 
-  
-
-
-
-
-
-    /**
-     *
-     */
-    static function getActionTrendHiddenTableJSON(context, tableIndex) {
+  /*  static function getActionTrendHiddenTableJSON(context, tableIndex) {
 
         var log = context.log;
         var report = context.report;
@@ -916,7 +918,7 @@ class PageActions {
         var smTableJSON = JSON.parse(smTable);
 
         return smTableJSON;
-    }
+    }*/
 
 
 
@@ -924,14 +926,6 @@ class PageActions {
     /**
      * ?? context ??
      */
-    static function getJSONTableRowDataArray(jsonTable, rowIndex){
-        var result = [];
-        var l = jsonTable.data[rowIndex].length;
-        for(var i=0; i<l; i++){
-            result.push(jsonTable.data[rowIndex][i].values.count);
-        }
-        return result;
-    }
 
 
 
