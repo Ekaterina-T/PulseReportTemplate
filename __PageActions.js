@@ -113,6 +113,41 @@ class PageActions {
     }
 
      /**
+     * @description help function to get valid code of 'Time Series break by' for Smart View
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log} - for log
+     * @param timeUnit - option of parameter p_TimeUnitWithDefault
+     * @inner
+     * @example getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit);
+     */
+    static function getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit){
+        var timeUnitCode = timeUnit.Code;
+        var resultSmartViewQuery = "";
+        switch (timeUnitCode) {
+            case 'Y':
+                resultSmartViewQuery+="time1: year; ";
+                break;
+
+            case 'Q':
+                resultSmartViewQuery+="time1: year; ";
+                resultSmartViewQuery+="time2: quarter; ";
+                break;
+
+            case 'M':
+                resultSmartViewQuery+="time1: year; ";
+                resultSmartViewQuery+="time2: month; ";
+                break;
+            case 'D':
+                resultSmartViewQuery+="time1: year; ";
+                resultSmartViewQuery+="time2: month; ";
+                resultSmartViewQuery+="time3: day; ";
+                break;
+
+            default:
+                resultSmartViewQuery+="time1: year; ";
+        }
+        return resultSmartViewQuery;
+    }
+     /**
      * @description help function to generate SmartView table code for both trending widgets (Action Trend, End User Statistics)
      * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @param {Object} {order: int trendIndex} - index of given Trend in Trend series list in Config
@@ -666,82 +701,52 @@ class PageActions {
         table.Caching.Enabled = false;
     }
 
+    /**
+     * @description function to render the Hitlists.
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @param Boolean isEditDeleteMode - determines if we should edd Edit/Delete links or not
+     * @example PageActions.hitlistsActions_Render({hitlist: hitlist, state: state, report: report, pageContext: pageContext, log: log}, false);
+     */
+    static function hitlistsActions_Render(context, isEditDeleteMode){
 
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var hitlist = context.hitlist;
 
+        var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
+        var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
 
+        for (var i=0; i<staticCols.length; i++) {
+            Hitlist.AddColumn(context, staticCols[i].id, staticCols[i].properties);
+        }
 
+        for (var i=0; i<tagCols.length; i++) {
+            Hitlist.AddColumn(context, tagCols[i].id, tagCols[i].properties);
+        }
 
+        if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
+            throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
+        }
 
+        if (isEditDeleteMode) {
+            Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
+            Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
+        }
+    }
 
     /**
-     * @memberof PageActions
-     * @function hitlistActions_Hide
      * @description function to hide the hitlist
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
+     * @example PageActions.hitlistActions_Hide({state: state, report: report, log: log})
      */
     static function hitlistActions_Hide(context) {
         return Export.isPdfExportMode(context);
     }
 
-
     /**
-     * @memberof PageActions
-     * @function getTagColumnNumbers
-     * @description function to get the number of columns with tags.
-     * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     * @return {Array} - array with numbers of columns
-     */
-    static function getTagColumnNumbers (context) {
-
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var tagColumnNumbers = [];
-
-        var numberOfStaticColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns').length;
-        var numberOfTagColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist').length;
-        var numberOfColumnsAtStart = 2 + numberOfStaticColumns; // Hitlist always contains 1 first hidden column with the system field Respondent ID
-
-        for (var i=0; i<numberOfTagColumns; i++) {
-            tagColumnNumbers.push(i + numberOfColumnsAtStart);
-        }
-        return tagColumnNumbers;
-    }
-
-    /**
-     * @memberof PageActions
-     * @function tableKPI_Render
-     * @description function to render the Implememted Actions table.
+     * @description function to render the ActionsKPI table.
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     */
-    static function getKPIResult(context){
-
-        var report = context.report;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-
-        var cell : Datapoint = report.TableUtils.GetCellValue("ActionsKPI",1,1);
-        if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
-
-            var color = Config.primaryGreyColor;
-            var score = parseFloat((100*cell.Value).toFixed(Config.Decimal));
-            var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
-
-            for (var j=0; j<thresholds.length; j++) {
-                if (score >= thresholds[j].score) {
-                    color =  thresholds[j].color;
-                    break;
-                }
-            }
-            return [{score: score, color: color, qid: 'actions', format: '%', yAxisMin: 0}];
-        }
-
-        return null;
-    }
-
-    /**
-     * @memberof PageActions
-     * @function tableKPI_Render
-     * @description function to render the Implememted Actions table.
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @example PageActions.tableKPI_Render({state: state, report: report, log: log, table: table, pageContext: pageContext});
      */
     static function tableKPI_Render(context){
 
@@ -776,108 +781,71 @@ class PageActions {
         table.Caching.Enabled = false;
     }
 
+
+
+
+
+
     /**
-     * @memberof PageActions
-     * @function addActionTrendSeriesByParam
-     * @description function to add action trend series
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Object} 
-     * @param {}
+     * @description function to get the number of columns with tags in StyleAndJavaScriptUtil
+     * @param {Object} context - {pageContext: ageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @return {Array} - array with numbers of columns
+     * @example PageActions.getTagColumnNumbers(context)
+     * @inner
      */
-    /*static function setActionTrendSeriesByParam(context, seriesParam, target) {
+    static function getTagColumnNumbers (context) {
 
-        var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var index = seriesParam.order;
-        var trendSeries  = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'Trend');
+        var tagColumnNumbers = [];
 
-        //ET: what happens if condition === false? should we hide widget if series are not specified?
-        // or throw error demanding to populate this property? i tend to this option
-        // if we do return when condition = false, than code will have less {}, less spagetti like
-        if (trendSeries.length > index) {
+        var numberOfStaticColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns').length;
+        var numberOfTagColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist').length;
+        var numberOfColumnsAtStart = 2 + numberOfStaticColumns; // Hitlist always contains 1 first hidden column with the system field Respondent ID
 
-            // add row with action status
-            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, trendSeries[index].qId);
-            var hq: HeaderQuestion = new HeaderQuestion(qe);
-            hq.IsCollapsed = false;
-            hq.ShowTotals = true;
-            hq.Distributions.Enabled = true;
-            hq.Distributions.Count= true;
-            hq.HideHeader = true;
+        for (var i=0; i<numberOfTagColumns; i++) {
+            tagColumnNumbers.push(i + numberOfColumnsAtStart);
+        }
+        return tagColumnNumbers;
+    }
 
-            var qmask : MaskFlat = new MaskFlat(true);
-            qmask.IsInclusive = false;
-            for (var i = 0; i<trendSeries.length; i++) {
-                qmask.Codes.Add(trendSeries[i].code);
+    /**
+     * @description function to send settings of the Implememted Actions table to  Javascript via StyleAndJavaScriptUtil
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @inner
+     * @example PageActions.getKPIResult(context)
+     * @returns Array of JSON [{score: score, color: color, qid: 'actions', format: '%', yAxisMin: 0}] or null
+     */
+    static function getKPIResult(context){
+
+        var report = context.report;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var cell : Datapoint = report.TableUtils.GetCellValue("ActionsKPI",1,1);
+        if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
+
+            var color = Config.primaryGreyColor;
+            var score = parseFloat((100*cell.Value).toFixed(Config.Decimal));
+            var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
+
+            for (var j=0; j<thresholds.length; j++) {
+                if (score >= thresholds[j].score) {
+                    color =  thresholds[j].color;
+                    break;
+                }
             }
-            hq.AnswerMask = qmask;
-            hq.FilterByMask = true;
-
-            //ET: if else must have {} airbnb clean-code style guide
-            // can be shorter: (target) ? target.Add(hq) : table.RowHeader.Add(hq);
-            if (target) target.Add(hq);
-            else table.RowHeaders.Add(hq);
-
-            // add column - trending by Date variable
-            TableUtil.addTrending(context, trendSeries[index].date);
-
-            var hd : HeaderQuestion = table.ColumnHeaders[0];
-            var toDate : DateTime = DateTime.Now;
-            hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
-            hd.TimeSeries.EndDate = toDate;
+            return [{score: score, color: color, qid: 'actions', format: '%', yAxisMin: 0}];
         }
 
+        return null;
     }
-*/
 
-    /**
-     * @memberof PageActions
-     * @function tableTrend_Render
-     * @description function to render the trend table
-     * @param {Object} context - {component: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-   /* static function tableTrendHidden_Render(context, seriesParam) {
-
-        var table = context.table;
-        setActionTrendSeriesByParam(context, seriesParam);
-
-        // global table settings
-        table.RemoveEmptyHeaders.Columns = false;
-        table.Caching.Enabled = false;
-
-    }*/
-
-    /**
-     * @memberof PageActions
-     * @function tableEndUsertStatisticsHidden_Render
-     * @description function to render the EndUsertStatisticsHidden table. End user statistics by action status. Data from hidden tables is combined in EndUsertStatistics table
-     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext}, order
-     */
-    /*static function tableEndUsertStatisticsHidden_Render(context, seriesParam) {
-
-        var table = context.table;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
-
-        setActionTrendSeriesByParam(context, seriesParam);
-        var nestedRowHeader = table.RowHeaders[0];
-
-        var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
-        var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
-        hqActionOwner.ShowTotals = false;
-
-        table.RowHeaders[0] = hqActionOwner;
-        table.RowHeaders[0].SubHeaders.Add(nestedRowHeader);
-
-        // global table settings
-        table.RemoveEmptyHeaders.Columns = false;
-        table.Caching.Enabled = false;
-    }
-     */
-
-
-    /**
-     *
+     /**
+     * @description help function to check specific role permissions / features, uses on  StyleAndJavaScriptUtil and in the report
+     * @param {Object} context - {pageContext: ageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param String feature - name of feature - check list of features in report Config
+     * @returns Boolean  
+     * @example PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments')
+     * @inner
      */
     static function isFeatureAvailableForUserRole(context, feature) {
 
@@ -907,101 +875,10 @@ class PageActions {
         return isAvailable;
     }
 
-  /*  static function getActionTrendHiddenTableJSON(context, tableIndex) {
-
-        var log = context.log;
-        var report = context.report;
-        var smExpression = generateActionTrandHiddenTableSmartView(context,{order: tableIndex});
-
-        var sourceId  = DataSourceUtil.getDsId(context);//getDSId allows to avoid need of Source property on page level; getPagePropertyValueFromConfig (context, pageId, 'Source');
-        var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
-        var smTableJSON = JSON.parse(smTable);
-
-        return smTableJSON;
-    }*/
-
-
-
-
-    /**
-     * ?? context ??
-     */
-
-
-
-
- 
-
-    /**
-     *
-     */
-    static function getTimeSeriesByTimeUnitSmartViewProps(context, timeUnit){
-        var timeUnitCode = timeUnit.Code;
-        var resultSmartViewQuery = "";
-        switch (timeUnitCode) {
-            case 'Y':
-                resultSmartViewQuery+="time1: year; ";
-                break;
-
-            case 'Q':
-                resultSmartViewQuery+="time1: year; ";
-                resultSmartViewQuery+="time2: quarter; ";
-                break;
-
-            case 'M':
-                resultSmartViewQuery+="time1: year; ";
-                resultSmartViewQuery+="time2: month; ";
-                break;
-            case 'D':
-                resultSmartViewQuery+="time1: year; ";
-                resultSmartViewQuery+="time2: month; ";
-                resultSmartViewQuery+="time3: day; ";
-                break;
-
-            default:
-                resultSmartViewQuery+="time1: year; ";
-        }
-        return resultSmartViewQuery;
-    }
-
-
-
-
-
-    static function hitlistsActions_Render(context, isEditDeleteMode){
-
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var hitlist = context.hitlist;
-
-        /* retrieve the list of hitlist columns from Config without using 'isCustomSource' (i.e. the main source is used to find Config settings) */
-        var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
-        var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-
-        /* add columns to Hiltlist using custom source */
-        for (var i=0; i<staticCols.length; i++) {
-            Hitlist.AddColumn(context, staticCols[i].id, staticCols[i].properties);
-        }
-
-        for (var i=0; i<tagCols.length; i++) {
-            Hitlist.AddColumn(context, tagCols[i].id, tagCols[i].properties);
-        }
-
-        if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
-            throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
-        }
-
-        if (isEditDeleteMode) {
-            Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
-            Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
-        }
-    }
-
-
-
-
     /**
      * @param {Object} context
      * @returns {Object} {pid: currentPid, pname: currentPname}
+     * @requires Parameters: p_projectSelector
      */
     static function getProjectInfoForActionsSurvey(context) {
 
@@ -1020,10 +897,5 @@ class PageActions {
         var selectedPulseSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
         return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
     }
-
-
-
-
-
 
 }
