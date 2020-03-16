@@ -269,9 +269,9 @@ class PageActions {
      * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @param Object {order: int trendIndex} - index of given Trend in Trend series list in Config
      * @inner
-     * @example generatetableEndUsertStatisticsHiddenTableSmartView(context, {order: trendIndex});
+     * @example generateTableEndUsertStatisticsHiddenTableSmartView(context, {order: trendIndex});
      */
-    static function generatetableEndUsertStatisticsHiddenTableSmartView(context, trendIndex){
+    static function generateTableEndUsertStatisticsHiddenTableSmartView(context, trendIndex){
         var resultSmartViewQuery = "";
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -284,21 +284,7 @@ class PageActions {
         if(chosenUsersN >0){
             resultSmartViewQuery +="mask: '" + chosenUsers.join(',') + ";";
         }
-        /*for(var i=0; i<chosenUsersN; i++) {
-
-            // move out of loop? start loop from 1 - otherwise extra checks
-            // can be replaces with shorter expression: !i? resultSmartViewQuery+="mask: '" : other alternative
-            if(i==0) {
-                resultSmartViewQuery+="mask: '";
-            } else {
-                resultSmartViewQuery+="','";
-            }
-
-            resultSmartViewQuery+=chosenUsers[i];
-            if (i==chosenUsersN-1) {
-                resultSmartViewQuery +="';";
-            }
-        }*/
+       
         resultSmartViewQuery += "}"; 
         resultSmartViewQuery += generateTrendingSmartViewTableCodeByTimeUnit(context, trendIndex);
         
@@ -317,7 +303,7 @@ class PageActions {
         var log = context.log;
         var report = context.report;
 
-        var smExpression = generatetableEndUsertStatisticsHiddenTableSmartView(context,{order: trendIndex});
+        var smExpression = generateTableEndUsertStatisticsHiddenTableSmartView(context,{order: trendIndex});
 
         var sourceId  = DataSourceUtil.getDsId(context);
         var smTable = report.TableUtils.GenerateTableFromExpression(sourceId, smExpression, TableFormat.Json);
@@ -351,15 +337,13 @@ class PageActions {
             return;
         }
 
+        addTrendingColumnByFirstTrend(context);  
+
         var chosenUsers = ParamUtil.GetSelectedOptions(context, 'p_EndUserSelection');
         var chosenUsersN = chosenUsers.length;
 
-        if(chosenUsersN==0){
-           return;
-        }
-
-        addTrendingColumnByFirstTrend(context);  
-
+        if(chosenUsersN==0){   return;   }
+      
         var jsonTables = [];
         
         for(var trendIndex = 0; trendIndex<trendSeries.length; trendIndex++){
