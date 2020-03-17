@@ -44,7 +44,7 @@ class PageUtil {
         }
         //specific page script for Actions page 
         if(pageId == "Actions"){
-            PageActions.ActionPage_Init({state: state, report: report, log: log, text: text, user: user, pageContext: pageContext});
+            PageActions.ActionPage_Init(context);
         }
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
