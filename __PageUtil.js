@@ -42,7 +42,10 @@ class PageUtil {
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-
+        //specific page script for Actions page 
+        if(pageId == "Actions"){
+            PageActions.ActionPage_Init({state: state, report: report, log: log, text: text, user: user, pageContext: pageContext});
+        }
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
         //log.LogDebug('page init end');

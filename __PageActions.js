@@ -105,7 +105,7 @@ class PageActions {
 
         var hd : HeaderQuestion = table.ColumnHeaders[existingColumnsNumber]; //trending column
         var toDate : DateTime = DateTime.Now;
-        hd.TimeSeries.StartDate = new DateTime (2019, 1, 1);
+        hd.TimeSeries.StartDate =  SystemConfig.ActionPlannerSettings.TrendingStartDate; //new DateTime (2019, 1, 1);
         hd.TimeSeries.EndDate = toDate;
         
     }
@@ -194,7 +194,7 @@ class PageActions {
                     resultSmartViewQuery+= timeUnit.Code + "{";
             }
                 var toDate : DateTime = DateTime.Now;
-                var fromDate : DateTime = new DateTime (2019, 1, 1);
+                var fromDate : DateTime =  SystemConfig.ActionPlannerSettings.TrendingStartDate; //new DateTime (2019, 1, 1);
    
                 resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
                 resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToStringForSmartView(fromDate)+ "\"; ";
@@ -211,6 +211,9 @@ class PageActions {
      * @example generateActionTrandHiddenTableSmartView(context, {order: trendIndex});
      */
     static function generateActionTrandHiddenTableSmartView(context, seriesParam){
+
+        //if needed in future some specific for Action Trend code can be added here
+
         return generateTrendingSmartViewTableCodeByTimeUnit(context, seriesParam);
     }
 
@@ -769,11 +772,6 @@ class PageActions {
         table.Caching.Enabled = false;
     }
 
-
-
-
-
-
     /**
      * @description function to get the number of columns with tags in StyleAndJavaScriptUtil
      * @param {Object} context - {pageContext: ageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
@@ -869,6 +867,7 @@ class PageActions {
     }
 
     /**
+     * @description
      * @param {Object} context
      * @returns {Object} {pid: currentPid, pname: currentPname}
      * @requires Parameters: p_projectSelector
