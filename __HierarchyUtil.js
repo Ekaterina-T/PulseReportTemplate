@@ -57,7 +57,17 @@ class HierarchyUtil {
      * @returns {String} filter expression.
      */
 
-    static function getHierarchyFilterExpressionForCurrentRB (context) {
+    static function getHierarchyFilterExpressionForCurrentRB (context, parameterName) {
+
+        //to use in public report
+        if (parameterName) {
+            var codes = ParamUtil.GetSelectedCodes(context, parameterName);
+            return 'InHierarchy(hierarchy, "' + codes[0] + '")';
+        }
+
+        if (!context.user || !context.user.PersonalizedReportBase) {
+            return '';
+        }
 
         var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
 
