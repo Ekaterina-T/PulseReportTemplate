@@ -129,6 +129,9 @@ class StyleAndJavaScriptUtil {
             } else {
                 properties.push('isAdvancedReportingVisible: true');
             }
+
+            properties.push('columnWithTagsId: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns')[0].id));
+            properties.push('tagIds: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist')));
         }
 
         globalVarScript.push('<script>');
