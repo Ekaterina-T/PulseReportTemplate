@@ -74,7 +74,7 @@ class StyleAndJavaScriptUtil {
         
         properties.push('currentLanguage: ' + report.CurrentLanguage);
 
-        if (user && user.Roles) {
+        if (!PublicUtil.isPublic()) {
             properties.push('userRoles: "' + user.Roles + '"');
         }
 
@@ -121,7 +121,7 @@ class StyleAndJavaScriptUtil {
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
             properties.push('StatementsByDimension: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension')));
 
-            if (user && user.UserId) {
+            if (!PublicUtil.isPublic()) {
                 properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
                 properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
                 properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));

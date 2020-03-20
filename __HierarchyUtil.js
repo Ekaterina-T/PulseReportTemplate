@@ -65,7 +65,7 @@ class HierarchyUtil {
             return 'InHierarchy(hierarchy, "' + codes[0] + '")';
         }
 
-        if (!context.user || !context.user.PersonalizedReportBase) {
+        if (PublicUtil.isPublic()) {
             return '';
         }
 
