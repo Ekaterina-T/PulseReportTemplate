@@ -4,9 +4,11 @@ class PublicUtil {
      * @memberof PublicUtil
      * @function isPublic
      * @description function to check if report is public (check in Config)
+     * @param {Object} context - {user}
      */
-    static function isPublic () {
-        var isPublic = Config['isPublic'];
+    static function isPublic (context) {
+        var user = context.user;
+        var isPublic = Config.isPublic;
         if (!!isPublic) {
             return true;
         } else {

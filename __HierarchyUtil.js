@@ -65,7 +65,7 @@ class HierarchyUtil {
             return 'InHierarchy(hierarchy, "' + codes[0] + '")';
         }
 
-        if (PublicUtil.isPublic()) {
+        if (PublicUtil.isPublic(context)) {
             return '';
         }
 

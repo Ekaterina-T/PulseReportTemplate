@@ -433,7 +433,7 @@ class Filters {
 
     static function getOnlyOwnActionsExpression (context) {
 
-        if (PublicUtil.isPublic()) {
+        if (PublicUtil.isPublic(context)) {
             return '';
         }
 
@@ -456,7 +456,7 @@ class Filters {
 
     static function getOnlyOwnActionsinHitlistExpression (context) {
 
-        if (PublicUtil.isPublic()) {
+        if (PublicUtil.isPublic(context)) {
             return '';
         }
 
