@@ -24,7 +24,12 @@ class BranchLogo{
     }
     
     if(branchDependentSettings.BranchSelectorType == "parameter"){
-      return  ParamUtil.GetSelectedCodes(context, branchDependentSettings.BranchSelectorParameterName)[0];
+        var selectedNodes = ParamUtil.GetSelectedCodes(context, branchDependentSettings.BranchSelectorParameterName);
+        if(selectedNodes.length != 1 ){
+            throw new Error('PageActions.getSelectedNodeId: parameter mentioned in Config BranchDependentLogoSettings>BranchSelectorType settings always must have one value.');
+        }
+
+        return  selectedNodes[0];
     }  
     
     throw new Error('PageActions.getSelectedNodeId: check Config BranchDependentLogoSettings>BranchSelectorType settings. It should be "hierarchy" or "parameter".');
