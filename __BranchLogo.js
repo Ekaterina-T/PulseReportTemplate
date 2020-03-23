@@ -97,7 +97,7 @@ class BranchLogo{
    
     if(selectedBranchInfo.branchId != undefined && selectedBranchInfo.branchId != "undefined" && selectedBranchInfo.branchId != "") {
       var link =  branchDependentSettings.BranchLogoFileLibraryFolderLink + "/";
-      link += Config.BranchLogoPrefix + selectedBranchInfo.branchId;
+      link += branchDependentSettings.BranchLogoPrefix + selectedBranchInfo.branchId;
       link += "."+ branchDependentSettings.BranchLogoFilenameExtension;
       return link;
     } 
