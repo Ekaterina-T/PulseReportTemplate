@@ -594,7 +594,7 @@ class PageActions {
         var hf : HeaderFormula = new HeaderFormula();
         hf.HideHeader = true;
         hf.Type = FormulaType.Expression;
-        hf.Expression = "if(row < rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, 0, 1), 0 )";
+        hf.Expression = "if(row <= rows/2, if(cellv(col-1,row)+cellv(col-1,row+rows/2) > 0, 0, 1), 0 )";
 
         table.ColumnHeaders.Add(hb);
         table.ColumnHeaders.Add(hf);
