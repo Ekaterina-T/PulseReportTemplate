@@ -131,5 +131,38 @@ class BranchLogo{
      
       text.Output.Append(htmlCode); 
     }
+
+
+    /**
+     *
+     */
+    static function getUserIdsByCurrentUsersHF(context, reportUserId) {
+
+        if(!Config.IsBranchLogoOn) {
+            return;
+        }
+
+        var log = context.log;
+        var confirmit = context.confirmit;
+
+        var HFParentNodeID_lookup = Config.BranchDependentLogoSettings.BranchLogoTableColumnName;
+
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AdditionalInfoSchema');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'EndUserTable');
+        var schema_HF : DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
+        var table_HF : DBDesignerTable = schema_HF.GetDBDesignerTable(tableName);
+
+        var userid = reportUserId.replace(/[^\w]/g,'_');
+
+        var currentHFNumColection : StringCollection = table_HF.GetColumnValues("__l9"+HFParentNodeID_lookup, "id", userid);
+        if (currentHFNumColection.Count <= 0) {
+            throw new Error("There's no such user as " + userid + "in the Enduser table.");
+        }
+
+        var currentHFNum = currentHFNumColection[0];
+        var idsWithCurrentHF : StringCollection = table_HF.GetColumnValues("id", "__l9"+HFParentNodeID_lookup, currentHFNum);
+
+        return idsWithCurrentHF;
+    }
     
   }

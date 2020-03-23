@@ -573,12 +573,25 @@ class PageActions {
         var actionOwner = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'EndUserSelection');
         var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
         var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
+
+        var AOmask: MaskFlat = new MaskFlat();
+        AOmask.IsInclusive = true;
+        var currentHFUserIds = BranchLogo.getUserIdsByCurrentUsersHF(context, user.UserId);
+        for (var i = 0 ; i < currentHFUserIds.Count; i++) {
+            AOmask.Codes.Add(currentHFUserIds[i]);
+        }
+
+        hqActionOwner.AnswerMask = AOmask;
+        hqActionOwner.FilterByMask = true;
         hqActionOwner.ShowTotals = false;
         table.RowHeaders.Add(hqActionOwner);
 
         var actionCreator = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionCreatorsList');
         var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
         var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
+
+        hqActionCreator.AnswerMask = AOmask;
+        hqActionCreator.FilterByMask = true;
         hqActionCreator.ShowTotals = false;
         table.RowHeaders.Add(hqActionCreator);
 
