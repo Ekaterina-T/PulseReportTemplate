@@ -574,14 +574,14 @@ class PageActions {
         var qeActionOwner: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOwner);
         var hqActionOwner: HeaderQuestion = new HeaderQuestion(qeActionOwner);
 
-        var AOmask: MaskFlat = new MaskFlat();
-        AOmask.IsInclusive = true;
-        var currentHFUserIds = BranchLogo.getUserIdsByCurrentUsersHF(context, user.UserId);
+        var actionOwnerMask: MaskFlat = new MaskFlat();
+        actionOwnerMask.IsInclusive = true;
+        var currentHFUserIds = BranchSpecifics.getUserIdsByCurrentBranch(context, context.user.UserId);
         for (var i = 0 ; i < currentHFUserIds.Count; i++) {
-            AOmask.Codes.Add(currentHFUserIds[i]);
+            actionOwnerMask.Codes.Add(currentHFUserIds[i]);
         }
 
-        hqActionOwner.AnswerMask = AOmask;
+        hqActionOwner.AnswerMask = actionOwnerMask;
         hqActionOwner.FilterByMask = true;
         hqActionOwner.ShowTotals = false;
         table.RowHeaders.Add(hqActionOwner);
@@ -590,7 +590,7 @@ class PageActions {
         var qeActionCreator: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionCreator);
         var hqActionCreator: HeaderQuestion = new HeaderQuestion(qeActionCreator);
 
-        hqActionCreator.AnswerMask = AOmask;
+        hqActionCreator.AnswerMask = actionOwnerMask;
         hqActionCreator.FilterByMask = true;
         hqActionCreator.ShowTotals = false;
         table.RowHeaders.Add(hqActionCreator);

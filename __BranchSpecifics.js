@@ -1,4 +1,4 @@
-class BranchLogo{
+class BranchSpecifics{
 
     /**
     * @description get id of node depending on selector type
@@ -7,32 +7,32 @@ class BranchLogo{
                                                BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
                                                BranchLogoTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
     * @returns String
-    * @example BranchLogoTest.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
     * @inner
     */
-    static function getSelectedNodeId(context, branchDependentSettings){
+    static function getSelectedNodeId(context){
     var log = context.log;
     var user = context.user;
-    
-    if(branchDependentSettings.BranchSelectorType == "hierarchy"){   
-      if(!PublicUtil.isPublic(context)){     
+
+    if(Config.BranchSelectorType == "hierarchy"){
+      if(!PublicUtil.isPublic(context)){
          return user.PersonalizedReportBase;
       }
       else{
-        throw new Error('PageActions.getSelectedNodeId: for public report Config BranchDependentLogoSettings>BranchSelectorType should be "parameter".'); 
+        throw new Error('BranchSpecifics.getSelectedNodeId: for public report Config BranchSelectorType should be "parameter".');
       }
     }
-    
-    if(branchDependentSettings.BranchSelectorType == "parameter"){
-        var selectedNodes = ParamUtil.GetSelectedCodes(context, branchDependentSettings.BranchSelectorParameterName);
+
+    if(Config.BranchSelectorType == "parameter"){
+        var selectedNodes = ParamUtil.GetSelectedCodes(context, Config.BranchSelectorParameterName);
         if(selectedNodes.length != 1 ){
-            throw new Error('PageActions.getSelectedNodeId: parameter mentioned in Config BranchDependentLogoSettings>BranchSelectorType settings always must have one value.');
+            throw new Error('BranchSpecifics.getSelectedNodeId: parameter mentioned in Config BranchSelectorType settings always must have one value.');
         }
 
         return  selectedNodes[0];
-    }  
-    
-    throw new Error('PageActions.getSelectedNodeId: check Config BranchDependentLogoSettings>BranchSelectorType settings. It should be "hierarchy" or "parameter".');
+    }
+
+    throw new Error('BranchSpecifics.getSelectedNodeId: check Config BranchDependentLogoSettings>BranchSelectorType settings. It should be "hierarchy" or "parameter".');
     }
   
     /**
@@ -41,9 +41,9 @@ class BranchLogo{
     * @param {String} selectedNodeId  id of the node selected in the report  
     * @param {Object} settings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
                                                BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
-                                               BranchLogoTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
-    * @returns String
-    * @example BranchLogoTest.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+                                               BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
+    * @returns {Object} {branchId: branchId, logoLink: branchLogoLink}
+    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
     * @inner
     */
    static function getSelectedBranchId(context, selectedNodeId, settings){
@@ -56,12 +56,12 @@ class BranchLogo{
     var branchId : String = "";
     var branchLogoLink : String ="";
     
-    if(settings.BranchLogoTableColumnName != ""){ 
-      branchId = dbTable.GetColumnValues("__l9" + settings.BranchLogoTableColumnName, "id", selectedNodeId)[0];
+    if(Config.BranchIDTableColumnName != ""){
+      branchId = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId)[0];
     }
     
     if(settings.BranchLogoLinkTableColumnName != "") {
-      branchLogoLink = dbTable.GetColumnValues("__l9" + settings.BranchLogoLinkTableColumnName, "id", selectedNodeId)[0];
+      branchLogoLink = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId)[0];
     }
     
     return {branchId: branchId, logoLink: branchLogoLink};
@@ -74,9 +74,9 @@ class BranchLogo{
                                            ForceDefaultBranchLogoForAll: false};
     * @param {Object} branchDependentSettings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
                                                BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
-                                               BranchLogoTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
+                                               BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
     * @returns String
-    * @example BranchLogoTest.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
     * @inner
     */
     static function getBranchLogoImgLink(context, defaultSettings, branchDependentSettings){
@@ -92,7 +92,7 @@ class BranchLogo{
     }
     
     //branch dependent
-    var selectedNodeId = getSelectedNodeId(context, branchDependentSettings);
+    var selectedNodeId = getSelectedNodeId(context);
     var selectedBranchInfo = getSelectedBranchId(context, selectedNodeId, branchDependentSettings);
     
     //specified logo link has priority
@@ -113,17 +113,16 @@ class BranchLogo{
     /**
     * @description generate html code for branch logo 
     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
-    * @example BranchLogoTest.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
     */
     static function branchLogo_Render(context){
       var log = context.log;
       var text = context.text;
-  
+
+      if(!Config.IsBranchSpecificsOn && !Config.BranchLogo.enabled) {return;}
       
-      if(!Config.IsBranchLogoOn) {return;} 
-      
-      var defaultSettings = Config.DefaultBranchLogoSettings;
-      var branchDependentSettings = Config.BranchDependentLogoSettings;
+      var defaultSettings = Config.BranchLogo.DefaultBranchLogoSettings;
+      var branchDependentSettings = Config.BranchLogo;
       
       var logoLink = getBranchLogoImgLink(context, defaultSettings, branchDependentSettings);
       
@@ -139,25 +138,27 @@ class BranchLogo{
 
 
     /**
-     *
+     * @description get endusers that belong to current hierarchy branch
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
+     * @param {String} reportUserId  current end user id
+     * @returns {StringCollection} - string array with end user ids
+     * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext}, reportUserId);
      */
-    static function getUserIdsByCurrentUsersHF(context, reportUserId) {
+    static function getUserIdsByCurrentBranch(context, endUserId) {
 
-        if(!Config.IsBranchLogoOn) {
-            return;
+        if(!Config.IsBranchSpecificsOn && !Config.EndUserByBranch.enabled) {
+            return [];
         }
 
         var log = context.log;
-        var confirmit = context.confirmit;
 
-        var HFParentNodeID_lookup = Config.BranchDependentLogoSettings.BranchLogoTableColumnName;
-
-        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AdditionalInfoSchema');
-        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'EndUserTable');
-        var schema_HF : DBDesignerSchema = confirmit.GetDBDesignerSchema(schemaId);
+        var HFParentNodeID_lookup = Config.EndUserByBranch.BranchIDTableColumnName;
+        var schemaId = Config.DBSchemaID_ForProject;
+        var tableName = Config.EndUserTableName;
+        var schema_HF : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
         var table_HF : DBDesignerTable = schema_HF.GetDBDesignerTable(tableName);
 
-        var userid = reportUserId.replace(/[^\w]/g,'_');
+        var userid = endUserId.replace(/[^\w]/g,'_');
 
         var currentHFNumColection : StringCollection = table_HF.GetColumnValues("__l9"+HFParentNodeID_lookup, "id", userid);
         if (currentHFNumColection.Count <= 0) {
