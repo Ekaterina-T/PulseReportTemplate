@@ -544,7 +544,6 @@ class PageResults {
         } else { // Percent
 
             baseDist.Distributions.HorizontalPercents = true;
-            baseDist.Distribution.UseInnermostTotals = true;
             baseDist.Distributions.Count = false;
         }
 
