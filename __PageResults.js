@@ -17,7 +17,7 @@ class PageResults {
     tableStatements_ApplyConditionalFormatting(context);
     SuppressUtil.setTableSuppress(table, suppressSettings);
 
-    table.Decimals = Config.Decimals;
+    table.Decimals = Config.Decimal;
     table.RowNesting = TableRowNestingType.Nesting;
     table.RemoveEmptyHeaders.Rows = true;
     table.Caching.Enabled = false;
@@ -371,11 +371,11 @@ class PageResults {
         var avg: HeaderFormula = new HeaderFormula();
         avg.Type = FormulaType.Expression;
         avg.Expression = 'cellv(col-1,row)';//'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
-        avg.Decimals = Config.Decimals;
+        avg.Decimals = Config.Decimal;
         avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
         var score: HeaderStatistics = new HeaderStatistics();
-        score.Decimals = Config.Decimals;
+        score.Decimals = Config.Decimal;
         score.Statistics.Avg = true;
         score.HideData = true;
         //score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
@@ -401,7 +401,7 @@ class PageResults {
         var fav: HeaderFormula = new HeaderFormula();
         fav.Type = FormulaType.Expression;
         fav.Expression = 'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
-        fav.Decimals = Config.Decimals;
+        fav.Decimals = Config.Decimal;
         fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
 
         //add distribution barChart
@@ -409,7 +409,7 @@ class PageResults {
         bcCategories.Totals = false;
         bcCategories.Distributions.Enabled = true;
         bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Decimals = Config.Decimals;
+        bcCategories.Decimals = Config.Decimal;
         bcCategories.HideData = true;
 
         if (parentHeader) {
@@ -430,7 +430,7 @@ class PageResults {
         var diff: HeaderFormula = new HeaderFormula();
         diff.Type = FormulaType.Expression;
         diff.Expression = 'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row))';
-        diff.Decimals = Config.Decimals;
+        diff.Decimals = Config.Decimal;
         diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
 
         //add distribution barChart
@@ -438,7 +438,7 @@ class PageResults {
         bcCategories.Totals = false;
         bcCategories.Distributions.Enabled = true;
         bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Decimals = Config.Decimals;
+        bcCategories.Decimals = Config.Decimal;
         bcCategories.HideData = true;
 
         if (parentHeader) {
@@ -472,7 +472,7 @@ class PageResults {
     bcCategories.Totals = false;
     bcCategories.Distributions.Enabled = true;
     bcCategories.Distributions.HorizontalPercents = true;
-    bcCategories.Decimals = Config.Decimals;
+    bcCategories.Decimals = Config.Decimal;
     bcCategories.HideData = true;
 
     table.ColumnHeaders.Add(bcCategories);
@@ -534,7 +534,7 @@ class PageResults {
 
         categoryDistr.Totals = false;
         baseDist.Distributions.Enabled = true;
-        baseDist.Decimals = Config.Decimals;
+        baseDist.Decimals = Config.Decimal;
         baseDist.HideHeader = true;
 
         if (selectedDistr === 'C') { // Counts
@@ -845,7 +845,7 @@ class PageResults {
         tableBenchmarks_AddColumns_Banner0(context);
         SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
-        table.Decimals = Config.Decimals;
+        table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = false;
     }
