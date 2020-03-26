@@ -370,7 +370,7 @@ class PageResults {
         // add Score column
         var avg: HeaderFormula = new HeaderFormula();
         avg.Type = FormulaType.Expression;
-        avg.Expression = 'cellv(col-1,row)';//'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
+        avg.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
         avg.Decimals = Config.Decimal;
         avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
@@ -400,7 +400,7 @@ class PageResults {
         // add Score column
         var fav: HeaderFormula = new HeaderFormula();
         fav.Type = FormulaType.Expression;
-        fav.Expression = 'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
+        fav.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
         fav.Decimals = Config.Decimal;
         fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
 
@@ -429,7 +429,7 @@ class PageResults {
         // add Score column
         var diff: HeaderFormula = new HeaderFormula();
         diff.Type = FormulaType.Expression;
-        diff.Expression = 'if(cellv(col-1,row) = emptyv() OR cellv(col-1,row) < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row))';
+        diff.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row))';
         diff.Decimals = Config.Decimal;
         diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
 
