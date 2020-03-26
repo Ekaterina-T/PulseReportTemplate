@@ -46,7 +46,7 @@ class BranchSpecifics{
     * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
     * @inner
     */
-   static function getSelectedBranchId(context, selectedNodeId, settings){
+   static function getSelectedBranchIdOrLogo(context, selectedNodeId, settings){
     var log = context.log;
     var confirmit = context.confirmit;
     
@@ -61,7 +61,7 @@ class BranchSpecifics{
     }
     
     if(settings.BranchLogoLinkTableColumnName != "") {
-      branchLogoLink = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId)[0];
+      branchLogoLink = dbTable.GetColumnValues("__l9" + settings.BranchLogoLinkTableColumnName, "id", selectedNodeId)[0];
     }
     
     return {branchId: branchId, logoLink: branchLogoLink};
@@ -93,7 +93,7 @@ class BranchSpecifics{
     
     //branch dependent
     var selectedNodeId = getSelectedNodeId(context);
-    var selectedBranchInfo = getSelectedBranchId(context, selectedNodeId, branchDependentSettings);
+    var selectedBranchInfo = getSelectedBranchIdOrLogo(context, selectedNodeId, branchDependentSettings);
     
     //specified logo link has priority
     if(selectedBranchInfo.logoLink != undefined && selectedBranchInfo.logoLink != "undefined" && selectedBranchInfo.logoLink != "") { 
