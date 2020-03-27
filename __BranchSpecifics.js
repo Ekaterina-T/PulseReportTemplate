@@ -91,7 +91,7 @@ class BranchSpecifics{
     if(Config.BranchIDTableColumnName != ""){
       var ids = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId);
       if(ids.Count > 0){
-         branchId += ids[0];
+         branchId = ids[0];
       }
     }
        
