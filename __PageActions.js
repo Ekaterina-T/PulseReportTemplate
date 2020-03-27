@@ -42,8 +42,8 @@ class PageActions {
            throw new Error('PageActions.ActionBtn_Render: User is not in the table ' + tableName +' in schema ' + schemaId);
         }
 
-        linkParameters.push('B='+  BranchSpecifics.getSelectedBranchId(context));
-        linkParameters.push('Id=' + endUserIds[0]);
+        //linkParameters.push('B='+  BranchSpecifics.getSelectedBranchId(context));
+        //linkParameters.push('Id=' + endUserIds[0]);
         linkParameters.push('U=' +  user.UserId);
 
         if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
