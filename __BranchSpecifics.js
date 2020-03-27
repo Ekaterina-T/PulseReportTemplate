@@ -89,7 +89,10 @@ class BranchSpecifics{
     var branchId : String = "";
         
     if(Config.BranchIDTableColumnName != ""){
-      branchId = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId)[0];
+      var ids = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId);
+      if(ids.length > 0){
+         branchId = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId)[0];
+      }
     }
        
     return branchId;
