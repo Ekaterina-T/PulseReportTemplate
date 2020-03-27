@@ -32,18 +32,18 @@ class PageActions {
 
         //assemble all parameters for the link
 
-        var schemaId = Config.DBSchemaID_ForProject;
+       /* var schemaId = Config.DBSchemaID_ForProject;
         var tableName = Config.EndUserTableName;
         var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
         var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(tableName);
         var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
     
-        if(endUserIds.Count != 1){
+        if(endUserIds.length != 1){
            throw new Error('PageActions.ActionBtn_Render: User is not in the table ' + tableName +' in schema ' + schemaId);
         }
-
-        //linkParameters.push('B='+  BranchSpecifics.getSelectedBranchId(context));
-        //linkParameters.push('Id=' + endUserIds[0]);
+        
+        linkParameters.push('B='+  BranchSpecifics.getSelectedBranchId(context));
+        linkParameters.push('Id=' + endUserIds[0]);*/
         linkParameters.push('U=' +  user.UserId);
 
         if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
