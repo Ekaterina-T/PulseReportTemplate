@@ -38,7 +38,7 @@ class PageActions {
         var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(tableName);
         var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
     
-        if(endUserIds.length != 1){
+        if(endUserIds.Count != 1){
            throw new Error('PageActions.ActionBtn_Render: User is not in the table ' + tableName +' in schema ' + schemaId);
         }
         var branch = BranchSpecifics.getSelectedBranchId(context);
