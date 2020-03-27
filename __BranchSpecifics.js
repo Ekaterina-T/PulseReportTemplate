@@ -7,7 +7,7 @@ class BranchSpecifics{
                                                BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
                                                BranchLogoTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
     * @returns String
-    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+    * @example BranchSpecifics.getSelectedNodeId(context);
     * @inner
     */
     static function getSelectedNodeId(context){
@@ -43,8 +43,7 @@ class BranchSpecifics{
                                                BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
                                                BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
     * @returns {Object} {branchId: branchId, logoLink: branchLogoLink}
-    * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
-    * @inner
+    * @example BranchSpecifics.getSelectedBranchIdOrLogo(context, );
     */
    static function getSelectedBranchIdOrLogo(context, selectedNodeId, settings){
     var log = context.log;
@@ -65,6 +64,38 @@ class BranchSpecifics{
     }
     
     return {branchId: branchId, logoLink: branchLogoLink};
+    
+  }
+
+  /**
+    * @description get branch id from db table
+    * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
+    * @param {String} selectedNodeId  id of the node selected in the report  
+    * @param {Object} settings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
+                                               BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
+                                               BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
+    * @returns String - branch id 
+    * @example BranchSpecifics.getSelectedBranchId(context);
+    */
+   static function getSelectedBranchId(context){
+    var log = context.log;
+    var confirmit = context.confirmit;
+
+    var selectedNodeId = BranchSpecifics.getSelectedNodeId(context);
+    
+    var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
+    var dbTable : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+    
+    var branchId : String = "";
+        
+    if(Config.BranchIDTableColumnName != ""){
+      var ids = dbTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId);
+      if(ids.Count > 0){
+         branchId = ids[0];
+      }
+    }
+       
+    return branchId;
     
   }
     /**
