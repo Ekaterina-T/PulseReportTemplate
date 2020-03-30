@@ -133,9 +133,10 @@ class StyleAndJavaScriptUtil {
                 var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
             
                 var branch = BranchSpecifics.getSelectedBranchId(context);
-        
-                properties.push('B: '+  (branch == "" || branch == undefined ? "null":branch));
-                properties.push('U: ' +  user.UserId);
+                log.LogDebug(branch);
+                
+                properties.push('branch: ' +  (branch == "" || branch == undefined ? "null":branch));
+                properties.push('userLogin: ' +  user.UserId);
                /*  if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
                 
                 */
