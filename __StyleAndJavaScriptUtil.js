@@ -126,7 +126,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
                 properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
                 properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
-
+                properties.push('U: "' +  user.UserId+'"');
                 //user data
                 //var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                // var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
@@ -136,7 +136,7 @@ class StyleAndJavaScriptUtil {
               //  log.LogDebug(branch);
 
                // properties.push('branch: ' +  ((branch == "" || branch == undefined || branch == null)? "null":branch));
-                properties.push('U: ' +  user.UserId);
+               
                // if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
                 
 
