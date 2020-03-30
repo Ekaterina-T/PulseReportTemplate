@@ -134,9 +134,9 @@ class StyleAndJavaScriptUtil {
             
                 var branch = BranchSpecifics.getSelectedBranchId(context);
         
-                properties.push('B='+  (branch == "" || branch== undefined? "null":branch));
-                if(endUserIds.Count>0){ properties.push('Id=' + endUserIds[0]);}
-                properties.push('U=' +  user.UserId);
+                properties.push('B:'+  (branch == "" || branch== undefined? "null":branch));
+                if(endUserIds.Count>0){ properties.push('Id:' + endUserIds[0]);}
+                properties.push('U:' +  user.UserId);
 
 
             } else {
