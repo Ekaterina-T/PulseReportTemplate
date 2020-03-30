@@ -134,12 +134,11 @@ class StyleAndJavaScriptUtil {
             
                 var branch = BranchSpecifics.getSelectedBranchId(context);
                 log.LogDebug(branch);
+
+               // properties.push('branch: ' +  ((branch == "" || branch == undefined || branch == null)? "null":branch));
+                properties.push('U: ' +  user.UserId);
+                if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
                 
-                properties.push('branch: ' +  (branch == "" || branch == undefined ? "null":branch));
-                properties.push('userLogin: ' +  user.UserId);
-               /*  if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
-                
-                */
 
             } else {
                 properties.push('isAdvancedReportingVisible: true');
