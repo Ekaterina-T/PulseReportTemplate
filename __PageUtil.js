@@ -27,12 +27,7 @@ class PageUtil {
         var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
-        log.LogDebug('before param init: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_OpenTextQs')));
-        
         ParamUtil.Initialise(context); // initialise parameters
-        log.LogDebug('after param init: '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_OpenTextQs')));
-
-
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible

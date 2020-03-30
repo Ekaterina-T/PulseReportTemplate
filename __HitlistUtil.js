@@ -94,7 +94,6 @@ class Hitlist {
             var log = context.log;
     
             var qIds = ParamUtil.GetSelectedCodes(context, parameterName);
-            log.LogDebug('AddColumnsByParameter ('+ parameterName+ ')='+JSON.stringify(qIds))
          
             for (var i=0; i<qIds.length; i++) {          
                 AddColumn(context, qIds[i], columnProps);
