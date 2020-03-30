@@ -128,16 +128,15 @@ class StyleAndJavaScriptUtil {
                 properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
                 properties.push('U: "' +  user.UserId+'"');
                 //user data
-                //var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
-               // var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
-               // var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
+                var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
+                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
             
-               // var branch = BranchSpecifics.getSelectedBranchId(context);
-              //  log.LogDebug(branch);
+                var branch = BranchSpecifics.getSelectedBranchId(context);
 
-               // properties.push('branch: ' +  ((branch == "" || branch == undefined || branch == null)? "null":branch));
+               properties.push('B: "' +  ((branch == "" || branch == undefined || branch == null)? "null":branch) +'"');
                
-               // if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
+               if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
                 
 
             } else {
