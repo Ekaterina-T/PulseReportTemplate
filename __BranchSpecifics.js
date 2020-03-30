@@ -169,37 +169,68 @@ class BranchSpecifics{
 
 
     /**
-     * @description get endusers that belong to current hierarchy branch
-     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
-     * @param {String} reportUserId  current end user id
+     * @description get end users that belong to current hierarchy branch
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
      * @returns {StringCollection} - string array with end user ids
-     * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext}, reportUserId);
+     * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
-    static function getUserIdsByCurrentBranch(context, endUserId) {
+    static function getUserIdsByCurrentBranch(context) {
 
-        if(!Config.IsBranchSpecificsOn && !Config.EndUserByBranch.enabled) {
+        if(!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
             return [];
         }
 
         var log = context.log;
+        var confirmit = context.confirmit;
 
-        var HFParentNodeID_lookup = Config.EndUserByBranch.BranchIDTableColumnName;
-        var schemaId = Config.DBSchemaID_ForProject;
-        var tableName = Config.EndUserTableName;
-        var schema_HF : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
-        var table_HF : DBDesignerTable = schema_HF.GetDBDesignerTable(tableName);
-
-        var userid = endUserId.replace(/[^\w]/g,'_');
-
-        var currentHFNumColection : StringCollection = table_HF.GetColumnValues("__l9"+HFParentNodeID_lookup, "id", userid);
-        if (currentHFNumColection.Count <= 0) {
-            throw new Error("There's no such user as " + userid + "in the Enduser table.");
+        var branchId = BranchSpecifics.getSelectedBranchId(context);
+        if (!branchId) {
+            return [];
         }
 
-        var currentHFNum = currentHFNumColection[0];
-        var idsWithCurrentHF : StringCollection = table_HF.GetColumnValues("id", "__l9"+HFParentNodeID_lookup, currentHFNum);
+        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        var maxNTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserMaxNTableName);
 
-        return idsWithCurrentHF;
+        var maxN;
+        var maxNValues = maxNTable.GetColumnValues("__l9"+Config.EndUserMaxNTableColumnName, "id", branchId);
+
+        if (!maxNValues || maxNValues.Count <= 0) {
+            maxNValues = maxNTable.GetColumnValues("__l9"+Config.EndUserMaxNTableColumnName, "id", "default");
+        }
+
+        maxN = maxNValues[0];
+
+        var idsFromCurrentBranch = [];
+        for (var i = 1; i <= maxN; i++ ) {
+            idsFromCurrentBranch.push(branchId + '_' + i);
+        }
+
+        return idsFromCurrentBranch;
+    }
+
+
+    /**
+     * @description get filter expression to filter end users that belong to current hierarchy branch
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @returns {string} - filter expression
+     * @example BranchSpecifics.getOnlyUsersFromCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+     */
+    static function getOnlyUsersFromCurrentBranch(context) {
+
+        if(!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled || !Config.EndUserByBranch.endUserQuestionId) {
+            return '';
+        }
+
+        var log = context.log;
+        var confirmit = context.confirmit;
+
+        var endUserQuestionId = Config.EndUserByBranch.endUserQuestionId;
+        var userIds = BranchSpecifics.getUserIdsByCurrentBranch(context);
+        if (!userIds || userIds.length <= 0) {
+            return '';
+        }
+
+        return 'In(' + endUserQuestionId + ', "' + userIds.join('") OR In(' + endUserQuestionId + ', "') + '")';
     }
     
   }
