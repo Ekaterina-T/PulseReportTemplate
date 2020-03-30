@@ -137,7 +137,7 @@ class StyleAndJavaScriptUtil {
 
                // properties.push('branch: ' +  ((branch == "" || branch == undefined || branch == null)? "null":branch));
                 properties.push('U: ' +  user.UserId);
-                if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
+               // if(endUserIds.Count>0){ properties.push('Id: ' + endUserIds[0]);}
                 
 
             } else {
