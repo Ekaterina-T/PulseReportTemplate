@@ -128,7 +128,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
 
                 //user data
-                var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+               /* var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
                 var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
             
@@ -137,7 +137,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('B:'+  (branch == "" || branch== undefined? "null":branch));
                 if(endUserIds.Count>0){ properties.push('Id:' + endUserIds[0]);}
                 properties.push('U:' +  user.UserId);
-
+                */
 
             } else {
                 properties.push('isAdvancedReportingVisible: true');
