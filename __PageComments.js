@@ -51,7 +51,6 @@ class PageComments {
             var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
     
             for (var i=0; i<staticCols.length; i++) {
-                log.LogDebug('hitlistComments_Render='+staticCols[i])
                 Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
             }
         }

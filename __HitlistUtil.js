@@ -55,8 +55,6 @@ class Hitlist {
     
             var hitlist = context.hitlist;
             var log = context.log;
-
-            log.LogDebug('AddColumn: '+qId)
     
             var sortable = columnProps.sortable || false;
             var searchable = columnProps.searchable || false;
@@ -96,7 +94,7 @@ class Hitlist {
             var log = context.log;
     
             var qIds = ParamUtil.GetSelectedCodes(context, parameterName);
-            log.LogDebug('AddColumnsByParameter='+JSON.stringify(qIds))
+            log.LogDebug('AddColumnsByParameter ('+ parameterName+ ')='+JSON.stringify(qIds))
          
             for (var i=0; i<qIds.length; i++) {          
                 AddColumn(context, qIds[i], columnProps);
