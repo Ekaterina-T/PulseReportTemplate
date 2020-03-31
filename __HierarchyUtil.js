@@ -238,7 +238,7 @@ class HierarchyUtil {
      * @param {String} nodeId
      */
 
-    static function getDirectChildrenForCurrentReportBase(context, nodeId) {
+    static function getDirectChildrenForCurrentReportBase(context) {
 
         var log = context.log;
         var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
