@@ -473,6 +473,7 @@ class PageActions {
         hq.Distributions.Enabled = true;
         hq.Distributions.HorizontalPercents = true;
         hq.ShowTotals = false;
+        hq.Decimals = Config.Decimal;
         table.ColumnHeaders.Add(hq);
 
         // global table settings
@@ -566,6 +567,7 @@ class PageActions {
         var qEColumn: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'actionstatus');
         var hQColumn : HeaderQuestion = new HeaderQuestion(qEColumn);
         hQColumn.ShowTotals = false;
+        hQColumn.Decimals = Config.Decimal;
         table.ColumnHeaders.Add(hQColumn);
         table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
