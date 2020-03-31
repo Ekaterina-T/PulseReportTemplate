@@ -207,40 +207,49 @@ class HierarchyUtil {
         return levels;
     }
 
-    /*
-      static function getLevel(user) {
-        return getParents(user).length;
-      }
-
-      static function isLowestLevelInHierarchy(user, confirmit) {
-        var reportBase = user.PersonalizedReportBase;
-        var rows = dbTable.Rows;
-        var isLowest = true;
-
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === reportBase) {
-            isLowest = false;
-            break;
-          }
-        }
-        return isLowest;
-      }
-
-      static function isLowestLevelInHierarchyAnyUser(userID, confirmit) {
-        var rows = dbTable.Rows;
-        var isLowest = true;
-
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === userID) {
-            isLowest = false;
-            break;
-          }
-        }
-        return isLowest;
-      }
+    /**
+     * @memberof HierarchyUtil
+     * @function getDirectChildren
+     * @description gets direct children of the node
+     * @param {Object} context {confirmit: confirmit}
+     * @param {String} nodeId
      */
+
+    static function getDirectChildren(context, nodeId) {
+
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+        var relation = Config.relationName;
+        var stringColl = dbTableNew.GetColumnValues('id', relation, nodeId);
+        var nodes = [];
+
+        for(var i=0; i<stringColl.Count; i++) {
+            nodes.push(stringColl[i]);
+        }
+
+        return nodes;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getDirectChildren
+     * @description gets direct children of the node
+     * @param {Object} context {confirmit: confirmit}
+     * @param {String} nodeId
+     */
+
+    static function getDirectChildrenForCurrentReportBase(context, nodeId) {
+
+        var log = context.log;
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var nodes = [];
+
+        for(var i=0; i< bases.length; i++) {
+            nodes = nodes.concat(getDirectChildren(context, bases[i]))
+        }
+
+        return nodes;
+    }
 
 
 }
