@@ -9,9 +9,7 @@ class PageComments {
          */
         static function Hide(context) {
             var log = context.log;
-            log.LogDebug('Hide: '+JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_AllOpenTextQs')));
-            context.pageContext.Items['CurrentPageId'] = 'Comments';
-            PulseProgramUtil.printPulseSurveyContentInfoTable(context, 'Page_Comments')
+            //log.LogDebug('Hide: '+JSON.stringify(ParamUtil.GetSelectedCodes(context,'p_AllOpenTextQs')));
             return false;
         }
     
