@@ -706,6 +706,7 @@ class PageActions {
         var hQCost : HeaderQuestion = new HeaderQuestion(qECost);
         hQCost.IsCollapsed = true;
         hQCost.HideHeader = true;
+        hQCost.Decimals = Config.Decimal;
         hQRow.SubHeaders.Add(hQCost);
 
         var HSAvg: HeaderStatistics = new HeaderStatistics();
@@ -779,6 +780,7 @@ class PageActions {
         formula.Expression = "IF(CELLV(1, ROWS)!=0 , SUM(COLVALUES(2, ROWS-1))/CELLV(1, ROWS), EMPTYV())";
         formula.Title.Texts.Add(new LanguageText(9, "%"));
         formula.Percent = true;
+        formula.Decimals = Config.Decimal;
         table.RowHeaders.Add(formula);
 
 
