@@ -139,7 +139,8 @@ class StyleAndJavaScriptUtil {
             var barChartColors = Config.barChartColors_Distribution;
             var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
             var numberOfVerbatimComments = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_KPI', 'NumberOfCommentsToShow');
-    
+            var lineColor = Config.lineColor;
+
             var css_string = '';
     
             css_string += ''
@@ -215,6 +216,11 @@ class StyleAndJavaScriptUtil {
                 css_string += '.material-card--favorable tr:nth-last-child(n+6) td { display: none; }'
                     +'.material-card--unfavorable tr:nth-last-child(n+6) td { display: none; }';
             }
+
+            //Results table
+            css_string += '.tablesaw td.addTopBorder {'
+                            +'border-top-color: '+lineColor+' !important;'
+                            +'}';
     
             return '<style>'+css_string+'</style>';
         }
