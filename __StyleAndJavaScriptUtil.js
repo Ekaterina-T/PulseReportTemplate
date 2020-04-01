@@ -96,6 +96,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('evenRowColor: '+JSON.stringify(Config.evenRowColor));
                 properties.push('evenDimensionColor: '+JSON.stringify(Config.evenDimensionColor));
                 properties.push('oddDimensionColor: '+JSON.stringify(Config.oddDimensionColor));
+                properties.push('lineColor: '+JSON.stringify(Config.lineColor));
             }
     
             if (pageId === 'Categorical_') {
