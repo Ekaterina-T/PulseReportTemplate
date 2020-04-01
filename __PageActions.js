@@ -473,6 +473,7 @@ class PageActions {
         hq.Distributions.Enabled = true;
         hq.Distributions.HorizontalPercents = true;
         hq.ShowTotals = false;
+        hq.Decimals = Config.Decimal;
         table.ColumnHeaders.Add(hq);
 
         // global table settings
@@ -566,6 +567,7 @@ class PageActions {
         var qEColumn: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'actionstatus');
         var hQColumn : HeaderQuestion = new HeaderQuestion(qEColumn);
         hQColumn.ShowTotals = false;
+        hQColumn.Decimals = Config.Decimal;
         table.ColumnHeaders.Add(hQColumn);
         table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
@@ -704,6 +706,7 @@ class PageActions {
         var hQCost : HeaderQuestion = new HeaderQuestion(qECost);
         hQCost.IsCollapsed = true;
         hQCost.HideHeader = true;
+        hQCost.Decimals = Config.Decimal;
         hQRow.SubHeaders.Add(hQCost);
 
         var HSAvg: HeaderStatistics = new HeaderStatistics();
@@ -777,6 +780,7 @@ class PageActions {
         formula.Expression = "IF(CELLV(1, ROWS)!=0 , SUM(COLVALUES(2, ROWS-1))/CELLV(1, ROWS), EMPTYV())";
         formula.Title.Texts.Add(new LanguageText(9, "%"));
         formula.Percent = true;
+        formula.Decimals = Config.Decimal;
         table.RowHeaders.Add(formula);
 
 

@@ -126,6 +126,19 @@ class StyleAndJavaScriptUtil {
                 properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
                 properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
                 properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
+                properties.push('U: "' +  user.UserId+'"');
+                //user data
+                var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
+                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
+            
+                var branch = BranchSpecifics.getSelectedBranchId(context);
+
+               properties.push('B: "' +  ((branch == "" || branch == undefined || branch == null)? "null":branch) +'"');
+               
+               if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
+                
+
             } else {
                 properties.push('isAdvancedReportingVisible: true');
             }
