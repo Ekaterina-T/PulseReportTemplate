@@ -132,9 +132,9 @@ class StyleAndJavaScriptUtil {
                 var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
                 var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
             
-                var branch = BranchSpecifics.getSelectedBranchId(context);
+               // var branch = BranchSpecifics.getSelectedBranchId(context);
 
-               properties.push('B: "' +  ((branch == "" || branch == undefined || branch == null)? "null":branch) +'"');
+               // properties.push('B: "' +  ((branch == "" || branch == undefined || branch == null)? "null":branch) +'"');
                
                if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
                 
