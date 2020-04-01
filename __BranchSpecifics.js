@@ -242,7 +242,9 @@ class BranchSpecifics{
      * @example BranchSpecifics.getUserIdByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
     static function getUserIdByLogin(context, login) {
-
+        var log = context.log; 
+        var confirmit = context.confirmit;
+        
         if(!login || !Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
             return '';
         }
