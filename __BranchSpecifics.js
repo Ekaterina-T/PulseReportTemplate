@@ -240,11 +240,11 @@ class BranchSpecifics{
      * @description get end user's id by their login
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
      * @param {string} login
-     * @param {DBDesignerSchema} schema - if we've already got one
+     * @param {DBDesignerSchema} existingSchema - if we've already got one
      * @returns {string} - end user id from Database table
      * @example BranchSpecifics.getUserIdByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
-    static function getUserIdByLogin(context, login, schema) {
+    static function getUserIdByLogin(context, login, existingSchema) {
         var log = context.log;
         var confirmit = context.confirmit;
 
@@ -252,7 +252,7 @@ class BranchSpecifics{
             return '';
         }
 
-        schema = schema ? schema : confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        var schema : DBDesignerSchema = existingSchema ? existingSchema : confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var endUserTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserTableName);
 
         var userId = endUserTable.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, login);
