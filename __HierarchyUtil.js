@@ -3,6 +3,7 @@ class HierarchyUtil {
     // cached hierarchy DB table
     // check page initialize script
     static var dbTable : DataTable = new DataTable();
+    static var isLowestLevel = {};    
 
     /**
      * @memberof HierarchyUtil
@@ -286,7 +287,7 @@ class HierarchyUtil {
            allLowest = false;
            break;
          }
-         
+
        }
         return allLowest;
        
