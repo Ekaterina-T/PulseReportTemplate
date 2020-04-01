@@ -776,7 +776,7 @@ class PageResults {
         var report = context.report;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var bmColumn = 2; // 1st coulumn always exists - it's base
+        var bmColumn = 2; // 1st coulumn always exists - it's base, then score value
         var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm": "Benchmarks";
         var baseValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, 1);
         var suppressValue = SuppressConfig.TableSuppressValue;
@@ -977,19 +977,17 @@ class PageResults {
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
         var table = context.table;
-        var state = context.state;
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
-
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
         excludedFiltersForN.SegmentType = HeaderSegmentType.Expression;
         excludedFiltersForN.Expression = Filters.getHierarchyAndWaveFilter(context);
         excludedFiltersForN.HideHeader = true;
 
-        addResponsesColumn(context, excludedFiltersForN, true)
+        addResponsesColumn(context, excludedFiltersForN, true);
         table.ColumnHeaders.Add(excludedFiltersForN);
 
         //add Score column
