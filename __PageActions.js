@@ -583,6 +583,7 @@ class PageActions {
     static function inactiveUsersHiddenTable_Render(context){
         var table = context.table;
         var log = context.log;
+        var user = context.user;
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 

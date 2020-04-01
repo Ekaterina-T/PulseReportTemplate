@@ -346,6 +346,7 @@ class ParamUtil {
         var mask = context.mask;
         var log = context.log;
         var report = context.report;
+        var user = context.user;
 
         if (parameterId === 'p_Statements') {
             mask.Access = ParameterAccessType.Inclusive;

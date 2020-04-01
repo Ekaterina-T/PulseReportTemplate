@@ -181,6 +181,7 @@ class BranchSpecifics{
         }
 
         var log = context.log;
+        var confirmit = context.confirmit;
 
         var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var maxNTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserMaxNTableName);
@@ -251,7 +252,7 @@ class BranchSpecifics{
             return '';
         }
 
-        var schema : DBDesignerSchema = schema ? schema : confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        schema = schema ? schema : confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var endUserTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserTableName);
 
         var userId = endUserTable.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, login);
@@ -273,6 +274,6 @@ class BranchSpecifics{
         }
 
         var idIndexLength = userId.split('_')[userId.split('_').length-1].length + 1;
-        return branchId = userId.substr(0, userId.length - idIndexLength);
+        return userId.substr(0, userId.length - idIndexLength);
     }
   }
