@@ -232,5 +232,26 @@ class BranchSpecifics{
 
         return 'In(' + endUserQuestionId + ', "' + userIds.join('") OR In(' + endUserQuestionId + ', "') + '")';
     }
-    
+
+
+    /**
+     * @description get end user's id by their login
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {string} login
+     * @returns {string} - end user id from Database table
+     * @example BranchSpecifics.getUserIdByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+     */
+    static function getUserIdByLogin(context, login) {
+
+        if(!login || !Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
+            return '';
+        }
+
+        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        var endUserTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserTableName);
+
+        var userId = endUserTable.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, login);
+
+        return userId ? userId : '';
+    }
   }

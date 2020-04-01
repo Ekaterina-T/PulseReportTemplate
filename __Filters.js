@@ -438,10 +438,11 @@ class Filters {
         }
 
         var state = context.state;
+        var user = context.user;
 
         if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
-            var userId = context.user.UserId;
-            return 'IN(actionowner, "' + userId + '")';
+            var userId = BranchSpecifics.getUserIdByLogin(context, user.UserId);
+            return 'IN(actionowner, "' + userId ? userId : user.UserId + '")';
         }
 
         return '';
@@ -460,11 +461,12 @@ class Filters {
             return '';
         }
 
-        var state = context.state;
+        var user = context.user;
 
         if(!PageActions.isFeatureAvailableForUserRole(context, "EditOrDeleteOthersActions")){
 	   //&& !state.Parameters.IsNull("p_SwitchHitlistMode")) {
-            return 'IN(actionowner, "' + context.user.UserId + '")';
+            var userId = BranchSpecifics.getUserIdByLogin(context, user.UserId);
+            return 'IN(actionowner, "' + userId ? userId : user.UserId + '")';
         }
         return '';
     }
