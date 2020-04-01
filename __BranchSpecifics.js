@@ -257,7 +257,7 @@ class BranchSpecifics{
 
         var userId = endUserTable.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, login);
 
-        return userId ? userId : '';
+        return userId && userId.Count > 0 ? userId[0] : '';
     }
 
 
