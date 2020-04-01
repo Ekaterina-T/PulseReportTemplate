@@ -234,6 +234,64 @@ class HierarchyUtil {
       	return null;
     }
 
+    	/**
+     * @memberof HierarchyUtil
+     * @function isLowestLevelInHierarchyAnyNode
+     * @description checks if the specified node is lowest level in hierarchy
+     * @param {String} nodeID 
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @returns {Boolean} isLowest
+     */  
+    static function isLowestLevelInHierarchyAnyNode(nodeID, context) {
+        
+         var rows = dbTable.Rows;
+         var isLowest = true;
+ 
+         for (var i = 0; i < rows.Count; i++) {
+           var row : DataRow = rows[i];
+           if(row[Config.relationName] === nodeID) {
+             isLowest = false;
+             break;
+           }
+         }
+         return isLowest;
+       }
+ 
+       /**
+      * @memberof HierarchyUtil
+      * @function allAssignedNodesLowest
+      * @description checks if all nodes user is assigned to are lowest level in hierarchy
+      * @param {Object} context {confirmit: confirmit, user: user, log: log}
+      * @returns {Boolean} allLowest
+      */  
+       static function allAssignedNodesLowest(context) {
+         
+       var user = context.user;
+       var log = context.log;
+       
+       if (user.UserType == ReportUserType.Confirmit) {
+         return false;
+       }
+       
+       var allLowest = true;
+       var nodesAssigned = user.GetNodeAssignments();
+       for (var i=0; i<nodesAssigned.length; i++) {
+
+         var nodeId = nodesAssigned[i];
+         
+         if (isLowestLevel[nodeId] === undefined) {
+           isLowestLevel[nodeId] = isLowestLevelInHierarchyAnyNode(nodeId, context);
+         }
+         if (!isLowestLevel[nodeId]) {
+           allLowest = false;
+           break;
+         }
+         
+       }
+        return allLowest;
+       
+     }
+
     /*
       static function getLevel(user) {
         return getParents(user).length;
@@ -254,19 +312,6 @@ class HierarchyUtil {
         return isLowest;
       }
 
-      static function isLowestLevelInHierarchyAnyUser(userID, confirmit) {
-        var rows = dbTable.Rows;
-        var isLowest = true;
-
-        for (var i = 0; i < rows.Count; i++) {
-          var row : DataRow = rows[i];
-          if(row['parent'] === userID) {
-            isLowest = false;
-            break;
-          }
-        }
-        return isLowest;
-      }
      */
 
 
