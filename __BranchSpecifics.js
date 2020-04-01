@@ -174,22 +174,23 @@ class BranchSpecifics{
      * @returns {StringCollection} - string array with end user ids
      * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
-    static function getUserIdsByCurrentBranch(context) {
+    static function getUserIdsByCurrentBranch(context, endUserId) {
 
-        if(!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
+        if(!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled || !endUserId) {
             return [];
         }
 
         var log = context.log;
-        var confirmit = context.confirmit;
-
-        var branchId = BranchSpecifics.getSelectedBranchId(context);
-        if (!branchId) {
-            return [];
-        }
 
         var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var maxNTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserMaxNTableName);
+
+        var userId = BranchSpecifics.getUserIdByLogin(context, endUserId, schema);
+        var branchId = BranchSpecifics.getBranchIdFromUserId(context, userId);
+
+        if (!branchId) {
+            return [];
+        }
 
         var maxN;
         var maxNValues = maxNTable.GetColumnValues("__l9"+Config.EndUserMaxNTableColumnName, "id", branchId);
@@ -238,20 +239,38 @@ class BranchSpecifics{
      * @description get end user's id by their login
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
      * @param {string} login
+     * @param {DBDesignerSchema} schema - if we've already got one
      * @returns {string} - end user id from Database table
      * @example BranchSpecifics.getUserIdByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
-    static function getUserIdByLogin(context, login) {
+    static function getUserIdByLogin(context, login, schema) {
 
         if(!login || !Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
             return '';
         }
 
-        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        var schema : DBDesignerSchema = schema ? schema : confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var endUserTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserTableName);
 
         var userId = endUserTable.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, login);
 
         return userId ? userId : '';
+    }
+
+
+    /**
+     * @description get branch id from user id
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {string} userId
+     * @returns {string} - branchId
+     * @example BranchSpecifics.getBranchIdFromUserId({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+     */
+    static function getBranchIdFromUserId(context, userId) {
+        if (!userId) {
+            return '';
+        }
+
+        var idIndexLength = userId.split('_')[userId.split('_').length-1].length + 1;
+        return branchId = userId.substr(0, userId.length - idIndexLength);
     }
   }

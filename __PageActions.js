@@ -592,7 +592,7 @@ class PageActions {
 
         var actionOwnerMask: MaskFlat = new MaskFlat();
         actionOwnerMask.IsInclusive = true;
-        var currentHFUserIds = BranchSpecifics.getUserIdsByCurrentBranch(context);
+        var currentHFUserIds = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
         for (var i = 0 ; i < currentHFUserIds.length; i++) {
             actionOwnerMask.Codes.Add(currentHFUserIds[i]);
         }

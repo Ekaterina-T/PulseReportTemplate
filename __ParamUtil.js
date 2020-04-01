@@ -358,7 +358,7 @@ class ParamUtil {
         }
 
         if (parameterId === 'p_EndUserSelection') {
-            var idsInCurrentBranch = BranchSpecifics.getUserIdsByCurrentBranch(context);
+            var idsInCurrentBranch = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
             mask.Access = ParameterAccessType.Inclusive;
             //mask.AddKeys(idsInCurrentBranch);
             for (var i = 0; i < idsInCurrentBranch.length; i++) {
