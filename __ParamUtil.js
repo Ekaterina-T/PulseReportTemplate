@@ -30,6 +30,7 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
+        log.LogDebug('param load start '+parameter.ParameterId)
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
@@ -42,6 +43,7 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
         }
+        log.LogDebug('param load end '+parameter.ParameterId)
 
         return;
     }
@@ -377,6 +379,8 @@ class ParamUtil {
         var log = context.log;
         var report = context.report;
 
+        log.LogDebug('mask start '+parameterId)
+
         if (parameterId === 'p_Statements') {
             mask.Access = ParameterAccessType.Inclusive;
 
@@ -387,6 +391,7 @@ class ParamUtil {
             }
 
         }
+        log.LogDebug('mask end '+parameterId)
     }
 
     /**
