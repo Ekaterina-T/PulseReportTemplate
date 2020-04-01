@@ -442,7 +442,7 @@ class Filters {
 
         if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
             var userId = BranchSpecifics.getUserIdByLogin(context, user.UserId);
-            return 'IN(actionowner, "' + userId ? userId : user.UserId + '")';
+            return 'IN(actionowner, "' + (userId ? userId : user.UserId) + '")';
         }
 
         return '';

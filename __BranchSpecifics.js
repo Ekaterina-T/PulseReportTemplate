@@ -225,9 +225,10 @@ class BranchSpecifics{
 
         var log = context.log;
         var confirmit = context.confirmit;
+        var user = context.user;
 
         var endUserQuestionId = Config.EndUserByBranch.endUserQuestionId;
-        var userIds = BranchSpecifics.getUserIdsByCurrentBranch(context);
+        var userIds = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
         if (!userIds || userIds.length <= 0) {
             return '';
         }
