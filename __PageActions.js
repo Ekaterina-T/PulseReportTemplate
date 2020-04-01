@@ -41,9 +41,9 @@ class PageActions {
         if(endUserIds.Count != 1){
            throw new Error('PageActions.ActionBtn_Render: User is not in the table ' + tableName +' in schema ' + schemaId);
         }
-        var branch = BranchSpecifics.getSelectedBranchId(context);
+        //var branch = BranchSpecifics.getSelectedBranchId(context);
 
-        linkParameters.push('B='+  (branch == "" || branch== undefined? "null":branch));
+        //linkParameters.push('B='+  (branch == "" || branch== undefined? "null":branch));
         linkParameters.push('Id=' + endUserIds[0]);
         linkParameters.push('U=' +  user.UserId);
 
