@@ -445,8 +445,8 @@ class ParamUtil {
         if(parameterName === 'p_TimeUnitWithDefault') {
             //in export with loop by param it may cause troubles (pageid)
             //because param load script runs before page script
-            var pageId = PageUtil.getCurrentPageIdInConfig(context);
-            if(pageId === 'Page_Trends') {
+            var pageID = PageUtil.getCurrentPageIdInConfig(context);
+            if(pageID === 'Page_Trends') {
                 return !isPulseProgram;
             }
         }
@@ -485,11 +485,10 @@ class ParamUtil {
         }
 
 
-        log.LogDebug('pageId='+pageId+' parameterName='+parameterName+' !isPulseProgram='+(!isPulseProgram));
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         if(pageId === 'Page_Trends' && parameterName === 'p_DisplayMode') {
-
             log.LogDebug('pageId='+pageId+' parameterName='+parameterName+' !isPulseProgram='+(!isPulseProgram));
-            return !isPulseProgram;
+            return isPulseProgram;
         }
 
         if(parameterName === 'p_CustomOpenTextQs') {
