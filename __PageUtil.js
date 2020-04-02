@@ -160,4 +160,30 @@ class PageUtil {
 
         return union && union.length>0;
     }
+
+    /**
+     * @param {object} context
+     * @param {string} parameterId - id of iteratedParameter
+     * @returns {boolean} if current page (with one option of iterated parameter) should be showm=n
+     */
+    static function hideUnnecessaryPagesForIteratedParameter(context, parameterId) {
+        var log = context.log;
+        var report = context.report;
+        var pageContext = context.pageContext;
+
+        if (!pageContext.Items["IteratedParameterBaseParamterId"]) {
+            pageContext.Items.Add("IteratedParameterBaseParamterId", parameterId);
+        }
+
+        if (!Export.isExportMode(context)) {
+            return false;
+        }
+
+        var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
+        if (openTextQIds.length > 0) {
+            var openTextBase = report.TableUtils.GetCellValue("IteratedParameterBase:Base", 1, 1).Value;
+            return openTextBase <= 0;
+        }
+        return true;
+    }
 }

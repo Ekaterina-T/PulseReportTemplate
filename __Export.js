@@ -59,4 +59,40 @@ class Export {
         return str;
     }
 
+    /**
+     * render help table to hide unnecessary pages for iterated parameter
+     * @param {object} context - {table: table, state: state, report: report,  pageContext: pageContext, log: log}
+     * @param {string} parameterId - id of iterated parameter (from pageContext.Items["IteratedParameterBaseParamterId"])
+     * @example Export.tableBaseForIteratedParameter_Render({table: table, state: state, report: report, pageContext: pageContext, log: log}, pageContext.Items["IteratedParameterBaseParamterId"]);
+     */
+    static function tableBaseForIteratedParameter_Render(context, parameterId) {
+        var table = context.table;
+
+        var qe: QuestionnaireElement;
+        var row : HeaderQuestion;
+
+        var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
+        for (var i=0; i<openTextQIds.length; i++) {
+            qe = QuestionUtil.getQuestionnaireElement(context, openTextQIds[i]);
+            row = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.ShowTotals = false;
+            row.Distributions.Enabled = true;
+            row.Distributions.Count = true;
+            table.RowHeaders.Add(row);
+        }
+
+        if (openTextQIds.length <= 0) {
+            qe = QuestionUtil.getQuestionnaireElement(context, "status");
+            row = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.ShowTotals = false;
+            row.Distributions.Enabled = true;
+            row.Distributions.Count = true;
+            table.RowHeaders.Add(row);
+        }
+
+        var hb: HeaderBase = new HeaderBase();
+        table.ColumnHeaders.Add(hb);
+    }
 }
