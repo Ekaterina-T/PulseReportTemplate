@@ -485,7 +485,7 @@ class ParamUtil {
         }
 
         if(pageId === 'Page_Trends' && parameterName === 'p_DisplayMode') {
-            return isPulseProgram;
+            return !isPulseProgram;
         }
 
         if(parameterName === 'p_CustomOpenTextQs') {
