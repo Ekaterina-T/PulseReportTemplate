@@ -485,6 +485,7 @@ class ParamUtil {
         }
 
 
+        log.LogDebug('pageId='+pageId+' parameterName='+parameterName+' !isPulseProgram='+(!isPulseProgram));
         if(pageId === 'Page_Trends' && parameterName === 'p_DisplayMode') {
 
             log.LogDebug('pageId='+pageId+' parameterName='+parameterName+' !isPulseProgram='+(!isPulseProgram));
