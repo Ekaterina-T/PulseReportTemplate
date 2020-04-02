@@ -62,7 +62,7 @@ class Hitlist {
             column.IsLink = YesNoDefaultValue.No;
             column.IsSearchable = columnProps.searchable ? YesNoDefaultValue.Yes : YesNoDefaultValue.No;
             column.IsSortable = columnProps.sortable ? YesNoDefaultValue.Yes : YesNoDefaultValue.No;
-            if (columnProps.order) {
+            if (columnProps.order  || columnProps.order == 0) {
                 hitlist.Columns.Insert(columnProps.order, column);
             } else {
                 hitlist.Columns.Add(column);

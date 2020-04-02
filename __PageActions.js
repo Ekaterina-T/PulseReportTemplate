@@ -733,25 +733,83 @@ class PageActions {
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var hitlist = context.hitlist;
+        var log = context.log;
 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
+        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var callBlockId = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'CallBlockId');
+
+        var position = 0;
+        var actionLinksNumber = isEditDeleteMode ? actionLinks.length : 0;
+
+        if (isEditDeleteMode) {
+            hitlistsActions_removeExtraLinkColumns(context);
+
+            for(var i = 0; i < actionLinksNumber; i++) {
+                hitlistsActions_SetCallblockLinks(context, actionLinks[i], i, callBlockId);
+            }
+        }
 
         for (var i=0; i<staticCols.length; i++) {
-            Hitlist.AddColumn(context, staticCols[i].id, staticCols[i].properties);
+            Hitlist.AddColumn(context, staticCols[i].id, {sortable: staticCols[i].properties.sortable, searchable: staticCols[i].properties.searchable, order: position});
+            position++;
         }
 
         for (var i=0; i<tagCols.length; i++) {
-            Hitlist.AddColumn(context, tagCols[i].id, tagCols[i].properties);
+            Hitlist.AddColumn(context, tagCols[i].id, {sortable: tagCols[i].properties.sortable, searchable: tagCols[i].properties.searchable, order: position});
+            position++;
         }
 
-        if(staticCols.length + tagCols.length !== hitlist.Columns.Count) {
+        if(staticCols.length + tagCols.length !== hitlist.Columns.Count - actionLinksNumber) {
             throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for hitlist columns, '+DataSourceUtil.getProgramDsId(context)+'. Duplicated question ids and hierarchy variables are not allowed to use in the hitlist component.');
         }
+    }
 
-        if (isEditDeleteMode) {
-            Hitlist.AddColumn(context, 'editLink', {sortable: false, searchable: false});
-            Hitlist.AddColumn(context, 'deleteLink', {sortable: false, searchable: false});
+    /**
+     * @description function to set up the links to corresponding callblocks.
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @param String actionLink - type of the link, e.g. edit, delete
+     * @param Int linkPosition - position of the link in the hitlist
+     * @param String callBlockId - id of the callblock the link is reffering to
+     * @example PageActions.hitlistsActions_SetCallblockLinks({hitlist: hitlist, state: state, report: report, pageContext: pageContext, log: log}, "edit", 0, "Init");
+     */
+    static function hitlistsActions_SetCallblockLinks(context, actionLink, linkPosition, callBlockId) {
+        var hitlist = context.hitlist;
+        var log = context.log;
+        var report = context.report;
+        var user = context.user;
+
+        //user data
+        var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+        var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
+        var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
+
+        var langInLink = 'l=' + report.CurrentLanguage + ';';
+        var rolesList = user.Roles == '' ? '' : 'role="' + user.Roles + '";';
+        var isResponsibleVisible = isFeatureAvailableForUserRole(context, 'Delegation') == "" || isFeatureAvailableForUserRole(context, 'Delegation') == "false" ? "" : "isResponsibleVisible=" + isFeatureAvailableForUserRole(context, 'Delegation') + ';';
+        var isWriting = isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "" || isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "false"? "" : "isWriting=" + isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') + ';';
+        var source = 'source=' + actionLink;
+        var u = 'U=' + user.UserId;
+        var idEditor = endUserIds.Count > 0 ? 'IdEditor=' + endUserIds[0] : '';
+
+        hitlist.Columns[linkPosition].SurveyLink.CallBlockId = callBlockId;
+        hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink + rolesList + isResponsibleVisible + isWriting + source + u + idEditor;
+    }
+
+    /**
+     * @description function to remove extra links from the hitlist based on the number of them specified in the config
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.hitlistsActions_removeExtraLinkColumns({hitlist: hitlist, state: state, report: report, pageContext: pageContext, log: log});
+     */
+    static function hitlistsActions_removeExtraLinkColumns(context) {
+        var hitlist = context.hitlist;
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+
+        for(var i = actionLinks.length; i < hitlist.Columns.Count; i++) {
+            hitlist.Columns.RemoveAt(i);
         }
     }
 
