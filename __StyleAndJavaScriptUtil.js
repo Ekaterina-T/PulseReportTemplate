@@ -130,7 +130,7 @@ class StyleAndJavaScriptUtil {
                 //user data
                 var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
-                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
+                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
             
                // var branch = BranchSpecifics.getSelectedBranchId(context);
 

@@ -36,7 +36,7 @@ class PageActions {
         var tableName = Config.EndUserTableName;
         var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
         var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(tableName);
-        var endUserIds = table_EndUsers.GetColumnValues("id", "__l9", user.UserId);
+        var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
     
         if(endUserIds.Count != 1){
            throw new Error('PageActions.ActionBtn_Render: User is not in the table ' + tableName +' in schema ' + schemaId);
