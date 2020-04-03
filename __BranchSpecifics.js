@@ -184,7 +184,7 @@ class BranchSpecifics{
         var confirmit = context.confirmit;
 
         var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
-        var maxNTable : DBDesignerTable = schema.GetDBDesignerTable(Config.EndUserMaxNTableName);
+        var branchConfigTable : DBDesignerTable = schema.GetDBDesignerTable(Config.BranchConfigTableName);
 
         var userId = BranchSpecifics.getUserIdByLogin(context, endUserId, schema);
         var branchId = BranchSpecifics.getBranchIdFromUserId(context, userId);
@@ -194,10 +194,10 @@ class BranchSpecifics{
         }
 
         var maxN;
-        var maxNValues = maxNTable.GetColumnValues("__l9"+Config.EndUserMaxNTableColumnName, "id", branchId);
+        var maxNValues = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.MaxN, "id", branchId);
 
         if (!maxNValues || maxNValues.Count <= 0) {
-            maxNValues = maxNTable.GetColumnValues("__l9"+Config.EndUserMaxNTableColumnName, "id", "default");
+            maxNValues = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.MaxN, "id", "default");
         }
 
         maxN = maxNValues[0];
