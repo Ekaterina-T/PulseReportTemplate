@@ -316,7 +316,7 @@ class PageResults {
         }
     }
 
-    /*
+    /**
   * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
   * @param {object} context: {state: state, report: report, log: log, table: table}
   * @param {string} scoreType
@@ -344,7 +344,7 @@ class PageResults {
         tableStatements_AddBenchmarkColumns_Banner0(context, isNormalizedTable);
     }
 
-    /*
+    /**
   * Add Score calculation
   * @param {object} context: {state: state, report: report, log: log, table: table}
   * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
@@ -460,7 +460,7 @@ class PageResults {
         throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
     }
 
-    /*
+    /**
   *  add distribution bar chart
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   */
@@ -520,7 +520,7 @@ class PageResults {
         }
     }
 
-    /*
+    /**
   *  add scale distribution columns
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   */
@@ -558,7 +558,7 @@ class PageResults {
         }
     }
 
-    /*
+    /**
   *  add base column
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   *  @param {Header} parentHeader - not mandatory
@@ -582,7 +582,7 @@ class PageResults {
         }
     }
 
-    /*
+    /**
   *  create base column
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   *  @param {boolean} isHidden - not mandatory
@@ -618,6 +618,7 @@ class PageResults {
      * @param {String} header content title
      * @param {boolean} isNormalizedTable: true for table for normalized questions
      */
+        //TODO: unify with copyScoreValues below
     static function copyBenchmarkValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title, isNormalizedTable) {
 
         var report = context.report;
@@ -626,20 +627,13 @@ class PageResults {
         var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm": "Benchmarks";
         var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
         var suppressValue = SuppressConfig.TableSuppressValue;
-        var baseValues: Datapoint[];
+        var baseValues: Datapoint[] = (!baseValuesForOriginalScores) ? report.TableUtils.GetColumnValues(benchmarkTable, 1) : baseValuesForOriginalScores;
 
-        if (!baseValuesForOriginalScores) {
-            baseValues = report.TableUtils.GetColumnValues(benchmarkTable, 1);
-        } else {
-            baseValues = baseValuesForOriginalScores;
-        }
 
         for (var i = 0; i < bmValues.length; i++) {
-            var bmVal: Datapoint = bmValues[i];
-            var base: Datapoint = baseValues[i];
 
-            if (base.Value >= suppressValue && !bmVal.IsEmpty) {
-                targetHeader.SetCellValue(i, bmVal.Value);
+            if (baseValues[i].Value >= suppressValue && ! bmValues[i].IsEmpty) {
+                targetHeader.SetCellValue(i,  bmValues[i].Value);
             }
         }
 
@@ -649,6 +643,9 @@ class PageResults {
     }
 
     /**
+     * returns number of answers in break by question
+     * @param {Object} context
+     * @returns {Number} number of sub-rows
      */
     static function getNumberOfSubHeaderRows(context) {
 
@@ -669,6 +666,16 @@ class PageResults {
         return subHeaders.length;
     }
 
+    /**
+     * if all questions inside dimension will be suppressed -> dimension must be suppressed
+     * -> don't move score value to statements table
+     * @param {Object} context
+     * @param {Number} dimensionStartRow - number of 1st row of dimension
+     * @param {Object} dimensionsInfoObject - holds info if dimension is suppressed or not to avoid recalculation for every row
+     * @param {StringCollection} rowHeaderInfo - row headers of benchmark table, report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
+     * @param {DataPont[]} - baseValues 1st column of Benchmarh table
+     * @returns {Boolean} - if dimension is suppressed or not
+     */
     static function isDimensionSuppressed(context, dimensionStartRow, dimensionsInfoObject, rowHeaderInfo, baseValues) {
 
         if(!dimensionsInfoObject.hasOwnProperty(dimensionStartRow)) {
@@ -681,7 +688,6 @@ class PageResults {
             while(isDimensionEmpty && rowNum<=baseValues.length-1) {
 
                 var nextRowHeader = rowHeaderInfo[rowNum];
-
                 //next dimension started
                 if(nextRowHeader[nextRowHeader.length - 1] === "") {
                     break;
@@ -698,17 +704,24 @@ class PageResults {
         return dimensionsInfoObject[dimensionStartRow];
     }
 
+    /**
+     *
+     * @param {Object} context
+     * @param {StringCollection} rowHeaderInfo - row headers of benchmark table, report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
+     * @param {Number} - row index
+     * @returns {Boolean} - if row is a question or dimension's total
+     */
     static function isQuestionHeader(context, rowHeaderInfo, rowIndex) {
 
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         if (tabSwitcher[0] === 'custom') {
-            return true;
+            return true; //there are no dimensions on custom tab
         }
 
         var currentRowInfo = rowHeaderInfo[rowIndex];
         var currentRowId = currentRowInfo[currentRowInfo.length -1];
 
-        if(!Export.isExcelExportMode(context)) {
+        if(!Export.isExcelExportMode(context)) { // in web and pdf
             return currentRowId !== "";
         }
 

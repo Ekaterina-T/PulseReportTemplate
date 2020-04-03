@@ -9,7 +9,7 @@ class PageComments {
          */
         static function Hide(context) {
             var log = context.log;
-            return false;
+            return PageUtil.hideUnnecessaryPagesForIteratedParameter(context, "p_AllOpenTextQs");
         }
     
         /**
