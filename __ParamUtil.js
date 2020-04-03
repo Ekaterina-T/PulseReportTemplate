@@ -485,9 +485,9 @@ class ParamUtil {
         }
 
 
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        if(pageId === 'Page_Trends' && parameterName === 'p_DisplayMode') {
-            return !isPulseProgram;
+        if(parameterName === 'p_DisplayMode') {
+            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            return pageId === 'Page_Trends' && !isPulseProgram;
         }
 
         if(parameterName === 'p_CustomOpenTextQs') {
