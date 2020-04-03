@@ -404,6 +404,7 @@ class ParamUtil {
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
+        var pageId;
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
@@ -445,8 +446,8 @@ class ParamUtil {
         if(parameterName === 'p_TimeUnitWithDefault') {
             //in export with loop by param it may cause troubles (pageid)
             //because param load script runs before page script
-            var pageID = PageUtil.getCurrentPageIdInConfig(context);
-            if(pageID === 'Page_Trends') {
+            pageId = PageUtil.getCurrentPageIdInConfig(context);
+            if(pageId === 'Page_Trends') {
                 return !isPulseProgram;
             }
         }
@@ -486,7 +487,7 @@ class ParamUtil {
 
 
         if(parameterName === 'p_DisplayMode') {
-            var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            pageId = PageUtil.getCurrentPageIdInConfig(context);
             return pageId === 'Page_Trends' && !isPulseProgram;
         }
 
