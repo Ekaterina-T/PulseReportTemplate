@@ -19,7 +19,7 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         var pageId = getCurrentPageIdInConfig(context);
-        log.LogDebug('page init 1: hier='+user.PersonalizedReportBase);
+        log.LogDebug('page init 1: hier='+context.user.PersonalizedReportBase);
 
         //save page source to page context
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
