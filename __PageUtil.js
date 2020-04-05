@@ -9,6 +9,7 @@ class PageUtil {
     static function Initialise(context) {
 
         var log = context.log;
+        log.LogDebug('PAGE INIT');
         var state = context.state;
         var page = context.page;
         var pageContext = context.pageContext;
@@ -18,7 +19,7 @@ class PageUtil {
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         var pageId = getCurrentPageIdInConfig(context);
-        log.LogDebug('page init 1: pageId='+pageId);
+        log.LogDebug('page init 1: hier='+user.PersonalizedReportBase);
 
         //save page source to page context
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
