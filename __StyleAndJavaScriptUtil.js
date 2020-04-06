@@ -1,4 +1,4 @@
-class StyleAndJavaScriptUtilNEW {
+class StyleAndJavaScriptUtil {
     
     /*
     * Assemble all "backend dependant" css styles and js scripts
