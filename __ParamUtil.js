@@ -348,20 +348,19 @@ class ParamUtil {
         var report = context.report;
         var user = context.user;
 
-        if (parameterId === 'p_Statements') {
+        if (parameterId === 'p_Dimensions') {
             mask.Access = ParameterAccessType.Inclusive;
 
-            var dimension = ParamUtil.GetSelectedCodes(context, 'p_Dimensions')[0];
-            var qIds = report.TableUtils.GetRowHeaderCategoryIds("QuestionsByDimension");
-            for (var i = 0; i < qIds.length; i++) {
-                mask.Keys.Add(qIds[i]);
+            var dimensions = BranchSpecifics.getDimensionsByBranch(context);
+            for (var i = 0; i < dimensions.length; i++) {
+                mask.Keys.Add(dimensions[i]);
             }
         }
 
         if (parameterId === 'p_EndUserSelection') {
             var idsInCurrentBranch = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
             mask.Access = ParameterAccessType.Inclusive;
-            //mask.AddKeys(idsInCurrentBranch);
+
             for (var i = 0; i < idsInCurrentBranch.length; i++) {
                 mask.Keys.Add(idsInCurrentBranch[i]);
             }
