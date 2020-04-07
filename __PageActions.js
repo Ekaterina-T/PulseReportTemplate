@@ -782,6 +782,10 @@ class PageActions {
         var report = context.report;
         var user = context.user;
 
+        if(callBlockId == null || callBlockId == undefined || callBlockId == ''){
+            throw new Error('PageActions.hitlistsActions_SetCallblockLinks:  Config should have "CallBlockId" property.');
+        }
+
         //user data
         var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
         var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
