@@ -6,8 +6,7 @@ class StyleAndJavaScriptUtil {
      * @returns {string} script and style string
      */
 
-    static
-    function assembleBackendDependantStylesAndJS(context) {
+    static function assembleBackendDependantStylesAndJS(context) {
 
         var str = '';
 
@@ -131,8 +130,10 @@ class StyleAndJavaScriptUtil {
         var log = context.log;
         var greenColor = Config.primaryGreenColor;
         var redColor = Config.primaryRedColor;
-        var kpiColor = Config.kpiColor;
-        var kpiColor_dark = Config.kpiColor_dark;
+        var mainColor = Config.mainColor;
+        var mainColor_dark = Config.mainColor_dark;
+        var hierarchyColor = Config.hierarchyColor;
+        var buttonsFontColor = Config.buttonsFontColor;
         var logo = Config.logo;
         var headerBackground = Config.headerBackground;
         var isThreeDotsMenuNeeded = Config.showThreeDotsCardMenu;
@@ -151,15 +152,15 @@ class StyleAndJavaScriptUtil {
         //icon with two men in queue
         +
         '.icon--kpi{' +
-        'background-image: url(data:image/svg+xml,%3Csvg%20fill%3D%22%23' + kpiColor.substring(1, kpiColor.length) + '%22%20viewBox%3D%220%200%2024%2024%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M16%2011c1.66%200%202.99-1.34%202.99-3S17.66%205%2016%205c-1.66%200-3%201.34-3%203s1.34%203%203%203zm-8%200c1.66%200%202.99-1.34%202.99-3S9.66%205%208%205C6.34%205%205%206.34%205%208s1.34%203%203%203zm0%202c-2.33%200-7%201.17-7%203.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8%200c-.29%200-.62.02-.97.05%201.16.84%201.97%201.97%201.97%203.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z%22/%3E%0A%3C/svg%3E);' +
+        'background-image: url(data:image/svg+xml,%3Csvg%20fill%3D%22%23' + mainColor.substring(1, mainColor.length) + '%22%20viewBox%3D%220%200%2024%2024%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M16%2011c1.66%200%202.99-1.34%202.99-3S17.66%205%2016%205c-1.66%200-3%201.34-3%203s1.34%203%203%203zm-8%200c1.66%200%202.99-1.34%202.99-3S9.66%205%208%205C6.34%205%205%206.34%205%208s1.34%203%203%203zm0%202c-2.33%200-7%201.17-7%203.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8%200c-.29%200-.62.02-.97.05%201.16.84%201.97%201.97%201.97%203.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z%22/%3E%0A%3C/svg%3E);' +
             '}'
 
         //nav menu item color
         +
         '.css-menu .yui3-menuitem:hover > a' +
-        '{ color: ' + kpiColor + '  !important;}' +
-            'div.reportal-horizontal-menu>.yui3-menu .css-menu-topitem:hover {' +
-            'border-bottom-color:' + kpiColor + '!important;}'
+        '{ color: ' + mainColor + '  !important;}' +
+            'div.reportal-horizontal-menu>.yui3-menu li.css-menu-topitem:hover {' +
+            'border-bottom-color:' + mainColor + '!important;}'
 
         //header background
         +
@@ -171,14 +172,14 @@ class StyleAndJavaScriptUtil {
         +
         '.yui-calcontainer>table .calnav,' +
         '.yui-calcontainer>table td.calcell.today>a{' +
-        '    background: ' + kpiColor + ' !important;' +
+        '    background: ' + mainColor + ' !important;' +
             '    color: white!important;' +
             '}' +
             '.yui-calcontainer>table .calnavleft:before,' +
             '.yui-calcontainer>table .calnavright:before{' +
-            'border-color: ' + kpiColor + ';}' +
+            'border-color: ' + mainColor + ';}' +
             '.yui-calcontainer>table .calnav:hover {' +
-            'background: ' + kpiColor_dark + ' !important;}'
+            'background: ' + mainColor_dark + ' !important;}'
 
         //unfavorable card
         +
@@ -192,20 +193,29 @@ class StyleAndJavaScriptUtil {
         'div .material-card.favorable .Table td' +
         '{background-color: ' + greenColor + ';}'
 
-
+        //buttons
+        +
+        '.dd-button-select, .dd-button-select:active, .dd-button-select:hover {' +
+        'background: '+mainColor+' !important;' +
+        'color: '+buttonsFontColor+' !important; }'
+        
+        //hierarchy selector
+        +
+        'div a.dd-block {' +
+        'background-color: '+hierarchyColor+' !important; }'
 
         //hitlist navigation
         +
         'div .hitlist-nav-button:hover, ' +
         'div .hitlist-nav-page:hover {' +
-        'background-color: ' + kpiColor + ' !important;' +
-            '}'
+        'background-color: '+mainColor+' !important;' +
+        'color: '+buttonsFontColor+'!important; }'
 
         //loading animation colors (three blinking dots)
         +
         '@keyframes pulse { ' +
-        'from { background-color:' + kpiColor + ';}' +
-            'to { background-color:' + kpiColor_dark + ';}' +
+        'from { background-color:' + mainColor + ';}' +
+            'to { background-color:' + mainColor_dark + ';}' +
             '}';
 
         if (!isThreeDotsMenuNeeded) {
