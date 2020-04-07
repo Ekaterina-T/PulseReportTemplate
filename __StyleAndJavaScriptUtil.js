@@ -119,7 +119,6 @@ class StyleAndJavaScriptUtil {
         if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
-            properties.push('StatementsByDimension: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'StatementsByDimension')));
 
             if (!PublicUtil.isPublic(context)) {
                 properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
