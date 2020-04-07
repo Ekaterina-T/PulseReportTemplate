@@ -284,7 +284,7 @@ class BranchSpecifics {
         var maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", branchId);
 
         if (!maxNValues || maxNValues.Count <= 0) {
-            maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", "default");
+            maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", Config.BranchConfigTableDefaultId);
         }
 
         maxN = maxNValues[0];
@@ -333,7 +333,7 @@ class BranchSpecifics {
         var branchId = getSelectedBranchId(context);
 
         if (!branchId) {
-            return [];
+            branchId = Config.BranchConfigTableDefaultId;
         }
 
         if (!_branchConfigTable) {
