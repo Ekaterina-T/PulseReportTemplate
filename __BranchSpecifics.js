@@ -259,7 +259,7 @@ class BranchSpecifics {
 
     /**
      * @description get end users that belong to current branch
-     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
      * @returns {StringCollection} - string array with end user ids
      * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
@@ -302,7 +302,7 @@ class BranchSpecifics {
 
     /**
      * @description get filter expression to filter end users that belong to current branch
-     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
      * @returns {string} - filter expression
      * @example BranchSpecifics.getOnlyUsersFromCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
@@ -325,8 +325,8 @@ class BranchSpecifics {
 
     /**
      * @description get dimensions that associated with current branch
-     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
-     * @returns {string} - filter expression
+     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @returns {Array} - dimensions
      * @example BranchSpecifics.getDimensionsByBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
     static function getDimensionsByBranch(context) {
@@ -348,6 +348,21 @@ class BranchSpecifics {
 
         var dimensionsStr = _branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId)[0];
         return dimensionsStr.split(",");
+    }
+
+    /**
+     * @description hide page by branch id
+     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @returns {boolean} - flag that shows whether this page should be hidden or not
+     * @example BranchSpecifics.hidePageByBranch(context);
+     */
+    static function hidePageByBranch(context) {
+        if (!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
+            return false;
+        }
+        var branchId = getSelectedBranchId(context);
+
+        return !branchId;
     }
 
     /**
