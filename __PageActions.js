@@ -737,7 +737,7 @@ class PageActions {
 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var actionLinks = hitlistsActions_getActionLinks(context);
         var callBlockId = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'CallBlockId');
 
         var position = 0;
@@ -746,8 +746,10 @@ class PageActions {
         if (isEditDeleteMode) {
             hitlistsActions_removeExtraLinkColumns(context);
 
-            for(var i = 0; i < actionLinksNumber; i++) {
-                hitlistsActions_SetCallblockLinks(context, actionLinks[i], i, callBlockId);
+            if(actionLinksNumber > 0) {
+                for(var i = 0; i < actionLinksNumber; i++) {
+                    hitlistsActions_SetCallblockLinks(context, actionLinks[i], i, callBlockId);
+                }
             }
         }
 
@@ -795,6 +797,7 @@ class PageActions {
 
         hitlist.Columns[linkPosition].SurveyLink.CallBlockId = callBlockId;
         hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink + rolesList + isResponsibleVisible + isWriting + source + u + idEditor;
+        hitlist.Columns[linkPosition].SurveyLink.Name = actionLink + ' link';
     }
 
     /**
@@ -806,11 +809,35 @@ class PageActions {
         var hitlist = context.hitlist;
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var actionLinks = hitlistsActions_getActionLinks(context);
 
-        for(var i = actionLinks.length; i < hitlist.Columns.Count; i++) {
+        var i = hitlist.Columns.Count - 1;
+
+        while(i >= actionLinks.length) {
             hitlist.Columns.RemoveAt(i);
+            i--;
         }
+    }
+
+    /**
+     * @description function to evaluate the links defined in the Config and remove any incorrect occurrences
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @example PageActions.hitlistsActions_getActionLinks({hitlist: hitlist, state: state, report: report, pageContext: pageContext, log: log});
+     */
+    static function hitlistsActions_getActionLinks(context) {
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var evaluatedActionLinks = [];
+
+        if(actionLinks != null || actionLinks != undefined || actionLinks.length != 0) {
+            for(var i = 0; i < actionLinks.length; i++) {
+                if(actionLinks[i].ToLower().indexOf('read') >= 0 || actionLinks[i].ToLower().indexOf('edit') >= 0 || actionLinks[i].ToLower().indexOf('delete') >= 0) {
+                    evaluatedActionLinks.push(actionLinks[i]);
+                }
+            }
+        }
+
+        return evaluatedActionLinks;
     }
 
     /**

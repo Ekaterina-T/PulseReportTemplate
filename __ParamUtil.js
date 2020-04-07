@@ -365,6 +365,15 @@ class ParamUtil {
                 mask.Keys.Add(idsInCurrentBranch[i]);
             }
         }
+
+        if(parameterId === 'p_ActionsHitlistSettings') {
+            var actionLinks = PageActions.hitlistsActions_getActionLinks(context);
+
+            if(actionLinks.length == 0) {
+                mask.Access = ParameterAccessType.Exclusive;
+                mask.Keys.Add('SwitchHitlistMode');
+            }
+        }
     }
 
     /**

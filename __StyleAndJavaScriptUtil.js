@@ -145,7 +145,7 @@ class StyleAndJavaScriptUtil {
 
             properties.push('columnWithTagsId: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns')[0].id));
             properties.push('tagIds: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist')));
-            properties.push('actionLinks: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ActionLinks')));
+            properties.push('actionLinks: ' + JSON.stringify(PageActions.hitlistsActions_getActionLinks(context)));
         }
 
         globalVarScript.push('<script>');
