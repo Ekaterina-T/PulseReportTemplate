@@ -211,6 +211,11 @@ class StyleAndJavaScriptUtil {
         'background-color: '+mainColor+' !important;' +
         'color: '+buttonsFontColor+'!important; }'
 
+        //Results page - active tab
+        +
+        '.scores-tabs__tab--active {' +
+        'border-bottom: 0.143rem solid '+mainColor+'; }'
+
         //loading animation colors (three blinking dots)
         +
         '@keyframes pulse { ' +
