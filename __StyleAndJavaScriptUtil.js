@@ -67,6 +67,7 @@ class StyleAndJavaScriptUtil {
 
         properties.push('Apply: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
         properties.push('Reset: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
+        properties.push('ResetAll: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ResetAll')));
 
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
 
