@@ -284,6 +284,9 @@ class BranchSpecifics {
         var maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", branchId);
 
         if (!maxNValues || maxNValues.Count <= 0) {
+            if (!Config.BranchConfigTableDefaultId) {
+                throw new Error("BranchSpecifics.getUserIdsByCurrentBranch: there's no BranchConfigTableDefaultId in Config")
+            }
             maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", Config.BranchConfigTableDefaultId);
         }
 
@@ -333,6 +336,9 @@ class BranchSpecifics {
         var branchId = getSelectedBranchId(context);
 
         if (!branchId) {
+            if (!Config.BranchConfigTableDefaultId) {
+                throw new Error("BranchSpecifics.getDimensionsByBranch: there's no BranchConfigTableDefaultId in Config")
+            }
             branchId = Config.BranchConfigTableDefaultId;
         }
 
