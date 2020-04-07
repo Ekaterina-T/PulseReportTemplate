@@ -203,7 +203,7 @@ class StyleAndJavaScriptUtil {
         +
         '.pulse-project-selector-btn {' +
         'background-color: '+mainColor+';' +
-        'border: 0px solid '+mainColor+'; }' +
+        'border: 0px solid '+mainColor+';' +
         'color: '+buttonsFontColor+' !important; }'
         
         
