@@ -198,6 +198,14 @@ class StyleAndJavaScriptUtil {
         '.dd-button-select, .dd-button-select:active, .dd-button-select:hover {' +
         'background: '+mainColor+' !important;' +
         'color: '+buttonsFontColor+' !important; }'
+
+        //project selector OK button
+        +
+        '.pulse-project-selector-btn {' +
+        'background-color: '+mainColor+';' +
+        'border: 0px solid '+mainColor+'; }' +
+        'color: '+buttonsFontColor+' !important; }'
+        
         
         //hierarchy selector
         +
