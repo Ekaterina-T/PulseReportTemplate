@@ -743,6 +743,10 @@ class PageActions {
         var position = 0;
         var actionLinksNumber = isEditDeleteMode ? actionLinks.length : 0;
 
+        if(actionLinksNumber > hitlist.Columns.Count) {
+            throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for the number of action links, or add extra links to the hitlist.');
+        }
+
         if (isEditDeleteMode) {
             hitlistsActions_removeExtraLinkColumns(context);
 
@@ -835,8 +839,14 @@ class PageActions {
 
         if(actionLinks != null || actionLinks != undefined || actionLinks.length != 0) {
             for(var i = 0; i < actionLinks.length; i++) {
-                if(actionLinks[i].ToLower().indexOf('read') >= 0 || actionLinks[i].ToLower().indexOf('edit') >= 0 || actionLinks[i].ToLower().indexOf('delete') >= 0) {
-                    evaluatedActionLinks.push(actionLinks[i]);
+                if(actionLinks[i].ToLower().indexOf('read') >= 0) {
+                    evaluatedActionLinks.push('read');
+                }
+                if(actionLinks[i].ToLower().indexOf('edit') >= 0) {
+                    evaluatedActionLinks.push('edit');
+                }
+                if(actionLinks[i].ToLower().indexOf('delete') >= 0) {
+                    evaluatedActionLinks.push('delete');
                 }
             }
         }
