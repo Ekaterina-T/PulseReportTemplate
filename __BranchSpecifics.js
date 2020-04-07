@@ -360,6 +360,17 @@ class BranchSpecifics {
         if (!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
             return false;
         }
+
+        var user = context.user;
+
+        var endUserId = user.UserId;
+        var userId = BranchSpecifics.getUserIdByLogin(context, endUserId);
+
+        // to check if user has a row in EndUser table
+        if (!userId) {
+            return true;
+        }
+
         var branchId = getSelectedBranchId(context);
 
         return !branchId;
