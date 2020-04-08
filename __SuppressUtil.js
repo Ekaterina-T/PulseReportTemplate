@@ -182,9 +182,11 @@ class SuppressUtil {
 
             // if multiple hierachy selection is allowed, no confidentionality checks are performed, i.e.
             // all  nodes are shown irrespective of small neighbor units
-            var user_bases = user.PersonalizedReportBase.split(',');
-            if (user_bases.length > 1) 
-               return false;
+            if (user.PersonalizedReportBase) {
+                var user_bases = user.PersonalizedReportBase.split(',');
+                if (user_bases.length > 1)
+                    return false;
+            }
     
     
             var bases : Datapoint[] = report.TableUtils.GetColumnValues("Confidentiality:HierarchyTable",1);

@@ -39,11 +39,15 @@ class PagePulseSurveyData {
                 questionType = questionType.toLowerCase();
 
                 if (questionType.indexOf('hierarchy') >= 0) {
-                    header = new HeaderSegment();
-                    header.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                    header.SegmentType = HeaderSegmentType.Expression;
-                    header.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
-                    table.RowHeaders.Add(header);
+
+                    if (context.user.PersonalizedReportBase) {
+
+                        header = new HeaderSegment();
+                        header.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                        header.SegmentType = HeaderSegmentType.Expression;
+                        header.Expression = HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
+                        table.RowHeaders.Add(header);
+                    }
 
                 } else if (questionType.indexOf('multi') >= 0) {
 

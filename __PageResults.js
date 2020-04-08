@@ -328,7 +328,6 @@ class PageResults {
         var log = context.log;
 
         // add Score column
-        //addScore(context);
         var scoreHeader: HeaderContent = new HeaderContent();
         context.table.ColumnHeaders.Add(scoreHeader);
 
@@ -354,11 +353,8 @@ class PageResults {
     static function addScore(context, parentHeader) {
 
         var table = context.table;
-        var state = context.state;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var scoreType = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ScoreType');
-        var suppressSettings = context.suppressSettings;
-        var suppressValue = suppressSettings.minBase || SuppressConfig.TableSuppressValue;
 
         var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
         var negScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_NegativeCols');
@@ -373,7 +369,7 @@ class PageResults {
             // add Score column
             var avg: HeaderFormula = new HeaderFormula();
             avg.Type = FormulaType.Expression;
-            avg.Expression = 'cellv(col+1, row)';//avg.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
+            avg.Expression = 'cellv(col+1, row)';
             avg.Decimals = Config.Decimal;
             avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
@@ -384,11 +380,9 @@ class PageResults {
             //score.Texts.Average = TextAndParameterUtil.getLabelByKey(context, 'Score');
 
             if (parentHeader) {
-                //parentHeader.SubHeaders.Add(scoreResponses);
                 parentHeader.SubHeaders.Add(avg);
                 parentHeader.SubHeaders.Add(score);
             } else {
-                //table.ColumnHeaders.Add(scoreResponses);
                 table.ColumnHeaders.Add(avg);
                 table.ColumnHeaders.Add(score);
             }
@@ -396,8 +390,7 @@ class PageResults {
         }
 
         var bcCategories: HeaderCategories = new HeaderCategories();
-        //bcCategories.RecodingShowOriginal = true;
-        //bcCategories.RecodingPosition = RecodingPositionType.OnStart;
+
         if (scoreType === '%fav') {
 
             // add Score column
@@ -416,11 +409,9 @@ class PageResults {
             bcCategories.HideData = true;
 
             if (parentHeader) {
-                //parentHeader.SubHeaders.Add(scoreResponses);
                 parentHeader.SubHeaders.Add(fav);
                 parentHeader.SubHeaders.Add(bcCategories);
             } else {
-                //table.ColumnHeaders.Add(scoreResponses);
                 table.ColumnHeaders.Add(fav);
                 table.ColumnHeaders.Add(bcCategories);
             }
@@ -433,7 +424,6 @@ class PageResults {
             var diff: HeaderFormula = new HeaderFormula();
             diff.Type = FormulaType.Expression;
             diff.Expression = 'cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row)';
-            //diff.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row))';
             diff.Decimals = Config.Decimal;
             diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
 
@@ -994,17 +984,25 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
+        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
         excludedFiltersForN.SegmentType = HeaderSegmentType.Expression;
-        excludedFiltersForN.Expression = Filters.getHierarchyAndWaveFilter(context);
+        excludedFiltersForN.Expression = excludedFiltersExpression;
         excludedFiltersForN.HideHeader = true;
 
         addResponsesColumn(context, excludedFiltersForN, true);
         table.ColumnHeaders.Add(excludedFiltersForN);
 
         //add Score column
-        addScore(context, excludedFiltersForN);
+        var scoreHeaders = addScore(context); // first add header and below segment because otherwise scripted table gives wrong results
+        var excludedFiltersForScore: HeaderSegment = new HeaderSegment();
+
+        excludedFiltersForScore.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        excludedFiltersForScore.SegmentType = HeaderSegmentType.Expression;
+        excludedFiltersForScore.HideData = true;
+        excludedFiltersForScore.Expression = excludedFiltersExpression;
+        scoreHeaders[1].SubHeaders.Add(excludedFiltersForScore);
 
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {

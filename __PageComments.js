@@ -8,7 +8,7 @@ class PageComments {
          * @returns {Boolean}
          */
         static function Hide(context) {
-            return false; //PageUtil.hideUnnecessaryPagesForIteratedParameter(context, "p_AllOpenTextQs");
+            return PageUtil.hideUnnecessaryPagesForIteratedParameter(context, "p_AllOpenTextQs", "Comments");
         }
     
         /**

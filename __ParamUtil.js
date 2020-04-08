@@ -443,6 +443,8 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }*/
 
+        pageId = PageUtil.getCurrentPageIdInConfig(context);
+
         if(parameterName === 'p_TimeUnitWithDefault') {
             //in export with loop by param it may cause troubles (pageid)
             //because param load script runs before page script

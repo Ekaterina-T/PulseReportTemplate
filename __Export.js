@@ -15,6 +15,11 @@ class Export {
         return state.ReportExecutionMode === ReportExecutionMode.PdfExport;
     }
 
+    static function isDesignMode (context) {
+        var state = context.state;
+        return state.ReportExecutionMode === ReportExecutionMode.Design;
+    }
+
     static function isMassExportMode(context) {
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             return false;
@@ -66,23 +71,24 @@ class Export {
      * @example Export.tableBaseForIteratedParameter_Render({table: table, state: state, report: report, pageContext: pageContext, log: log}, pageContext.Items["IteratedParameterBaseParamterId"]);
      */
     static function tableBaseForIteratedParameter_Render(context, parameterId) {
+        var log = context.log;
         var table = context.table;
 
         var qe: QuestionnaireElement;
         var row : HeaderQuestion;
 
-        var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
-        for (var i=0; i<openTextQIds.length; i++) {
-            qe = QuestionUtil.getQuestionnaireElement(context, openTextQIds[i]);
-            row = new HeaderQuestion(qe);
-            row.IsCollapsed = true;
-            row.ShowTotals = false;
-            row.Distributions.Enabled = true;
-            row.Distributions.Count = true;
-            table.RowHeaders.Add(row);
-        }
-
-        if (openTextQIds.length <= 0) {
+        var qIds = parameterId ? ParamUtil.GetSelectedCodes (context, parameterId) : [];
+        if (qIds.length > 0) {
+            for (var i=0; i<qIds.length; i++) {
+                qe = QuestionUtil.getQuestionnaireElement(context, qIds[i]);
+                row = new HeaderQuestion(qe);
+                row.IsCollapsed = true;
+                row.ShowTotals = false;
+                row.Distributions.Enabled = true;
+                row.Distributions.Count = true;
+                table.RowHeaders.Add(row);
+            }
+        } else {
             qe = QuestionUtil.getQuestionnaireElement(context, "status");
             row = new HeaderQuestion(qe);
             row.IsCollapsed = true;
