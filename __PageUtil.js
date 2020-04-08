@@ -188,6 +188,8 @@ class PageUtil {
 
         var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
         log.LogDebug('openTextQIds: ' + openTextQIds);
+        log.LogDebug('openTextQIds l: ' + openTextQIds.length);
+        log.LogDebug('openTextQIds l expr: ' + openTextQIds.length > 0);
         if (openTextQIds.length > 0) {
             var openTextBase = report.TableUtils.GetCellValue("IteratedParameterBase:Base", 1, 1).Value;
             log.LogDebug('openTextBase: ' + openTextBase);
