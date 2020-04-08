@@ -171,10 +171,10 @@ class PageUtil {
         var report = context.report;
         var pageContext = context.pageContext;
 
-        /*var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
+        var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
         if (iteratedParameterOptions.length <= 0) {
             return false;
-        }*/
+        }
 
         if (!pageContext.Items["IteratedParameterBaseParamterId"]) {
             pageContext.Items.Add("IteratedParameterBaseParamterId", parameterId);
