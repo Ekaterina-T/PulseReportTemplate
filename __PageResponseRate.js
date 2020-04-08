@@ -8,8 +8,7 @@ class PageResponseRate {
      * @returns {Boolean}
      */
     static function Hide(context){
-
-        return false;
+        return PageUtil.hideUnnecessaryPagesForIteratedParameter(context, "p_Demographics", "Response_Rate");
     }
 
     /**
