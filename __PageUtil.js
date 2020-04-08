@@ -172,6 +172,7 @@ class PageUtil {
         var pageContext = context.pageContext;
 
         var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
+        log.LogDebug('iteratedParameterOptions: ' + iteratedParameterOptions);
         if (iteratedParameterOptions.length <= 0) {
             return false;
         }
@@ -179,14 +180,17 @@ class PageUtil {
         if (!pageContext.Items["IteratedParameterBaseParamterId"]) {
             pageContext.Items.Add("IteratedParameterBaseParamterId", parameterId);
         }
+        log.LogDebug('IteratedParameterBaseParamterId: ' + parameterId);
 
         if (!Export.isExportMode(context)) {
             return false;
         }
 
         var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
+        log.LogDebug('openTextQIds: ' + openTextQIds);
         if (openTextQIds.length > 0) {
             var openTextBase = report.TableUtils.GetCellValue("IteratedParameterBase:Base", 1, 1).Value;
+            log.LogDebug('openTextBase: ' + openTextBase);
             return openTextBase <= 0;
         }
         return true;
