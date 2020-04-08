@@ -66,6 +66,7 @@ class Export {
      * @example Export.tableBaseForIteratedParameter_Render({table: table, state: state, report: report, pageContext: pageContext, log: log}, pageContext.Items["IteratedParameterBaseParamterId"]);
      */
     static function tableBaseForIteratedParameter_Render(context, parameterId) {
+        var log = context.log;
         var table = context.table;
 
         var qe: QuestionnaireElement;
@@ -73,6 +74,7 @@ class Export {
 
         var openTextQIds = ParamUtil.GetSelectedCodes (context, parameterId);
         for (var i=0; i<openTextQIds.length; i++) {
+            log.LogDebug(openTextQIds[i]);
             qe = QuestionUtil.getQuestionnaireElement(context, openTextQIds[i]);
             row = new HeaderQuestion(qe);
             row.IsCollapsed = true;
