@@ -119,7 +119,9 @@ class ParamUtil {
             ResetParameters(context, ['p_Statements']);
         }
 
+        log.LogDebug('before pulse Init'+JSON.stringify(ParamUtil.GetSelectedCodes('p_projectSelector')));
         pulseInit(context);
+        log.LogDebug('after pulse Init'+JSON.stringify(ParamUtil.GetSelectedCodes('p_projectSelector')));
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
