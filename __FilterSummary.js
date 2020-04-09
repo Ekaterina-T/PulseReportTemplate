@@ -11,7 +11,7 @@ class FilterSummary {
 
         var text = context.text;
         var log = context.log;
-        var filterName = TextAndParameterUtil.getTextTranslationByKey(context, filterText);
+        var filterName = filterText ? TextAndParameterUtil.getTextTranslationByKey(context, filterText) : '';
         var filterValues = ParamUtil.GetSelectedOptions(context, paramName);
 
         if(filterValues.length>0) { // do not print anything if parameter is empty
@@ -20,7 +20,7 @@ class FilterSummary {
             for(var i=0; i<filterValues.length; i++) {
                 filterLabels.push(filterValues[i].Label);
             }
-            text.Output.Append(filterName+" "+filterLabels.join(', ')+"<br>"+System.Environment.NewLine);
+            text.Output.Append((filterName ? (filterName+" ") : '')+filterLabels.join(', ')+"<br>"+System.Environment.NewLine);
         }
     }
 
