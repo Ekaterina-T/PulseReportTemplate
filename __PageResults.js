@@ -247,7 +247,8 @@ class PageResults {
         var log = context.log;
 
         // add Score column
-        addScore(context);
+        var scoreHeader: HeaderContent = new HeaderContent();
+        context.table.ColumnHeaders.Add(scoreHeader);
         //add distribution barChart
         addDistributionBarChart(context);
         // add scale distribution
@@ -267,6 +268,7 @@ class PageResults {
      */
     static function addScore(context, parentHeader) {
 
+        var log = context.log;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var scoreType = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ScoreType');
@@ -459,29 +461,222 @@ class PageResults {
         }
     }
 
+    /**
+     *  create base column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {boolean} isHidden - not mandatory
+     */
+    static function getResponsesColumn(context, isHidden) {
+
+        var table = context.table;
+
+        // add Responses Column
+        var responses: HeaderBase = new HeaderBase();
+        var catForMask: HeaderCategories = new HeaderCategories();
+
+        catForMask.HideHeader = true;
+        catForMask.HideData = isHidden;
+        TableUtil.maskOutNA(context, catForMask);
+
+        catForMask.Mask.Type = MaskType.ShowCodes;
+        catForMask.Mask.Codes = ''; // do not show any codes but Total
+        responses.SubHeaders.Add(catForMask);
+
+        responses.HideHeader = isHidden;
+        responses.HideData = isHidden;
+
+        return responses;
+    }
+
     /*
      *  add base column
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
-    static function addResponsesColumn(context) {
+    static function addResponsesColumn(context, parentHeader, isMandatory) {
 
         var state = context.state;
         // add Responses Column if it's not Excel export (KN-353)
-        if (state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
+        if (!isMandatory && state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
             return;
         }
-
         var table = context.table;
-        var responses: HeaderBase = new HeaderBase();
-        var catForNAMask: HeaderCategories = new HeaderCategories(); // a way to exclude NA from base calculation
 
-        TableUtil.maskOutNA(context, catForNAMask); // exclude NA code
-        catForNAMask.HideHeader = true;
-        catForNAMask.Mask.Type = MaskType.ShowCodes;
-        catForNAMask.Mask.Codes = ''; // do not show any codes but Total
-        responses.SubHeaders.Add(catForNAMask);
+        // add Responses Column
+        var responses = getResponsesColumn(context);
 
-        table.ColumnHeaders.Add(responses);
+        if (parentHeader) {
+            parentHeader.SubHeaders.Add(responses);
+        } else {
+            table.ColumnHeaders.Add(responses);
+        }
+    }
+
+    /**
+     * copies values of column #bmColumn from Benchmarks table into targetHeader of another table
+     * @param {Object} context
+     * @param {Datapoint[]} - base values for main table where we copy data to
+     * @param {Number} column of Benchmark table to copy vals from (1-based)
+     * @param {HeaderContent} header content that recieves values
+     * @param {String} header content title
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
+     */
+        //TODO: unify with copyScoreValues below
+    static function copyBenchmarkValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title) {
+
+        var report = context.report;
+        var log = context.log;
+        var table = context.table;
+        var benchmarkTable = "Benchmarks";
+        var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
+        var suppressValue = SuppressConfig.TableSuppressValue;
+        var baseValues: Datapoint[] = (!baseValuesForOriginalScores) ? report.TableUtils.GetColumnValues(benchmarkTable, 1) : baseValuesForOriginalScores;
+
+
+        for (var i = 0; i < bmValues.length; i++) {
+
+            if (baseValues[i].Value >= suppressValue && ! bmValues[i].IsEmpty) {
+                targetHeader.SetCellValue(i,  bmValues[i].Value);
+            }
+        }
+
+        targetHeader.Title = new Label(report.CurrentLanguage, title);
+        table.ColumnHeaders.Add(targetHeader);
+
+    }
+
+    /**
+     * returns number of answers in break by question
+     * @param {Object} context
+     * @returns {Number} number of sub-rows
+     */
+    static function getNumberOfSubHeaderRows(context) {
+
+        if(context.state.Parameters.IsNull('p_Results_BreakBy')) {
+            return 0;
+        }
+
+        var qid = ParamUtil.GetSelectedCodes(context, 'p_Results_BreakBy');
+        var questionInfo = QuestionUtil.getQuestionInfo(context, qid);
+        var subHeaders;
+
+        if(questionInfo.standardType === 'hierarchy') {
+            subHeaders = HierarchyUtil.getDirectChildrenForCurrentReportBase(context);
+        } else {
+            subHeaders = QuestionUtil.getQuestionAnswers(context, qid);
+        }
+
+        return subHeaders.length;
+    }
+
+    /**
+     * if all questions inside dimension will be suppressed -> dimension must be suppressed
+     * -> don't move score value to statements table
+     * @param {Object} context
+     * @param {Number} dimensionStartRow - number of 1st row of dimension
+     * @param {Object} dimensionsInfoObject - holds info if dimension is suppressed or not to avoid recalculation for every row
+     * @param {StringCollection} rowHeaderInfo - row headers of benchmark table, report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
+     * @param {DataPont[]} - baseValues 1st column of Benchmarh table
+     * @returns {Boolean} - if dimension is suppressed or not
+     */
+    static function isDimensionSuppressed(context, dimensionStartRow, dimensionsInfoObject, rowHeaderInfo, baseValues) {
+
+        if(!dimensionsInfoObject.hasOwnProperty(dimensionStartRow)) {
+
+            var numOfSubHeaders = getNumberOfSubHeaderRows(context);
+            var rowNum = (numOfSubHeaders>0) ? dimensionStartRow+numOfSubHeaders : dimensionStartRow+1; //jump to not total's rows
+            var isDimensionEmpty = true;
+            var suppressValue = SuppressConfig.TableSuppressValue;
+
+            while(isDimensionEmpty && rowNum<=baseValues.length-1) {
+
+                var nextRowHeader = rowHeaderInfo[rowNum];
+                //next dimension started
+                if(nextRowHeader[nextRowHeader.length - 1] === "") {
+                    break;
+                }
+
+                if(!baseValues[rowNum].IsEmpty && baseValues[rowNum].Value >= suppressValue) {
+                    isDimensionEmpty = false;
+                }
+                rowNum++;
+            }
+            dimensionsInfoObject[dimensionStartRow] = isDimensionEmpty;
+        }
+
+        return dimensionsInfoObject[dimensionStartRow];
+    }
+
+    /**
+     *
+     * @param {Object} context
+     * @param {StringCollection} rowHeaderInfo - row headers of benchmark table, report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
+     * @param {Number} - row index
+     * @returns {Boolean} - if row is a question or dimension's total
+     */
+    static function isQuestionHeader(context, rowHeaderInfo, rowIndex) {
+
+        var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
+        if (tabSwitcher[0] === 'custom') {
+            return true; //there are no dimensions on custom tab
+        }
+
+        var currentRowInfo = rowHeaderInfo[rowIndex];
+        var currentRowId = currentRowInfo[currentRowInfo.length -1];
+
+        if(!Export.isExcelExportMode(context)) { // in web and pdf
+            return currentRowId !== "";
+        }
+
+        if(currentRowId !== "") {
+            return true;
+        }
+
+        //excel export and id is empty: either dimension header or custom question header
+        var pageId = PageUtil.getCurrentPageIdInConfig(context)
+        var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
+        var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
+
+        return rowIndex > rowHeaderInfo.length - custom_questions.length;
+
+    }
+
+    /**
+     * copies values of column #bmColumn from Benchmarks table into targetHeader of another table
+     * @param {Object} context
+     * @param {Datapoint[]} - base values for main table where we copy data to
+     * @param {Number} column of Benchmark table to copy vals from (1-based)
+     * @param {HeaderContent} header content that recieves values
+     * @param {String} header content title
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
+     */
+    static function copyScoreValues(context, baseValuesForOriginalScores, bmColumn, targetHeader, title) {
+
+        var report = context.report;
+        var log = context.log;
+        var benchmarkTable = "Benchmarks";
+        var bmValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
+        var suppressValue = SuppressConfig.TableSuppressValue;
+        var baseValues: Datapoint[] = (!baseValuesForOriginalScores) ? report.TableUtils.GetColumnValues(benchmarkTable, 1) : baseValuesForOriginalScores;
+
+        var rowHeaderInfo = report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
+        var dimensionsInfoObject = {};
+
+        for (var i = 0; i < bmValues.length; i++) {
+
+            //log.LogDebug('------------------------------------');
+            var isDimensionHeader = !isQuestionHeader(context, rowHeaderInfo, i);
+            var isDimensionNotSuppressed = isDimensionHeader && !isDimensionSuppressed(context, i, dimensionsInfoObject, rowHeaderInfo, baseValues);
+
+            //log.LogDebug('i='+i+' current row='+JSON.stringify(rowHeaderInfo[i])+' isDimensionHeader='+isDimensionHeader+' isDimensionNotSuppressed='+isDimensionNotSuppressed+' baseValues[i].Value='+baseValues[i].Value);
+
+            if (isDimensionNotSuppressed || (!isDimensionHeader && baseValues[i].Value >= suppressValue)) {
+                if(!bmValues[i].IsEmpty) targetHeader.SetCellValue(i, bmValues[i].Value);
+            }
+            //log.LogDebug('------------------------------------');
+        }
+
+        targetHeader.Title = new Label(report.CurrentLanguage, title);
+
     }
 
 
@@ -490,33 +685,40 @@ class PageResults {
      * @param {object} context: {state: state, report: report, log: log, table: table}
      */
 
+    /*
+ * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
+ * @param {object} context: {state: state, report: report, log: log, table: table}
+ * @param {boolean} isNormalizedTable: true for table for normalized questions
+ */
     static function tableStatements_AddBenchmarkColumns_Banner0(context) {
 
         var log = context.log;
 
-        if (!isBenchmarkAvailable(context)) {
-            return;
-        }
         var report = context.report;
         var table = context.table;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var bmColumn = 2; // 1st coulumn always exists - it's base
-        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', 1)
+        var bmColumn = 2; // 1st coulumn always exists - it's base, then score value
+        var benchmarkTable = "Benchmarks";
+        var baseValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, 1);
         var suppressValue = SuppressConfig.TableSuppressValue;
-        var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles('Benchmarks');
+        var benchmarkTableLabels = report.TableUtils.GetColumnHeaderCategoryTitles(benchmarkTable);
         var base: Datapoint;
-
         // !!!order of how bm cols are added must comply with bm table column order!!!
+
+        //copy Score value
+        var scoreHeader: HeaderContent = table.ColumnHeaders[0];
+        copyScoreValues(context, baseValues, bmColumn, scoreHeader, benchmarkTableLabels[bmColumn - 1]);
+        bmColumn += 1;
 
         // previous wave benchmark
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         if (showPrevWave) {
             // add values
             var waveHeader: HeaderContent = new HeaderContent();
-            var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
 
+            //TO DO: replace with copyBenchmarkValues(context, bmColumn, targetHeader, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
+            var preWaveVals: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, bmColumn);
             waveHeader.HideData = true;
-
             for (var j = 0; j < preWaveVals.length; j++) {
 
                 var prevWaveVal: Datapoint = preWaveVals[j];
@@ -528,35 +730,20 @@ class PageResults {
                     waveHeader.SetCellValue(j, '-');
                 }
             }
-
             table.ColumnHeaders.Add(waveHeader);
+
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsPrevWave');
             bmColumn += 1;
         }
 
         //add survey comparison score
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
-
         if (tabSwitcher[0] !== 'custom') {
 
             var surveyCompCols = getBenchmarkSurveys(context);
-            for (i = 0; i < surveyCompCols.length; i++) {
-
+            for (var i = 0; i < surveyCompCols.length; i++) {
                 var surveyCompContent: HeaderContent = new HeaderContent();
-                var surveyValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
-                surveyCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
-
-                for (var j = 0; j < baseValues.length; j++) {
-
-                    base = baseValues[j];
-                    benchmark = surveyValues[j];
-
-                    if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                        surveyCompContent.SetCellValue(j, benchmark.Value);
-                    }
-                }
-
-                table.ColumnHeaders.Add(surveyCompContent);
+                copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1]);
                 bmColumn += 1;
             }
         }
@@ -565,20 +752,8 @@ class PageResults {
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
             var benchmarkContent: HeaderContent = new HeaderContent();
-            var benchmarkValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn);
-
-            for (var i = 0; i < benchmarkValues.length; i++) {
-
-                var benchmark: Datapoint = benchmarkValues[i];
-                base = baseValues[i];
-
-                if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                    benchmarkContent.SetCellValue(i, benchmark.Value);
-                }
-            }
-
+            copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
             benchmarkContent.HideData = true;
-            table.ColumnHeaders.Add(benchmarkContent);
             addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
             bmColumn += 1;
         }
@@ -587,7 +762,7 @@ class PageResults {
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
 
-            var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context); 
+            var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
             if (hierarchyLevel) {
 
                 var hierCompContent: HeaderContent = new HeaderContent();
@@ -597,7 +772,7 @@ class PageResults {
                 for (var j = 0; j < baseValues.length; j++) {
 
                     base = baseValues[j];
-                    benchmark = hierValues[j];
+                    var benchmark = hierValues[j];
 
                     if (base.Value >= suppressValue && !benchmark.IsEmpty) {
                         hierCompContent.SetCellValue(j, benchmark.Value);
@@ -606,7 +781,7 @@ class PageResults {
 
                 table.ColumnHeaders.Add(hierCompContent);
                 //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
-                
+
             }
         }
 
@@ -728,15 +903,13 @@ class PageResults {
         var table = context.table;
         var log = context.log;
 
-        if (isBenchmarkAvailable(context)) {
-            tableStatements_AddRows(context);
-            tableBenchmarks_AddColumns_Banner0(context);
-            //SuppressUtil.setTableSuppress(table, context.suppressSettings);
+        tableStatements_AddRows(context);
+        tableBenchmarks_AddColumns_Banner0(context);
+        //SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
-            table.Decimals = 0;
-            table.RowNesting = TableRowNestingType.Nesting;
-            table.RemoveEmptyHeaders.Rows = false;
-        }
+        table.Decimals = 0;
+        table.RowNesting = TableRowNestingType.Nesting;
+        table.RemoveEmptyHeaders.Rows = false;
     }
 
     /*
@@ -750,15 +923,25 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
-        var excludedFiltersForN: HeaderSegment = new HeaderSegment();
-        var responses: HeaderBase = new HeaderBase();
+        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);
 
+        var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
         excludedFiltersForN.SegmentType = HeaderSegmentType.Expression;
-        excludedFiltersForN.Expression = Filters.getHierarchyAndWaveFilter(context);
-        excludedFiltersForN.HideHeader = true;
-        excludedFiltersForN.SubHeaders.Add(responses);
+        excludedFiltersForN.Expression = excludedFiltersExpression;
+        excludedFiltersForN.HideHeader = false;
+        addResponsesColumn(context, excludedFiltersForN, true);
         table.ColumnHeaders.Add(excludedFiltersForN);
+
+        //add Score column
+        var scoreHeaders = addScore(context); // first add header and below segment because otherwise scripted table gives wrong results
+        var excludedFiltersForScore: HeaderSegment = new HeaderSegment();
+
+        excludedFiltersForScore.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        excludedFiltersForScore.SegmentType = HeaderSegmentType.Expression;
+        excludedFiltersForScore.HideData = true;
+        excludedFiltersForScore.Expression = excludedFiltersExpression;
+        scoreHeaders[1].SubHeaders.Add(excludedFiltersForScore);
 
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
@@ -767,7 +950,6 @@ class PageResults {
 
         //add survey based comparison
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
-
         if (tabSwitcher[0] !== 'custom') {
             var surveysToCompare = getBenchmarkSurveys(context);
 
@@ -782,8 +964,9 @@ class PageResults {
             var benchmarks: HeaderBenchmark = new HeaderBenchmark();
             benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
 
-            if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet')) { // there's benchmark set
+            var bmSet = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet');
 
+            if (bmSet && bmSet.length>0) { // there's benchmark set
                 var selectedBMSet = ParamUtil.GetSelectedCodes(context, 'p_BenchmarkSet'); // can be only one option
                 benchmarks.BenchmarkSet = selectedBMSet[0];
             }
@@ -919,33 +1102,13 @@ class PageResults {
     }
 
 
-    /*
-     * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
-    static function isBenchmarkAvailable(context) {
-
-        var log = context.log;
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
-        var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
-        var reportBases = context.user.PersonalizedReportBase.split(',');
-        var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
-        var surveysToCompare = getBenchmarkSurveys(context).length;
-
-        if (benchmarkProject || showPrevWave || (reportBases.length === 1 && hierarchyLevel) || surveysToCompare) {
-            return true;
-        }
-        return false;
-    }
-
 
     /*
      * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
      *  @param {object} context: {state: state, report: report, log: log, table: table}
      */
     static function table_Benchmarks_hide(context) {
-        return !isBenchmarkAvailable(context);
+        return false;
     }
 
     /*
