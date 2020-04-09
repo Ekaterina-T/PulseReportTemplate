@@ -9,17 +9,16 @@ class PageUtil {
     static function Initialise(context) {
 
         var log = context.log;
-        //log.LogDebug('PAGE INIT');
-        var state = context.state;
+        //'PAGE INIT');
+        var state =log.LogDebug( context.state;
         var page = context.page;
         var pageContext = context.pageContext;
 
-        log.LogDebug('p_projectSelector1 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
+        log.LogDebug(context.pageContext.Items['p_projectSelector'])
 
         //log.LogDebug('page init start: '+page.CurrentPageId);
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
-        log.LogDebug('p_projectSelector2 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         var pageId = getCurrentPageIdInConfig(context);
         //log.LogDebug('page init 1: hier='+context.user.PersonalizedReportBase);
@@ -28,17 +27,14 @@ class PageUtil {
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
         //log.LogDebug('page init 1');
-        log.LogDebug('p_projectSelector3 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
         var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
-        log.LogDebug('p_projectSelector4 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         //log.LogDebug('page init 3');
         ParamUtil.Initialise(context); // initialise parameters
         //log.LogDebug('page init 4');
-        log.LogDebug('p_projectSelector5 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -46,7 +42,6 @@ class PageUtil {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
-        log.LogDebug('p_projectSelector6 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
         //log.LogDebug('page init 5');
 
         if(!HierarchyUtil.Hide(context) && HierarchyUtil.isDataTableEmpty(context)) { // hierarchy needed and not cached yet
@@ -54,7 +49,6 @@ class PageUtil {
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-        log.LogDebug('p_projectSelector7 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
         //log.LogDebug('page init 6');
 
         //for tests
