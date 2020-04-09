@@ -102,17 +102,21 @@ class ParamUtil {
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
+
+        log.LogDebug('p_projectSelector1 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
+        log.LogDebug('p_projectSelector2 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         // reset all parameters (=null) if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
+        log.LogDebug('p_projectSelector3 = '+JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_projectSelector')));
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
