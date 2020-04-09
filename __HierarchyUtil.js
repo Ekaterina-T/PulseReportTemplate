@@ -59,6 +59,14 @@ class HierarchyUtil {
 
     static function getHierarchyFilterExpressionForCurrentRB (context, parameterName) {
 
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        //no filter if show only own action is checked
+        if(!context.state.Parameters.IsNull("p_OnlyOwnActions") && pageId == 'Page_Actions') {
+            return '';
+        }
+
         //to use in public report
         if (parameterName) {
             var codes = ParamUtil.GetSelectedCodes(context, parameterName);

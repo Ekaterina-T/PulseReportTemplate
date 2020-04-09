@@ -550,6 +550,7 @@ class PageActions {
     static function tableActionsByDemographics_Render (context) {
 
         var table = context.table;
+        var state = context.state;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_Actions_BreakBy');
 
@@ -560,7 +561,10 @@ class PageActions {
         if (selectedBreakVar[0] == hierarchyQuestionId) {
             hQRow.ReferenceGroup.Enabled = false;
             hQRow.HierLayout = 'Flat';
-            hQRow.AnswerMask = getHierarchyMask (context);
+
+            if(state.Parameters.IsNull("p_OnlyOwnActions")) {
+                hQRow.AnswerMask = getHierarchyMask (context);
+            }
         }
         table.RowHeaders.Add(hQRow);
 
@@ -688,6 +692,7 @@ class PageActions {
     static function tableActionCost_Render(context) {
 
         var table = context.table;
+        var state = context.state;
         var hierarchyQuestionId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
         var selectedBreakVar = ParamUtil.GetSelectedCodes (context, 'p_ActionCost_BreakBy');
         table.RemoveEmptyHeaders.Rows = true;
@@ -699,7 +704,10 @@ class PageActions {
         if (selectedBreakVar[0] == hierarchyQuestionId) {
             hQRow.ReferenceGroup.Enabled = false;
             hQRow.HierLayout = 'Flat';
-            hQRow.AnswerMask = getHierarchyMask (context);
+
+            if(state.Parameters.IsNull("p_OnlyOwnActions")) {
+                hQRow.AnswerMask = getHierarchyMask (context);
+            }
         }
         table.RowHeaders.Add(hQRow);
 
