@@ -442,8 +442,7 @@ class Filters {
 
         if ((!state.Parameters.IsNull("p_OnlyOwnActions")) || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
             var userId = BranchSpecifics.getUserIdByLogin(context, user.UserId);
-            var userIdText : String = (userId ? userId : user.UserId);
-            return 'IN(actionowner, "' + userIdText + '")';
+            return 'IN(actionowner, "' + (userId ? userId : user.UserId) + '")';
         }
 
         return '';
@@ -462,12 +461,13 @@ class Filters {
             return '';
         }
 
+        var state = context.state;
         var user = context.user;
 
         if(!PageActions.isFeatureAvailableForUserRole(context, "EditOrDeleteOthersActions")){
 	   //&& !state.Parameters.IsNull("p_SwitchHitlistMode")) {
             var userId = BranchSpecifics.getUserIdByLogin(context, user.UserId);
-            return 'IN(actionowner, "' + userId ? userId : user.UserId + '")';
+            return 'IN(actionowner, "' + (userId ? userId : user.UserId) + '")';
         }
         return '';
     }
