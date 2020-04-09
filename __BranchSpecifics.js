@@ -1,38 +1,38 @@
 class BranchSpecifics {
 
-    static private var _hierarchySchema: DBDesignerSchema;
-    static private var _hierarchyTable: DBDesignerTable;
-    static private var _databaseSchema: DBDesignerSchema;
-    static private var _endUserTable: DBDesignerTable;
-    static private var _branchConfigTable: DBDesignerTable;
+    static var hierarchySchema: DBDesignerSchema;
+    static var hierarchyTable: DBDesignerTable;
+    static var databaseSchema: DBDesignerSchema;
+    static var endUserTable: DBDesignerTable;
+    static var branchConfigTable: DBDesignerTable;
 
     /**
-     * @description set private database table (and/or schema)
+     * @description set database table (and/or schema)
      * @param {Object} context = {confirmit: confirmit}
      * @param {String} tableType - "hierarchy", "enduser", "branchconfig"
      * @example BranchSpecifics.setDatabaseTable(context, "Hierarchy");
      */
-    static private function setDatabaseTable(context, tableType) {
+    static function setDatabaseTable(context, tableType) {
         var confirmit = context.confirmit;
 
         switch (tableType) {
             case "hierarchy":
-                if (!_hierarchySchema) {
-                    _hierarchySchema = confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
+                if (!hierarchySchema) {
+                    hierarchySchema = confirmit.GetDBDesignerSchema(parseInt(Config.schemaId));
                 }
-                _hierarchyTable = _hierarchySchema.GetDBDesignerTable(Config.tableName);
+                hierarchyTable = hierarchySchema.GetDBDesignerTable(Config.tableName);
                 break;
             case "enduser":
-                if (!_databaseSchema) {
-                    _databaseSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                if (!databaseSchema) {
+                    databaseSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 }
-                _endUserTable = _databaseSchema.GetDBDesignerTable(Config.EndUserTableName);
+                endUserTable = databaseSchema.GetDBDesignerTable(Config.EndUserTableName);
                 break;
             case "branchconfig":
-                if (!_databaseSchema) {
-                    _databaseSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                if (!databaseSchema) {
+                    databaseSchema = confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 }
-                _branchConfigTable = _databaseSchema.GetDBDesignerTable(Config.BranchConfigTableName);
+                branchConfigTable = databaseSchema.GetDBDesignerTable(Config.BranchConfigTableName);
                 break;
         }
     }
@@ -52,11 +52,11 @@ class BranchSpecifics {
             return '';
         }
 
-        if (!_endUserTable) {
+        if (!endUserTable) {
             setDatabaseTable(context, "enduser");
         }
 
-        var userId = _endUserTable.GetColumnValues("id", "__l9" + Config.EndUserTableLoginColumnName, login);
+        var userId = endUserTable.GetColumnValues("id", "__l9" + Config.EndUserTableLoginColumnName, login);
 
         return userId && userId.Count > 0 ? userId[0] : '';
     }
@@ -112,12 +112,12 @@ class BranchSpecifics {
         var selectedNodeId = BranchSpecifics.getSelectedNodeIdFromHierarchy(context);
         var branchId: String = "";
 
-        if (!_hierarchyTable) {
+        if (!hierarchyTable) {
             setDatabaseTable(context, "hierarchy");
         }
 
         if (Config.BranchIDTableColumnName != "") {
-            var ids = _hierarchyTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId);
+            var ids = hierarchyTable.GetColumnValues("__l9" + Config.BranchIDTableColumnName, "id", selectedNodeId);
             if (ids.Count > 0) {
                 branchId = ids[0];
             }
@@ -142,15 +142,7 @@ class BranchSpecifics {
 
         //get branchId by user's login
         var branchId = BranchSpecifics.getBranchIdFromUserId(context, userId);
-        if (!branchId) { //if there's no branch id in user's login
-            // use hierarchy branchId
-            branchId = BranchSpecifics.getSelectedBranchIdFromHierarchy(context);
-            if (!branchId) {
-                return "";
-            }
-        }
-
-        return branchId;
+        return !branchId ? "" : branchId;
     }
 
     /**
@@ -170,14 +162,14 @@ class BranchSpecifics {
         var branchId: String = "";
         var branchLogoLink: String = "";
 
-        if (!_hierarchyTable) {
+        if (!hierarchyTable) {
             setDatabaseTable(context, "hierarchy");
         }
 
         branchId = getSelectedBranchId(context);
 
         if (settings.BranchLogoLinkTableColumnName != "") {
-            branchLogoLink = _hierarchyTable.GetColumnValues("__l9" + settings.BranchLogoLinkTableColumnName, "id", selectedNodeId)[0];
+            branchLogoLink = hierarchyTable.GetColumnValues("__l9" + settings.BranchLogoLinkTableColumnName, "id", selectedNodeId)[0];
         }
 
         return {branchId: branchId, logoLink: branchLogoLink};
@@ -276,18 +268,18 @@ class BranchSpecifics {
             return [];
         }
 
-        if (!_branchConfigTable) {
+        if (!branchConfigTable) {
             setDatabaseTable(context, "branchconfig");
         }
 
         var maxN;
-        var maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", branchId);
+        var maxNValues = branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", branchId);
 
         if (!maxNValues || maxNValues.Count <= 0) {
             if (!Config.BranchConfigTableDefaultId) {
                 throw new Error("BranchSpecifics.getUserIdsByCurrentBranch: there's no BranchConfigTableDefaultId in Config")
             }
-            maxNValues = _branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", Config.BranchConfigTableDefaultId);
+            maxNValues = branchConfigTable.GetColumnValues("__l9" + Config.BranchConfigTableColumnNames.MaxN, "id", Config.BranchConfigTableDefaultId);
         }
 
         maxN = maxNValues[0];
@@ -342,11 +334,11 @@ class BranchSpecifics {
             branchId = Config.BranchConfigTableDefaultId;
         }
 
-        if (!_branchConfigTable) {
+        if (!branchConfigTable) {
             setDatabaseTable(context, "branchconfig");
         }
 
-        var dimensionsStr = _branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId)[0];
+        var dimensionsStr = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId)[0];
         return dimensionsStr.split(",");
     }
 
