@@ -156,9 +156,9 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var dimensionsInConfig = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-        
+
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-           return dimensionsInConfig;
+            return dimensionsInConfig;
         }
 
         var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
@@ -206,7 +206,7 @@ class PageResults {
         var custom_questions = QuestionUtil.getQuestionsByCategory(context, custom_category);
 
         var isDimensionVisible = state.Parameters.GetString('p_Results_TableTabSwitcher') !== 'noDims'
-            // display a categorisation object as a dimension
+        // display a categorisation object as a dimension
         if (isDimensionVisible && !DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             var categorization: HeaderCategorization = new HeaderCategorization();
             categorization.CategorizationId = 'Custom';
@@ -992,7 +992,7 @@ class PageResults {
         var log = context.log;
         var report = context.report;
         var levelSegment: HeaderSegment = new HeaderSegment();
-        
+
         levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
         levelSegment.SegmentType = HeaderSegmentType.Expression;
         levelSegment.HideData = true;
@@ -1004,7 +1004,7 @@ class PageResults {
             levelSegment.Label = new Label(report.CurrentLanguage, hierarchyLevel['label']);
 
         } else {
-            return; 
+            return;
         }
 
         //calc score
@@ -1127,26 +1127,26 @@ class PageResults {
         return surveysToCompare;
     }
 
-     /*
-     * Checks either Dimensions or ResultStatements are specified in config
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+    /*
+    * Checks either Dimensions or ResultStatements are specified in config
+    * @param {object} context: {state: state, report: report, log: log, table: table}
+    */
     static function isDimensionsMode(context) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var resultStatements = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
         var dimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
-       
+
         if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
             throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
         }
-     
+
         if (resultStatements && resultStatements.length > 0) {
             return false;
         } else if (dimensions && dimensions.length > 0) {
             return true;
-        } else { 
+        } else {
             throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
         }
     }
