@@ -9,8 +9,8 @@ class PageUtil {
     static function Initialise(context) {
 
         var log = context.log;
-        //'PAGE INIT');
-        var state =log.LogDebug( context.state;
+        //log.LogDebug('PAGE INIT');
+        var state = context.state;
         var page = context.page;
         var pageContext = context.pageContext;
 
