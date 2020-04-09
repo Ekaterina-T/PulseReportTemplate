@@ -14,8 +14,6 @@ class PageUtil {
         var page = context.page;
         var pageContext = context.pageContext;
 
-        log.LogDebug('is param null='+state.Parameters.IsNull('p_projectSelector'))
-
         //log.LogDebug('page init start: '+page.CurrentPageId);
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
