@@ -746,7 +746,7 @@ class PageActions {
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
         var actionLinks = hitlistsActions_getActionLinks(context);
-        var callBlockId = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'CallBlockId');
+        var callBlockId = SystemConfig.ActionPlannerSettings.CallBlockID;
 
         var position = 0;
         var actionLinksNumber = isEditDeleteMode ? actionLinks.length : 0;

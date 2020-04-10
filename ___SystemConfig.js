@@ -106,6 +106,7 @@ public class SystemConfig {
 
         ActionCreatorsList: 'userId', //Qid of action creator question - to determine inactive users
         EndUserSelection: 'actionowner', //Qid which holds the list of end users
+        CallBlockID: 'Init', //The id of the call block for the hitlist links
 
         TrendingStartDate : new DateTime (2019, 1, 1)
     };
