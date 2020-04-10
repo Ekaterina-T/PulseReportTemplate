@@ -562,7 +562,7 @@ class PageActions {
             hQRow.ReferenceGroup.Enabled = false;
             hQRow.HierLayout = 'Flat';
 
-            if(state.Parameters.IsNull("p_OnlyOwnActions")) {
+            if(state.Parameters.IsNull("p_OnlyOwnActions") || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
                 hQRow.AnswerMask = getHierarchyMask (context);
             }
         }
@@ -705,7 +705,7 @@ class PageActions {
             hQRow.ReferenceGroup.Enabled = false;
             hQRow.HierLayout = 'Flat';
 
-            if(state.Parameters.IsNull("p_OnlyOwnActions")) {
+            if(state.Parameters.IsNull("p_OnlyOwnActions") || (!PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
                 hQRow.AnswerMask = getHierarchyMask (context);
             }
         }
