@@ -842,10 +842,19 @@ class PageActions {
      */
     static function hitlistsActions_getActionLinks(context) {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var actionLinks = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var actionLinksObject = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionLinks');
+        var actionLinks = [];
         var evaluatedActionLinks = [];
 
-        if(actionLinks != null || actionLinks != undefined || actionLinks.length != 0) {
+        if(actionLinksObject != null || actionLinksObject != undefined) {
+            for (var prop in actionLinksObject) {
+                if(actionLinksObject[prop]) {
+                    actionLinks.push(prop);
+                }
+            }
+        }
+
+        if(actionLinks.length != 0) {
             for(var i = 0; i < actionLinks.length; i++) {
                 if(actionLinks[i].ToLower().indexOf('read') >= 0) {
                     evaluatedActionLinks.push('read');
