@@ -21,6 +21,7 @@ public class SystemConfig {
         'p_DisplayMode':              { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DisplayMode'},
         'p_ShowAllPulseSurveys':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ShowAllPulseSurveys'},
         'p_AcrossAllSurveys':         { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'AcrossAllSurveys'},
+        'p_DirectFilter':         { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DirectFilter'},
 
         'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
