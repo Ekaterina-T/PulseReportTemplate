@@ -63,7 +63,7 @@ class HierarchyUtil {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         //no filter if show only own action is checked
-        if(!context.state.Parameters.IsNull("p_OnlyOwnActions") && pageId == 'Page_Actions') {
+        if(pageId == 'Page_Actions' && (!context.state.Parameters.IsNull("p_OnlyOwnActions") || !PageActions.isFeatureAvailableForUserRole(context, "ReportLevelAccess"))) {
             return '';
         }
 
