@@ -46,6 +46,7 @@ class PageActions {
         //linkParameters.push('B='+  (branch == "" || branch== undefined? "null":branch));
         linkParameters.push('Id=' + endUserIds[0]);
         linkParameters.push('U=' +  user.UserId);
+        linkParameters.push('FeaturesConfig=' + user.Roles);
 
         if(!HierarchyUtil.Hide(context)) linkParameters.push('hier='+ user.PersonalizedReportBase);
 
@@ -809,10 +810,11 @@ class PageActions {
         var isWriting = isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "" || isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "false"? "" : "isWriting=" + isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') + ';';
         var source = 'source=' + actionLink + ";";
         var u = 'U=' + user.UserId  + ";";
+        var featuresConfig = "featuresConfig=" + user.Roles +";";
         var idEditor = endUserIds.Count > 0 ? 'IdEditor=' + endUserIds[0] + ";" : '';
 
         hitlist.Columns[linkPosition].SurveyLink.CallBlockId = callBlockId;
-        hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink + rolesList + isResponsibleVisible + isWriting + source + u + idEditor;
+        hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink + rolesList + isResponsibleVisible + isWriting + source + u + idEditor+featuresConfig;
         hitlist.Columns[linkPosition].SurveyLink.Name = actionLink + ' link';
     }
 

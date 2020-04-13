@@ -126,6 +126,7 @@ class StyleAndJavaScriptUtil {
                 properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
                 properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
                 properties.push('U: "' +  user.UserId+'"');
+                properties.push('FeaturesConfig: "'+ user.Roles + '"');
                 //user data
                 var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
