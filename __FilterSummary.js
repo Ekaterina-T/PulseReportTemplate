@@ -12,7 +12,8 @@ class FilterSummary {
         var text = context.text;
         var log = context.log;
         var filterName = filterText ? TextAndParameterUtil.getTextTranslationByKey(context, filterText) : '';
-        var filterValues = ParamUtil.GetSelectedOptions(context, paramName);
+        var filterValues = (paramName === 'p_ActionAllocation') ? ParameterOptions.getDefaultValue(context, 'p_ActionAllocation') : ParamUtil.GetSelectedOptions(context, paramName);
+
 
         if(filterValues.length>0) { // do not print anything if parameter is empty
 
