@@ -42,7 +42,11 @@ class FilterSummary {
 
         var log = context.log;
         var user = context.user;
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
+        var state = context.state;
         var str = '';
+
 
         // data source
         str += Export.displayDataSourceInfo(context);
@@ -60,7 +64,13 @@ class FilterSummary {
             str += '<div>'+TextAndParameterUtil.getTextTranslationByKey(context, 'TimePeriod')+' '+start.ToShortDateString()+' - '+end.ToShortDateString()+'</div>';
             str += System.Environment.NewLine;
         }
-
+        
+        //show only own actions
+     	if (pageId == 'Actions' && !state.Parameters.IsNull('p_OnlyOwnActions')) {
+          str += '<div>'+ TextAndParameterUtil.getTextTranslationByKey(context, 'ShowOnlyOwnActions') + '</div>';
+          str += System.Environment.NewLine;
+        }
+        
         //selected wave
         if(DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'WaveQuestion')) {
 
@@ -68,6 +78,7 @@ class FilterSummary {
             str += System.Environment.NewLine;
         }
 
+                
         //filter panel filters
         var filterOptions = Filters.GetFiltersValues(context, 'global');
 
