@@ -814,7 +814,7 @@ class PageActions {
         var idEditor = endUserIds.Count > 0 ? 'IdEditor=' + endUserIds[0] + ";" : '';
 
         hitlist.Columns[linkPosition].SurveyLink.CallBlockId = callBlockId;
-        hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink + rolesList + isResponsibleVisible + isWriting + source + u + idEditor+featuresConfig;
+        hitlist.Columns[linkPosition].SurveyLink.UrlEncryptedParameters = langInLink  + isResponsibleVisible + isWriting + source + u + idEditor+featuresConfig;
         hitlist.Columns[linkPosition].SurveyLink.Name = actionLink + ' link';
     }
 
