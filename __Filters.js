@@ -387,6 +387,31 @@ class Filters {
 
         return '';
     }
+    
+    /**
+     * @description function to generate a script expression to filter by node without children
+     * @param {Object} context
+     * @returns {String} filter script expression
+     */
+    static function getDirectFilterExpression(context) {
+
+        var log = context.log;
+        var user = context.user;
+
+        var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_DirectFilter');
+		var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'); 
+
+      var reportBase = user.PersonalizedReportBase.split(',');
+      var allSelectedHierarchyLevels = '"' + reportBase[0] + '"';
+      for (var i = 1; i < reportBase.length; i++) {
+        allSelectedHierarchyLevels = allSelectedHierarchyLevels + ',' + '"' + reportBase[i] + '"';
+      }
+
+      if (selectedCodes[0] == 'Direct nodes') {
+         return 'IN(' + hierarchyQId + ',' + allSelectedHierarchyLevels + ')';
+      }
+      return '';
+    }
 
     /**
      * not empty comments filter
