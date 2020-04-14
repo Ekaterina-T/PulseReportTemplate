@@ -805,7 +805,6 @@ class PageActions {
         var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
 
         var langInLink = 'l=' + report.CurrentLanguage + ';';
-        var rolesList = user.Roles == '' ? '' : 'role="' + user.Roles + '";';
         var isResponsibleVisible = isFeatureAvailableForUserRole(context, 'Delegation') == "" || isFeatureAvailableForUserRole(context, 'Delegation') == "false" ? "" : "isResponsibleVisible=" + isFeatureAvailableForUserRole(context, 'Delegation') + ';';
         var isWriting = isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "" || isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') == "false"? "" : "isWriting=" + isFeatureAvailableForUserRole(context, 'WriteAndChangeComments') + ';';
         var source = 'source=' + actionLink + ";";
