@@ -65,6 +65,9 @@ class StyleAndJavaScriptUtil {
 
         properties.push('Apply: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
         properties.push('Reset: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
+        
+        properties.push('DirectButtonText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectButtonText')));
+        properties.push('DirectResetButtonText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectResetButtonText')));
 
         if (pageId === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(Hitlist.GetTagColumnNumbers (context, 'p_ScoreQs', 'p_TagQs')));
