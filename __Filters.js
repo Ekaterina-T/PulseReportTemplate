@@ -502,7 +502,7 @@ class Filters {
         var expr = '';
 
         if (user.UserType === ReportUserType.Confirmit) { // for tests
-            var bases = user.PersonalizedReportBase;
+            //var bases = user.PersonalizedReportBase;
             expr = 'CreatedByEndUserName = ""';
         } else {
             expr = 'CreatedByEndUserName = "' + user.UserId + '"';

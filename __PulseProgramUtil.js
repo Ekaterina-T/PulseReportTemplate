@@ -316,9 +316,9 @@ class PulseProgramUtil {
                 resourcesData[resources[i].Code] = { Value: resourcesBase[i]};
             }
 
-            log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
+            //log.LogDebug('Data from PulseSurveyContentInfo table: '+JSON.stringify(resourcesData));
         } else {
-            log.LogDebug('Data from PulseSurveyContentInfo table: no data');
+            //log.LogDebug('Data from PulseSurveyContentInfo table: no data');
         }
 
     }

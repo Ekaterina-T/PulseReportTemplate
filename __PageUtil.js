@@ -15,7 +15,9 @@ class PageUtil {
 
         //log.LogDebug('page init start');
         pageContext.Items.Add('userEmail', context.user.Email);
-        pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
+        if (!pageContext.Items["CurrentPageId"]) {
+            pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
+        }
 
         var pageId = getCurrentPageIdInConfig(context);
         //log.LogDebug('page init 1: pageId='+pageId);
@@ -166,15 +168,13 @@ class PageUtil {
      * @param {string} parameterId - id of iteratedParameter
      * @returns {boolean} if current page (with one option of iterated parameter) should be showm=n
      */
-    static function hideUnnecessaryPagesForIteratedParameter(context, parameterId) {
+    static function hideUnnecessaryPagesForIteratedParameter(context, parameterId, pageId) {
         var log = context.log;
         var report = context.report;
         var pageContext = context.pageContext;
 
-        var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
-        log.LogDebug('iteratedParameterOptions: ' + iteratedParameterOptions);
-        if (iteratedParameterOptions.length <= 0) {
-            return false;
+        if (!pageContext.Items["CurrentPageId"]) {
+            pageContext.Items.Add('CurrentPageId', pageId);
         }
 
         if (!pageContext.Items["IteratedParameterBaseParamterId"]) {
@@ -182,7 +182,12 @@ class PageUtil {
         }
         log.LogDebug('IteratedParameterBaseParamterId: ' + parameterId);
 
-        if (!Export.isExportMode(context)) {
+        var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
+        if (iteratedParameterOptions.length <= 0) {
+            return false;
+        }
+
+        if ((!Export.isExportMode(context) && !Export.isDesignMode(context)) || !context.user.PersonalizedReportBase){
             return false;
         }
 
