@@ -810,7 +810,7 @@ class PageActions {
         var source = 'source=' + actionLink + ";";
         var u = 'U=' + user.UserId  + ";";
         var userRolesString : String = user.Roles;
-        var featuresConfig = userRolesString.length>0? "featuresConfig='" + user.Roles +"';": '';
+        var featuresConfig = userRolesString.length>0? "featuresConfig=" + user.Roles +";": '';
         var idEditor = endUserIds.Count > 0 ? 'IdEditor=' + endUserIds[0] + ";" : '';
 
         hitlist.Columns[linkPosition].SurveyLink.CallBlockId = callBlockId;
