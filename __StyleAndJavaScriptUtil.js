@@ -52,6 +52,8 @@ class StyleAndJavaScriptUtil {
         properties.push('hideTimePeriodFilters: '+Filters.isTimePeriodFilterHidden(context));
 
         properties.push('hideWaveFilter: '+Filters.isWaveFilterHidden(context));
+        
+        properties.push('isDirectFilterEnabled: '+Filters.isDirectFilterEnabled(context));
 
         properties.push('noDataWarning: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg')));
 
@@ -66,8 +68,7 @@ class StyleAndJavaScriptUtil {
         properties.push('Apply: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
         properties.push('Reset: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
         
-        properties.push('DirectButtonText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectButtonText')));
-        properties.push('DirectResetButtonText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectResetButtonText')));
+        properties.push('DirectToggleLabelText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectToggleLabelText')));
 
         if (pageId === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(Hitlist.GetTagColumnNumbers (context, 'p_ScoreQs', 'p_TagQs')));
@@ -242,6 +243,10 @@ class StyleAndJavaScriptUtil {
         //Results table
         css_string += '.tablesaw td.addTopBorder {'
                         +'border-top-color: '+lineColor+' !important;'
+                        +'}';
+        
+        css_string += '.direct-toggle-label {'
+                        +'background-color: '+mainColor+' !important;'
                         +'}';
 
         return '<style>'+css_string+'</style>';
