@@ -245,6 +245,7 @@ class StyleAndJavaScriptUtil {
                         +'border-top-color: '+lineColor+' !important;'
                         +'}';
         
+        //Direct filter toggle
         css_string += '.direct-toggle-label {'
                         +'background-color: '+mainColor+' !important;'
                         +'}';
