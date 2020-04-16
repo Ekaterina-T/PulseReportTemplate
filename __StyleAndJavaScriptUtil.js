@@ -246,8 +246,8 @@ class StyleAndJavaScriptUtil {
                         +'}';
         
         //Direct filter toggle
-        css_string += '.direct-toggle-label {'
-                        +'background-color: '+mainColor+' !important;'
+        css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label {'
+                        +'background-color: '+mainColor
                         +'}';
 
         return '<style>'+css_string+'</style>';
