@@ -332,6 +332,15 @@ class Filters {
         var log = context.log;
         return (Boolean)(!DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion'));
     }
+	
+    /**
+     * @description function indicating if the direct filter is needed or not
+     * @param {Object} context
+     * @returns {Boolean} true or false
+     */
+	static function isDirectFilterEnabled(context) {
+		return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'isDirectFilterEnabled');
+	}
 
     /**
      * @description function to generate a script expression to filter by selected time period
@@ -397,9 +406,13 @@ class Filters {
 
         var log = context.log;
         var user = context.user;
+	    
+	if (!isDirectFilterEnabled(context)) {
+           return '';
+        }
 
         var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_DirectFilter');
-		var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'); 
+	var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'); 
 
       var reportBase = user.PersonalizedReportBase.split(',');
       var allSelectedHierarchyLevels = '"' + reportBase[0] + '"';
