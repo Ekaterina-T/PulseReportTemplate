@@ -301,6 +301,8 @@ class HierarchyUtil {
        if (user.UserType == ReportUserType.Confirmit) {
          return false;
        }
+
+       setDataTable(context); //temp for using in page hide scripts
        
        var allLowest = true;
        var nodesAssigned = user.GetNodeAssignments();
@@ -336,6 +338,8 @@ class HierarchyUtil {
         if (user.UserType == ReportUserType.Confirmit) {
           return true;
         }
+        
+        setDataTable(context); //temp for using in page hide scripts
         
         var nodesAssigned = user.GetNodeAssignments();
         for (var i=0; i<nodesAssigned.length; i++) {
