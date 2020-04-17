@@ -327,19 +327,25 @@ class BranchSpecifics {
         }
         var branchId = getSelectedBranchId(context);
 
-        if (!branchId) {
-            if (!Config.BranchConfigTableDefaultId) {
-                throw new Error("BranchSpecifics.getDimensionsByBranch: there's no BranchConfigTableDefaultId in Config")
-            }
-            branchId = Config.BranchConfigTableDefaultId;
-        }
-
         if (!branchConfigTable) {
             setDatabaseTable(context, "branchconfig");
         }
 
-        var dimensionsStr = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId)[0];
-        return dimensionsStr.split(",");
+        if (!branchId) {
+            branchId = getDefaultBranchId();
+        }
+
+        var dimensionsStrArray = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId);
+        if (dimensionsStrArray.Count <= 0) {
+            branchId = getDefaultBranchId();
+            dimensionsStrArray = branchConfigTable.GetColumnValues("__l9"+Config.BranchConfigTableColumnNames.Dimensions, "id", branchId);
+        }
+
+        if (dimensionsStrArray.Count <= 0) {
+            throw new Error("BranchSpecifics.getDimensionsByBranch: BranchConfig table doesn't contain 'default' row");
+        }
+
+        return dimensionsStrArray[0].split(",");
     }
 
     /**
@@ -382,5 +388,17 @@ class BranchSpecifics {
 
         var idIndexLength = userId.split('_')[userId.split('_').length - 1].length + 1;
         return userId.substr(0, userId.length - idIndexLength);
+    }
+
+    /**
+     * @description get default branch id
+     * @returns {string} - default branchId
+     * @example BranchSpecifics.getDefaultBranchId();
+     */
+    static function getDefaultBranchId() {
+        if (!Config.BranchConfigTableDefaultId) {
+            throw new Error("BranchSpecifics.getDimensionsByBranch: there's no BranchConfigTableDefaultId in Config")
+        }
+        return Config.BranchConfigTableDefaultId;
     }
 }
