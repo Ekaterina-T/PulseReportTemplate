@@ -137,7 +137,6 @@ class HierarchyUtil {
         for (var i = 0; i < rows.Count; i++) {
             var row : DataRow = rows[i];
             if(!row[Config.relationName]) {
-                log.LogDebug('Top node saved: '+topNode);
                 topNode = row['id'];
                 break;
             }
@@ -334,17 +333,16 @@ class HierarchyUtil {
         
         var user = context.user;
         var log = context.log;
-        log.LogDebug('topNodeAssigned function'); 
+        
         if (user.UserType == ReportUserType.Confirmit) {
           return true;
         }
         
         setDataTable(context); //temp for using in page hide scripts
-        
+
         var nodesAssigned = user.GetNodeAssignments();
         for (var i=0; i<nodesAssigned.length; i++) {
           var nodeId = nodesAssigned[i];
-          log.LogDebug('nodeId: '+nodeId+'; topNode: '+topNode); 
           if (nodeId == topNode) {
             return true;
           }
