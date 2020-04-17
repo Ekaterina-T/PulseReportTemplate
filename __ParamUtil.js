@@ -108,25 +108,29 @@ class ParamUtil {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
+        log.LogDebug('param init start 0')
 
         // reset all parameters (=null) if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
+        log.LogDebug('param init start 1')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
+        log.LogDebug('param init start 2')
 
         pulseInit(context);
+        log.LogDebug('param init start 3')
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
-        //log.LogDebug('param init end')
+        log.LogDebug('param init end')
     }
 
 
