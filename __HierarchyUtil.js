@@ -4,6 +4,7 @@ class HierarchyUtil {
     // check page initialize script
     static var dbTable : DataTable = new DataTable();
     static var isLowestLevel = {};    
+    static var topNode = "";
 
     /**
      * @memberof HierarchyUtil
@@ -103,6 +104,8 @@ class HierarchyUtil {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
             var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
+
+            saveTopNode(context);
         }
     }
 
@@ -114,6 +117,30 @@ class HierarchyUtil {
      */
     static function getDataTable() {
         return dbTable;
+    }
+
+     /**
+     * @memberof HierarchyUtil
+     * @function saveTopNode
+     * @description saves top hierarchy node to static var topNode
+     * @param {Object} context {confirmit: confirmit, log: log}
+     */
+    static function saveTopNode(context) {
+
+        var log = context.log;
+        var rows = dbTable && dbTable.Rows;
+
+        if(!rows || rows.Count === 0) {
+            throw new Error('HierarchyUtil.getParentsForHierarchyNode: hierarchy dbTable is not set although requested.');
+        }
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row : DataRow = rows[i];
+            if(!row[Config.relationName]) {
+                topNode = row['id'];
+                break;
+            }
+        }
     }
 
     /**
@@ -292,6 +319,33 @@ class HierarchyUtil {
         return allLowest;
        
      }
+
+     /**
+     * @memberof HierarchyUtil
+     * @function topNodeAssigned
+     * @description checks if user is assigned to top level of hierarchy
+	 * @param {Object} context {confirmit: confirmit, user: user, log: log}
+     * @returns {Boolean} 
+     */  
+  	static function topNodeAssigned(context) {
+        
+        var user = context.user;
+        var log = context.log;
+     
+        if (user.UserType == ReportUserType.Confirmit) {
+          return true;
+        }
+        
+        var nodesAssigned = user.GetNodeAssignments();
+        for (var i=0; i<nodesAssigned.length; i++) {
+          var nodeId = nodesAssigned[i];
+          if (nodeId == topNode) {
+            return true;
+          }
+        }
+         return false; 
+      }
+  
 
     /**
      * @memberof HierarchyUtil
