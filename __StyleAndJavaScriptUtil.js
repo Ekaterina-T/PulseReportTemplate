@@ -249,6 +249,10 @@ class StyleAndJavaScriptUtil {
         css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label {'
                         +'background-color: '+mainColor
                         +'}';
+        
+        css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label::after {'
+                        +'background-color: '+mainColor
+                        +'}';
 
         return '<style>'+css_string+'</style>';
     }
