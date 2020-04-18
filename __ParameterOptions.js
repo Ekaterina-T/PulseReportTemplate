@@ -466,7 +466,9 @@ class ParameterOptions {
     static public function isCachable(context, parameterId) {
 
         var parameterInfo = SystemConfig.reportParameterValuesMap[parameterId];
-        return !(parameterInfo && parameterInfo.hasOwnProperty('CachingDisabled') && parameterInfo['CachingDisabled']);
+        var key = CacheUtil.getParameterCacheKey(context, parameterId);
+
+        return key && !(parameterInfo && parameterInfo.hasOwnProperty('CachingDisabled') && parameterInfo['CachingDisabled']);
     }
 
     /**

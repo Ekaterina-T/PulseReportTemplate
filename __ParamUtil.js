@@ -34,8 +34,10 @@ class ParamUtil {
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
+        log.LogDebug('param load start 1')
 
         var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
+        log.LogDebug('param load start 2')
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
