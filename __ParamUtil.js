@@ -408,12 +408,16 @@ class ParamUtil {
      */
     static function isParameterToBeLoaded(context) {
 
+
+        var log = context.log;
+        log.LogDebug('isParameterToBeLoaded 0');
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
-        var log = context.log;
         var pageId;
+        log.LogDebug('isParameterToBeLoaded 1');
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+        log.LogDebug('isParameterToBeLoaded 2');
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -497,11 +501,14 @@ class ParamUtil {
             pageId = PageUtil.getCurrentPageIdInConfig(context);
             return pageId === 'Page_Trends' && !isPulseProgram;
         }
+        log.LogDebug('isParameterToBeLoaded 3');
 
         if(parameterName === 'p_CustomOpenTextQs') {
             var isOnePulseProjectSelected = ParamUtil.GetSelectedCodes(context,'p_projectSelector').length === 1;
             return isPulseProgram && isOnePulseProjectSelected;
         }
+
+        log.LogDebug('isParameterToBeLoaded 4');
 
         return true;
     }
