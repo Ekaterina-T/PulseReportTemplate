@@ -30,7 +30,7 @@ class PageUtil {
         var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
-        log.LogDebug('page init 3');
+        //log.LogDebug('page init 3');
         ParamUtil.Initialise(context); // initialise parameters
         //log.LogDebug('page init 4');
 
