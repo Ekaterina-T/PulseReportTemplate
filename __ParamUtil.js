@@ -30,14 +30,14 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
-        log.LogDebug('param load start '+parameter.ParameterId)
+        //log.LogDebug('param load start '+parameter.ParameterId)
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
-        log.LogDebug('param load start 1')
+        //log.LogDebug('param load start 1')
 
         var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
-        log.LogDebug('param load start 2')
+        //log.LogDebug('param load start 2')
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -45,7 +45,7 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
         }
-        log.LogDebug('param load end '+parameter.ParameterId)
+        //log.LogDebug('param load end '+parameter.ParameterId)
 
         return;
     }
@@ -104,35 +104,35 @@ class ParamUtil {
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
-        log.LogDebug('param init start')
+        //log.LogDebug('param init start')
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        log.LogDebug('param init start 0')
+        //log.LogDebug('param init start 0')
 
         // reset all parameters (=null) if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        log.LogDebug('param init start 1')
+        //log.LogDebug('param init start 1')
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        log.LogDebug('param init start 2')
+        //log.LogDebug('param init start 2')
 
         pulseInit(context);
-        log.LogDebug('param init start 3')
+        //log.LogDebug('param init start 3')
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
-        log.LogDebug('param init end')
+        //log.LogDebug('param init end')
     }
 
 
@@ -410,14 +410,14 @@ class ParamUtil {
 
 
         var log = context.log;
-        log.LogDebug('isParameterToBeLoaded 0');
+        //log.LogDebug('isParameterToBeLoaded 0');
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var pageId;
-        log.LogDebug('isParameterToBeLoaded 1');
+        //log.LogDebug('isParameterToBeLoaded 1');
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
-        log.LogDebug('isParameterToBeLoaded 2');
+        //log.LogDebug('isParameterToBeLoaded 2');
 
         if (parameterName === 'p_projectSelector') {
             return isPulseProgram;
@@ -501,14 +501,14 @@ class ParamUtil {
             pageId = PageUtil.getCurrentPageIdInConfig(context);
             return pageId === 'Page_Trends' && !isPulseProgram;
         }
-        log.LogDebug('isParameterToBeLoaded 3');
+        //log.LogDebug('isParameterToBeLoaded 3');
 
         if(parameterName === 'p_CustomOpenTextQs') {
             var isOnePulseProjectSelected = ParamUtil.GetSelectedCodes(context,'p_projectSelector').length === 1;
             return isPulseProgram && isOnePulseProjectSelected;
         }
 
-        log.LogDebug('isParameterToBeLoaded 4');
+        //log.LogDebug('isParameterToBeLoaded 4');
 
         return true;
     }
