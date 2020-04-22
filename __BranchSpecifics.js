@@ -89,7 +89,7 @@ class BranchSpecifics {
                 throw new Error('BranchSpecifics.getSelectedNodeIdFromHierarchy: parameter mentioned in Config BranchSelectorType settings always must have one value.');
             }
 
-            return selectedNodes[0];
+            return selectedNodes[0] ? selectedNodes[0] : Config.BranchConfigTableDefaultId;
         }
 
         throw new Error('BranchSpecifics.getSelectedNodeIdFromHierarchy: check Config BranchDependentLogoSettings>BranchSelectorType settings. It should be "hierarchy" or "parameter".');
@@ -137,11 +137,19 @@ class BranchSpecifics {
         var log = context.log;
         var user = context.user;
 
-        var endUserId = user.UserId;
-        var userId = BranchSpecifics.getUserIdByLogin(context, endUserId);
+        var branchId;
 
-        //get branchId by user's login
-        var branchId = BranchSpecifics.getBranchIdFromUserId(context, userId);
+        if (!PublicUtil.isPublic(context)) {
+            var endUserId = user.UserId;
+            var userId = BranchSpecifics.getUserIdByLogin(context, endUserId);
+
+            //get branchId by user's login
+            branchId = BranchSpecifics.getBranchIdFromUserId(context, userId);
+        } else {
+            //get branchId by hierarchy (parameter)
+            branchId = BranchSpecifics.getSelectedBranchIdFromHierarchy(context);
+        }
+
         return !branchId ? "" : branchId;
     }
 
@@ -355,7 +363,7 @@ class BranchSpecifics {
      * @example BranchSpecifics.hidePageByBranch(context);
      */
     static function hidePageByBranch(context) {
-        if (!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
+        if (!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled || PublicUtil.isPublic(context)) {
             return false;
         }
 
