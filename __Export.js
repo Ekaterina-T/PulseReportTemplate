@@ -76,8 +76,8 @@ class Export {
 
         var qe: QuestionnaireElement;
         var row : HeaderQuestion;
+        var qIds = parameterId ? ParamUtil.GetSelectedCodes (context, parameterId) : [];
 
-        var qIds = ParamUtil.GetSelectedCodes (context, parameterId);
         if (qIds.length > 0) {
             for (var i=0; i<qIds.length; i++) {
                 qe = QuestionUtil.getQuestionnaireElement(context, qIds[i]);

@@ -686,7 +686,7 @@ class PageResults {
                 if(!baseValues[rowNum].IsEmpty && baseValues[rowNum].Value >= suppressValue) {
                     isDimensionEmpty = false;
                 }
-                rowNum++;
+                rowNum = (numOfSubHeaders > 0) ? rowNum + numOfSubHeaders : rowNum + 1;
             }
             dimensionsInfoObject[dimensionStartRow] = isDimensionEmpty;
         }
