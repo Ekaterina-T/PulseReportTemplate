@@ -17,7 +17,7 @@ class CacheUtil {
         var log = context.log;
         var pageContext = context.pageContext;
         var lang = context.report.CurrentLanguage;
-        var userEmail = PublicUtil.isPublic(context) ? 'noemail' : pageContext.Items['userEmail'];
+        var userEmail = !!pageContext.Items['userEmail'] ? pageContext.Items['userEmail'] : 'noemail';
         var key = userEmail+'_'+DataSourceUtil.getDsId(context)+'_'+parameterId+'_'+lang;
 
         return key;
