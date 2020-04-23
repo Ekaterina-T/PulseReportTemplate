@@ -71,6 +71,7 @@ class StyleAndJavaScriptUtil {
         properties.push('Reset: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
 
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
+        properties.push('isPublicReport: ' + JSON.stringify(PublicUtil.isPublic(context)))ж
         
         properties.push('currentLanguage: ' + report.CurrentLanguage);
 
