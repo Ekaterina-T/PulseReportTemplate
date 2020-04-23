@@ -41,7 +41,6 @@ class BranchSpecifics {
      * @description get end user's id by their login
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
      * @param {string} login
-     * @param {DBDesignerSchema} existingSchema - if we've already got one
      * @returns {string} - end user id from Database table
      * @example BranchSpecifics.getUserIdByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
@@ -64,9 +63,6 @@ class BranchSpecifics {
     /**
      * @description get id of node depending on selector type
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
-     * @param {Object} branchDependentSettings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
-                                               BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
-                                               BranchLogoTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
      * @returns String
      * @example BranchSpecifics.getSelectedNodeIdFromHierarchy(context);
      * @inner
@@ -84,7 +80,7 @@ class BranchSpecifics {
         }
 
         if (Config.BranchSelectorType == "parameter") {
-            var selectedNodes = ParamUtil.GetSelectedCodes(context, Config.BranchSelectorParameterName);
+            var selectedNodes = ParamUtil.GetSelectedCodes(context, Config.PublicHierarchyParameterName);
             if (selectedNodes.length != 1) {
                 throw new Error('BranchSpecifics.getSelectedNodeIdFromHierarchy: parameter mentioned in Config BranchSelectorType settings always must have one value.');
             }
@@ -98,10 +94,6 @@ class BranchSpecifics {
     /**
      * @description get branch id from db table
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
-     * @param {String} selectedNodeId  id of the node selected in the report
-     * @param {Object} settings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
-                                               BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
-                                               BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
      * @returns String - branch id
      * @example BranchSpecifics.getSelectedBranchIdFromHierarchy(context);
      */
@@ -158,7 +150,7 @@ class BranchSpecifics {
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
      * @param {String} selectedNodeId  id of the node selected in the report
      * @param {Object} settings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
-                                               BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
+                                               BranchSelectorType: "hierarchy"("parameter"),
                                                BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
      * @returns {Object} {branchId: branchId, logoLink: branchLogoLink}
      * @example BranchSpecifics.getSelectedBranchIdOrLogo(context);
@@ -190,7 +182,7 @@ class BranchSpecifics {
      * @param {String} defaultSettings  = { DefaultBranchLogoLink: "/isa/AAIHMPIBHONRJTKTPPCAEPPDORNRMQMV/hsologo.png",
                                            ForceDefaultBranchLogoForAll: false};
      * @param {Object} branchDependentSettings = {BranchLogoFileLibraryFolderLink: link,  BranchLogoFilenameExtension: "svg",
-                                               BranchSelectorType: "hierarchy"("parameter"), BranchSelectorParameterName: "",
+                                               BranchSelectorType: "hierarchy"("parameter"),
                                                BranchIDTableColumnName: "HfNodeId", BranchLogoLinkTableColumnName:"" };
      * @returns String
      * @example BranchSpecifics.branchLogo_Render({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
@@ -260,6 +252,7 @@ class BranchSpecifics {
     /**
      * @description get end users that belong to current branch
      * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {String}
      * @returns {StringCollection} - string array with end user ids
      * @example BranchSpecifics.getUserIdsByCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
      */
