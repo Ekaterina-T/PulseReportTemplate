@@ -14,7 +14,9 @@ class PageUtil {
         var pageContext = context.pageContext;
 
         //log.LogDebug('page init start');
-        pageContext.Items.Add('userEmail', context.user.Email);
+        if(PublicUtil.isPublic(context)) {
+            pageContext.Items.Add('userEmail', context.user.Email);
+        }
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         var pageId = getCurrentPageIdInConfig(context);
