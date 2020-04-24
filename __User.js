@@ -10,8 +10,8 @@ class User {
         var log = context.log;
         var user = context.user;
 
-        //confirmit user (has access to all surveys for QA) or survey is available for all end users (validRoles is null)
-        if(user.UserType === ReportUserType.Confirmit || !validRoles) {
+        //confirmit user (has access to all surveys for QA) or survey is available for all end users (validRoles is null) or report is in public mode
+        if(user.UserType === ReportUserType.Confirmit || !validRoles || PublicUtil.isPublic(context)) {
             return true;
         }
 

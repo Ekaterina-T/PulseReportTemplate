@@ -986,7 +986,7 @@ class PageActions {
     static function isFeatureAvailableForUserRole(context, feature) {
         var user = context.user;
        
-        if (user.UserType == ReportUserType.Confirmit) {
+        if (user.UserType == ReportUserType.Confirmit || PublicUtil.isPublic(context)) {
             return true;
         } 
 
