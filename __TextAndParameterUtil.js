@@ -63,6 +63,36 @@ class TextAndParameterUtil {
         return keyName;
     }
 
+    /*
+     * Get translation for text by key and a subkey (for more complicated structure)
+     * @param {object} context {state: state, report: report, log: log}
+     * @param {string} keyName
+     * @param {string} subkeyName
+     * @param {boolean} throw error if translation not found or not? --- replace with smth better?
+     * @returns {object} property value
+     */
+    static function getTextTranslationByKeyAndSubkey(context, keyName, subkeyName, skipWarning) {
+
+        var report = context.report;
+        var log = context.log;
+        var currentLanguage = report.CurrentLanguage;
+        var translation = TextAndParameterLibrary.TextLibrary[keyName];
+
+        if(translation != null) {
+            var subTranslation = translation[subkeyName];
+
+            if(subTranslation != null) {
+                return subTranslation[currentLanguage];
+            }
+        }
+
+        if(!skipWarning && (translation == null || subTranslation == null)) {
+            throw new Error('TextAndParameterTextLibrary.getParameterValuesByKey: No translation for ' + keyName + ', ' + subkeyName + ' for language "' + currentLanguage + '" was found');
+        }
+
+        return keyName;
+    }
+
 
     /*
      * Get Multilingual label by key

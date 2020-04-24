@@ -61,6 +61,29 @@ class BranchSpecifics {
     }
 
     /**
+     * @description get all end users ids mentioned in the table by their login
+     * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @param {string} login
+     * @returns {string} - list of end user ids from Database table
+     * @example BranchSpecifics.getAllUserIdsByLogin({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+     */
+    static function getAllUserIdsByLogin(context, login) {
+        var log = context.log;
+
+        if (!login || !Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled) {
+            return '';
+        }
+
+        if (!endUserTable) {
+            setDatabaseTable(context, "enduser");
+        }
+
+        var userId = endUserTable.GetColumnValues("id", "__l9" + Config.EndUserTableLoginColumnName, login);
+
+        return userId;
+    }
+
+    /**
      * @description get id of node depending on selector type
      * @param {Object} context = {state: state, report: report, log: log, text: text, user: user, pageContext: pageContext}
      * @returns String
@@ -347,32 +370,6 @@ class BranchSpecifics {
         }
 
         return dimensionsStrArray[0].split(",");
-    }
-
-    /**
-     * @description hide page by branch id
-     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
-     * @returns {boolean} - flag that shows whether this page should be hidden or not
-     * @example BranchSpecifics.hidePageByBranch(context);
-     */
-    static function hidePageByBranch(context) {
-        if (!Config.IsBranchSpecificsOn || !Config.EndUserByBranch.enabled || PublicUtil.isPublic(context)) {
-            return false;
-        }
-
-        var user = context.user;
-
-        var endUserId = user.UserId;
-        var userId = BranchSpecifics.getUserIdByLogin(context, endUserId);
-
-        // to check if user has a row in EndUser table
-        if (!userId) {
-            return true;
-        }
-
-        var branchId = getSelectedBranchId(context);
-
-        return !branchId;
     }
 
     /**
