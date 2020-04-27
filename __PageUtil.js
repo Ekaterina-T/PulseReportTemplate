@@ -71,7 +71,7 @@ class PageUtil {
 
         var surveyProperties = DataSourceUtil.getSurveyConfig(context);
         
-        if (TestSuppressUtil.isInitialReportBaseLow(context)) {
+        if (SuppressUtil.isInitialReportBaseLow(context)) {
         pagesToShow.push('SuppressMessage');
         return pagesToShow;
         }
