@@ -283,8 +283,7 @@ class SuppressUtil {
     
         static function message (context) {
             
-            if (isInitialReportBaseLow(context))
-               return TextAndParameterUtil.getTextTranslationByKey(context, 'LowInitialReportBaseWarning');
+            //text for initialReportBaseIsLow is defined on the text component on the SuppressMessagePage
     
             if (reportBaseIsLow (context))
                 return TextAndParameterUtil.getTextTranslationByKey(context, 'LowReportBaseWarning');
