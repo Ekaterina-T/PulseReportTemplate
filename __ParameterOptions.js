@@ -94,21 +94,37 @@ class ParameterOptions {
         }
 
         if (parameterInfo.locationType === 'Page') {
+            //also refer to parameterInfo.locationType === 'Survey' when/if this part needs extension
             return DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName); // static array, qid array, qid
         }
 
         if (parameterInfo.locationType === 'Survey') {
 
-            var propertyPath = parameterInfo.propertyName;
-
-            if (typeof propertyPath === 'string') {
-                return DataSourceUtil.getSurveyPropertyValueFromConfig(context, propertyPath); // static array, qid array, qid
+            //resource is just the value of the property
+            if (parameterInfo.hasOwnProperty('propertyName')) {
+                return DataSourceUtil.getSurveyPropertyValueFromConfig(context, parameterInfo.propertyName); // static array, qid array, qid
             }
 
-            if (propertyPath instanceof Array) {
+            var i;
+
+            //resource consists of several Config properties
+            if (parameterInfo.hasOwnProperty('propertyNames')) {
+                var properties = parameterInfo.propertyNames;
+                var propertyObj = {};
+
+                for(i=0; i<properties.length; i++) {
+                    var currentProperty = properties[i];
+                    propertyObj[currentProperty] = DataSourceUtil.getSurveyPropertyValueFromConfig(context, currentProperty);
+                }
+                return propertyObj;
+            }
+
+            //resource is found via path array[0].array[1].array[2]...
+            if (parameterInfo.hasOwnProperty('propertyPath')) {
+                var propertyPath = parameterInfo.propertyName;
                 var currentProperty = DataSourceUtil.getSurveyConfig(context);
 
-                for (var i = 0; i < propertyPath.length; i++) {
+                for (i = 0; i < propertyPath.length; i++) {
                     if (currentProperty.hasOwnProperty(propertyPath[i])) {
                         currentProperty = currentProperty[propertyPath[i]];
                     } else {
@@ -125,12 +141,11 @@ class ParameterOptions {
             return { Codes: parameterInfo.qIdCodes, Labels: parameterInfo.qIdLabels }
         }
 
-
         if (parameterInfo.locationType === 'QuestionCategory') {
             var customCategory = DataSourceUtil.getPagePropertyValueFromConfig(context, parameterInfo.page, parameterInfo.propertyName);
             var custom_questions = QuestionUtil.getQuestionsByCategory(context, customCategory);
             var custom_qIds = [];
-            for (var i = 0; i < custom_questions.length; i++) {
+            for (i = 0; i < custom_questions.length; i++) {
                 var custom_question: Question = custom_questions[i];
                 custom_qIds.push(custom_question.QuestionId);
             }
@@ -359,6 +374,43 @@ class ParameterOptions {
         }
 
         throw new Error('ParameterOptions.getOptions_FunctionCall: cannot find handler for path: ' + path);
+    }
+
+    /**
+     *@param {object} context
+     *@param {object} hierarchyInfo {schemaId: val, tableName: val}
+     *@return {array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+    static private function getOptions_HierarchyTable(context, hierarchyInfo) {
+
+        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(hierarchyInfo.schemaId);
+        var table : DBDesignerTable = schema.GetDBDesignerTable(hierarchyInfo.tableName);
+        var lang = report.CurrentLanguage;
+
+        var ids : StringCollection = table.GetColumnValues("id");
+        var labelsEng : StringCollection = table.GetColumnValues("__l9");
+        var labels : StringCollection;
+
+        //hierarchy management's nodes table doesn't support translations
+        //normal tables do support it, so need to double check
+        try {
+            labels = table.GetColumnValues("__l"+lang);
+        } catch(e) {
+            labels = labelsEng;
+        }
+
+        var options = [];
+
+        for(var i=0;i<ids.Count;i++)
+        {
+            var option = {};
+            option.Label = labels[i];
+            option.Code = ids[i];
+            options.push(option);
+        }
+
+        return options;
+
     }
 
     //------------------------------------------------------------------------------------------------------

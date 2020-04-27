@@ -9,7 +9,7 @@ public class SystemConfig {
   */
     static var reportParameterValuesMap = {
 
-        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
+        'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyPath: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
         'p_Trends_trackerSurveys': { type: 'QuestionId', locationType: 'QuestionId', ID: 'source_projectid', CachingDisabled: true}, //temporary
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
@@ -40,12 +40,13 @@ public class SystemConfig {
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionAllocation':   { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'Breakdown'},
         'p_EndUserSelection':   { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
+
         'p_ActionsHitlistSettings':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ActionsHitlistSettings'},
-        'p_OnlyOwnActions':     { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ShowOnlyOwnActions'},
+        'p_OnlyOwnActions':          { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ShowOnlyOwnActions'},
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
-        'p_Hierarchy': { type: 'QuestionId', locationType: 'Survey', propertyName: 'HierarchyTableQuestion', isInReverseOrder: false}
+        'p_Hierarchy': { type: 'HierarchyTable', locationType: 'Survey', propertyNames: ['schemaId', 'tableName']}
 
     };
 
