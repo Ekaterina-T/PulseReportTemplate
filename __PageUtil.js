@@ -26,9 +26,23 @@ class PageUtil {
 
         ParamUtil.Initialise(context); // initialise parameters
 
+        // if data should be suppressed because there's not enough data on hierarchy levels assigned to user, 
+        //then redirect to SuppressMessage page
+        if(state.ReportExecutionMode === ReportExecutionMode.Web && isInitialSuppressApplied(context) && page.CurrentPageId !== 'SuppressMessage') {
+          page.NextPageId = 'SuppressMessage';
+          return;
+        }
+      
+        // if there's enough data on hierarchy levels assigned to user, than redirect to default page
+        // from the SuppressMessage page
+        if(state.ReportExecutionMode === ReportExecutionMode.Web && isPageVisible(context) && !isInitialSuppressApplied(context) && page.CurrentPageId === 'SuppressMessage') {
+            page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
+            return;
+        }
+
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
-        if(state.ReportExecutionMode === ReportExecutionMode.Web && !isPageVisible(context) ) {
+        if(state.ReportExecutionMode === ReportExecutionMode.Web && !isPageVisible(context) && !isInitialSuppressApplied(context)) {
             page.NextPageId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DefaultPage');
             return;
         }
@@ -56,6 +70,11 @@ class PageUtil {
         var pagesToShow = [];
 
         var surveyProperties = DataSourceUtil.getSurveyConfig(context);
+        
+        if (TestSuppressUtil.isInitialReportBaseLow(context)) {
+        pagesToShow.push('SuppressMessage');
+        return pagesToShow;
+        }
 
         for(var property in surveyProperties) {
             if(property.indexOf('Page_')===0) { //page config
@@ -67,6 +86,22 @@ class PageUtil {
             }
         }
         return pagesToShow;
+    }
+    
+    /*
+     * Indicates if there's enough data on hierarchy levels assigned to user or not.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @returns {Boolean}
+     */
+
+    static function isInitialSuppressApplied(context) {
+
+        var log = context.log;
+
+        var pageContext = context.pageContext;
+
+        return SuppressUtil.isInitialReportBaseLow(context);
+
     }
 
     /*
