@@ -383,9 +383,9 @@ class ParameterOptions {
      */
     static private function getOptions_HierarchyTable(context, hierarchyInfo) {
 
-        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(hierarchyInfo.schemaId);
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(hierarchyInfo.schemaId);
         var table : DBDesignerTable = schema.GetDBDesignerTable(hierarchyInfo.tableName);
-        var lang = report.CurrentLanguage;
+        var lang = context.report.CurrentLanguage;
 
         var ids : StringCollection = table.GetColumnValues("id");
         var labelsEng : StringCollection = table.GetColumnValues("__l9");
