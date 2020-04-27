@@ -414,7 +414,6 @@ class ParameterOptions {
         }
 
         return options;
-
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -466,6 +465,10 @@ class ParameterOptions {
 
         if (type === 'DynamicList') {
             return getOptions_DynamicList(context, resource);
+        }
+
+        if (type === 'HierarchyTable') {
+            return getOptions_HierarchyTable(context, resource);
         }
 
         throw new Error('ParamUtil.GetParameterOptions: parameter options cannot be defined.');
