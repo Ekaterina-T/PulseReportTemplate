@@ -46,7 +46,7 @@ public class SystemConfig {
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
-        'p_Hierarchy': { type: 'HierarchyTable', locationType: 'Config', propertyNames: ['schemaId', 'tableName']}
+        'p_Hierarchy': { type: 'HierarchyTable', locationType: 'ReportHierarchy'}
 
     };
 

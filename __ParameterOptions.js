@@ -137,27 +137,8 @@ class ParameterOptions {
             throw new Error('ParameterOptions.getParameterValuesResourceByLocation: cannot build resource for "Survey" unknown type.')
         }
 
-        if (parameterInfo.locationType === 'Config') {
-
-            //resource is just the value of the property
-            if (parameterInfo.hasOwnProperty('propertyName')) {
-                return Config[parameterInfo.propertyName]; // static array, qid array, qid
-            }
-
-            var i;
-            //resource consists of several Config properties
-            if (parameterInfo.hasOwnProperty('propertyNames')) {
-                var properties = parameterInfo.propertyNames;
-                var propertyObj = {};
-
-                for(i=0; i<properties.length; i++) {
-                    var currentProperty = properties[i];
-                    propertyObj[currentProperty] = Config[currentProperty];
-                }
-                return propertyObj;
-            }
-
-            throw new Error('ParameterOptions.getParameterValuesResourceByLocation: cannot build resource for "Survey" unknown type.')
+        if (parameterInfo.locationType === 'ReportHierarchy') {
+            return {schemaId: Config.schemaId, tableName: Config.tableName};
         }
 
         if (parameterInfo.locationType === 'CombinationOfQuestions') {
