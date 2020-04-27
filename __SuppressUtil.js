@@ -282,6 +282,9 @@ class SuppressUtil {
     
     
         static function message (context) {
+            
+            if (isInitialReportBaseLow(context))
+               return TextAndParameterUtil.getTextTranslationByKey(context, 'LowInitialReportBaseWarning');
     
             if (reportBaseIsLow (context))
                 return TextAndParameterUtil.getTextTranslationByKey(context, 'LowReportBaseWarning');
