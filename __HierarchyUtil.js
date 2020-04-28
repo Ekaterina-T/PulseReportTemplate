@@ -238,20 +238,29 @@ class HierarchyUtil {
     /**
      * @memberof HierarchyUtil
      * @function getHierarchyLevelToCompare
-     * @description gets BA level from DB table for the current node
+     * @description gets benchmark level from DB table/HM for the current node
      * @param {Object} context {confirmit: confirmit, log: log}
-     * @returns {String}
+     * @returns {Object}
      */
     static function getHierarchyLevelToCompare(context) {
 
         var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var level = {};
+
         var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
-        var filteredRow: DataRow[] = dbTable.Select("id='"+ bases[0] +"'");
-        
-        if (filteredRow.length > 0) 
+        var benchColumn = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBenchmarkDBColumn');
+        var colName = benchColumn.name;
+        var colType = benchColumn.type;        
+        if (colType == "HMcolumn" || colType == "DDcolumn") colName = "__l9" + colName;
+      
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+        var StringColl = dbTableNew.GetColumnValues(colName, 'id', bases[0]);
+      
+        if (StringColl.Count > 0) 
         {
-          level['id'] = filteredRow[0]['upperlevelba'];
+          level['id'] = StringColl[0];
           var BARow: DataRow[] = dbTable.Select("id='"+ level['id'] +"'");
           if (BARow.length > 0) {
             level['label'] = BARow[0]['__l9'];
