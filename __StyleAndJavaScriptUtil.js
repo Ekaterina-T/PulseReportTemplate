@@ -253,6 +253,13 @@ class StyleAndJavaScriptUtil {
         css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label::after {'
                         +'background-color: '+mainColor
                         +'}';
+        //InitialSuppress and GlobalSuppress messages
+        css_string += '.initial-suppress-warning {'
+                        + 'color: '+mainColor + '!important;'
+                        +'}';
+        css_string += '.global-suppress-warning {'
+                        + 'color: '+mainColor + '!important;'
+                        +'}';
 
         return '<style>'+css_string+'</style>';
     }
