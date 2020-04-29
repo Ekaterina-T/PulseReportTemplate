@@ -151,6 +151,25 @@ class SuppressUtil {
             table.RowHeaders.Add(hq);
         }
     
+        /*Table for the SuppressMessage page*/
+        static function buildReportBaseNoFiltersTable(context) {
+    
+            var report = context.report;
+            var state = context.state;
+            var table = context.table;
+            var log = context.log;
+    
+            var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+            var qe : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, response.qId);
+            var hq: HeaderQuestion = new HeaderQuestion(qe);
+            hq.IsCollapsed = true;
+            hq.ShowTotals = true;
+            hq.Distributions.Enabled = true;
+            hq.Distributions.Count = true;
+    
+            table.RowHeaders.Add(hq);
+        }
+    
     
         // Hide small units: a node should not show if it has less than X
         static function reportBaseIsLow (context) {
@@ -243,12 +262,27 @@ class SuppressUtil {
     
         static function isGloballyHidden (context) {
     
-            return reportBaseIsLow (context) || hierarchyUnitIsSensitive (context);
+            return reportBaseIsLow (context) || hierarchyUnitIsSensitive (context) || isInitialReportBaseLow(context);
     
         }
     
+        static function isInitialReportBaseLow(context) {
+    
+            var report = context.report;
+            var log = context.log;
+            
+            
+            var N_of_participants = report.TableUtils.GetCellValue('ConfidentialityInitialSuppress:ReportBaseNoFilters',1, 1).Value;
+    
+            if (N_of_participants.Equals(Double.NaN) || (N_of_participants < SuppressConfig.ReportBaseSuppressValue)) {
+                return true;
+            }
+            return false;
+        }
     
         static function message (context) {
+            
+            //text for initialReportBaseIsLow is defined on the text component on the SuppressMessagePage
     
             if (reportBaseIsLow (context))
                 return TextAndParameterUtil.getTextTranslationByKey(context, 'LowReportBaseWarning');
@@ -273,7 +307,7 @@ class SuppressUtil {
             var log = context.log;
     
             // data suppression isn't applied to Response Rate page, so no warning is displayed
-            if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions') {
+            if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions' || pageContext.Items['CurrentPageId'] === 'SuppressMessage') {
                 return true;
             }
             return !(SuppressUtil.reportBaseIsLow (context) || SuppressUtil.hierarchyUnitIsSensitive (context));
