@@ -257,8 +257,11 @@ class StyleAndJavaScriptUtil {
         css_string += '.initial-suppress-warning {'
                         + 'color: '+mainColor + '!important;'
                         +'}';
-        css_string += '.global-suppress-warning {'
+                        
+        css_string += '.global-warning {'
                         + 'color: '+mainColor + '!important;'
+                        + 'font-size: 2em !important;'
+                        + 'padding: 0.5em;'
                         +'}';
 
         return '<style>'+css_string+'</style>';
