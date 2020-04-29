@@ -425,6 +425,27 @@ class Filters {
       }
       return '';
     }
+	
+    /**
+     * @description function to generate a script expression to filter by user hierarchy node assignments
+     * @param {Object} context
+     * @returns {String} filter script expression (InHierarchy(...))
+     */
+      static function getInitialReportBaseTableFilterExpression(context) {
+  
+       var nodesAssigned = context.user.GetNodeAssignments();
+
+       if(nodesAssigned) {
+            var filterExpr = [];
+
+            for(var i=0; i< nodesAssigned.length; i++) {
+              filterExpr.push(HierarchyUtil.getHierarchyFilterExpressionForNode (context, nodesAssigned[i]));
+            }
+            return filterExpr;
+        }
+
+        return '';
+    }
 
     /**
      * not empty comments filter
