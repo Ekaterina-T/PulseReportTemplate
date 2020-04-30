@@ -264,8 +264,8 @@ class HierarchyUtil {
           var BARow: DataRow[] = dbTable.Select("id='"+ level['id'] +"'");
           if (BARow.length > 0) {
             level['label'] = BARow[0]['__l9'];
+            return level;
           }
-          if (level['id']) return level;
         }
               
       	return null;
