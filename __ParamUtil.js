@@ -68,7 +68,7 @@ class ParamUtil {
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
         
         if (parameterName == 'p_Wave') {
-			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue')) {
+			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue').length > 0) {
 				return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
 			}
 			else {
