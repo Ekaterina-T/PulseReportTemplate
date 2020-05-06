@@ -125,9 +125,25 @@ class PageResults {
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         var isDimensionVisible = tabSwitcher.length === 0 || tabSwitcher[0] === 'withDims';
-
+        
         for (var i = 0; i < categorizations.length; i++) {
 
+            //dimension
+          if (isDimensionVisible) {
+              var dimension: HeaderCategorization = new HeaderCategorization();
+              dimension.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
+              dimension.DataSourceNodeId = DataSourceUtil.getDsId(context);
+              dimension.DefaultStatistic = StatisticsType.Average;
+              dimension.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+              dimension.Preaggregation = PreaggregationType.Average;
+              dimension.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+              dimension.Collapsed = true;
+              dimension.Totals = true;
+                          
+              table.RowHeaders.Add(dimension);
+          	}
+          
+            //statements
             var categorization: HeaderCategorization = new HeaderCategorization();
             categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
             categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
@@ -136,7 +152,7 @@ class PageResults {
             categorization.Preaggregation = PreaggregationType.Average;
             categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
             categorization.Collapsed = false;
-            categorization.Totals = isDimensionVisible;
+            categorization.Totals = false;
 
             TableUtil.addBreakByNestedHeader(context, categorization);
             table.RowHeaders.Add(categorization);
