@@ -67,14 +67,14 @@ class ParamUtil {
 		}
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
         
-        if (parameterName == 'p_Wave' && parameterOptions.length == 0) {
+        /*if (parameterName == 'p_Wave' && parameterOptions.length == 0) {
 			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue')) {
 				return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
 			}
 			else {
 				throw new Error('ParamUtil.getDefaultParameterValue: DefaultWaveValue is not defined in Config');
 			}
-		}
+		}*/
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
