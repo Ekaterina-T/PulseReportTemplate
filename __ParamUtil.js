@@ -439,8 +439,10 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }*/
 
-        if(parameterName === 'p_TimeUnitWithDefault' && pageId === 'Page_Trends') {
-            return !isPulseProgram;
+        if(parameterName === 'p_TimeUnitWithDefault') {
+		if (pageId === 'Page_Trends') {
+			return !isPulseProgram;
+		}
         }
 
         if (parameterName === 'p_Trends_trackerSurveys') {
