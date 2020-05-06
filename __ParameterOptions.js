@@ -221,9 +221,6 @@ class ParameterOptionsBuilder {
             var option = {};
             option.Code = qList[i]; // propertyValue[i] is qid in this case
             option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
-            if (option.Code != '2020H1') {
-            parameterOptions.push(option);
-            }
         }
 
         return parameterOptions;
