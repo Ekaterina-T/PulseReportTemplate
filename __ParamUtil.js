@@ -60,6 +60,10 @@ class ParamUtil {
         var log = context.log;
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+        
+        if (parameterName == 'p_Wave') {
+            return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
+        }
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
