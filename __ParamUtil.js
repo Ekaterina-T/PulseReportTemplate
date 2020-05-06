@@ -45,6 +45,9 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
 	 }
+         else {
+		 log.LogDebug('Here comes the 2020H1 code');
+	 }
         }
 
         return;
