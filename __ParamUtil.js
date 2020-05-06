@@ -59,7 +59,22 @@ class ParamUtil {
 
         var log = context.log;
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
+        if (parameterName == 'p_Wave') {
+			log.LogDebug('p_Wave options:');
+		for (var i = 0; i < parameterOptions.length; i++) {
+			log.LogDebug(parameterOptions[i]);
+		 }
+		}
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
+        
+        if (parameterName == 'p_Wave' && parameterOptions.length == 0) {
+			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue')) {
+				return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
+			}
+			else {
+				throw new Error('ParamUtil.getDefaultParameterValue: DefaultWaveValue is not defined in Config');
+			}
+		}
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
