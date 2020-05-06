@@ -40,14 +40,9 @@ class ParamUtil {
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
-	 if (parameterOptions[i].Code != '2020H1') {
             val.StringKeyValue = parameterOptions[i].Code;
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
-	 }
-         else {
-		 log.LogDebug('Here comes the 2020H1 code');
-	 }
         }
 
         return;
@@ -72,14 +67,14 @@ class ParamUtil {
 		}
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
         
-        /*if (parameterName == 'p_Wave' && parameterOptions.length == 0) {
+        if (parameterName == 'p_Wave') {
 			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue')) {
 				return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
 			}
 			else {
 				throw new Error('ParamUtil.getDefaultParameterValue: DefaultWaveValue is not defined in Config');
 			}
-		}*/
+		}
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
