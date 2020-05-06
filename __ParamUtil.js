@@ -461,6 +461,10 @@ class ParamUtil {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
 
+        if (parameterName === 'p_TagQs') {
+            return HierarchyUtil.allAssignedNodesLowest(context) ? false : true;
+        }
+
         return true;
     }
 
