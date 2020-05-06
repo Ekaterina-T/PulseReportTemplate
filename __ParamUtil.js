@@ -318,6 +318,10 @@ class ParamUtil {
             // single select parameter
             if (param instanceof ParameterValueResponse) {
                 //log.LogDebug('SINGLE: stringKeyValue='+param.StringKeyValue+'; stringValue='+state.Parameters.GetString(parameterName));
+ 		if (parameterName == 'p_Wave') {
+			log.LogDebug('p_Wave selected codes:');
+			log.LogDebug('SINGLE: stringKeyValue='+param.StringKeyValue+'; stringValue='+state.Parameters.GetString(parameterName));
+		}
                 return [param.StringKeyValue || state.Parameters.GetString(parameterName)];
             }
 
