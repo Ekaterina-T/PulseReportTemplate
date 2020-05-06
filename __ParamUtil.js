@@ -68,10 +68,13 @@ class ParamUtil {
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
         
         if (parameterName == 'p_Wave') {
-			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue').length > 0) {
+			if (DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue')) {
+				log.LogDebug("Property found");
 				return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
 			}
 			else {
+				log.LogDebug("Property not found");
+				log.LogDebug(DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue'));
 				throw new Error('ParamUtil.getDefaultParameterValue: DefaultWaveValue is not defined in Config');
 			}
 		}
