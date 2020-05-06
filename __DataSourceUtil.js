@@ -157,7 +157,7 @@ class DataSourceUtil {
         }
 
         //property is not found but it's mandatory for that case
-        if(isMandatory) {
+        if(isMandatory!==false) {
             throw new Error('DataSourceUtil.getPagePropertyValueFromConfig: property "'+propertyName+'" is not found. Check Config settings for page "'+pageId+'", '+ getProgramDsId(context));
         }
 

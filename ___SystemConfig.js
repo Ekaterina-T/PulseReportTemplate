@@ -24,6 +24,7 @@ public class SystemConfig {
         'p_DirectFilter':         { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DirectFilter'},
 
         'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
+        'p_OrgOverviewBreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'OrgOverviewBreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
@@ -47,7 +48,8 @@ public class SystemConfig {
     // mandatory parameters can be single or multi. Must have default value when a page opens
     static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
-                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher'];
+                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher',
+                                            'p_OrgOverviewBreakBy'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead

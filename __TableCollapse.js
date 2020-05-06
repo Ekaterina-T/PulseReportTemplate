@@ -35,8 +35,15 @@ class TableCollapse
   }
   
   //setup collapsible structure for table with flat hierarchy (no other headers)
-  static function setupCollapsibleTable_Hier(table, divId, text, report, confirmit) 
+  static function setupCollapsibleTable_Hier(context, table, divId, text, report, confirmit)
   {
+    var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
+    var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
+
+    if(rowsQidInfo.standardType !== 'hierarchy') {
+      return;
+    }
+
     if (cfg.hier.length==0) getHier(confirmit);                     // get hier from DB designer
     var headers = report.TableUtils.GetRowHeaderCategoryIds(table); // table row header ids
     var hier = []; 

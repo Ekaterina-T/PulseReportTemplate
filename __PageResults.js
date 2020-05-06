@@ -458,7 +458,6 @@ class PageResults {
             categoryDistr.Totals = false;
             baseDist.Distributions.Enabled = true;
             baseDist.Decimals = 0;
-            baseDist.HideHeader = true;
 
             if (selectedDistr === 'C') { // Counts
 

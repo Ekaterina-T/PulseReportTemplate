@@ -39,53 +39,64 @@ class PageKPI {
      * @description function to render the KPI table
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
-  static function tableKPI_Render(context){
-    
-    var table = context.table;
-    var log = context.log;
-    var suppressSettings = context.suppressSettings;
-    var pageId = PageUtil.getCurrentPageIdInConfig(context);
+    static function tableKPI_Render(context){
 
-    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
-    
-    for (var i=0; i < Qs.length; i++) {
-      
-      var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
-      var row;
-      
-      if(header.Type === 'Question') {        
-        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, header.Code);
-        row = new HeaderQuestion(qe);
-        row.IsCollapsed = true;
-        row.HideHeader = true;
-        
-      } else if(header.Type === 'Dimension') {
-        
-        row = new HeaderCategorization();        
-        row.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-        row.DataSourceNodeId = DataSourceUtil.getDsId(context);
-        row.DefaultStatistic = StatisticsType.Average;
-        row.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-        row.Preaggregation = PreaggregationType.Average;
-        row.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/browse/TQA-4116
-        row.Collapsed = true;
-        row.Totals = true;
-      }      
-      
-      TableUtil.maskOutNA(context, row);
-      table.RowHeaders.Add(row);
+        var table = context.table;
+        var log = context.log;
+        var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
+
+        for (var i=0; i < Qs.length; i++) {
+
+            var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
+            var row;
+
+            if(header.Type === 'Question') {
+                var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, header.Code);
+                row = new HeaderQuestion(qe);
+                row.IsCollapsed = true;
+                row.HideHeader = true;
+
+            } else if(header.Type === 'Dimension') {
+
+                row = new HeaderCategorization();
+                row.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                row.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                row.DefaultStatistic = StatisticsType.Average;
+                row.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                row.Preaggregation = PreaggregationType.Average;
+                row.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/browse/TQA-4116
+                row.Collapsed = true;
+                row.Totals = true;
+            }
+
+            TableUtil.maskOutNA(context, row);
+            table.RowHeaders.Add(row);
+        }
+
+        // add column statics
+        var s : HeaderStatistics = new HeaderStatistics();
+        s.Statistics.Avg = true;
+        table.ColumnHeaders.Add(s);
+
+        // add distribution columns
+        if(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showKPISpread')) {
+            var distr : HeaderCategories = new HeaderCategories();
+            distr.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'NPSRecodingId');
+            distr.Totals = false;
+            distr.Distributions.Enabled = true;
+            distr.Distributions.HorizontalPercents = true;
+            distr.Decimals = Config.Decimal;
+            table.ColumnHeaders.Add(distr);
+        }
+
+        // global table settings
+        table.Caching.Enabled = false;
+        SuppressUtil.setTableSuppress(table, suppressSettings);
+
     }
-    
-    // add column statics
-    var s : HeaderStatistics = new HeaderStatistics();
-    s.Statistics.Avg = true;
-    table.ColumnHeaders.Add(s);
-    
-    // global table settings
-    table.Caching.Enabled = false;
-    SuppressUtil.setTableSuppress(table, suppressSettings);
-    
-  }
 
 
     /**
@@ -122,28 +133,28 @@ class PageKPI {
      * @description function to render the Trend table
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
-  static function tableTrend_Render(context){
-    
-    var table = context.table;
-    var log = context.log;
-    var suppressSettings = context.suppressSettings;
-    var pageId = PageUtil.getCurrentPageIdInConfig(context);
-    
-    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
-    
-    for (var i=0; i<Qs.length; i++) {     
-      table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
+    static function tableTrend_Render(context){
+
+        var table = context.table;
+        var log = context.log;
+        var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
+
+        for (var i=0; i<Qs.length; i++) {
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
+        }
+        // add column - trending by Date variable
+        var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
+        TableUtil.addTrending(context, dateQId);
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.Decimals = Config.Decimal;
+        SuppressUtil.setTableSuppress(table, suppressSettings);
+
     }
-    // add column - trending by Date variable
-    var dateQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'DateQuestion');
-    TableUtil.addTrending(context, dateQId);
-    
-    // global table settings
-    table.Caching.Enabled = false;
-    table.Decimals = Config.Decimal;
-    SuppressUtil.setTableSuppress(table, suppressSettings);
-    
-  }
 
     /**
      * @memberof PageKPI
@@ -152,34 +163,34 @@ class PageKPI {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Boolean}
      */
-  static function verbatim_Hide(context){
-    
-    if (SuppressUtil.isGloballyHidden(context)) {
-      return true;
+    static function verbatim_Hide(context){
+
+        if (SuppressUtil.isGloballyHidden(context)) {
+            return true;
+        }
+
+        var log = context.log;
+        var report = context.report;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        // check if question defined
+        if(!DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment')) {
+            throw new Error('PageKPI.verbatim_Hide: KPI Comment question is not specified.');
+        }
+
+        // check base value for the verbatim question. If it is less than VerbatimSuppressValue, Verbatim table is hidden
+
+        var counts : Datapoint[] = report.TableUtils.GetColumnValues("VerbatimBase", 1);
+
+        for (var i=0; i<counts.Length; i++) {
+            var base = parseInt(counts[i].Value);
+            if (base < SuppressConfig.VerbatimSuppressValue) {
+                return true;
+            }
+        }
+
+        return false;
     }
-    
-    var log = context.log;
-    var report = context.report;
-    var pageId = PageUtil.getCurrentPageIdInConfig(context);
-    
-    // check if question defined
-    if(!DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIComment')) {
-      throw new Error('PageKPI.verbatim_Hide: KPI Comment question is not specified.');
-    }
-    
-    // check base value for the verbatim question. If it is less than VerbatimSuppressValue, Verbatim table is hidden
-    
-    var counts : Datapoint[] = report.TableUtils.GetColumnValues("VerbatimBase", 1);
-    
-    for (var i=0; i<counts.Length; i++) {
-      var base = parseInt(counts[i].Value);
-      if (base < SuppressConfig.VerbatimSuppressValue) {
-        return true;
-      }
-    }
-    
-    return false;
-  }
 
     static function verbatim_Render(context) {
 
@@ -198,6 +209,59 @@ class PageKPI {
         //verbatimTable.HideData.BaseLessThan = Config.SuppressSettings.VerbatimSuppressValue;
     }
 
+
+    /**
+     *
+     */
+    static function getDistributionKPIResult(context, values, startIndex) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        if(!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showKPISpread')) {
+            return [];
+        }
+
+        var distribution = [];
+        var distributionColors = Config.npsColors_Distribution;
+
+        if(!distributionColors || distributionColors.length === 0) {
+            throw new Error('PageKPI.getDistributionKPIResult: no distribution descriptor provided for LTR scale');
+        }
+
+        for(var j=0; j<distributionColors.length; j++) {
+            var spread = {};
+            var cell = values[j+startIndex];
+            var value = (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) ? (cell.Value*100).toFixed(Config.Decimal) : 0
+            spread.value = value;
+            spread.label = TextAndParameterUtil.getTextTranslationByKey(context, distributionColors[j].label);
+            spread.color = distributionColors[j].color;
+            distribution.push(spread);
+        }
+
+        return distribution;
+    }
+
+    /**
+     *
+     */
+    static function getScoreKPIResult(context, scoreCell) {
+
+        var result = {score: 'NA', color: Config.primaryGreyColor};
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
+
+        if (!scoreCell.IsEmpty && !scoreCell.Value.Equals(Double.NaN)) {
+            result.score = parseFloat(scoreCell.Value.toFixed(Config.Decimal));
+            for (var j=0; j<thresholds.length; j++) {
+                if (result.score >= thresholds[j].score) {
+                    result.color =  thresholds[j].color;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     /**
      * @memberof PageKPI
      * @function getKPIResult
@@ -205,45 +269,107 @@ class PageKPI {
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @returns {Object} - object with properties title and score
      */
-  static function getKPIResult(context) {
-    
-    var report = context.report;
-    var log = context.log;
-    var pageId = PageUtil.getCurrentPageIdInConfig(context);
-    
-    // add row = KPI question
-    var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI');
+    static function getKPIResult(context) {
 
-    if(Qs.length === 0) {
-        return [];
-    }
+        var report = context.report;
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-    var titles = report.TableUtils.GetRowHeaderCategoryTitles('KPI:KPI');
+        // add row = KPI question
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI');
 
-    var results = [];
-    for (var i=0; i < Qs.length; i++) {
-      
-      var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);         
-      var result = {qid: header.Code, title: titles[i], score: 'N/A', color: Config.primaryGreyColor};
-      
-      if (!SuppressUtil.isGloballyHidden(context) && report.TableUtils.GetRowValues("KPI:KPI",i+1).length) {
-        var cell : Datapoint = report.TableUtils.GetCellValue("KPI:KPI",i+1,1);
-        if (!cell.IsEmpty && !cell.Value.Equals(Double.NaN)) {
-          result.score = parseFloat(cell.Value.toFixed(Config.Decimal));
-          var thresholds = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'KPIthreshold');
-          for (var j=0; j<thresholds.length; j++) {
-            if (result.score >= thresholds[j].score) {
-              result.color =  thresholds[j].color;
-              break;
-            }
-          }
+        if(Qs.length === 0 || SuppressUtil.isGloballyHidden(context)) {
+            return [];
         }
-      }
-      results.push(result);
+
+        var titles = report.TableUtils.GetRowHeaderCategoryTitles('KPI:KPI'); //
+        var results = [];
+
+        for (var i=0; i < Qs.length; i++) {
+
+            var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
+            var result = {qid: header.Code, title: titles[i], score: { value: 'N/A', color: Config.primaryGreyColor }, distribution: []};
+            var rowValues: Datapoint[] = report.TableUtils.GetRowValues("KPI:KPI",i+1);
+
+            if (rowValues.length) {
+                var scoreCell : Datapoint = rowValues[0];
+                result.score = getScoreKPIResult(context, scoreCell);
+                result.distribution = getDistributionKPIResult(context, rowValues, 1);
+            }
+            results.push(result);
+        }
+
+        return results;
     }
-   
-      return results;
-  }
+
+    static function buildKPIDistributionLegend(context) {
+
+        var distributionColors = Config.npsColors_Distribution;
+        var legend = '<div class="distribution-container__legend"><div class="bar-chart-legend">';
+
+        for (var i = 0; i < distributionColors.length; i++) {
+            legend += '<div class="bar-chart-legend__item legend-item">' +
+                '<div class="legend-item__color" style="background-color: ' + distributionColors[i].color + ';"></div>' +
+                '<div class="legend-item__label">' + TextAndParameterUtil.getTextTranslationByKey(context, distributionColors[i].legendLabel) + '</div>' +
+                '</div>';
+        }
+
+        legend += '</div></div>';
+
+        return legend;
+    }
+
+    static function buildKPIDistributionChart(context, qid, distribution) {
+
+        if(!distribution || distribution.length ===0) {
+            return '';
+        }
+
+        var spread = [];
+
+        for(var i=0; i<distribution.length; i++) {
+            var value = distribution[i].value;
+            if(value>0) {
+                var color = distribution[i].color;
+                var title = distribution[i].label;
+                var bar = '<div class="distribution-container__bar" style="width:'+value+'%; background-color:'+color+'" title="'+title+'">'+value+'%</div>';
+                spread.push(bar);
+            }
+        }
+
+        var barchart = '<div class = "distribution-container__barchart">'+spread.join('')+'</div>';
+        var legend = buildKPIDistributionLegend(context);
+
+        return '<div id="distribution-container-'+qid+'" class = "distribution-container">'+barchart+legend+'</div>';
+
+    }
+
+
+    /**
+     * @memberof PageCategorical
+     * @function buildCategoricalTiles
+     * @description function to generate material cards with categories
+     * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function buildKPITiles (context) {
+
+        var log = context.log;
+
+        // render cards
+        var kpiResults = getKPIResult(context);
+        for (var i=0; i<kpiResults.length; i++) {
+            var content = {
+                title: kpiResults[i].title,
+                tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'KPI_InfoTooltip'),
+                hoverText: '',
+                qid: kpiResults[i].qid,
+                data: '<div id="gauge-container-'+kpiResults[i].qid+'" class = "gauge-container"> </div>'+buildKPIDistributionChart(context, kpiResults[i].qid, kpiResults[i].distribution)
+            };
+
+            CardUtil.RenderCard (context, content, 'material-card--kpi');
+        }
+    }
+
 
     /**
      *
@@ -279,36 +405,6 @@ class PageKPI {
     }
 
     /**
-     * @memberof PageCategorical
-     * @function buildCategoricalTiles
-     * @description function to generate material cards with categories
-     * @param {Object} context - {report: report, user: user, state: state, confirmit: confirmit, log: log}
-     */
-
-
-    static function buildKPITiles (context) {
-
-        var report = context.report;
-        var state = context.state;
-        var log = context.log;
-        var text = context.text;
-
-        // render cards
-        var kpiResults = getKPIResult(context);
-        for (var i=0; i<kpiResults.length; i++) {
-            var content = {
-                title: kpiResults[i].title,
-                tooltip: TextAndParameterUtil.getTextTranslationByKey(context, 'KPI_InfoTooltip'),
-                hoverText: '',
-                qid: kpiResults[i].qid,
-                data: '<div id="gauge-container-'+kpiResults[i].qid+'" class = "gauge-container"> </div>'
-            };
-
-            CardUtil.RenderCard (context, content, 'material-card--kpi');
-        }
-    }
-
-        /**
      * @memberof PageKPI
      * @function tableOrgOverview_Hide
      * @description function to hide the OrgOverview table
@@ -317,89 +413,96 @@ class PageKPI {
      */
     static function tableOrgOverview_Hide(context){
 
-      return SuppressUtil.isGloballyHidden(context);
+        return SuppressUtil.isGloballyHidden(context);
 
     }
 
     /**
-   * @memberof PageKPI
-   * @function tableOrgOverview_Render
-   * @description function to render the OrgOverview table
-   * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-   */
+     * @memberof PageKPI
+     * @function tableOrgOverview_Render
+     * @description function to render the OrgOverview table
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     */
     static function tableOrgOverview_Render(context){
-      
-      var table = context.table;
-      var log = context.log;
-      var suppressSettings = context.suppressSettings;
-      var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-      var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-      var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierarchyQId);
-      var hh: HeaderQuestion = new HeaderQuestion(qe);
-      hh.ShowTotals = false;
-      hh.HierLayout = HierLayout.Flat;
-      hh.ReferenceGroup.Enabled = true;
-      hh.ReferenceGroup.Self = true;
-      hh.ReferenceGroup.Levels = '+1';
-      table.RowHeaders.Add(hh);
-      
-      var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
-      qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
-      var hq: HeaderQuestion = new HeaderQuestion(qe);
-      hq.IsCollapsed = true;
-      hq.FilterByMask = true;
-      hq.ShowTotals = false;
-      hq.Distributions.Enabled = true;
-      hq.Distributions.Count = true;
-      hq.HideHeader = true;
-      if (response.codes.length) {
-          var qmask : MaskFlat = new MaskFlat(true);
-          qmask.Codes.AddRange(response.codes);
-          hq.AnswerMask = qmask;
-      }
-      var hc : HeaderSegment = new HeaderSegment(TextAndParameterUtil.getLabelByKey(context, 'Responses'), '');
-      hc.DataSourceNodeId = DataSourceUtil.getDsId (context);
-      hc.SubHeaders.Add(hq);
-      table.ColumnHeaders.Add(hc);
-      
+        var table = context.table;
+        var log = context.log;
+        var suppressSettings = context.suppressSettings;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-      var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
-      
-      for (var i=0; i<Qs.length; i++) { 
-        
-        var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
-        var col;
-        
-        if(header.Type === 'Question') {        
-          qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
-          col = new HeaderQuestion(qe);
-          col.IsCollapsed = true;
-          col.DefaultStatistic = StatisticsType.Average;
-          
-        } else if(header.Type === 'Dimension') {
-          
-          col = new HeaderCategorization();        
-          col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-          col.DataSourceNodeId = DataSourceUtil.getDsId(context);
-          col.DefaultStatistic = StatisticsType.Average;
-          col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-          col.Preaggregation = PreaggregationType.Average;
-          col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
-          col.Collapsed = true;
-          col.Totals = true;
-        }      
-        
-        TableUtil.maskOutNA(context, col);
-        table.ColumnHeaders.Add(col);
-      }       
-    
-      // global table settings
-      table.Caching.Enabled = false;
-      table.RemoveEmptyHeaders.Rows = true;
-      table.Decimals = Config.Decimal;
-      SuppressUtil.setTableSuppress(table, suppressSettings);
+        var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
+        var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
+        var hrows: HeaderQuestion = new HeaderQuestion(qe);
+
+        if(rowsQidInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
+            hrows.HierLayout = HierLayout.Flat;
+            hrows.ReferenceGroup.Enabled = true;
+            hrows.ReferenceGroup.Self = true;
+            hrows.ReferenceGroup.Levels = '+1';
+        }
+
+        hrows.ShowTotals = false;
+        table.RowHeaders.Add(hrows);
+
+        var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+        qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
+        hq.IsCollapsed = true;
+        hq.FilterByMask = true;
+        hq.ShowTotals = false;
+        hq.Distributions.Enabled = true;
+        hq.Distributions.Count = true;
+        hq.HideHeader = true;
+        if (response.codes.length) {
+            var qmask : MaskFlat = new MaskFlat(true);
+            qmask.Codes.AddRange(response.codes);
+            hq.AnswerMask = qmask;
+        }
+        var hc : HeaderSegment = new HeaderSegment(TextAndParameterUtil.getLabelByKey(context, 'Responses'), '');
+        hc.DataSourceNodeId = DataSourceUtil.getDsId (context);
+        hc.SubHeaders.Add(hq);
+        table.ColumnHeaders.Add(hc);
+
+
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'KPI', true);
+
+        for (var i=0; i<Qs.length; i++) {
+
+            var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
+            var col;
+
+            if(header.Type === 'Question') {
+                qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+                col = new HeaderQuestion(qe);
+                col.IsCollapsed = true;
+                col.DefaultStatistic = StatisticsType.Average;
+
+            } else if(header.Type === 'Dimension') {
+
+                col = new HeaderCategorization();
+                col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                col.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                col.DefaultStatistic = StatisticsType.Average;
+                col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                col.Preaggregation = PreaggregationType.Average;
+                col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
+                col.Collapsed = true;
+                col.Totals = true;
+            }
+
+            TableUtil.maskOutNA(context, col);
+            table.ColumnHeaders.Add(col);
+        }
+
+        // global table settings
+        table.Caching.Enabled = false;
+        table.RemoveEmptyHeaders.Rows = true;
+        table.Decimals = Config.Decimal;
+        SuppressUtil.setTableSuppress(table, suppressSettings);
 
     }
+
+
 
 }
