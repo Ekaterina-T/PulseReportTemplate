@@ -38,7 +38,7 @@ class ParamUtil {
 
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, null, 'load'); // get options
 
-        for (var i = 0; i < parameterOptions.length - 1; i++) { // populate parameter
+        for (var i = 1; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
             val.StringKeyValue = parameterOptions[i].Code;
             val.StringValue = parameterOptions[i].Label;
