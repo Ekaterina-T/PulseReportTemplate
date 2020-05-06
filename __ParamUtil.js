@@ -85,7 +85,7 @@ class ParamUtil {
             var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
 
             for (var i = 0; i < parameterOptions.length; i++) {
-                if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
+		    if (qidsWithData.hasOwnProperty(parameterOptions[i].Code) && parameterOptions[i].Code != '2020H1') {
                     return parameterOptions[i].Code;
                 }
             }
