@@ -62,7 +62,7 @@ class ParamUtil {
         if (parameterName == 'p_Wave') {
 			log.LogDebug('p_Wave options:');
 		for (var i = 0; i < parameterOptions.length; i++) {
-			log.LogDebug(parameterOptions[i]);
+			log.LogDebug(parameterOptions[i].Code);
 		 }
 		}
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
