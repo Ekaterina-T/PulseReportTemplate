@@ -38,11 +38,13 @@ class ParamUtil {
 
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, null, 'load'); // get options
 
-        for (var i = 1; i < parameterOptions.length; i++) { // populate parameter
+        for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
+	 if (parameterOptions[i].Code != '2020H1') {
             val.StringKeyValue = parameterOptions[i].Code;
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
+	 }
         }
 
         return;
