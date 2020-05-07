@@ -387,6 +387,7 @@ class ParamUtil {
         var parameter = context.parameter;
         var parameterName = parameter.ParameterId;
         var log = context.log;
+		var pageId;
 
         var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
 
@@ -396,7 +397,7 @@ class ParamUtil {
         
         //after p_projectSelector to be able to iterate export over it
         //in the above case p_projectSelector runs earlier than page script
-        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        //var pageId = PageUtil.getCurrentPageIdInConfig(context);
         
         if (parameterName === 'p_Results_CountsPercents') {
             var user = context.user;
@@ -429,8 +430,11 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }*/
 
-        if(parameterName === 'p_TimeUnitWithDefault' && pageId === 'Page_Trends') {
-            return !isPulseProgram;
+        if(parameterName === 'p_TimeUnitWithDefault') {
+			pageId = PageUtil.getCurrentPageIdInConfig(context);
+			if (pageId === 'Page_Trends') {
+				return !isPulseProgram;
+			}
         }
 
         if (parameterName === 'p_Trends_trackerSurveys') {
