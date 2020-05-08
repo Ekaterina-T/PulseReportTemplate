@@ -445,7 +445,7 @@ class Filters {
             for(var i=0; i< nodesAssigned.length; i++) {
               filterExpr.push(HierarchyUtil.getHierarchyFilterExpressionForNode (context, nodesAssigned[i]));
             }
-            return filterExpr;
+            return filterExpr.join(' OR ');
         }
 
         return '';
