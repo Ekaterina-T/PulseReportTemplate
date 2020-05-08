@@ -392,10 +392,10 @@ class Filters {
         }
 
         var qId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        var waveFromPageContext = context.pageContext.Items['p_Wave'];
 
-        if (selectedCodes.length) {
-            return getFilterExpressionByAnswerRange(context, qId, [selectedCodes[0]]); // wave filter shouldn't support multiple selection
+        if (waveFromPageContext) {
+            return getFilterExpressionByAnswerRange(context, qId, [waveFromPageContext]); // wave filter shouldn't support multiple selection
         }
 
         return '';

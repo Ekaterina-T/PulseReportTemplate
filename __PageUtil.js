@@ -25,6 +25,9 @@ class PageUtil {
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
         ParamUtil.Initialise(context); // initialise parameters
+		if (!Filters.isWaveFilterHidden(context)) {
+           pageContext.Items.Add('p_Wave', ParamUtil.GetSelectedCodes(context, 'p_Wave')[0]);
+		}
         
         // if data should be suppressed because there's not enough data on hierarchy levels assigned to user, 
         //then redirect to SuppressMessage page
