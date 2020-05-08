@@ -2,10 +2,10 @@ class PageResults {
 
 
     /*
-     * Assemble Statements table
-     * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
-     * @param {string} bannerId: explicit bannerId to use, not mandotary
-     */
+  * Assemble Statements table
+  * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
+  * @param {string} bannerId: explicit bannerId to use, not mandotary
+  */
 
     static function tableStatements_Render(context, bannerId) {
 
@@ -25,9 +25,9 @@ class PageResults {
     }
 
     /*
-     * Hide Statements table because of suppress
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Hide Statements table because of suppress
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     static function tableStatements_Hide(context) {
 
@@ -36,10 +36,10 @@ class PageResults {
 
 
     /*
-     * Column Banner selector for Statements table
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     * @param {string} bannerId: explicit bannerId to use, not mandotary
-     */
+  * Column Banner selector for Statements table
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {string} bannerId: explicit bannerId to use, not mandotary
+  */
 
     static function tableStatements_AddColumns(context, bannerId) {
 
@@ -52,9 +52,9 @@ class PageResults {
     }
 
     /*
-     * Add set of rows based on questions or categorizations (for pulse)
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Add set of rows based on questions or categorizations (for pulse)
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     static function tableStatements_AddRows(context) {
 
@@ -68,8 +68,8 @@ class PageResults {
         var showDimensions = isDimensionsMode(context);
 
         /*if (resultStatements && resultStatements.length > 0 && dimensions && dimensions.length > 0) {
-            throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
-        }*/
+    throw new Error('PageResults.tableStatements_AddRows: One of Config properties for page "Results" ResultStatements and Dimensions should be null or [].');
+    }*/
 
         if (!showCustomQuestions && !showDimensions) {
             tableStatements_AddRows_Banner0(context);
@@ -91,9 +91,9 @@ class PageResults {
     }
 
     /*
-     * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Add statement questions as table rows based on Survey Config-> Page_Result-> ResultStatements
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     static function tableStatements_AddRows_Banner0(context) {
 
@@ -113,9 +113,9 @@ class PageResults {
 
 
     /*
-     * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Add categorizations as table rows based on Survey Config-> Page_Result-> Dimensions property
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     static function tableStatements_AddRows_Banner1(context) {
 
@@ -253,10 +253,10 @@ class PageResults {
     }
 
     /*
-     * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     * @param {string} scoreType
-     */
+  * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {string} scoreType
+  */
 
     static function tableStatements_AddColumns_Banner0(context) {
 
@@ -276,12 +276,12 @@ class PageResults {
     }
 
     /*
-     * Add Score calculation
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
-     * @param {Header} parentHeader - not mandotary
-     * @param {Array} [Header1, Header2,...]
-     */
+  * Add Score calculation
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
+  * @param {Header} parentHeader - not mandotary
+  * @param {Array} [Header1, Header2,...]
+  */
     static function addScore(context, parentHeader) {
 
         var log = context.log;
@@ -380,9 +380,9 @@ class PageResults {
     }
 
     /*
-     *  add distribution bar chart
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  *  add distribution bar chart
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function addDistributionBarChart(context) {
 
         var log = context.log;
@@ -440,9 +440,9 @@ class PageResults {
     }
 
     /*
-     *  add scale distribution columns
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  *  add scale distribution columns
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function addScaleDistributionColumns(context) {
 
         var state = context.state;
@@ -504,9 +504,9 @@ class PageResults {
     }
 
     /*
-     *  add base column
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  *  add base column
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function addResponsesColumn(context, parentHeader, isMandatory) {
 
         var state = context.state;
@@ -696,15 +696,15 @@ class PageResults {
 
 
     /*
-     * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     /*
- * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
- * @param {object} context: {state: state, report: report, log: log, table: table}
- * @param {boolean} isNormalizedTable: true for table for normalized questions
- */
+  * Add set of benchmark related set of columns: Benchmarks, Benchmark comparison bar chart
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  * @param {boolean} isNormalizedTable: true for table for normalized questions
+  */
     static function tableStatements_AddBenchmarkColumns_Banner0(context) {
 
         var log = context.log;
@@ -795,6 +795,7 @@ class PageResults {
                     }
                 }
                 table.ColumnHeaders.Add(hierCompContentDB);
+                bmColumn += 1;
             }
 
 
@@ -866,9 +867,9 @@ class PageResults {
 
 
     /*
-     * Conditional Formatting for Statements table
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Conditional Formatting for Statements table
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function tableStatements_ApplyConditionalFormatting(context) {
 
         var table = context.table;
@@ -892,9 +893,9 @@ class PageResults {
 
 
     /*
-     * show distribution bar chart legend
-     * @param {object} context {state: state, report: report, log: log, text: text}
-     */
+  * show distribution bar chart legend
+  * @param {object} context {state: state, report: report, log: log, text: text}
+  */
 
     static function drawDistributionChartLegend(context) {
 
@@ -918,9 +919,9 @@ class PageResults {
     //-----------------------------------------------------------------------------------------------
 
     /*
-     * Assemble Benchmarks table
-     * @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Assemble Benchmarks table
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
 
     static function tableBenchmarks_Render(context) {
 
@@ -937,9 +938,9 @@ class PageResults {
     }
 
     /*
-     * Populate benchmarks table
-     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-     */
+  * Populate benchmarks table
+  * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+  */
     static function tableBenchmarks_AddColumns_Banner0(context) {
 
         var table = context.table;
@@ -1007,20 +1008,20 @@ class PageResults {
 
             //add Benchmark as comparison to upper hierarchy levels
             var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
-            if (hierarchyLevelToCompare.length>0) {
-                for(i=0; i< hierarchyLevelToCompare.length; i++) {
-                    tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
-                }
+
+            for(i=0; i< hierarchyLevelToCompare.length; i++) {
+                tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
             }
+
         }
     }
 
 
     /*
-* Adds segment with proper filter by hierarchy and base and score column for it
-* @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-* @param {level} top or number of levels to go up
-*/
+  * Adds segment with proper filter by hierarchy and base and score column for it
+  * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+  * @param {level} top or number of levels to go up
+  */
     static function tableBenchmarks_addHierarchyBasedComparison(context, level) {
 
         var log = context.log;
@@ -1093,10 +1094,10 @@ class PageResults {
     }
 
     /*
-     * Adds segment with proper filter by survey
-     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-     * @param {string} survey - project id
-     */
+  * Adds segment with proper filter by survey
+  * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+  * @param {string} survey - project id
+  */
     static function tableBenchmarks_addSurveyBasedComparison(context, survey) {
 
         //var log = context.log;
@@ -1148,10 +1149,10 @@ class PageResults {
     }
 
     /*
-     * get code of previous wave
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     * @return {Answer} {Code: code, Label: label}
-     */
+  * get code of previous wave
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  * @return {Answer} {Code: code, Label: label}
+  */
     static function getPreviousWave(context) {
 
         var log = context.log;
@@ -1181,18 +1182,18 @@ class PageResults {
 
 
     /*
-     * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     */
+  * Checks is Benchmark table was build sucessfully, i.e. if benchmark project is defined
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function table_Benchmarks_hide(context) {
         return false;
     }
 
     /*
-     * Gets benchmark surveys
-     *  @param {object} context: {state: state, report: report, log: log, table: table}
-     *  @return {Array} array of pids
-     */
+  * Gets benchmark surveys
+  *  @param {object} context: {state: state, report: report, log: log, table: table}
+  *  @return {Array} array of pids
+  */
     static function getBenchmarkSurveys(context) {
         var surveysToCompare = [];
         var previousSurvey = SurveyTracker.getComparisonTrackerForSelectedPid(context);
@@ -1205,9 +1206,9 @@ class PageResults {
     }
 
     /*
-    * Checks either Dimensions or ResultStatements are specified in config
-    * @param {object} context: {state: state, report: report, log: log, table: table}
-    */
+  * Checks either Dimensions or ResultStatements are specified in config
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
     static function isDimensionsMode(context) {
 
         var log = context.log;
