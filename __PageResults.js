@@ -777,16 +777,6 @@ class PageResults {
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
 
-            //add hierarchy comparison benchmarks
-            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
-            if (hierarchyLevelToCompare.length>0) {
-                for(i=0; i<hierarchyLevelToCompare.length;i++) {
-                    var hierCompContent: HeaderContent = new HeaderContent();
-                    copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
-                    bmColumn += 1;
-                }
-            }
-
             //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
             var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
             if (hierarchyLevel) {
@@ -805,6 +795,17 @@ class PageResults {
                     }
                 }
                 table.ColumnHeaders.Add(hierCompContentDB);
+            }
+
+
+            //add hierarchy comparison benchmarks
+            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
+            if (hierarchyLevelToCompare.length>0) {
+                for(i=0; i<hierarchyLevelToCompare.length;i++) {
+                    var hierCompContent: HeaderContent = new HeaderContent();
+                    copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                    bmColumn += 1;
+                }
             }
         }
 
@@ -1000,6 +1001,10 @@ class PageResults {
         var bases = context.user.PersonalizedReportBase.split(',');
         if (bases.length === 1) {
 
+            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
+            tableBenchmarks_addHierarchyBenchmarkDBColumn(context);
+
+
             //add Benchmark as comparison to upper hierarchy levels
             var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
             if (hierarchyLevelToCompare.length>0) {
@@ -1007,10 +1012,6 @@ class PageResults {
                     tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
                 }
             }
-
-
-            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
-            tableBenchmarks_addHierarchyBenchmarkDBColumn(context);
         }
     }
 
