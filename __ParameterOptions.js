@@ -218,10 +218,12 @@ class ParameterOptionsBuilder {
         }
 
         for (var i = 0; i < qList.length; i++) {
-            var option = {};
-            option.Code = qList[i]; // propertyValue[i] is qid in this case
-            option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
-            parameterOptions.push(option);
+            if(Access.isQuestionAllowed(qList[i], context)) {
+                var option = {};
+                option.Code = qList[i]; // propertyValue[i] is qid in this case
+                option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
+                parameterOptions.push(option);
+            }
         }
 
         return parameterOptions;

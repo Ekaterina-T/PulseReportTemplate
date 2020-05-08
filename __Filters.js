@@ -191,6 +191,10 @@ class Filters {
             return true; // hide
         }
 
+        if (!Access.isQuestionAllowed(filterList[paramNum-1], context)) {
+            return true; // hide
+        }
+
         return false; // don't hide
     }
 
