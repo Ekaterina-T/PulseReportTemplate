@@ -125,24 +125,24 @@ class PageResults {
         var categorizations = getActiveCategorizations(context); //DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         var isDimensionVisible = tabSwitcher.length === 0 || tabSwitcher[0] === 'withDims';
-        
+
         for (var i = 0; i < categorizations.length; i++) {
 
             //dimension
-          if (isDimensionVisible) {
-              var dimension: HeaderCategorization = new HeaderCategorization();
-              dimension.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
-              dimension.DataSourceNodeId = DataSourceUtil.getDsId(context);
-              dimension.DefaultStatistic = StatisticsType.Average;
-              dimension.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-              dimension.Preaggregation = PreaggregationType.Average;
-              dimension.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
-              dimension.Collapsed = true;
-              dimension.Totals = true;
-                          
-              table.RowHeaders.Add(dimension);
-          	}
-          
+            if (isDimensionVisible) {
+                var dimension: HeaderCategorization = new HeaderCategorization();
+                dimension.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
+                dimension.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                dimension.DefaultStatistic = StatisticsType.Average;
+                dimension.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                dimension.Preaggregation = PreaggregationType.Average;
+                dimension.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+                dimension.Collapsed = true;
+                dimension.Totals = true;
+
+                table.RowHeaders.Add(dimension);
+            }
+
             //statements
             var categorization: HeaderCategorization = new HeaderCategorization();
             categorization.CategorizationId = String(categorizations[i]).replace(/[ ,&]/g, '');
@@ -773,16 +773,27 @@ class PageResults {
             bmColumn += 1;
         }
 
-        //add hierarchy comparison benchmarks
+
         var reportBases = context.user.PersonalizedReportBase.split(',');
         if (reportBases.length === 1) {
 
+            //add hierarchy comparison benchmarks
+            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
+            if (hierarchyLevelToCompare.length>0) {
+                for(i=0; i<hierarchyLevelToCompare.length;i++) {
+                    var hierCompContent: HeaderContent = new HeaderContent();
+                    copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                    bmColumn += 1;
+                }
+            }
+
+            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
             var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
             if (hierarchyLevel) {
 
-                var hierCompContent: HeaderContent = new HeaderContent();
+                var hierCompContentDB: HeaderContent = new HeaderContent();
                 var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
-                hierCompContent.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+                hierCompContentDB.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
 
                 for (var j = 0; j < baseValues.length; j++) {
 
@@ -790,13 +801,10 @@ class PageResults {
                     var benchmark = hierValues[j];
 
                     if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                        hierCompContent.SetCellValue(j, benchmark.Value);
+                        hierCompContentDB.SetCellValue(j, benchmark.Value);
                     }
                 }
-
-                table.ColumnHeaders.Add(hierCompContent);
-                //addScoreVsBenchmarkChart(context, 'col-1', 'hierComp');
-
+                table.ColumnHeaders.Add(hierCompContentDB);
             }
         }
 
@@ -989,20 +997,75 @@ class PageResults {
         }
 
 
-        //add Benchmark as comparison to upper/lower hierarchy levels
         var bases = context.user.PersonalizedReportBase.split(',');
-
         if (bases.length === 1) {
-            tableBenchmarks_addHierarchyBasedComparison(context);
+
+            //add Benchmark as comparison to upper hierarchy levels
+            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
+            if (hierarchyLevelToCompare.length>0) {
+                for(i=0; i< hierarchyLevelToCompare.length; i++) {
+                    tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
+                }
+            }
+
+
+            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
+            tableBenchmarks_addHierarchyBenchmarkDBColumn(context);
         }
     }
 
 
     /*
+* Adds segment with proper filter by hierarchy and base and score column for it
+* @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+* @param {level} top or number of levels to go up
+*/
+    static function tableBenchmarks_addHierarchyBasedComparison(context, level) {
+
+        var log = context.log;
+        var report = context.report;
+        var levelSegment: HeaderSegment = new HeaderSegment();
+        var parentsList = [];
+
+        levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        levelSegment.SegmentType = HeaderSegmentType.Expression;
+        levelSegment.HideData = true;
+
+        if (level === 'top') {
+            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
+        } else if (level === 'parent') {
+            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
+        } else {
+            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
+        }
+
+        if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
+            var parentArr = parentsList[0];
+            var index = parentArr.length - 1;
+
+            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+
+        } else {
+            return; // no such parent in the hierarchy
+        }
+
+        //calc score
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = levelSegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+        newHeaders[1].SubHeaders.Add(levelSegment);
+
+    }
+
+
+    /**
+     * IF-45
+     * @returns {Generator<*, void, ?>}
+     * @constructor
      * Adds segment with proper filter by hierarchy and base and score column for it
      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-    */
-    static function tableBenchmarks_addHierarchyBasedComparison(context) {
+     */
+    static function tableBenchmarks_addHierarchyBenchmarkDBColumn(context) {
 
         var log = context.log;
         var report = context.report;
@@ -1026,7 +1089,6 @@ class PageResults {
         var newHeaders = addScore(context);
         newHeaders[0].Title = levelSegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
         newHeaders[1].SubHeaders.Add(levelSegment);
-
     }
 
     /*
@@ -1115,7 +1177,6 @@ class PageResults {
 
         return null;
     }
-
 
 
     /*
