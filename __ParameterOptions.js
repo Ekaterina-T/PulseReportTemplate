@@ -218,12 +218,12 @@ class ParameterOptionsBuilder {
         }
 
         for (var i = 0; i < qList.length; i++) {
-            if(Access.isQuestionAllowed(qList[i], context)) {
+          //  if(Access.isQuestionAllowed(qList[i], context)) {
                 var option = {};
                 option.Code = qList[i]; // propertyValue[i] is qid in this case
                 option.Label = QuestionUtil.getQuestionTitle(context, qList[i]);
                 parameterOptions.push(option);
-            }
+           // }
         }
 
         return parameterOptions;
@@ -462,6 +462,30 @@ class ParameterOptionsBuilder {
     }
 
     /**
+     *@param {Object} context
+     *@param {Array} array of options [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     *@param {String} parameterId
+     *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+    static function maskOptions(context, options, parameterId) {
+     
+        var log = context.log;
+        var parameterInfo = GetParameterInfoObject(context, parameterId);
+        var type = parameterInfo.type;
+        
+        if (type === 'QuestionList') {
+            var masked = [];
+            for (var i = 0; i < options.length; i++) {
+              if(Access.isQuestionAllowed(options[i]['Code'], context)) {
+                masked.push(options[i]);
+              }
+            }
+            return masked;
+        }
+        return options;
+    }
+
+    /**
      * This function returns parameter options in standardised format.
      * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
      * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
@@ -479,12 +503,14 @@ class ParameterOptionsBuilder {
             CacheParameterOptions(context, parameterId);
         }
 
-        if(isCached) {
-            return CacheUtil.GetParameterOptions(context, parameterId);
-        }
+        //if(isCached) {
+        //    return CacheUtil.GetParameterOptions(context, parameterId);
+        //}
 
-        options = GetProcessedList(context, parameterId); //for params that shouldn't be cached
+        options = (isCached) ? CacheUtil.GetParameterOptions(context, parameterId) : GetProcessedList(context, parameterId); //for params that shouldn't be cached
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+
+        options = maskOptions(context, options, parameterId);
 
         return options;
     }
