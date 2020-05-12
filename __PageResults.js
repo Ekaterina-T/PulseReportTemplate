@@ -763,49 +763,56 @@ class PageResults {
             }
         }
 
-        // add benchmark data based on benchmark project
-        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        //hide benchmark when breakby hierarchy IF-120 
+        var hierarchyQ = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion');
+ 		var breakbyQ = ParamUtil.GetSelectedCodes(context, 'p_Results_BreakBy');
+        
+     	if (breakbyQ != hierarchyQ) {
 
-            var benchmarkContent: HeaderContent = new HeaderContent();
-            copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
-            benchmarkContent.HideData = true;
-            addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
-            bmColumn += 1;
-        }
+            // add benchmark data based on benchmark project
+            if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
-
-        var reportBases = context.user.PersonalizedReportBase.split(',');
-        if (reportBases.length === 1) {
-
-            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
-            var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
-            if (hierarchyLevel) {
-
-                var hierCompContentDB: HeaderContent = new HeaderContent();
-                var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
-                hierCompContentDB.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
-
-                for (var j = 0; j < baseValues.length; j++) {
-
-                    base = baseValues[j];
-                    var benchmark = hierValues[j];
-
-                    if (base.Value >= suppressValue && !benchmark.IsEmpty) {
-                        hierCompContentDB.SetCellValue(j, benchmark.Value);
-                    }
-                }
-                table.ColumnHeaders.Add(hierCompContentDB);
+                var benchmarkContent: HeaderContent = new HeaderContent();
+                copyBenchmarkValues(context, baseValues, bmColumn, benchmarkContent, benchmarkTableLabels[bmColumn - 1]);
+                benchmarkContent.HideData = true;
+                addScoreVsBenchmarkChart(context, 'col-1', 'ScoreVsNormValue');
                 bmColumn += 1;
             }
 
 
-            //add hierarchy comparison benchmarks
-            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
-            if (hierarchyLevelToCompare.length>0) {
-                for(i=0; i<hierarchyLevelToCompare.length;i++) {
-                    var hierCompContent: HeaderContent = new HeaderContent();
-                    copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+            var reportBases = context.user.PersonalizedReportBase.split(',');
+            if (reportBases.length === 1) {
+
+                //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
+                var hierarchyLevel = HierarchyUtil.getHierarchyLevelToCompare(context);
+                if (hierarchyLevel) {
+
+                    var hierCompContentDB: HeaderContent = new HeaderContent();
+                    var hierValues: Datapoint[] = report.TableUtils.GetColumnValues('Benchmarks', bmColumn); // num of column where values are bmVolumn
+                    hierCompContentDB.Title = new Label(report.CurrentLanguage, benchmarkTableLabels[bmColumn - 1]);
+
+                    for (var j = 0; j < baseValues.length; j++) {
+
+                        base = baseValues[j];
+                        var benchmark = hierValues[j];
+
+                        if (base.Value >= suppressValue && !benchmark.IsEmpty) {
+                            hierCompContentDB.SetCellValue(j, benchmark.Value);
+                        }
+                    }
+                    table.ColumnHeaders.Add(hierCompContentDB);
                     bmColumn += 1;
+                }
+
+
+                //add hierarchy comparison benchmarks
+                var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
+                if (hierarchyLevelToCompare.length>0) {
+                    for(i=0; i<hierarchyLevelToCompare.length;i++) {
+                        var hierCompContent: HeaderContent = new HeaderContent();
+                        copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1]);
+                        bmColumn += 1;
+                    }
                 }
             }
         }
@@ -983,36 +990,43 @@ class PageResults {
             }
         }
 
-        //add Benchmarks from benchmark project
-        if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
+        //hide benchmark when breakby hierarchy IF-120 
+        var hierarchyQ = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion');
+ 		var breakbyQ = ParamUtil.GetSelectedCodes(context, 'p_Results_BreakBy');
+        
+     	if (breakbyQ != hierarchyQ) {
 
-            var benchmarks: HeaderBenchmark = new HeaderBenchmark();
-            benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
+            //add Benchmarks from benchmark project
+            if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject')) {
 
-            var bmSet = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet');
+                var benchmarks: HeaderBenchmark = new HeaderBenchmark();
+                benchmarks.BenchmarkProjectId = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
 
-            if (bmSet && bmSet.length>0) { // there's benchmark set
-                var selectedBMSet = ParamUtil.GetSelectedCodes(context, 'p_BenchmarkSet'); // can be only one option
-                benchmarks.BenchmarkSet = selectedBMSet[0];
-            }
-            table.ColumnHeaders.Add(benchmarks);
-        }
+                var bmSet = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkSet');
 
-
-        var bases = context.user.PersonalizedReportBase.split(',');
-        if (bases.length === 1) {
-
-            //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
-            tableBenchmarks_addHierarchyBenchmarkDBColumn(context);
-
-
-            //add Benchmark as comparison to upper hierarchy levels
-            var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
-
-            for(i=0; i< hierarchyLevelToCompare.length; i++) {
-                tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
+                if (bmSet && bmSet.length>0) { // there's benchmark set
+                    var selectedBMSet = ParamUtil.GetSelectedCodes(context, 'p_BenchmarkSet'); // can be only one option
+                    benchmarks.BenchmarkSet = selectedBMSet[0];
+                }
+                table.ColumnHeaders.Add(benchmarks);
             }
 
+
+            var bases = context.user.PersonalizedReportBase.split(',');
+            if (bases.length === 1) {
+
+                //add Benchmark as comparison HierarchyBenchmarkDBColumn IF-45
+                tableBenchmarks_addHierarchyBenchmarkDBColumn(context);
+
+
+                //add Benchmark as comparison to upper hierarchy levels
+                var hierarchyLevelToCompare = ParamUtil.GetSelectedCodes(context,'p_HierarchyBasedComparisons');
+
+                for(i=0; i< hierarchyLevelToCompare.length; i++) {
+                    tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelToCompare[i]);
+                }
+
+            }
         }
     }
 
