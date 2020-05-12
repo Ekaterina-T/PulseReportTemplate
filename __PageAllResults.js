@@ -68,7 +68,7 @@ class PageAllResults {
          col.Preaggregation = PreaggregationType.Average;
          col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
          col.Collapsed = false;
-         col.Totals = true;
+         col.Totals = false;
          
        }      
        
