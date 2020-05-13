@@ -21,17 +21,22 @@ class PageAllResults {
   */
    static function tableAllResults_Render(context){
      
-     var table = context.table;
-     var log = context.log;
-     var suppressSettings = context.suppressSettings;
-     var pageId = PageUtil.getCurrentPageIdInConfig(context);
+      var table = context.table;
+      var log = context.log;
+      var suppressSettings = context.suppressSettings;
+      var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-     var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-     var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierarchyQId);
-     var hh: HeaderQuestion = new HeaderQuestion(qe);
-     hh.ShowTotals = false;
-     hh.HierLayout = HierLayout.Flat;
-     table.RowHeaders.Add(hh);
+      var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_AllResults_BreakBy')[0];
+      var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
+      var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
+      var hrows: HeaderQuestion = new HeaderQuestion(qe);
+
+      if(rowsQidInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
+        hrows.HierLayout = HierLayout.Flat;
+      }
+
+      hrows.ShowTotals = false;
+      table.RowHeaders.Add(hrows);
      
      var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
      var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
