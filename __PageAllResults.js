@@ -26,10 +26,6 @@ class PageAllResults {
       var suppressSettings = context.suppressSettings;
       var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-
-      var responses: HeaderBase = new HeaderBase();
-      table.RowHeaders.Add(responses);
-
       var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_AllResults_BreakBy')[0];
       var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
       var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
@@ -53,6 +49,11 @@ class PageAllResults {
      nestedHeader.AnswerMask = qmask;
      nestedHeader.FilterByMask = true;
      nestedHeader.ShowTotals = false;
+
+
+    var responses: HeaderBase = new HeaderBase();
+    responses.SubHeaders.Add(nestedHeader);
+    table.ColumnHeaders.Add(responses);
      
      var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'Questions', true);
      
