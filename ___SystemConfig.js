@@ -25,6 +25,7 @@ public class SystemConfig {
 
         'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
         'p_OrgOverviewBreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'OrgOverviewBreakVariables', isQuestionBased: true},
+        'p_AllResults_BreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_AllResults',           propertyName: 'BreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
