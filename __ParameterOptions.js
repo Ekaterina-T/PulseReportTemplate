@@ -556,12 +556,16 @@ class ParameterOptions {
             //pulse program + question based params -> need to exclude questions with 0 answers (not used in current pulse survey)
             //1st question with answers becomes default value
             if (paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
-                var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+                if (!Export.isExportMode(context) && !Export.isDesignMode(context)) {
+                    var qidsWithData = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
 
-                for (var i = 0; i < parameterOptions.length; i++) {
-                    if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
-                        return parameterOptions[i].Code;
+                    for (var i = 0; i < parameterOptions.length; i++) {
+                        if (qidsWithData.hasOwnProperty(parameterOptions[i].Code)) {
+                            return parameterOptions[i].Code;
+                        }
                     }
+                } else {
+                    return parameterOptions[0].Code;
                 }
             }
 
