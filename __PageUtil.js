@@ -178,7 +178,6 @@ class PageUtil {
         } else {
             pageContext.Items["CurrentPageId"] = pageId;
         }
-        log.LogDebug("pageId: " + pageId);
 
 
         if (!pageContext.Items["IteratedParameterBaseParamterId"]) {
@@ -187,17 +186,11 @@ class PageUtil {
             pageContext.Items["IteratedParameterBaseParamterId"] = parameterId;
         }
 
-        log.LogDebug("parameterId: " + parameterId);
-
         var iteratedParameterOptions = ParameterOptions.GetOptions(context, parameterId);
-        log.LogDebug("iteratedParameterOptions.length: " + iteratedParameterOptions.length);
         if (iteratedParameterOptions.length <= 0) {
             return false;
         }
 
-        log.LogDebug("Export.isExportMode(context): " + Export.isExportMode(context));
-        log.LogDebug("Export.isDesignMode(context): " + Export.isDesignMode(context));
-        log.LogDebug("context.user.PersonalizedReportBase: " + context.user.PersonalizedReportBase);
         if ((!Export.isExportMode(context) && !Export.isDesignMode(context)) || !context.user.PersonalizedReportBase) {
             return false;
         }
@@ -206,13 +199,10 @@ class PageUtil {
         }
 
         var qIds = ParamUtil.GetSelectedCodes (context, parameterId);
-        log.LogDebug("qIds.length: " + qIds.length);
         try {
-            log.LogDebug(context.state.Parameters[parameterId]);
         } catch(e) {}
         if (qIds.length > 0) {
             var base = report.TableUtils.GetCellValue("IteratedParameterBase:Base", 1, 1).Value;
-            log.LogDebug("base: " + base);
             return isNaN(base) || base <= 0;
         }
         //return true;
