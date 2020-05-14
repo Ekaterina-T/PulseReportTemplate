@@ -248,7 +248,7 @@ class PulseProgramUtil {
 
         if(resources.length > resourcesBase.length) {
             setPulseSurveyContentBaseValues(context);
-            var resourcesBase = pulseSurveyContentBaseValues[key];
+            resourcesBase = pulseSurveyContentBaseValues[key];
         }
 
         for(var i=0; i< resourcesBase.length; i++) {
