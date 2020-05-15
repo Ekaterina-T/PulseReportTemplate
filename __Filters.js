@@ -185,15 +185,13 @@ class Filters {
         var filterList = GetFilterListByType(context);
         var CurrentPageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        log.LogDebug('report base inside hide script: '+SuppressUtil.getReportBaseValue (context))
-
         // paramNum should be less than number of filter components on all pages
         // paramNum should be less than number of filters based on BG vars on Response Rate page
         if (paramNum > filterList.length || (CurrentPageId === 'Page_Response_Rate' && paramNum > numberOfBackgroundDataFilters)) {
             return true; // hide
         }
 
-        if (!Access.isQuestionAllowed(filterList[paramNum-1], context)) {
+        if (SuppressUtil.reportBaseIsLowForFilters(context) || !Access.isQuestionAllowed(filterList[paramNum-1], context)) {
             return true; // hide
         }
 

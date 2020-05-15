@@ -179,6 +179,14 @@ class SuppressUtil {
             return N_of_participants.Equals(Double.NaN) ? 0 : N_of_participants;
         }
 
+    /**
+     * @param {Object} context
+     * @return {Boolean} if filter panel should be hidden by suppress or not
+     */
+    static function reportBaseIsLowForFilters(context) {
+        return getReportBaseValue(context) < SuppressConfig.FilterSuppressValue;
+    }
+
         // Hide small units: a node should not show if it has less than X
         static function reportBaseIsLow (context) {
     
