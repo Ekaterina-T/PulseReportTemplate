@@ -70,6 +70,10 @@ class StyleAndJavaScriptUtil {
         
         properties.push('DirectToggleLabelText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectToggleLabelText')));
 
+        properties.push('isHierarchySelectorHidden: '+JSON.stringify(HierarchyUtil.Hide(context) || Access.hideHierarchyFilter(context)));
+        
+        properties.push('isAllFiltersHidden: '+JSON.stringify(Access.AllFiltersHidden(context)));
+        
         if (pageId === 'Comments') {
             properties.push('tagColumnNumbers: '+JSON.stringify(Hitlist.GetTagColumnNumbers (context, 'p_ScoreQs', 'p_TagQs')));
             properties.push('score_columns: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_ScoreQs')));
