@@ -54,8 +54,7 @@ class SuppressUtil {
             else if (displayCellOption == 'showMarker') { table.SuppressData.CellDisplay = BaseDisplayOption.ShowMarker; table.SuppressData.CellLimit = cellValue; }
             else table.SuppressData.CellDisplay = BaseDisplayOption.Show;
         }
-    
-    
+
         static function buildHierarchyTable(context) {
     
             var report = context.report;
@@ -124,8 +123,6 @@ class SuppressUtil {
     
         }
     
-    
-    
         static function buildReportBaseTable(context) {
     
             var report = context.report;
@@ -169,8 +166,19 @@ class SuppressUtil {
     
             table.RowHeaders.Add(hq);
         }
-    
-    
+
+    /**
+     * @param {Object} context
+     * @return {Number} number of responses after filters are applied
+     */
+    static function getReportBaseValue(context) {
+            var report = context.report;
+            var log = context.log;
+
+            var N_of_participants = report.TableUtils.GetCellValue('Confidentiality:ReportBase',1, 1).Value;
+            return N_of_participants.Equals(Double.NaN) ? 0 : N_of_participants;
+        }
+
         // Hide small units: a node should not show if it has less than X
         static function reportBaseIsLow (context) {
     
@@ -258,8 +266,7 @@ class SuppressUtil {
             }
             return false;
         }
-    
-    
+
         static function isGloballyHidden (context) {
     
             return reportBaseIsLow (context) || hierarchyUnitIsSensitive (context) || isInitialReportBaseLow(context);

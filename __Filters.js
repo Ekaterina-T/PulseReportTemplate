@@ -185,6 +185,8 @@ class Filters {
         var filterList = GetFilterListByType(context);
         var CurrentPageId = PageUtil.getCurrentPageIdInConfig(context);
 
+        log.LogDebug('report base inside hide script: '+Filters.reportBaseIsLow (context))
+
         // paramNum should be less than number of filter components on all pages
         // paramNum should be less than number of filters based on BG vars on Response Rate page
         if (paramNum > filterList.length || (CurrentPageId === 'Page_Response_Rate' && paramNum > numberOfBackgroundDataFilters)) {
