@@ -211,7 +211,7 @@ class SuppressUtil {
             var pageContext = context.pageContext;
             var user = context.user;          
 
-            //log.LogDebug('hierarchyUnitIsSensitive 1: '+!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'));
+            log.LogDebug('hierarchyUnitIsSensitive 1: '+!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'));
             // if no hierarchy question is defined in Config, we don't perform checking
             if (!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'))
                 return false;
@@ -220,7 +220,7 @@ class SuppressUtil {
             // all  nodes are shown irrespective of small neighbor units
 
             var user_bases = user.PersonalizedReportBase.split(',');
-        //log.LogDebug('hierarchyUnitIsSensitive 2: '+user_bases.length);
+        log.LogDebug('hierarchyUnitIsSensitive 2: '+user_bases.length);
             if (user_bases.length > 1) 
                return false;
     
@@ -230,7 +230,7 @@ class SuppressUtil {
     
     
             // 1. If a node has <unitSufficientBase> answers or more (e.g. > 100) it should always be shown
-        //log.LogDebug('hierarchyUnitIsSensitive 3: selfUnitBase='+selfUnitBase+ '; unitSufficientBase='+SuppressConfig.HierarchySuppress.unitSufficientBase);
+        log.LogDebug('hierarchyUnitIsSensitive 3: selfUnitBase='+selfUnitBase+ '; unitSufficientBase='+SuppressConfig.HierarchySuppress.unitSufficientBase);
             if (selfUnitBase >= SuppressConfig.HierarchySuppress.unitSufficientBase) {
                 return false;
             }
@@ -243,20 +243,20 @@ class SuppressUtil {
                 log.LogDebug('sibling['+i+']='+bases[i].Value)
             }
 
-        //log.LogDebug('hierarchyUnitIsSensitive 4: delta='+delta+ '; parentBase='+parentBase+' allSiblingsBase='+allSiblingsBase);
+        log.LogDebug('hierarchyUnitIsSensitive 4: delta='+delta+ '; parentBase='+parentBase+' allSiblingsBase='+allSiblingsBase);
     
             // 2. Hide a unit when there are small siblings next to it or few people are connected directly to its parent node
             if (parentBase - selfUnitBase && parentBase - selfUnitBase <= delta) {
                 return true;
             }
 
-        //log.LogDebug('hierarchyUnitIsSensitive 5: delta='+delta+ '; parentBase='+parentBase+' allSiblingsBase='+allSiblingsBase);
+        log.LogDebug('hierarchyUnitIsSensitive 5: delta='+delta+ '; parentBase='+parentBase+' allSiblingsBase='+allSiblingsBase);
     
             // 3. Hide a unit if too few people are connected directly to the parent node
             if (parentBase - allSiblingsBase && parentBase - allSiblingsBase <= delta) {
                 return true;
             }
-        //log.LogDebug('hierarchyUnitIsSensitive 6');
+        log.LogDebug('hierarchyUnitIsSensitive 6');
     
     
             // Additional check for Results table with breakdown by child hierarchy level
@@ -282,7 +282,7 @@ class SuppressUtil {
                 }
             }
 
-        //log.LogDebug('hierarchyUnitIsSensitive 7');
+        log.LogDebug('hierarchyUnitIsSensitive 7');
             return false;
         }
 
