@@ -957,7 +957,8 @@ class PageResults {
 
         // add Responses Column
         var filtersExcludedFromBMTable = [Filters.getHierarchyAndWaveFilter(context), Filters.getDirectFilterExpression(context)];
-        var excludedFiltersExpression = filtersExcludedFromBMTable.join(' AND ');
+        log.LogDebug('filtersExcludedFromBMTable='+JSON.stringify(filtersExcludedFromBMTable))
+        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);//filtersExcludedFromBMTable.join(' AND ');
 
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
