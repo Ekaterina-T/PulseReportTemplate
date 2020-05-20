@@ -956,9 +956,15 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add Responses Column
-        var filtersExcludedFromBMTable = [Filters.getHierarchyAndWaveFilter(context), Filters.getDirectFilterExpression(context)];
-        log.LogDebug('filtersExcludedFromBMTable='+JSON.stringify(filtersExcludedFromBMTable))
-        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);//filtersExcludedFromBMTable.join(' AND ');
+        var filtersExcludedFromBMTable = [Filters.getHierarchyAndWaveFilter(context)];
+        var directsFilter = Filters.getDirectFilterExpression(context);
+
+        if(directsFilter && directsFilter.length >0) {
+            filtersExcludedFromBMTable.push(directsFilter);
+        }
+
+        //log.LogDebug('filtersExcludedFromBMTable='+JSON.stringify(filtersExcludedFromBMTable))
+        var excludedFiltersExpression = filtersExcludedFromBMTable.join(' AND ');
 
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
