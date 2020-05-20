@@ -981,6 +981,7 @@ class PageResults {
         table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = false;
+		table.Caching.Enabled = false;
     }
 
     /*
