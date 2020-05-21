@@ -129,7 +129,7 @@ class PagePulseSurveyData {
         var log = context.log;
 
         var headers = table.RowHeaders;
-        setHeadersProperties(headers);
+        setHeadersProperties(context, headers);
         
     }
   
@@ -137,15 +137,25 @@ class PagePulseSurveyData {
      * Sets up properties of specified headers
      *  @param {HeaderCollection} headers
      */
-     static function setHeadersProperties(headers) {
-       var cnt = headers.Count;
+     static function setHeadersProperties(context, headers) {
 
-       for (var i = 0; i < cnt; i++) {
+         var log = context.log;
+         var cnt = headers.Count;
+
+         for (var i = 0; i < cnt; i++) {
             var hd: HeaderQuestion = headers[i];
             hd.ShowTotals = false;
             hd.Sorting.Enabled = false;
 
-            setHeadersProperties(headers[i].SubHeaders);
+            var qe : QuestionnaireElement = hd.QuestionnaireElement;
+
+            if(qe.QuestionId == 'CreatedDate') {
+                hd.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
+                hd.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
+                hd.TimeSeries.Time3 = TimeseriesTimeUnitType.DayOfMonth;
+            }
+
+            setHeadersProperties(context, headers[i].SubHeaders);
         }
      }
 }

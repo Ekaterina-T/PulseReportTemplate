@@ -194,18 +194,12 @@ class PageUtil {
         if ((!Export.isExportMode(context) && !Export.isDesignMode(context)) || !context.user.PersonalizedReportBase) {
             return false;
         }
-        if (Export.isDesignMode(context)) {
-            return true;
-        }
 
         var qIds = ParamUtil.GetSelectedCodes (context, parameterId);
-        try {
-        } catch(e) {}
         if (qIds.length > 0) {
             var base = report.TableUtils.GetCellValue("IteratedParameterBase:Base", 1, 1).Value;
             return isNaN(base) || base <= 0;
         }
-        //return true;
         return false;
     }
 }
