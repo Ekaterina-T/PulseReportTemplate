@@ -841,8 +841,10 @@ class PageResults {
         }
 
         //add hierarchy comparison benchmarks
-        var reportBases = context.user.PersonalizedReportBase.split(',');
-        if (reportBases.length === 1) {
+        var hierAvailable = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        var reportBases = hierAvailable && context.user.PersonalizedReportBase.split(',');
+
+        if (reportBases && reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
             for (var i = 0; i < hierCompCols.length; i++) {
@@ -1036,8 +1038,10 @@ class PageResults {
         }
 
         //add Benchmark as comparison to upper hierarchy levels
-        var bases = context.user.PersonalizedReportBase.split(',');
-        if (bases.length === 1) {
+        var hierAvailable = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        var bases = hierAvailable && context.user.PersonalizedReportBase.split(',');
+
+        if (bases && bases.length === 1) {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
@@ -1183,8 +1187,9 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var benchmarkProject = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'BenchmarkProject');
-        var hierarchyLevels = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
-        var reportBases = context.user.PersonalizedReportBase.split(',');
+        var hierAvailable = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+        var hierarchyLevels = hierAvailable && DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+        var reportBases = hierAvailable && context.user.PersonalizedReportBase.split(',');
         var showPrevWave = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave');
         var surveysToCompare = getBenchmarkSurveys(context).length;
 
