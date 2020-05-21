@@ -488,7 +488,7 @@ class ParamUtil {
 
         if(parameterName === 'p_DisplayMode') {
             pageId = PageUtil.getCurrentPageIdInConfig(context);
-            return pageId === 'Page_Trends' && !isPulseProgram;
+            return !(pageId === 'Page_Trends' && isPulseProgram);
         }
 
         if(parameterName === 'p_CustomOpenTextQs') {
