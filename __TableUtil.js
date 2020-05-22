@@ -338,7 +338,7 @@ class TableUtil {
         hs.Statistics.Avg = true;
         hs.Statistics.Count = true;
         hs.HideHeader = true;
-        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (AVG)');
+        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
         hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
         row.SubHeaders.Add(hs);
 
