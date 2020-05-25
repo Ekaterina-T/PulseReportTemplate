@@ -987,6 +987,7 @@ class PageResults {
     /*
   * Populate benchmarks table
   * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+  * @param {boolean} isNormalizedTable: true for table for normalized questions
   */
     static function tableBenchmarks_AddColumns_Banner0(context, isNormalizedTable) {
 
