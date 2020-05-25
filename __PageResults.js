@@ -1287,9 +1287,11 @@ class PageResults {
         var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
 
         //calculate the number of normalized questions
-        for(var i = 0; i < questions.length; i++) {
-            if(questions[i].indexOf('_normalized') != -1) {
-                questionsNorm++;
+        if(questions) {
+            for (var i = 0; i < questions.length; i++) {
+                if (questions[i].indexOf('_normalized') != -1) {
+                    questionsNorm++;
+                }
             }
         }
 
