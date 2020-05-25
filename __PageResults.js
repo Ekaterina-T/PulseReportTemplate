@@ -975,7 +975,7 @@ class PageResults {
         var log = context.log;
 
         tableStatements_AddRows(context, isNormalizedTable);
-        tableBenchmarks_AddColumns_Banner0(context);
+        tableBenchmarks_AddColumns_Banner0(context, isNormalizedTable);
         SuppressUtil.setTableSuppress(table, context.suppressSettings);
 
         table.Decimals = Config.Decimal;
@@ -988,7 +988,7 @@ class PageResults {
   * Populate benchmarks table
   * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
   */
-    static function tableBenchmarks_AddColumns_Banner0(context) {
+    static function tableBenchmarks_AddColumns_Banner0(context, isNormalizedTable) {
 
         var table = context.table;
         var log = context.log;
@@ -1003,6 +1003,11 @@ class PageResults {
 
         addResponsesColumn(context, excludedFiltersForN, true);
         table.ColumnHeaders.Add(excludedFiltersForN);
+
+        //if the table is normalized and no normalized qs specified don't add other columns
+        if(isNormalizedTable && !anyNormalizedQuestions(context)) {
+            return;
+        }
 
         //add Score column
         addScore(context, excludedFiltersForN);
@@ -1265,6 +1270,27 @@ class PageResults {
         } else {
             throw new Error('PageResults.tableStatements_AddRows: No data to build rows. Please check ResultStatements and Dimensions properties for page Results.');
         }
+    }
+
+    /*
+  * Checks whether there are any normilized questions specified
+  * @param {object} context: {state: state, report: report, log: log, table: table}
+  */
+    static function anyNormalizedQuestions(context) {
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var questionsNorm = (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DimensionsWithNormalizedQuestions')).length;
+        var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ResultStatements');
+
+        //calculate the number of normalized questions
+        for(var i = 0; i < questions.length; i++) {
+            if(questions[i].indexOf('_normalized') != -1) {
+                questionsNorm++;
+            }
+        }
+
+        return questionsNorm > 0
     }
 
 }
