@@ -674,13 +674,14 @@ class PageResults {
      * @param {Object} dimensionsInfoObject - holds info if dimension is suppressed or not to avoid recalculation for every row
      * @param {StringCollection} rowHeaderInfo - row headers of benchmark table, report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
      * @param {DataPont[]} - baseValues 1st column of Benchmarh table
+     * @param {Nimber} numOfSubheaders - number of the subheaders for the dimension
      * @returns {Boolean} - if dimension is suppressed or not
      */
-    static function isDimensionSuppressed(context, dimensionStartRow, dimensionsInfoObject, rowHeaderInfo, baseValues) {
+    static function isDimensionSuppressed(context, dimensionStartRow, dimensionsInfoObject, rowHeaderInfo, baseValues, numOfSubheaders) {
 
         if(!dimensionsInfoObject.hasOwnProperty(dimensionStartRow)) {
 
-            var numOfSubHeaders = getNumberOfSubHeaderRows(context);
+            var numOfSubHeaders = numOfSubheaders;
             var rowNum = (numOfSubHeaders>0) ? dimensionStartRow+numOfSubHeaders : dimensionStartRow+1; //jump to not total's rows
             var isDimensionEmpty = true;
             var suppressValue = SuppressConfig.TableSuppressValue;
@@ -756,6 +757,8 @@ class PageResults {
         var suppressValue = SuppressConfig.TableSuppressValue;
         var baseValues: Datapoint[] = (!baseValuesForOriginalScores) ? report.TableUtils.GetColumnValues(benchmarkTable, 1) : baseValuesForOriginalScores;
 
+        var numOfSubheaders = getNumberOfSubHeaderRows(context);
+
         var rowHeaderInfo = report.TableUtils.GetRowHeaderCategoryIds(benchmarkTable);
         var dimensionsInfoObject = {};
 
@@ -763,7 +766,7 @@ class PageResults {
 
             //log.LogDebug('------------------------------------');
             var isDimensionHeader = !isQuestionHeader(context, rowHeaderInfo, i);
-            var isDimensionNotSuppressed = isDimensionHeader && !isDimensionSuppressed(context, i, dimensionsInfoObject, rowHeaderInfo, baseValues);
+            var isDimensionNotSuppressed = isDimensionHeader && !isDimensionSuppressed(context, i, dimensionsInfoObject, rowHeaderInfo, baseValues, numOfSubheaders);
 
             //log.LogDebug('i='+i+' current row='+JSON.stringify(rowHeaderInfo[i])+' isDimensionHeader='+isDimensionHeader+' isDimensionNotSuppressed='+isDimensionNotSuppressed+' baseValues[i].Value='+baseValues[i].Value);
 
