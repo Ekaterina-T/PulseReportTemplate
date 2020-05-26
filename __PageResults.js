@@ -995,11 +995,13 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
+        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);
+
         // add Responses Column
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
         excludedFiltersForN.DataSourceNodeId = DataSourceUtil.getDsId(context);
         excludedFiltersForN.SegmentType = HeaderSegmentType.Expression;
-        excludedFiltersForN.Expression = Filters.getHierarchyAndWaveFilter(context);
+        excludedFiltersForN.Expression = excludedFiltersExpression;
         excludedFiltersForN.HideHeader = true;
 
         addResponsesColumn(context, excludedFiltersForN, true);
@@ -1011,7 +1013,15 @@ class PageResults {
         }
 
         //add Score column
-        addScore(context, excludedFiltersForN);
+        //addScore(context, excludedFiltersForN);
+        var scoreHeaders = addScore(context); // first add header and below segment because otherwise scripted table gives wrong results
+        var excludedFiltersForScore: HeaderSegment = new HeaderSegment();
+
+        excludedFiltersForScore.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        excludedFiltersForScore.SegmentType = HeaderSegmentType.Expression;
+        excludedFiltersForScore.HideData = true;
+        excludedFiltersForScore.Expression = excludedFiltersExpression;
+        scoreHeaders[1].SubHeaders.Add(excludedFiltersForScore);
 
         //add previous wave column
         if (DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave')) {
