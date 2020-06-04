@@ -468,10 +468,10 @@ class ParamUtil {
         if (parameterName === 'p_BenchmarkSet') {
             return DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BenchmarkSet') ? true : false;
         }
-
+        /* IF-142 put tag selector back on for all
         if (parameterName === 'p_TagQs') {
             return HierarchyUtil.allAssignedNodesLowest(context) ? false : true;
-        }
+        }*/
 
         return true;
     }
