@@ -57,13 +57,9 @@ class SuppressUtil {
     
     
         static function buildHierarchyTable(context) {
-    
-            var report = context.report;
-            var state = context.state;
+
             var table = context.table;
             var log = context.log;
-
-        log.LogDebug('buildHierarchyTable 1')
     
             var hb : HeaderBase = new HeaderBase();
             hb.Distributions.Enabled = true;
@@ -71,9 +67,6 @@ class SuppressUtil {
             table.ColumnHeaders.Add(hb);
     
             var hierachyId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
-
-
-        log.LogDebug('buildHierarchyTable 2 hierachyId='+hierachyId)
 
             if (hierachyId) {
                 var qe : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierachyId);
