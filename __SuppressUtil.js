@@ -62,6 +62,8 @@ class SuppressUtil {
             var state = context.state;
             var table = context.table;
             var log = context.log;
+
+        log.LogDebug('buildHierarchyTable 1')
     
             var hb : HeaderBase = new HeaderBase();
             hb.Distributions.Enabled = true;
@@ -69,6 +71,10 @@ class SuppressUtil {
             table.ColumnHeaders.Add(hb);
     
             var hierachyId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+
+
+        log.LogDebug('buildHierarchyTable 2 hierachyId='+hierachyId)
+
             if (hierachyId) {
                 var qe : QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, hierachyId);
                 var row : HeaderQuestion = new HeaderQuestion(qe);
@@ -99,9 +105,7 @@ class SuppressUtil {
         }
     
         static function buildHierarchyTableForResults(context) {
-    
-            var report = context.report;
-            var state = context.state;
+
             var table = context.table;
             var log = context.log;
     
@@ -176,31 +180,26 @@ class SuppressUtil {
             var pageContext = context.pageContext;
             var user = context.user;
 
-            log.LogDebug('hierarchyUnitIsSensitive 1');
 
             // if no hierarchy question is defined in Config, we don't perform checking
             if (!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion'))
                 return false;
-        log.LogDebug('hierarchyUnitIsSensitive 2');
 
             // if multiple hierachy selection is allowed, no confidentionality checks are performed, i.e.
             // all  nodes are shown irrespective of small neighbor units
             var user_bases = user.PersonalizedReportBase.split(',');
             if (user_bases.length > 1) 
                return false;
-        log.LogDebug('hierarchyUnitIsSensitive 3');
     
     
             var bases : Datapoint[] = report.TableUtils.GetColumnValues("Confidentiality:HierarchyTable",1);
             var selfUnitBase = bases[0].Value;
-        log.LogDebug('hierarchyUnitIsSensitive 4');
     
     
             // 1. If a node has <unitSufficientBase> answers or more (e.g. > 100) it should always be shown
             if (selfUnitBase >= SuppressConfig.HierarchySuppress.unitSufficientBase) {
                 return false;
             }
-        log.LogDebug('hierarchyUnitIsSensitive 5');
     
             var delta = SuppressConfig.HierarchySuppress.minGap;
             var parentBase = (bases.Length > 1) ? bases[1].Value : selfUnitBase;
@@ -208,20 +207,17 @@ class SuppressUtil {
             for (var i=2; i<bases.Length; i++) {
                 allSiblingsBase += bases[i].Value;
             }
-        log.LogDebug('hierarchyUnitIsSensitive 6');
     
     
             // 2. Hide a unit when there are small siblings next to it or few people are connected directly to its parent node
             if (parentBase - selfUnitBase && parentBase - selfUnitBase <= delta) {
                 return true;
             }
-        log.LogDebug('hierarchyUnitIsSensitive 7');
     
             // 3. Hide a unit if too few people are connected directly to the parent node
             if (parentBase - allSiblingsBase && parentBase - allSiblingsBase <= delta) {
                 return true;
             }
-        log.LogDebug('hierarchyUnitIsSensitive 8');
     
     
             // Additional check for Results table with breakdown by child hierarchy level
@@ -246,7 +242,6 @@ class SuppressUtil {
                     }
                 }
             }
-        log.LogDebug('hierarchyUnitIsSensitive 9');
             return false;
         }
     
