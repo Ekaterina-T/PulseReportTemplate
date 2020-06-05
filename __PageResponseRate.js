@@ -289,7 +289,7 @@ class PageResponseRate {
 
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in TableUtil break by function :(
                 hq.ReferenceGroup.Enabled = true;
-                hq.ReferenceGroup.Self = false;
+                hq.ReferenceGroup.Self = true;
                 //var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
                 //log.LogDebug('parentLevels='+parentLevels)
                 hq.ReferenceGroup.Levels = '+1';//Data from PulseSurveyContentInfo;
