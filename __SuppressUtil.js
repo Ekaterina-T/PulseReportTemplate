@@ -271,11 +271,16 @@ class SuppressUtil {
     
             var pageContext = context.pageContext;
             var log = context.log;
+
+            log.LogDebug('message_Hide 1');
     
             // data suppression isn't applied to Response Rate page, so no warning is displayed
             if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions') {
                 return true;
             }
+        log.LogDebug('message_Hide 2');
+        log.LogDebug('message_Hide 3 '+SuppressUtil.reportBaseIsLow (context));
+        log.LogDebug('message_Hide 4 '+SuppressUtil.hierarchyUnitIsSensitive (context));
             return !(SuppressUtil.reportBaseIsLow (context) || SuppressUtil.hierarchyUnitIsSensitive (context));
         }
       
