@@ -882,7 +882,30 @@ class PageActions {
     static function hitlistActions_Hide(context) {
         return Export.isPdfExportMode(context);
     }
-
+    
+     /**
+     * @description function to render the Verbatim - replacement for Hitlist in Public report.
+     * @param {Object} context - {state: state, report: report, log: log, verbatimTable: verbatimTable, pageContext: pageContext, user: user, confirmit: confirmit}
+     */
+	 
+    static function verbatimActions_Render(context){
+        
+        var report = context.report;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var verbatimTable = context.verbatimTable;
+        var currentLang = report.CurrentLanguage;
+        var actionOverviewQId = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionOverviewQuestion') + '_' + currentLang;
+        var actionOverviewQE: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionOverviewQId);      
+        
+      	if(!actionOverviewQE) {
+            throw new Error('PageActions.verbatimActions_Render: qId' + actionOverviewQId + 'is not found in the survey');
+        }
+      
+        verbatimTable.Source = 'Questionnaire';
+	    verbatimTable.QuestionnaireElement = actionOverviewQE;
+	
+	}
+    
     /**
      * @description function to render the ActionsKPI table.
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
