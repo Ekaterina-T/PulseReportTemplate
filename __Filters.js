@@ -598,4 +598,23 @@ class Filters {
 
         return expr;
     }
+
+    /**
+     * function returns filter expression for chosen in parameter users
+     * @param {Object} context
+     * @param {String} paramName
+     * @returns {String} filter expression
+     */
+    static function getOnlyChosenOwnersInParamExpression (context, paramName) {
+
+        if (PublicUtil.isPublic(context)) {
+            return '';
+        }
+
+        var state = context.state;
+
+        if(!state.Parameters.IsNull(paramName)){
+            filter.Expression = 'IN('+ DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Actions', 'EndUserSelection')+', PValStrArr("'+paramName+'"))';
+         }
+    }
 }
