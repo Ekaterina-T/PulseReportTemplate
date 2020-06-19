@@ -69,6 +69,8 @@ class StyleAndJavaScriptUtil {
 
         properties.push('Apply: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Apply')));
         properties.push('Reset: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Reset')));
+        
+        properties.push('DeletedUser: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'EndUserDeleted')));
 
         properties.push('isPulseProgram: ' + JSON.stringify(!DataSourceUtil.isProjectSelectorNotNeeded(context)));
         properties.push('isPublicReport: ' + JSON.stringify(PublicUtil.isPublic(context)));

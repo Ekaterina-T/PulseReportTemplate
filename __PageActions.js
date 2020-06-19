@@ -746,26 +746,28 @@ class PageActions {
 
         var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
         var tagCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist');
-        var actionLinks = hitlistsActions_getActionLinks(context);
+        var actionLinks = hitlistsActions_getHitlistLinks(context, 'ActionLinks'); //edit/Delete Hitlist
+        var readHitlistLinks = hitlistsActions_getHitlistLinks(context, 'ReadHitlistLinks'); //read Hitlist
+      
         var callBlockId = SystemConfig.ActionPlannerSettings.CallBlockID;
 
         var position = 0;
-        var actionLinksNumber = isEditDeleteMode ? actionLinks.length : 0;
+        var actionLinksNumber = isEditDeleteMode ? actionLinks.length : readHitlistLinks.length;
+        var hitlistLinks =  isEditDeleteMode ? actionLinks : readHitlistLinks;
 
         if(actionLinksNumber > hitlist.Columns.Count) {
             throw new Error('PageActions.hitlistsActions_Render: сheck Config settings for the number of action links, or add extra links to the hitlist.');
         }
+ 
+        
+        hitlistsActions_removeExtraLinkColumns(context);
 
-        if (isEditDeleteMode) {
-            hitlistsActions_removeExtraLinkColumns(context);
-
-            if(actionLinksNumber > 0) {
+        if(actionLinksNumber > 0) {
                 for(var i = 0; i < actionLinksNumber; i++) {
-                    hitlistsActions_SetCallblockLinks(context, actionLinks[i], i, callBlockId);
+                    hitlistsActions_SetCallblockLinks(context, hitlistLinks[i], i, callBlockId);
                 }
-            }
-        }
-
+        } 
+  
         for (var i=0; i<staticCols.length; i++) {
             Hitlist.AddColumn(context, staticCols[i].id, {sortable: staticCols[i].properties.sortable, searchable: staticCols[i].properties.searchable, order: position});
             position++;
@@ -872,7 +874,46 @@ class PageActions {
 
         return evaluatedActionLinks;
     }
+    
+        /**
+     * @description function to evaluate the links defined in the Config and remove any incorrect occurrences
+     * @param {Object} context - {state: state, report: report, log: log, table: table, pageContext: pageContext, user: user, confirmit: confirmit}
+     * @param {Object} linksPropertyConfigName - "ActionLinks" or "ReadHitlistLinks"
+     * @example PageActions.hitlistsActions_getHitlistLinks({hitlist: hitlist, state: state, report: report, pageContext: pageContext, log: log});
+     */
+    static function hitlistsActions_getHitlistLinks(context, linksPropertyConfigName) {
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var actionLinksObject = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, linksPropertyConfigName);
+        var actionLinks = [];
+        var evaluatedActionLinks = [];
 
+        if(actionLinksObject != null || actionLinksObject != undefined) {
+            for (var prop in actionLinksObject) {
+                if(actionLinksObject[prop]) {
+                    actionLinks.push(prop);
+                }
+            }
+        }
+
+        if(actionLinks.length != 0) {
+            for(var i = 0; i < actionLinks.length; i++) {
+                if(actionLinks[i].ToLower().indexOf('comment') >= 0) {
+                    evaluatedActionLinks.push('comment');
+                }
+                if(actionLinks[i].ToLower().indexOf('read') >= 0) {
+                    evaluatedActionLinks.push('read');
+                }
+                if(actionLinks[i].ToLower().indexOf('edit') >= 0) {
+                    evaluatedActionLinks.push('edit');
+                }
+                if(actionLinks[i].ToLower().indexOf('delete') >= 0) {
+                    evaluatedActionLinks.push('delete');
+                }
+            }
+        }
+
+        return evaluatedActionLinks;
+    }
     /**
      * @description function to hide the hitlist
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}

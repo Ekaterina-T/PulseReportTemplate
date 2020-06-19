@@ -40,6 +40,7 @@ public class SystemConfig {
         'p_ActionCost_BreakBy': { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'BreakVariables'},
         'p_ActionAllocation':   { type: 'QuestionList',         locationType: 'Page', page: 'Page_Actions', propertyName: 'Breakdown'},
         'p_EndUserSelection':   { type: 'QuestionId',           locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
+        'p_EndUserSelectionHitlist':   { type: 'QuestionId',    locationType: 'Page', page: 'Page_Actions', propertyName: 'EndUserSelection'},
 
         'p_ActionsHitlistSettings':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ActionsHitlistSettings'},
         'p_OnlyOwnActions':          { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary',    propertyName: 'ShowOnlyOwnActions'},
@@ -62,7 +63,7 @@ public class SystemConfig {
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_OnlyOwnActions', 'p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault',
-                                         'p_CatDD_TimeUnitNoDefault','p_EndUserSelection'];  // we must add them empty option as 1st value instead
+                                         'p_CatDD_TimeUnitNoDefault','p_EndUserSelection, p_EndUserSelectionHitlist'];  // we must add them empty option as 1st value instead
 
     static const paramTypesToBeReset = {
         'PulseSurveyInfo': false,
