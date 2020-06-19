@@ -614,7 +614,7 @@ class Filters {
         var state = context.state;
 
         if(!state.Parameters.IsNull(paramName)){
-            filter.Expression = 'IN('+ DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Actions', 'EndUserSelection')+', PValStrArr("'+paramName+'"))';
+           return 'IN('+ DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Actions', 'EndUserSelection')+', PValStrArr("'+paramName+'"))';
          }
     }
 }
