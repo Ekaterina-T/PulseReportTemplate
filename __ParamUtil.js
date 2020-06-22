@@ -366,6 +366,15 @@ class ParamUtil {
             }
         }
 
+        if (parameterId === 'p_EndUserSelectionHitlist') {
+            var idsInCurrentBranch = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
+            mask.Access = ParameterAccessType.Inclusive;
+
+            for (var i = 0; i < idsInCurrentBranch.length; i++) {
+                mask.Keys.Add(idsInCurrentBranch[i]);
+            }
+        }
+
         if(parameterId === 'p_ActionsHitlistSettings') {
             var actionLinks = PageActions.hitlistsActions_getActionLinks(context);
 
