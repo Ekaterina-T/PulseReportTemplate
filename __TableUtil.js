@@ -134,14 +134,14 @@ class TableUtil {
 
         }
     }
-    /*
+
+    /**
      * Function sets start and end date for Date header.
      * That allows to limit date interval and number of columns in table when
      * 1) RemoveEmptyHeaders Option is off and 2) Date filter is applied
      * param {object} context {report: report, user: user, state: state, log: log}
      * param {HeaderQuestion} headerDateQuestion - header based on date question
      */
-
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
         
         if(!Filters.isTimePeriodFilterHidden(context)) {
@@ -156,7 +156,7 @@ class TableUtil {
         return;
     }
 
-    /*
+    /**
    * Function that excludes NA answer from header.
    * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
    * param {Header} headerQuestion or headerCategory
@@ -196,7 +196,7 @@ class TableUtil {
     }
 
 
-    /*
+    /**
    * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
    * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
    * @param {Header} parent header
@@ -317,6 +317,7 @@ class TableUtil {
 
     }
 
+
     /**
      *Function adds AVG and Base subheader to a
      *@param {object} context
@@ -326,6 +327,8 @@ class TableUtil {
     static function getTrendQuestionHeader(context, qid) {
 
         var report = context.report;
+        var AVG = TextAndParameterUtil.getTextTranslationByKey(context, 'AVG', true);
+        var N = TextAndParameterUtil.getTextTranslationByKey(context, 'N', true);
 
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qid);
         var qTitle = QuestionUtil.getQuestionTitle (context, qid);
@@ -338,8 +341,9 @@ class TableUtil {
         hs.Statistics.Avg = true;
         hs.Statistics.Count = true;
         hs.HideHeader = true;
-        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (AVG)');
-        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+
+        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' ('+AVG+')');
+        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' ('+N+')');
         row.SubHeaders.Add(hs);
 
 
@@ -367,6 +371,10 @@ class TableUtil {
         maskOutNA(context, row);
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            var AVG = TextAndParameterUtil.getTextTranslationByKey(context, 'AVG', true);
+            var N = TextAndParameterUtil.getTextTranslationByKey(context, 'N', true);
+
             var hs : HeaderStatistics = new HeaderStatistics();
             hs.Statistics.Avg = true;
             hs.Statistics.Count = true;
@@ -374,8 +382,8 @@ class TableUtil {
 
             var catLabel = TextAndParameterUtil.getTextTranslationByKey(context, 'Cat_'+catId, true);
 
-            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' (AVG)');
-            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' (N)');
+            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' ('+AVG+')');
+            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' ('+N+')');
 
             row.HideHeader = true;
             row.SubHeaders.Add(hs);
