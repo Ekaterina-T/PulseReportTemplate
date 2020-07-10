@@ -338,10 +338,14 @@ class TableUtil {
         hs.Statistics.Avg = true;
         hs.Statistics.Count = true;
         hs.HideHeader = true;
-        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (AVG)');
-        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
-        row.SubHeaders.Add(hs);
 
+        var AVG = TextAndParameterUtil.getTextTranslationByKey(context, 'AVG', true);
+        var N = TextAndParameterUtil.getTextTranslationByKey(context, 'N', true);
+
+        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' ('+AVG+')');
+        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' ('+N+')');
+
+        row.SubHeaders.Add(hs);
 
         return row;
     }
@@ -367,6 +371,10 @@ class TableUtil {
         maskOutNA(context, row);
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+
+            var AVG = TextAndParameterUtil.getTextTranslationByKey(context, 'AVG', true);
+            var N = TextAndParameterUtil.getTextTranslationByKey(context, 'N', true);
+
             var hs : HeaderStatistics = new HeaderStatistics();
             hs.Statistics.Avg = true;
             hs.Statistics.Count = true;
@@ -374,8 +382,8 @@ class TableUtil {
 
             var catLabel = TextAndParameterUtil.getTextTranslationByKey(context, 'Cat_'+catId, true);
 
-            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' (AVG)');
-            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' (N)');
+            hs.Texts.Average = new Label(report.CurrentLanguage, catLabel+' ('+AVG+')');
+            hs.Texts.Count = new Label(report.CurrentLanguage, catLabel+' ('+N+')');
 
             row.HideHeader = true;
             row.SubHeaders.Add(hs);
