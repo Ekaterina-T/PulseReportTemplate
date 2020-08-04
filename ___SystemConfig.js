@@ -37,6 +37,12 @@ public class SystemConfig {
         'p_QsToFilterBy':         { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'KPIQuestionsToFilterVerbatim', isQuestionBased: true},
         'p_Statements':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Actions',              propertyName: 'Statements', isQuestionBased: true},
 
+
+        'p_ImpactAnalysisDimension':    { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Correlation', propertyName: 'Dimensions', isQuestionBased: true},
+        'p_CorrelationQuestion':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Correlation',              propertyName: 'CorrelationQuestions', isQuestionBased: true},
+        'TA_CORRELATION_QUESTION':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Correlation',              propertyName: 'CorrelationQuestions', isQuestionBased: true},
+
+
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
         'p_HierarchyBasedComparisons': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'HierarchyBasedComparisons'},
         'p_Dimensions':   { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
@@ -51,7 +57,8 @@ public class SystemConfig {
     static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher',
-                                            'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy'];
+                                            'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy',
+                                            'p_ImpactAnalysisDimension', 'p_CorrelationQuestion'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
