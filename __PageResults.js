@@ -1077,29 +1077,47 @@ class PageResults {
         var log = context.log;
         var report = context.report;
         var levelSegment: HeaderSegment = new HeaderSegment();
-        var parentsList = [];
 
         levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
         levelSegment.SegmentType = HeaderSegmentType.Expression;
         levelSegment.HideData = true;
 
-        if (level === 'top') {
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
-        } else if (level === 'parent') {
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
+        if (level === 'company-total') {
+            var companyTotalField = Config.companyTotalField;
+            if(companyTotalField && companyTotalField.length > 0) {
+                var companyTotals = HierarchyUtil.getAdditionalColumnValueForCurrentReportBase(context, companyTotalField);
+
+                if(companyTotals && companyTotals.length === 1) {
+                    levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, companyTotals[0]['id'], null);
+                    levelSegment.Label = new Label(report.CurrentLanguage, companyTotals[0]['label']);
+                } else {
+                    return ;
+                }
+            } else {
+                throw new Error("PageResults.tableBenchmarks_addHierarchyBasedComparison: No company total field specified in the Config.")
+            }
+
         } else {
-            parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
-        }
+            var parentsList = [];
 
-        if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
-            var parentArr = parentsList[0];
-            var index = parentArr.length - 1;
+            if (level === 'top') {
+                parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
+            } else if (level === 'parent') {
+                parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, 1);
+            } else {
+                parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
+            }
 
-            levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
-            levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+            if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
+                var parentArr = parentsList[0];
+                var index = parentArr.length - 1;
 
-        } else {
-            return; // no such parent in the hierarchy
+                levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+                levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+
+            } else {
+                return; // no such parent in the hierarchy
+            }
         }
 
         //calc score
