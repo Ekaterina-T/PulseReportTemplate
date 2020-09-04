@@ -269,7 +269,8 @@ class HierarchyUtil {
         var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
 
         for(var i = 0; i < bases.length; i++) {
-            var recordValues = dbTableNew.GetColumnValues('__l9' + additionalColumnName, 'id', bases[i]);
+            //var recordValues = dbTableNew.GetColumnValues('__l9' + additionalColumnName, 'id', bases[i]);
+            var recordValues = dbTableNew.GetColumnValues(additionalColumnName, 'id', bases[i]);
             for(var j = 0; j < recordValues.Count; j++) {
                 if (dbTableNew.RowExists('id', recordValues[j])) {
                     var recordValue = {id: recordValues[i], label: getNodeLabelById(recordValues[j])};
