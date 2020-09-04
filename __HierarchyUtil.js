@@ -276,6 +276,8 @@ class HierarchyUtil {
                 }
             }
         }
+
+        return additionalValues;
     }
 
 
