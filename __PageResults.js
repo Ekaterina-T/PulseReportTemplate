@@ -1085,7 +1085,7 @@ class PageResults {
         if (level === 'company-total') {
             var companyTotalField = Config.companyTotalField;
             if(companyTotalField && companyTotalField.length > 0) {
-                var companyTotals = HierarchyUtil.getAdditionalColumnValueForCurrentReportBase(context, companyTotalField);
+                var companyTotals = HierarchyUtil.getAdditionalColumnValuesForCurrentReportBase(context, companyTotalField);
 
                 if(companyTotals && companyTotals.length === 1) {
                     levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, companyTotals[0]['id'], null);
