@@ -3,6 +3,8 @@ class HierarchyUtil {
     // cached hierarchy DB table
     // check page initialize script
     static var dbTable : DataTable = new DataTable();
+    static var isLowestLevel = {};
+    static var topNode = "";
 
     /**
      * @memberof HierarchyUtil
@@ -102,6 +104,8 @@ class HierarchyUtil {
             var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
             var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
+
+            saveTopNode(context);
         }
     }
 
@@ -113,6 +117,30 @@ class HierarchyUtil {
      */
     static function getDataTable() {
         return dbTable;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function saveTopNode
+     * @description saves top hierarchy node to static var topNode
+     * @param {Object} context {confirmit: confirmit, log: log}
+     */
+    static function saveTopNode(context) {
+
+        var log = context.log;
+        var rows = dbTable && dbTable.Rows;
+
+        if(!rows || rows.Count === 0) {
+            throw new Error('HierarchyUtil.getParentsForHierarchyNode: hierarchy dbTable is not set although requested.');
+        }
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row : DataRow = rows[i];
+            if(!row[Config.relationName]) {
+                topNode = row['id'];
+                break;
+            }
+        }
     }
 
     /**
@@ -209,6 +237,131 @@ class HierarchyUtil {
 
     /**
      * @memberof HierarchyUtil
+     * @function getHierarchyLevelToCompare
+     * @description gets benchmark level from DB table/HM for the current node
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @returns {Object}
+     */
+    static function getHierarchyLevelToCompare(context) {
+
+        var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var level = {};
+
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var benchColumn = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBenchmarkDBColumn');
+        var colName = benchColumn.name;
+        var colType = benchColumn.type;
+        if (colType == "HMcolumn" || colType == "DDcolumn") colName = "__l9" + colName;
+
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+        var StringColl = dbTableNew.GetColumnValues(colName, 'id', bases[0]);
+
+        if (StringColl.Count > 0)
+        {
+            level['id'] = StringColl[0];
+            var BARow: DataRow[] = dbTable.Select("id='"+ level['id'] +"'");
+            if (BARow.length > 0) {
+                level['label'] = BARow[0]['__l9'];
+                return level;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function isLowestLevelInHierarchyAnyNode
+     * @description checks if the specified node is lowest level in hierarchy
+     * @param {String} nodeID
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @returns {Boolean} isLowest
+     */
+    static function isLowestLevelInHierarchyAnyNode(nodeID, context) {
+
+        var rows = dbTable.Rows;
+        var isLowest = true;
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row : DataRow = rows[i];
+            if(row[Config.relationName] === nodeID) {
+                isLowest = false;
+                break;
+            }
+        }
+        return isLowest;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function allAssignedNodesLowest
+     * @description checks if all nodes user is assigned to are lowest level in hierarchy
+     * @param {Object} context {confirmit: confirmit, user: user, log: log}
+     * @returns {Boolean} allLowest
+     */
+    static function allAssignedNodesLowest(context) {
+
+        var user = context.user;
+        var log = context.log;
+
+        if (user.UserType == ReportUserType.Confirmit) {
+            return false;
+        }
+
+        setDataTable(context); //temp for using in page hide scripts
+
+        var allLowest = true;
+        var nodesAssigned = user.GetNodeAssignments();
+        for (var i=0; i<nodesAssigned.length; i++) {
+
+            var nodeId = nodesAssigned[i];
+
+            if (isLowestLevel[nodeId] === undefined) {
+                isLowestLevel[nodeId] = isLowestLevelInHierarchyAnyNode(nodeId, context);
+            }
+            if (!isLowestLevel[nodeId]) {
+                allLowest = false;
+                break;
+            }
+
+        }
+        return allLowest;
+
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function topNodeAssigned
+     * @description checks if user is assigned to top level of hierarchy
+     * @param {Object} context {confirmit: confirmit, user: user, log: log}
+     * @returns {Boolean}
+     */
+    static function topNodeAssigned(context) {
+
+        var user = context.user;
+        var log = context.log;
+
+        if (user.UserType == ReportUserType.Confirmit) {
+            return true;
+        }
+
+        setDataTable(context); //temp for using in page hide scripts
+
+        var nodesAssigned = user.GetNodeAssignments();
+        for (var i=0; i<nodesAssigned.length; i++) {
+            var nodeId = nodesAssigned[i];
+            if (nodeId == topNode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * @memberof HierarchyUtil
      * @function getDirectChildren
      * @description gets direct children of the node
      * @param {Object} context {confirmit: confirmit}
@@ -250,6 +403,5 @@ class HierarchyUtil {
 
         return nodes;
     }
-
 
 }

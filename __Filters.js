@@ -67,8 +67,13 @@ class Filters {
             // paramNum should be less than number of filter components on all pages
             // paramNum should be less than number of filters based on BG vars on Response Rate page
             if (paramNum > filterList.length || (pageId === 'Page_Response_Rate' && paramNum > numberOfBGFilters)) {
-                return true; // hide
+                return true;
             }
+
+            if (!Access.isQuestionAllowed(context, filterList[paramNum-1])) {
+                return true;
+            }
+
             return false;
         }
 
@@ -509,5 +514,17 @@ class Filters {
         }
 
         return expr;
+    }
+
+
+    /**
+     * @author - EkaterinaT
+     * @example - Filters.currentUsername({user:user, log: log})
+     * @description - filter for custom table UserRoles that has Username field, needed to define ViewerManager role
+     * @param {Object} context
+     * @returns {string} filter expression
+     */
+    static function currentUsername(context) {
+        return 'Username = "'+context.user.UserId+'"';
     }
 }

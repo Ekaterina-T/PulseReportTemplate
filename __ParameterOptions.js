@@ -489,6 +489,31 @@ class ParameterOptions {
     }
 
     /**
+     *@param {Object} context
+     *@param {Array} array of options [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     *@param {String} parameterId
+     *@return {Array} [{Code: code1, Label: label1}, {Code: code2, Label: label2}, ...]
+     */
+    static function maskOptions(context, options, parameterId) {
+
+        var log = context.log;
+        var parameterInfo = GetParameterInfoObject(context, parameterId);
+        var type = parameterInfo.type;
+
+        if (type !== 'QuestionList') {
+            return options;
+        }
+
+        var masked = [];
+        for (var i = 0; i < options.length; i++) {
+            if(Access.isQuestionAllowed(context, options[i]['Code'])) {
+                masked.push(options[i]);
+            }
+        }
+        return masked;
+    }
+
+    /**
      * This function returns parameter options in standardised format.
      * @param: {object} - context {state: state, report: report, parameter: parameter, log: log}
      * @param: {string} - parameterName optional, contains parameterId to get parameter's default value
@@ -511,6 +536,8 @@ class ParameterOptions {
         }
 
         options = GetProcessedList(context, parameterId); //for params that shouldn't be cached
+        options = maskOptions(context, options, parameterId);
+
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
 
         return options;
