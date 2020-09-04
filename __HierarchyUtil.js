@@ -251,5 +251,36 @@ class HierarchyUtil {
         return nodes;
     }
 
+    /**
+     * @memberof HierarchyUtil
+     * @function getAdditionalColumnValueForCurrentReportBase
+     * @description gets the value of specified additional column for current report base
+     * @param {Object} context {confirmit: confirmit}
+     * @param {String} additionalColumnName
+     */
+
+    static function getAdditionalColumnValuesForCurrentReportBase(context, additionalColumnName) {
+
+        var log = context.log;
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var additionalValues = [];
+
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+
+        for(var i = 0; i < bases.length; i++) {
+            var recordValues = dbTableNew.GetColumnValues('additionalColumnName', 'id', bases[i]);
+            if (recordValues && recordValues.length > 0) {
+                for(var j = 0; j < recordValues.Count; j++) {
+                    if (dbTableNew.RowExists('id', recordValues[j])) {
+                        additionalValues.push(recordValues[j]);
+                    }
+                }
+            } else {
+                throw new Error('HierarchyUtil.getAdditionalColumnValuesForCurrentReportBase: No such additional column specified for the current report base.');
+            }
+        }
+    }
+
 
 }
