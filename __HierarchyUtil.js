@@ -269,15 +269,11 @@ class HierarchyUtil {
         var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
 
         for(var i = 0; i < bases.length; i++) {
-            var recordValues = dbTableNew.GetColumnValues('additionalColumnName', 'id', bases[i]);
-            if (recordValues && recordValues.Count > 0) {
-                for(var j = 0; j < recordValues.Count; j++) {
-                    if (dbTableNew.RowExists('id', recordValues[j])) {
-                        additionalValues.push(recordValues[j]);
-                    }
+            var recordValues = dbTableNew.GetColumnValues(additionalColumnName, 'id', bases[i]);
+            for(var j = 0; j < recordValues.Count; j++) {
+                if (dbTableNew.RowExists('id', recordValues[j])) {
+                    additionalValues.push(recordValues[j]);
                 }
-            } else {
-                throw new Error('HierarchyUtil.getAdditionalColumnValuesForCurrentReportBase: No such additional column specified for the current report base.');
             }
         }
     }
