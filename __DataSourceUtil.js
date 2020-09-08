@@ -12,7 +12,7 @@ class DataSourceUtil {
         var surveys = Config.Surveys;
         var i = 0;
 
-        while (i< surveys.length && (surveys[i].isHidden || !User.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'getDefaultDSFromConfig'))) {
+        while (i< surveys.length && (surveys[i].isHidden || !UserUtil.isUserValidForSurveybyRole(context, surveys[i].AvailableForRoles, 'getDefaultDSFromConfig'))) {
             i++;
         }
 

@@ -79,5 +79,13 @@ public class SystemConfig {
                         ],
         Page_CategoricalDrilldown: ['BreakVariables'],
         Page_Response_Rate: ['DemographicsQuestions']
-    }
+    };
+
+    static public var USER_ROLES = {
+        //'hr' is hard-coded because UserRoles custom table in Smart Hub may have 2 roles: hr and manager
+        // and it is case sensitive https://confluence.firmglobal.com/pages/viewpage.action?pageId=119637746
+        // so for that sake of uniformity 'hr' must be like that
+        HR: 'hr',
+        VIEWER_MANAGER: 'ViewerManager'
+    };
 }
