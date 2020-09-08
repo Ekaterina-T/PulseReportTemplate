@@ -30,14 +30,14 @@ class ParamUtil {
         var parameter = context.parameter;
         var log = context.log;
 
-        log.LogDebug('param load start '+parameter.ParameterId)
+        //log.LogDebug('param load start '+parameter.ParameterId)
         if (!isParameterToBeLoaded(context)) { // no need to load parameter
             return;
         }
-        log.LogDebug('param load start 1')
+        //log.LogDebug('param load start 1')
 
         var parameterOptions = ParameterOptions.GetOptions(context, null, 'load'); // get options
-        log.LogDebug('param load start 2')
+        //log.LogDebug('param load start 2')
 
         for (var i = 0; i < parameterOptions.length; i++) { // populate parameter
             var val = new ParameterValueResponse();
@@ -45,7 +45,7 @@ class ParamUtil {
             val.StringValue = parameterOptions[i].Label;
             parameter.Items.Add(val);
         }
-        log.LogDebug('param load end '+parameter.ParameterId)
+        //log.LogDebug('param load end '+parameter.ParameterId)
 
         return;
     }

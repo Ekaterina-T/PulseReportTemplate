@@ -1040,7 +1040,7 @@ class PageResults {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }
 
-            tableBenchmarks_addTrackerBasedComparison(context);
+            //tableBenchmarks_addTrackerBasedComparison(context);
         }
 
         //add Benchmarks from benchmark project
