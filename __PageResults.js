@@ -1160,26 +1160,31 @@ class PageResults {
 
         var log = context.log;
         var report = context.report;
-        //var surveySegment: HeaderSegment = new HeaderSegment();
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
             var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Results_trackerSurveys');
 
-            for(var i = 0; i < projectsToCompare.length; i++) {
-                log.LogDebug(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
+            if(projectsToCompare.length > 0) {
+                var surveySegmentExpressions = [];
+
+                for (var i = 0; i < projectsToCompare.length; i++) {
+                    surveySegmentExpressions.push(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
+                }
+
+                /*var surveySegment: HeaderSegment = new HeaderSegment();
+                surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                surveySegment.SegmentType = HeaderSegmentType.Expression;
+                surveySegment.HideData = true;
+                surveySegment.Label = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, 'TrackerComparison'));
+
+                //calc score
+                var newHeaders = addScore(context);
+                newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+                newHeaders[1].SubHeaders.Add(surveySegment);*/
+
+                log.LogDebug(surveySegmentExpressions.join(' OR '));
             }
         }
-
-        /*surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
-        surveySegment.SegmentType = HeaderSegmentType.Expression;
-        surveySegment.HideData = true;
-        surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey.Code);
-
-        surveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
-        //calc score
-        var newHeaders = addScore(context);
-        newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
-        newHeaders[1].SubHeaders.Add(surveySegment);*/
     }
 
     /**
