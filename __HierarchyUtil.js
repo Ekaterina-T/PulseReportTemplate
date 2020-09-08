@@ -404,4 +404,56 @@ class HierarchyUtil {
         return nodes;
     }
 
+    /**
+     * @memberof HierarchyUtil
+     * @function getAdditionalColumnValueForCurrentReportBase
+     * @description gets the value of specified additional column for current report base
+     * @param {Object} context {confirmit: confirmit}
+     * @param {String} additionalColumnName
+     */
+
+    static function getAdditionalColumnValuesForCurrentReportBase(context, additionalColumnName) {
+
+        var log = context.log;
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var additionalValues = [];
+
+        var schema : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+
+        for(var i = 0; i < bases.length; i++) {
+            var recordValues = dbTableNew.GetColumnValues('__l9' + additionalColumnName, 'id', bases[i]);
+            //var recordValues = dbTableNew.GetColumnValues(additionalColumnName, 'id', bases[i]);
+            for(var j = 0; j < recordValues.Count; j++) {
+                if (dbTableNew.RowExists('id', recordValues[j])) {
+                    var recordValue = {id: recordValues[i], label: getNodeLabelById(recordValues[j])};
+                    additionalValues.push(recordValue);
+                }
+            }
+        }
+
+        return additionalValues;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getNodeLabelById
+     * @description gets the label of the requested node by it's id
+     * @param {String} nodeId
+     */
+
+    static function getNodeLabelById(nodeId) {
+        var rows = dbTable && dbTable.Rows;
+        var label = '';
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row: DataRow = rows[i];
+            if(row['id'] === nodeId) {
+                label = row['__l9'];
+                break;
+            }
+        }
+
+        return label;
+    }
 }
