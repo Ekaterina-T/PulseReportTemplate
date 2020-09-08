@@ -1040,7 +1040,7 @@ class PageResults {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }
 
-            //tableBenchmarks_addTrackerBasedComparison(context);
+            tableBenchmarks_addTrackerBasedComparison(context);
         }
 
         //add Benchmarks from benchmark project
@@ -1163,7 +1163,7 @@ class PageResults {
         //var surveySegment: HeaderSegment = new HeaderSegment();
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
+            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Results_trackerSurveys');
 
             for(var i = 0; i < projectsToCompare.length; i++) {
                 log.LogDebug(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
