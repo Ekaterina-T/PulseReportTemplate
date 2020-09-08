@@ -1039,6 +1039,8 @@ class PageResults {
             for (var i = 0; i < surveysToCompare.length; i++) {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }
+
+            tableBenchmarks_addTrackerBasedComparison(context);
         }
 
         //add Benchmarks from benchmark project
@@ -1148,6 +1150,36 @@ class PageResults {
         var newHeaders = addScore(context);
         newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
         newHeaders[1].SubHeaders.Add(surveySegment);
+    }
+
+     /*
+      * Adds segment with the filter based on the selected tracker surveys
+      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+      */
+    static function tableBenchmarks_addTrackerBasedComparison(context) {
+
+        var log = context.log;
+        var report = context.report;
+        //var surveySegment: HeaderSegment = new HeaderSegment();
+
+        if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Trends_trackerSurveys');
+
+            for(var i = 0; i < projectsToCompare.length; i++) {
+                log.LogDebug(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
+            }
+        }
+
+        /*surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+        surveySegment.SegmentType = HeaderSegmentType.Expression;
+        surveySegment.HideData = true;
+        surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey.Code);
+
+        surveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
+        //calc score
+        var newHeaders = addScore(context);
+        newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
+        newHeaders[1].SubHeaders.Add(surveySegment);*/
     }
 
     /**
