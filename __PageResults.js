@@ -1034,11 +1034,11 @@ class PageResults {
         //add survey based comparison
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         if (tabSwitcher[0] !== 'custom') {
-            var surveysToCompare = getBenchmarkSurveys(context);
+            /*var surveysToCompare = getBenchmarkSurveys(context);
 
             for (var i = 0; i < surveysToCompare.length; i++) {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
-            }
+            }*/
 
             tableBenchmarks_addTrackerBasedComparison(context);
         }
@@ -1171,18 +1171,19 @@ class PageResults {
                     surveySegmentExpressions.push(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
                 }
 
-                /*var surveySegment: HeaderSegment = new HeaderSegment();
+                var surveySegment: HeaderSegment = new HeaderSegment();
                 surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
                 surveySegment.SegmentType = HeaderSegmentType.Expression;
                 surveySegment.HideData = true;
                 surveySegment.Label = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, 'TrackerComparison'));
+                surveySegment.Expression = surveySegmentExpressions.join(' OR ');
 
                 //calc score
                 var newHeaders = addScore(context);
                 newHeaders[0].Title = surveySegment.Label; // first add header and below segment because otherwise scripted table gives wrong results
-                newHeaders[1].SubHeaders.Add(surveySegment);*/
+                newHeaders[1].SubHeaders.Add(surveySegment);
 
-                log.LogDebug(surveySegmentExpressions.join(' OR '));
+                //log.LogDebug(surveySegmentExpressions.join(' OR '));
             }
         }
     }
