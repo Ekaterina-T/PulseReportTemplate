@@ -1040,6 +1040,8 @@ class PageResults {
                 tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
             }*/
 
+            log.LogDebug('adding tracker comparison');
+
             tableBenchmarks_addTrackerBasedComparison(context);
         }
 
@@ -1064,6 +1066,7 @@ class PageResults {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
+                log.LogDebug('adding hierarchy comparison ' + hierarchyLevelsToCompare[i]);
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
         }
