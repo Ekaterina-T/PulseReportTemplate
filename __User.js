@@ -70,7 +70,7 @@ class UserUtil {
         var isViewerManager = true;
         var hrRole = SystemConfig.USER_ROLES.HR;
 
-        if(user.HasRole(hrRole)) {
+        if(user.UserType === ReportUserType.Confirmit || user.HasRole(hrRole)) {
             isViewerManager = false;
         } else {
             isViewerManager = !UserUtil.hasRoleInCustomTable(context, hrRole);
