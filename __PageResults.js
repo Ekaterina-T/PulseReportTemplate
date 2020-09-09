@@ -1034,14 +1034,6 @@ class PageResults {
         //add survey based comparison
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         if (tabSwitcher[0] !== 'custom') {
-            /*var surveysToCompare = getBenchmarkSurveys(context);
-
-            for (var i = 0; i < surveysToCompare.length; i++) {
-                tableBenchmarks_addSurveyBasedComparison(context, surveysToCompare[i]);
-            }*/
-
-            log.LogDebug('adding tracker comparison');
-
             tableBenchmarks_addTrackerBasedComparison(context);
         }
 
@@ -1066,7 +1058,6 @@ class PageResults {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
-                log.LogDebug('adding hierarchy comparison ' + hierarchyLevelsToCompare[i]);
                 tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
             }
         }
@@ -1178,7 +1169,7 @@ class PageResults {
                 surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
                 surveySegment.SegmentType = HeaderSegmentType.Expression;
                 surveySegment.HideData = true;
-                surveySegment.Label = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, 'TrackerComparison'));
+                surveySegment.Label = new Label(report.CurrentLanguage, TextAndParameterUtil.getTextTranslationByKey(context, 'SurveyComparison'));
                 surveySegment.Expression = surveySegmentExpressions.join(' OR ');
 
                 //calc score
