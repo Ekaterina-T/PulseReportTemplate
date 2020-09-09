@@ -835,8 +835,16 @@ class PageResults {
         var tabSwitcher = ParamUtil.GetSelectedCodes(context, 'p_Results_TableTabSwitcher');
         if (tabSwitcher[0] !== 'custom') {
 
-            var surveyCompCols = getBenchmarkSurveys(context);
+            /*var surveyCompCols = getBenchmarkSurveys(context);
             for (i = 0; i < surveyCompCols.length; i++) {
+                var surveyCompContent: HeaderContent = new HeaderContent();
+                copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
+                bmColumn += 1;
+            }*/
+
+            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Results_ComparisonSurveys');
+
+            if(projectsToCompare.length > 0) {
                 var surveyCompContent: HeaderContent = new HeaderContent();
                 copyBenchmarkValues(context, baseValues, bmColumn, surveyCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
                 bmColumn += 1;
@@ -1156,7 +1164,7 @@ class PageResults {
         var report = context.report;
 
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
-            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Results_trackerSurveys');
+            var projectsToCompare = ParamUtil.GetSelectedCodes(context, 'p_Results_ComparisonSurveys');
 
             if(projectsToCompare.length > 0) {
                 var surveySegmentExpressions = [];

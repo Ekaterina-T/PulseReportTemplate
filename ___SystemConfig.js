@@ -11,7 +11,7 @@ public class SystemConfig {
 
         'p_projectSelector': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'visibleSurveys'], CachingDisabled: true},
         'p_Trends_trackerSurveys': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'allSurveys'], CachingDisabled: true},
-        'p_Results_trackerSurveys': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'allSurveys'], CachingDisabled: true},
+        'p_Results_ComparisonSurveys': { type: 'PulseSurveyInfo', locationType: 'Survey', propertyName: ['PulseSurveyData', 'allSurveys'], CachingDisabled: true},
 
         'p_Results_CountsPercents':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'Distribution' },
         'p_Results_TableTabSwitcher': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ResultsTabSwitcher'},
@@ -50,7 +50,7 @@ public class SystemConfig {
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher', 'p_Trends_trackerSurveys'];
 
     // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_Results_trackerSurveys']; // we must add them empty option as 1st value instead
+    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_Results_ComparisonSurveys']; // we must add them empty option as 1st value instead
 
     static const paramTypesToBeReset = {
         'PulseSurveyInfo': false,
