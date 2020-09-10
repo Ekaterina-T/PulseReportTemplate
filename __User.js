@@ -91,7 +91,12 @@ class UserUtil {
 
         var log = context.log;
         var report = context.report;
-        var userRoles = report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
+
+        try {
+            var userRoles = report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
+        } catch (e) {
+            return false; //no table, no role
+        }
 
         if(!userRoles.length) {
             return false;
