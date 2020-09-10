@@ -379,14 +379,14 @@ class TableUtil {
         var header = {}; // prepare param for getTrendHeader
         
         if(typeof configItem === 'string') {
-        header.Code = configItem;
-        header.Type = 'Question';
+            header.Code = configItem;
+            header.Type = 'Question';
         } else {
-        header = configItem;
+            header = configItem;
         }
         
         if(!header || !header.Type || !header.Code) {
-        throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
+            throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
         }
         
         return header;
