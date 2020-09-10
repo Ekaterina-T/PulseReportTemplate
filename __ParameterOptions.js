@@ -531,11 +531,7 @@ class ParameterOptions {
             CacheParameterOptions(context, parameterId);
         }
 
-        if (isCached) {
-            return CacheUtil.GetParameterOptions(context, parameterId);
-        }
-
-        options = GetProcessedList(context, parameterId); //for params that shouldn't be cached
+        options = (isCached) ? CacheUtil.GetParameterOptions(context, parameterId) : GetProcessedList(context, parameterId); //for params that shouldn't be cached
         options = maskOptions(context, options, parameterId);
 
         //log.LogDebug(' ---- END    '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
