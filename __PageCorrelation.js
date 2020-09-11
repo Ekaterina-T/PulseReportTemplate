@@ -9,24 +9,15 @@ class PageCorrelation {
         var log = context.log;
         var table = context.table;
 
-        log.LogDebug("tableCorrelation_Render start");
-
-        log.LogDebug("tableCorrelation_Render settings 0");
         table.Caching.Enabled = false;
-        log.LogDebug("tableCorrelation_Render settings 1");
         table.TotalsFirst = true;
 
         //SuppressUtil.setTableSuppress(table, suppressSettings);
 
-        log.LogDebug("tableCorrelation_Render add rows");
         tableCorrelation_AddRows(context);
-        log.LogDebug("tableCorrelation_Render add cols");
         tableCorrelation_AddColumns(context);
-        log.LogDebug("tableCorrelation_Render add cf");
         tableCorrelation_AddConditionalFormatting(context);
-        log.LogDebug("tableCorrelation_Render add sort");
         tableCorrelation_AddSorting(context);
-        log.LogDebug("tableCorrelation_Render end");
     }
 
     /*
