@@ -5,9 +5,11 @@ class PageCorrelation {
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      */
     static function tableCorrelation_Render(context) {
-        log.LogDebug("tableCorrelation_Render start");
+
         var log = context.log;
         var table = context.table;
+
+        log.LogDebug("tableCorrelation_Render start");
 
         log.LogDebug("tableCorrelation_Render settings 0");
         table.Caching.Enabled = false;
