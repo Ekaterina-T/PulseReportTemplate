@@ -525,6 +525,13 @@ class Filters {
      * @returns {string} filter expression
      */
     static function currentUsername(context) {
-        return 'Username = "'+context.user.UserId+'"';
+
+        try {
+            //if "mirror" of UserRoles custom tables exist
+            report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
+            return 'Username = "'+context.user.UserId+'"';
+        } catch(e) {
+            return "";
+        }
     }
 }
