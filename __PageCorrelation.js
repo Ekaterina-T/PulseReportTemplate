@@ -81,7 +81,7 @@ class PageCorrelation {
 
         var columnsCollection: HeaderCollection = new HeaderCollection();
         columnsCollection.Add(getStatisticsColumn());
-        columnsCollection.Add(getCorrelation());
+        columnsCollection.Add(getCorrelation(context));
         columnsCollection.Add(getBaseColumn());
         columnsCollection.Add(getFormulaColumn());
 
@@ -103,7 +103,7 @@ class PageCorrelation {
      * Create HeaderCorrelation column based on the selected correlation question
      * @return {HeaderCorrelation} created column
      */
-    static function getCorrelation() {
+    static function getCorrelation(context) {
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
 
         if(!!selectedCorrelationVariable) {
