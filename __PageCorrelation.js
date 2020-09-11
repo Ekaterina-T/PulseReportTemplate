@@ -13,10 +13,15 @@ class PageCorrelation {
 
         //SuppressUtil.setTableSuppress(table, suppressSettings);
 
+        log.LogDebug("tableCorrelation_Render add rows");
         tableCorrelation_AddRows(context);
+        log.LogDebug("tableCorrelation_Render add cols");
         tableCorrelation_AddColumns(context);
+        log.LogDebug("tableCorrelation_Render add cf");
         tableCorrelation_AddConditionalFormatting(context);
+        log.LogDebug("tableCorrelation_Render add sort");
         tableCorrelation_AddSorting(context);
+        log.LogDebug("tableCorrelation_Render end");
     }
 
     /*
