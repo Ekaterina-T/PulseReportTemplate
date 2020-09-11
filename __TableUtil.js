@@ -479,7 +479,7 @@ class TableUtil {
     /**
      * @param {String[]} classes
      */
-    function addClasses(context, classes) {
+    static function addClasses(context, classes) {
         var table = context.table;
 
         table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
