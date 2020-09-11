@@ -475,4 +475,13 @@ class TableUtil {
 
         table.ConditionalFormatting = formatter;
     }
+
+    /**
+     * @param {String[]} classes
+     */
+    function addClasses(context, classes) {
+        var table = context.table;
+
+        table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
+    }
 }

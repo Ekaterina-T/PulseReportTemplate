@@ -11,6 +11,9 @@ class PageCorrelation {
 
         table.Caching.Enabled = false;
         table.TotalsFirst = true;
+        table.RemoveEmptyHeaders.Rows = true;
+
+        TableUtil.addClasses(context, ["reportal-table","reportal-categories", "correlation-table"]);
 
         //SuppressUtil.setTableSuppress(table, suppressSettings);
 
