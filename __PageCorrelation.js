@@ -213,4 +213,41 @@ class PageCorrelation {
 
         context.text.Output.Append(text);
     }
+
+    /**
+     * txtCorrelationScript_Render
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function txtCorrelationScript_Render(context){
+        var chartColors = Config.correlationColors.ChartPalette;
+        var areasColors = Config.correlationColors.AreasPalette;
+
+        var palette = {
+            chartColors: chartColors,
+            areasColors: areasColors
+        };
+
+        var currentLanguage = context.report.CurrentLanguage;
+        var currentDictionary = Translations.dictionary(currentLanguage);
+
+        var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
+        var correlationVariableId = selectedCorrelationVariable.Code;
+        var correlationVariableName = QuestionUtil.getQuestionTitle(context, correlationVariableId);
+
+        var chartInit = "<script>"+
+            "new Reportal.CorrelationView({" +
+            "   chartContainer: 'correlation-chart'," +
+            "   tableContainer: 'correlation-tables-view'," +
+            "   buttonsContainer: 'chart-tables-switcher'," +
+            "   table: document.querySelectorAll('.correlation-table')[document.querySelectorAll('.correlation-table').length -1 ]," +
+            "   palette: palette," +
+            "   questionName: '" + (correlationVariableName || correlationVariableId) + "'," +
+            "   translations: translations" +
+            "});"+
+            "</script>";
+
+        context.text.Output.Append(Config.print(currentDictionary,"translations"));
+        context.text.Output.Append(Config.print(palette,"palette"));
+        context.text.Output.Append(chartInit);
+    }
 }
