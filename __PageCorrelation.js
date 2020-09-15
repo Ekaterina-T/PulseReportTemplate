@@ -227,12 +227,6 @@ class PageCorrelation {
             areasColors: areasColors
         };
 
-        /*var currentLanguage = context.report.CurrentLanguage;
-        var currentDictionary = Translations.dictionary(currentLanguage);
-
-        context.log.LogDebug(Config.print(currentDictionary,"translations"));
-        context.log.LogDebug(Config.print(getTranslations(context),"translations"));*/
-
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
         var correlationVariableName = QuestionUtil.getQuestionTitle(context, correlationVariableId);
@@ -263,8 +257,8 @@ class PageCorrelation {
             'No data to display': TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg'),
             'Impact on' : TextAndParameterUtil.getTextTranslationByKey(context, 'ImpactOn'),
             'Correlation chart' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationChart'),
-            'Average Score' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScore'),
-            'Average Score Overall' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScoreOverall'),
+            'Average' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScore'),
+            'Overall' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScoreOverall'),
             'Correlation with' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationWith'),
             'Correlation with NPS' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationWithNPS'),
             'Zero correlation' : TextAndParameterUtil.getTextTranslationByKey(context, 'ZeroCorrelation'),
