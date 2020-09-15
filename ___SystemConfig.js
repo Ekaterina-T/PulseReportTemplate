@@ -40,7 +40,6 @@ public class SystemConfig {
 
         'p_ImpactAnalysisDimension':    { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Correlation', propertyName: 'Dimensions', isQuestionBased: true},
         'p_CorrelationQuestion':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Correlation',              propertyName: 'CorrelationQuestions', isQuestionBased: true},
-        'TA_CORRELATION_QUESTION':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Correlation',              propertyName: 'CorrelationQuestions', isQuestionBased: true},
 
 
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
