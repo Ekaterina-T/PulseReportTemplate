@@ -227,7 +227,11 @@ class PageCorrelation {
             areasColors: areasColors
         };
 
-        var currentDictionary = getTranslations(context);
+        var currentLanguage = context.report.CurrentLanguage;
+        var currentDictionary = Translations.dictionary(currentLanguage);
+
+        context.log.LogDebug(Config.print(currentDictionary,"translations"));
+        context.log.LogDebug(Config.print(getTranslations(context),"translations"));
 
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
