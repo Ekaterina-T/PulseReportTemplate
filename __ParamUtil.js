@@ -472,6 +472,10 @@ class ParamUtil {
             return isPulseProgram; // only needed for pulse programs
         }
 
+        if(parameterName === 'p_Results_ComparisonSurveys') {
+            return isPulseProgram; // only needed for pulse programs
+        }
+
         if (parameterName === 'p_Results_BreakBy') {
             var breakBy = DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Results', 'BreakVariables');
             return (breakBy && breakBy.length > 0) ? true : false;
