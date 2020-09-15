@@ -526,12 +526,11 @@ class Filters {
      */
     static function currentUsername(context) {
 
-        try {
-            //if "mirror" of UserRoles custom tables exist
-            report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
-            return 'Username = "'+context.user.UserId+'"';
-        } catch(e) {
-            return "";
-        }
+        var log = context.log;
+        var surveyConfig = DataSourceUtil.getSurveyConfig(context);
+        var str = surveyConfig.hasOwnProperty('UserRolesTabeleDsId') ? 'Username = "'+context.user.UserId+'"' : '';
+        return str;
+
+
     }
 }
