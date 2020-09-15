@@ -15,7 +15,7 @@ class PageCorrelation {
 
         TableUtil.addClasses(context, ["reportal-table","reportal-categories", "correlation-table"]);
 
-        //SuppressUtil.setTableSuppress(table, suppressSettings);
+        SuppressUtil.setTableSuppress(table, suppressSettings);
 
         tableCorrelation_AddRows(context);
         tableCorrelation_AddColumns(context);
@@ -39,24 +39,26 @@ class PageCorrelation {
 
             var header = TableUtil.getHeaderDescriptorObject(context, headerID[i]);
 
-            if(header.Type === 'Question') {
+            if (header.Type === 'Question') {
                 var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, header.Code);
                 var row: HeaderQuestion = new HeaderQuestion(qe);
                 row.IsCollapsed = true;
                 row.DefaultStatistic = StatisticsType.Average;
                 table.RowHeaders.Add(row);
 
-            } else if(header.Type === 'Dimension') {
-                var categorization: HeaderCategorization = new HeaderCategorization();
-                categorization.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-                categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                categorization.DefaultStatistic = StatisticsType.Average;
-                categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-                categorization.Preaggregation = PreaggregationType.Average;
-                categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
-                categorization.Collapsed = true;
-                categorization.Totals = false;
-                table.RowHeaders.Add(categorization);
+            } else {
+                if (header.Type === 'Dimension') {
+                    var categorization: HeaderCategorization = new HeaderCategorization();
+                    categorization.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                    categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                    categorization.DefaultStatistic = StatisticsType.Average;
+                    categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                    categorization.Preaggregation = PreaggregationType.Average;
+                    categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+                    categorization.Collapsed = false;
+                    categorization.Totals = false;
+                    table.RowHeaders.Add(categorization);
+                }
             }
         }
     }
