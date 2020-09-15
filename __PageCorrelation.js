@@ -227,11 +227,11 @@ class PageCorrelation {
             areasColors: areasColors
         };
 
-        var currentLanguage = context.report.CurrentLanguage;
+        /*var currentLanguage = context.report.CurrentLanguage;
         var currentDictionary = Translations.dictionary(currentLanguage);
 
         context.log.LogDebug(Config.print(currentDictionary,"translations"));
-        context.log.LogDebug(Config.print(getTranslations(context),"translations"));
+        context.log.LogDebug(Config.print(getTranslations(context),"translations"));*/
 
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
@@ -249,7 +249,7 @@ class PageCorrelation {
             "});"+
             "</script>";
 
-        context.text.Output.Append(Config.print(currentDictionary,"translations"));
+        context.text.Output.Append(Config.print(getTranslations(context),"translations"));
         context.text.Output.Append(Config.print(palette,"palette"));
         context.text.Output.Append(chartInit);
     }
@@ -274,6 +274,8 @@ class PageCorrelation {
             'Monitor and Improve' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtMonitor'),
             'Maintain' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtMaintain')
         }
+
+        return translation;
 
     }
 }
