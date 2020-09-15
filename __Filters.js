@@ -441,7 +441,7 @@ class Filters {
             selectedPids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         }
 
-        return Filters.getFilterExpressionByAnswerRange(context, 'source_projectid', selectedPids);
+        return Filters.getFilterExpressionByAnswerRange(context, SystemConfig.pulseSurveyID, selectedPids);
     }
 
     /**

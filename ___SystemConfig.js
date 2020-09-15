@@ -89,4 +89,6 @@ public class SystemConfig {
         HR: 'hr',
         VIEWER_MANAGER: 'ViewerManager'
     };
+
+    static var pulseSurveyID = 'source_projectid';
 }

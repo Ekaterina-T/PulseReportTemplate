@@ -1,5 +1,6 @@
 class SurveyTracker {
 
+
     /**
      * Gets list of all pulse surveys from the allSurveys table in SystemPages -> PulseSurveyData -> AllSurveys table
      * @param {object} context - contains Reportal scripting state, log, report, user, parameter objects
@@ -8,7 +9,7 @@ class SurveyTracker {
     static function getAllSurveyDescriptors(context) {
 
         var project : Project = DataSourceUtil.getProject(context);
-        var source_projectid: Question = project.GetQuestion('source_projectid');
+        var source_projectid: Question = project.GetQuestion(SystemConfig.pulseSurveyID);
         return source_projectid.GetAnswers();
     }
 
@@ -21,7 +22,7 @@ class SurveyTracker {
     static function getSurveyDescriptorByPid(context, pid) {
 
         var project : Project = DataSourceUtil.getProject(context);
-        var source_projectid: Question = project.GetQuestion('source_projectid');
+        var source_projectid: Question = project.GetQuestion(SystemConfig.pulseSurveyID);
         var info: Answer = source_projectid.GetAnswer(pid);
         return {Code: info.Precode, Label: info.Text};
     }

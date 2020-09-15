@@ -56,7 +56,7 @@ class PageTrend {
         // in pulse program Trend shows comparison between surveys
         if(!DataSourceUtil.isProjectSelectorNotNeeded(context)) {
 
-            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, 'source_projectid');
+            var pid: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, SystemConfig.pulseSurveyID);
             var pidHQ: HeaderQuestion = new HeaderQuestion(pid);
 
             //take values from config
