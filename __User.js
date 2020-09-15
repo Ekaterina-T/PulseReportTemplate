@@ -91,10 +91,11 @@ class UserUtil {
 
         var log = context.log;
         var report = context.report;
+        var usernameFilter = Filters.currentUsername(context);
 
-        try {
+        if(usernameFilter.length > 0) {
             var userRoles = report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
-        } catch (e) {
+        } else {
             return false; //no table, no role
         }
 
