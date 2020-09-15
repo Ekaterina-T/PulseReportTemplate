@@ -227,8 +227,7 @@ class PageCorrelation {
             areasColors: areasColors
         };
 
-        var currentLanguage = context.report.CurrentLanguage;
-        var currentDictionary = Translations.dictionary(currentLanguage);
+        var currentDictionary = getTranslations(context);
 
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
@@ -249,5 +248,28 @@ class PageCorrelation {
         context.text.Output.Append(Config.print(currentDictionary,"translations"));
         context.text.Output.Append(Config.print(palette,"palette"));
         context.text.Output.Append(chartInit);
+    }
+
+    /**
+     * Create an object with translations necessary for correlation table/chart
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function getTranslations(context) {
+        var translation = {
+            'No data to display': TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg'),
+            'Impact on' : TextAndParameterUtil.getTextTranslationByKey(context, 'ImpactOn'),
+            'Correlation chart' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationChart'),
+            'Average Score' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScore'),
+            'Average Score Overall' : TextAndParameterUtil.getTextTranslationByKey(context, 'AverageScoreOverall'),
+            'Correlation with' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationWith'),
+            'Correlation with NPS' : TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationWithNPS'),
+            'Zero correlation' : TextAndParameterUtil.getTextTranslationByKey(context, 'ZeroCorrelation'),
+
+            'Priority Issues' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtPriorityIssues'),
+            'Strength' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtStrength'),
+            'Monitor and Improve' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtMonitor'),
+            'Maintain' : TextAndParameterUtil.getTextTranslationByKey(context, 'txtMaintain')
+        }
+
     }
 }
