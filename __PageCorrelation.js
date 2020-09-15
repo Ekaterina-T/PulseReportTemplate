@@ -198,4 +198,19 @@ class PageCorrelation {
     static function tableCorrelation_AddSorting(context) {
         TableUtil.setupRowsTableSorting(context, false, 1, 0, true, 1);
     }
+
+    /**
+     * Show help text depending on what view is chosen
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     */
+    static function txtHelp_Render(context){
+        var text = '<div id="quadrant-table">'+
+            TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationTable_InfoTooltip') +
+            '</div>'+
+            '<div id="quadrant-chart">'+
+            TextAndParameterUtil.getTextTranslationByKey(context, 'CorrelationChart_InfoTooltip') +
+            '</div>';
+
+        context.text.Output.Append(text);
+    }
 }
