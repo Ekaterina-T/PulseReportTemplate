@@ -122,6 +122,12 @@ class StyleAndJavaScriptUtil {
             properties.push('tagColumnNumbers: '+JSON.stringify(PageActions.getTagColumnNumbers (context)));
         }
 
+        if (pageId === 'Correlation') {
+            //properties.push('action_kpi: '+JSON.stringify(PageActions.getKPIResult(context)));
+            properties.push('correlationDimensions: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')));
+            properties.push('isColorsForDimensionUnited: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isColorsForDimensionUnited')));
+        }
+
         globalVarScript.push('<script>');
         globalVarScript.push(';var ReportTemplateConfig = (function(){');
         globalVarScript.push('return {');
