@@ -231,9 +231,9 @@ class PageCorrelation {
             "   tableContainer: 'correlation-tables-view'," +
             "   buttonsContainer: 'chart-tables-switcher'," +
             "   table: document.querySelectorAll('.correlation-table')[document.querySelectorAll('.correlation-table').length -1 ]," +
-            "   palette: ReportTemplateConfig.correlationPalette," +
+            "   palette: correlationPalette," +
             "   questionName: '" + (correlationVariableName || correlationVariableId) + "'," +
-            "   translations: ReportTemplateConfig.correlationTranslations" +
+            "   translations: correlationTranslations" +
             "});"+
             "</script>";
 
