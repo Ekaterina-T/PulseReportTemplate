@@ -221,14 +221,6 @@ class PageCorrelation {
      * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     static function txtCorrelationScript_Render(context){
-        var chartColors = Config.correlationColors.ChartPalette;
-        var areasColors = Config.correlationColors.AreasPalette;
-
-        var palette = {
-            chartColors: chartColors,
-            areasColors: areasColors
-        };
-
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
         var correlationVariableName = QuestionUtil.getQuestionTitle(context, correlationVariableId);
@@ -246,13 +238,14 @@ class PageCorrelation {
             "</script>";
 
         context.text.Output.Append(Config.print(getTranslations(context),"translations"));
-        context.text.Output.Append(Config.print(palette,"palette"));
+        context.text.Output.Append(Config.print(getPalette(context),"palette"));
         context.text.Output.Append(chartInit);
     }
 
     /**
      * Create an object with translations necessary for correlation table/chart
      * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @return {Object} translations
      */
     static function getTranslations(context) {
         var translation = {
@@ -272,6 +265,22 @@ class PageCorrelation {
         }
 
         return translation;
+    }
 
+    /**
+     * Create an object with colors for correlation table/chart
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @return {Object} palette
+     */
+    static fucntion getPalette(context) {
+        var chartColors = Config.correlationColors.ChartPalette;
+        var areasColors = Config.correlationColors.AreasPalette;
+
+        var palette = {
+            chartColors: chartColors,
+            areasColors: areasColors
+        };
+
+        return palette;
     }
 }
