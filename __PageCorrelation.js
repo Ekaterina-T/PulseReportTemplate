@@ -237,8 +237,8 @@ class PageCorrelation {
             "});"+
             "</script>";
 
-        context.text.Output.Append(DataSourceUtil.printProperty(getTranslations(context),"correlationTranslations"));
-        context.text.Output.Append(DataSourceUtil.printProperty(getPalette(context),"correlationPalette"));
+        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getTranslations(context),"correlationTranslations"));
+        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getPalette(context),"correlationPalette"));
         context.text.Output.Append(chartInit);
     }
 

@@ -224,16 +224,4 @@ class DataSourceUtil {
         }
         return ifHide;
     }
-
-    /**
-     * function to create js variable from reportal object
-     * @param {Object} config - reportal object
-     * @param {String} configName - name for the js variable ('config' by degault)
-     * @returns {String}
-     */
-    static function printProperty(config, configName){ // JSON.print prints JSON `config` to page as JavaScript variable with a specified `configName`
-        var varName = configName || 'config';
-        return '<script type="text/javascript">var '+ varName + '=' + JSON.stringify(config) +'</script>';
-    }
-
 }
