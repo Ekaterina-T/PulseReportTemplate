@@ -127,7 +127,7 @@ class StyleAndJavaScriptUtil {
             properties.push('allDimensions: '+JSON.stringify(DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions')));
             properties.push('correlationDimensions: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions')));
             properties.push('isColorsForDimensionUnited: '+JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isColorsForDimensionUnited')));
-            properties.push('correlationTranslation: '+JSON.stringify(PageCorrelation.getTranslations(context)));
+            properties.push('correlationTranslations: '+JSON.stringify(PageCorrelation.getTranslations(context)));
             properties.push('correlationPalette: '+JSON.stringify(PageCorrelation.getPalette(context)));
         }
 

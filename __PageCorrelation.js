@@ -231,14 +231,14 @@ class PageCorrelation {
             "   tableContainer: 'correlation-tables-view'," +
             "   buttonsContainer: 'chart-tables-switcher'," +
             "   table: document.querySelectorAll('.correlation-table')[document.querySelectorAll('.correlation-table').length -1 ]," +
-            "   palette: palette," +
+            "   palette: ReportTemplateConfig.correlationPalette," +
             "   questionName: '" + (correlationVariableName || correlationVariableId) + "'," +
-            "   translations: translations" +
+            "   translations: ReportTemplateConfig.correlationTranslations" +
             "});"+
             "</script>";
 
-        context.text.Output.Append(Config.print(getTranslations(context),"translations"));
-        context.text.Output.Append(Config.print(getPalette(context),"palette"));
+        //context.text.Output.Append(Config.print(getTranslations(context),"translations"));
+        //context.text.Output.Append(Config.print(getPalette(context),"palette"));
         context.text.Output.Append(chartInit);
     }
 
