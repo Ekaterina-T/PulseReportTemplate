@@ -272,7 +272,7 @@ class PageCorrelation {
      * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
      * @return {Object} palette
      */
-    static fucntion getPalette(context) {
+    static function getPalette(context) {
         var chartColors = Config.correlationColors.ChartPalette;
         var areasColors = Config.correlationColors.AreasPalette;
 
