@@ -290,7 +290,9 @@ class PageCorrelation {
      * @return {Object} object with dimensions and questions for correlation
      */
     static function getCorrelationDimensionsAndQuestions(context) {
-        var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
+        //var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
         var correlationDimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
 
         var correlationDimensionsAndQuestions = [];
