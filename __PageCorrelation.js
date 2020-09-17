@@ -299,7 +299,7 @@ class PageCorrelation {
         var correlationDimensionsAndQuestions = [];
 
         for(var i = 0; i < correlationDimensions.length; i++) {
-            if(correlationDimensions[i].Type.toLowerCase() === 'dimension') {
+            if(!!correlationDimensions[i].Type && correlationDimensions[i].Type.toLowerCase() === 'dimension') {
                 log.LogDebug("dimension");
                 correlationDimensionsAndQuestions.push(
                     {
@@ -309,6 +309,7 @@ class PageCorrelation {
                         Questions: getQuestionsByDimensionId(context, correlationDimensions[i].Code)
                     }
                 );
+                log.LogDebug("added dimension");
 
             } else {
                 log.LogDebug("question");
@@ -351,8 +352,6 @@ class PageCorrelation {
                             Title: QuestionUtil.getQuestionTitle(context, questionsInDimension[j])
                         }
                     );
-                    log.LogDebug("question " + questionsInDimension[j]);
-                    log.LogDebug("question " + QuestionUtil.getQuestionTitle(context, questionsInDimension[j]));
                 }
                 break;
             }
