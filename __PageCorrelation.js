@@ -291,6 +291,7 @@ class PageCorrelation {
      */
     static function getCorrelationDimensionsAndQuestions(context) {
         //var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
+        var log = context.log;
         var pageContext = context.pageContext;
         var pageId = pageContext.Items['CurrentPageId'];
         var correlationDimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
@@ -299,6 +300,7 @@ class PageCorrelation {
 
         for(var i = 0; i < correlationDimensions.length; i++) {
             if(correlationDimensions[i].Type.toLowerCase() === 'dimension') {
+                log.LogDebug("dimension");
                 correlationDimensionsAndQuestions.push(
                     {
                         Type: 'Dimension',
@@ -309,6 +311,7 @@ class PageCorrelation {
                 );
 
             } else {
+                log.LogDebug("question");
                 correlationDimensionsAndQuestions.push(
                     {
                         Type: 'Question',
@@ -330,8 +333,11 @@ class PageCorrelation {
      * @return {Object} object with dimensions and questions for correlation
      */
     static function getQuestionsByDimensionId(context, dimensionId) {
+        var log = context.log;
         var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
         var questions = [];
+
+        log.LogDebug("getting questions from dimension");
 
         for(var i = 0; i < allDimensions.length; i++) {
             if(allDimensions[i].Code === dimensionId) {
