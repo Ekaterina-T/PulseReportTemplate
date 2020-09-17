@@ -341,8 +341,9 @@ class PageCorrelation {
 
         for(var i = 0; i < allDimensions.length; i++) {
             if(allDimensions[i].Code === dimensionId) {
-                log.LogDebug("dimension code" + allDimensions[i].Code);
+                log.LogDebug("dimension code " + allDimensions[i].Code);
                 var questionsInDimension = allDimensions[i].Questions;
+                log.LogDebug("dimension questions" + questionsInDimension);
                 for(var j = 0; j < questionsInDimension.length; j++) {
                     questions.push(
                         {
