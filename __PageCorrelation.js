@@ -137,8 +137,8 @@ class PageCorrelation {
 
     /*
      * Create HeaderFormula column which is calculated based on AdjustedSentiment
-     * if categorySentiment < overallSentiment then Adjusted sentiment = (10-categorySentiment+5), else Adjusted sentiment = (categorySentiment+5)
-     * final value is AdjustedSentiment * Counts * Correlation
+     * if average score < overall average score then Adjusted score = (10 - average score + 5), else Adjusted score = (average score + 5)
+     * final value is Adjusted score * Counts * Correlation
      * @return {HeaderFormula} created column
      */
     static function getFormulaColumn() {
@@ -153,10 +153,10 @@ class PageCorrelation {
     /*
      * Apply conditional formatting to the Correlation table to section the table into areas
      * Conditional formatting is used to define key area for each category
-     *      1. issues: categorySentiment <= overallSentiment && correlation > 0
-     *      2. monitor: categorySentiment < overallSentiment && correlation <= 0
-     *      3. strength: categorySentiment > overallSentiment && correlation >0
-     *      4. maintain: ctegorySentiment > overallSentiment && correlation <=0
+     *      1. issues: average score <= overall average score && correlation > 0
+     *      2. monitor: average score < overall average score && correlation <= 0
+     *      3. strength: average score > overall average score && correlation >0
+     *      4. maintain: average score > overall average score && correlation <=0
      * conditional formatting applied to the firs column and then used by js fuction to create chart and 4 different tables
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      */
@@ -169,7 +169,6 @@ class PageCorrelation {
                 expression: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'issues'
             },
-
             {
                 expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'monitor'
@@ -239,6 +238,7 @@ class PageCorrelation {
 
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getTranslations(context),"correlationTranslations"));
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getPalette(context),"correlationPalette"));
+        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getCorrelationDimensionsAndQuestions(context),"correlationDimension"));
         context.text.Output.Append(chartInit);
     }
 
@@ -282,5 +282,69 @@ class PageCorrelation {
         };
 
         return palette;
+    }
+
+    /**
+     * Create an object with dimensions and questions for correlation
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @return {Object} object with dimensions and questions for correlation
+     */
+    static function getCorrelationDimensionsAndQuestions(context) {
+        var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
+        var correlationDimensions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Dimensions');
+
+        var correlationDimensionsAndQuestions = [];
+
+        for(var i = 0; i < correlationDimensions.length; i++) {
+            if(correlationDimensions[i].Type.toLowerCase() === 'dimension') {
+                correlationDimensionsAndQuestions.push(
+                    {
+                        Type: 'Dimension',
+                        Code: correlationDimensions[i].Code,
+                        Title: correlationDimensions[i].Code,
+                        Questions: getQuestionsByDimensionId(context, correlationDimensions[i].Code)
+                    }
+                );
+
+            } else {
+                correlationDimensionsAndQuestions.push(
+                    {
+                        Type: 'Question',
+                        Code: correlationDimensions[i],
+                        Title: QuestionUtil.getQuestionTitle(context, correlationDimensions[i]),
+                        Questions: []
+                    }
+                );
+            }
+        }
+
+        return correlationDimensionsAndQuestions;
+    }
+
+    /**
+     * Create an object with question info for a specific dimension
+     * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {String} dimensionId
+     * @return {Object} object with dimensions and questions for correlation
+     */
+    static function getQuestionsByDimensionId(context, dimensionId) {
+        var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
+        var questions = [];
+
+        for(var i = 0; i < allDimensions.length; i++) {
+            if(allDimensions[i].Code === dimensionId) {
+                var questionsInDimension = allDimensions[i].Questions;
+                for(var j = 0; j < questionsInDimension.length; j++) {
+                    questions.push(
+                        {
+                            Code: questionsInDimension[i],
+                            Title: QuestionUtil.getQuestionTitle(context, questionsInDimension[i])
+                        }
+                    );
+                }
+                break;
+            }
+        }
+        return questions;
     }
 }
