@@ -238,7 +238,7 @@ class PageCorrelation {
 
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getTranslations(context),"correlationTranslations"));
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getPalette(context),"correlationPalette"));
-        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getCorrelationDimensionsAndQuestions(context),"correlationDimension"));
+        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getCorrelationDimensionsAndQuestions(context),"correlationDimensions"));
         context.text.Output.Append(chartInit);
     }
 
@@ -290,7 +290,6 @@ class PageCorrelation {
      * @return {Object} object with dimensions and questions for correlation
      */
     static function getCorrelationDimensionsAndQuestions(context) {
-        //var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
         var log = context.log;
         var pageContext = context.pageContext;
         var pageId = pageContext.Items['CurrentPageId'];
@@ -300,7 +299,6 @@ class PageCorrelation {
 
         for(var i = 0; i < correlationDimensions.length; i++) {
             if(!!correlationDimensions[i].Type && correlationDimensions[i].Type.toLowerCase() === 'dimension') {
-                log.LogDebug("dimension");
                 correlationDimensionsAndQuestions.push(
                     {
                         Type: 'Dimension',
@@ -309,10 +307,7 @@ class PageCorrelation {
                         Questions: getQuestionsByDimensionId(context, correlationDimensions[i].Code)
                     }
                 );
-                log.LogDebug("added dimension");
-
             } else {
-                log.LogDebug("question");
                 correlationDimensionsAndQuestions.push(
                     {
                         Type: 'Question',
@@ -338,13 +333,9 @@ class PageCorrelation {
         var allDimensions = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'AllDimensions');
         var questions = [];
 
-        log.LogDebug("getting questions from dimension");
-
         for(var i = 0; i < allDimensions.length; i++) {
             if(allDimensions[i].Code === dimensionId) {
-                log.LogDebug("dimension code " + allDimensions[i].Code);
                 var questionsInDimension = allDimensions[i].Questions;
-                log.LogDebug("dimension questions " + questionsInDimension);
                 for(var j = 0; j < questionsInDimension.length; j++) {
                     questions.push(
                         {
@@ -356,6 +347,7 @@ class PageCorrelation {
                 break;
             }
         }
+
         if(questions.length === 0) {
             throw new Error("PageCorrelation.getQuestionsByDimensionId: the " + dimensionId + " dimension is not specified in the config");
         }
