@@ -220,6 +220,9 @@ class PageCorrelation {
      * @param {Object} context - {component: text, pageContext: this.pageContext,report: report, user: user, state: state, confirmit: confirmit, log: log}
      */
     static function txtCorrelationScript_Render(context){
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
+
         var selectedCorrelationVariable = ParamUtil.GetSelectedOptions(context, 'p_CorrelationQuestion')[0];
         var correlationVariableId = selectedCorrelationVariable.Code;
         var correlationVariableName = QuestionUtil.getQuestionTitle(context, correlationVariableId);
@@ -240,6 +243,7 @@ class PageCorrelation {
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getTranslations(context),"correlationTranslations"));
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getPalette(context),"correlationPalette"));
         context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(getCorrelationDimensionsAndQuestions(context),"correlationDimensions"));
+        context.text.Output.Append(StyleAndJavaScriptUtil.printProperty(DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isColorsForDimensionUnited'),"isColorsForDimensionUnited"));
         context.text.Output.Append(chartInit);
     }
 
