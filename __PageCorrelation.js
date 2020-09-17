@@ -341,12 +341,13 @@ class PageCorrelation {
 
         for(var i = 0; i < allDimensions.length; i++) {
             if(allDimensions[i].Code === dimensionId) {
+                log.LogDebug("dimension code" + allDimensions[i].Code);
                 var questionsInDimension = allDimensions[i].Questions;
                 for(var j = 0; j < questionsInDimension.length; j++) {
                     questions.push(
                         {
-                            Code: questionsInDimension[i],
-                            Title: QuestionUtil.getQuestionTitle(context, questionsInDimension[i])
+                            Code: questionsInDimension[j],
+                            Title: QuestionUtil.getQuestionTitle(context, questionsInDimension[j])
                         }
                     );
                 }
