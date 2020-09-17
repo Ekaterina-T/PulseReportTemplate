@@ -232,7 +232,8 @@ class PageCorrelation {
             "   table: document.querySelectorAll('.correlation-table')[document.querySelectorAll('.correlation-table').length -1 ]," +
             "   palette: correlationPalette," +
             "   questionName: '" + (correlationVariableName || correlationVariableId) + "'," +
-            "   translations: correlationTranslations" +
+            "   translations: correlationTranslations," +
+            "   dimensions: correlationDimensions"
             "});"+
             "</script>";
 
