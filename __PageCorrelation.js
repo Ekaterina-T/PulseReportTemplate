@@ -343,7 +343,7 @@ class PageCorrelation {
             if(allDimensions[i].Code === dimensionId) {
                 log.LogDebug("dimension code " + allDimensions[i].Code);
                 var questionsInDimension = allDimensions[i].Questions;
-                log.LogDebug("dimension questions" + questionsInDimension);
+                log.LogDebug("dimension questions " + questionsInDimension);
                 for(var j = 0; j < questionsInDimension.length; j++) {
                     questions.push(
                         {
@@ -351,10 +351,16 @@ class PageCorrelation {
                             Title: QuestionUtil.getQuestionTitle(context, questionsInDimension[j])
                         }
                     );
+                    log.LogDebug("question " + questionsInDimension[j]);
+                    log.LogDebug("question " + QuestionUtil.getQuestionTitle(context, questionsInDimension[j]));
                 }
                 break;
             }
         }
+        if(questions.length === 0) {
+            throw new Error("PageCorrelation.getQuestionsByDimensionId: the " + dimensionId + " dimension is not specified in the config");
+        }
+
         return questions;
     }
 }
