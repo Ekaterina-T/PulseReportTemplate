@@ -20,7 +20,6 @@ class PageAllResults {
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      */
     static function tableAllResults_Render(context) {
-
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
@@ -71,52 +70,87 @@ class PageAllResults {
         var table = context.table;
         var log = context.log;
 
+        var wave = getWaveColumn(context);
+
+        var responses = getBaseColumn(context, wave);
+        //responses.SubHeaders.Add(wave);
+        table.ColumnHeaders.Add(responses);
+
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var questions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
+
+        for (var i = 0; i < questions.length; i++) {
+            var questionColumn = getQuestionColumn(context, questions[i], wave);
+            table.ColumnHeaders.Add(questionColumn);
+        }
+    }
+
+    /*
+     * Create HeaderBase column
+     * @return {HeaderBase} created column
+     */
+    static function getBaseColumn(context, subHeader) {
+        var headerBase: HeaderBase = new HeaderBase();
+
+        if(!!subHeader) {
+            headerBase.SubHeaders.Add(subHeader);
+        }
+
+        return headerBase;
+    }
+
+    /*
+     * Create HeaderQuestion column with the Wave
+     * @return {HeaderQuestion} created column
+     */
+    static function getWaveColumn(context) {
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
         var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
-        var nestedHeader: HeaderQuestion = new HeaderQuestion(waveQe);
-        var maskCodes = getLastNWavesFromSelected(3, context);
+        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
 
+        var maskCodes = getLastNWavesFromSelected(3, context);
         var qmask: MaskFlat = new MaskFlat();
         qmask.IsInclusive = true;
         qmask.Codes.AddRange(maskCodes);
-        nestedHeader.AnswerMask = qmask;
-        nestedHeader.FilterByMask = true;
-        nestedHeader.ShowTotals = false;
 
-        var responses: HeaderBase = new HeaderBase();
-        responses.SubHeaders.Add(nestedHeader);
-        table.ColumnHeaders.Add(responses);
+        waveHeader.AnswerMask = qmask;
+        waveHeader.FilterByMask = true;
+        waveHeader.ShowTotals = false;
 
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
+        return waveHeader;
+    }
 
-        for (var i = 0; i < Qs.length; i++) {
-            var header = TableUtil.getHeaderDescriptorObject(context, Qs[i]);
-            var col;
+    /*
+     * Create HeaderQuestion column with the Question
+     * @return {HeaderQuestion} created column
+     */
+    static function getQuestionColumn(context, question, subHeader) {
+        var header = TableUtil.getHeaderDescriptorObject(context, question);
+        var col;
 
-            if (header.Type === 'Question') {
-                var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
-                col = new HeaderQuestion(qe);
-                col.IsCollapsed = true;
+        if (header.Type === 'Question') {
+            var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+            col = new HeaderQuestion(qe);
+            col.IsCollapsed = true;
+            col.DefaultStatistic = StatisticsType.Average;
+        } else {
+            if (header.Type === 'Dimension') {
+                col = new HeaderCategorization();
+                col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                col.DataSourceNodeId = DataSourceUtil.getDsId(context);
                 col.DefaultStatistic = StatisticsType.Average;
-            } else {
-                if (header.Type === 'Dimension') {
-
-                    col = new HeaderCategorization();
-                    col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-                    col.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                    col.DefaultStatistic = StatisticsType.Average;
-                    col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-                    col.Preaggregation = PreaggregationType.Average;
-                    col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
-                    col.Collapsed = false;
-                    col.Totals = false;
-                }
+                col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                col.Preaggregation = PreaggregationType.Average;
+                col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
+                col.Collapsed = false;
+                col.Totals = false;
             }
+        }
 
-            TableUtil.maskOutNA(context, col);
-            col.SubHeaders.Add(nestedHeader);
-            table.ColumnHeaders.Add(col);
+        TableUtil.maskOutNA(context, col);
+
+        if(!!subHeader) {
+            col.SubHeaders.Add(subHeader);
         }
     }
 
@@ -129,7 +163,6 @@ class PageAllResults {
      * @returns {Array} codes
      */
     static function getLastNWavesFromSelected(N, context) {
-
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
         var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
@@ -143,8 +176,8 @@ class PageAllResults {
                 }
                 break;
             }
-
         }
+
         return codes;
     }
 }
