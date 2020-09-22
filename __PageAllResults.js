@@ -88,6 +88,8 @@ class PageAllResults {
      * @memberof PageAllResults
      * @function getBaseColumn
      * @description Create HeaderBase column
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} subHeader
      * @return {HeaderBase} created column
      */
     static function getBaseColumn(context, subHeader) {
@@ -104,6 +106,7 @@ class PageAllResults {
      * @memberof PageAllResults
      * @function getWaveColumn
      * @description Create HeaderQuestion column with the Wave
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      * @return {HeaderQuestion} created column
      */
     static function getWaveColumn(context) {
@@ -127,6 +130,9 @@ class PageAllResults {
      * @memberof PageAllResults
      * @function getQuestionColumn
      * @description Create HeaderQuestion column with the Question
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} question
+     * @param {Object} subHeader
      * @return {HeaderQuestion} created column
      */
     static function getQuestionColumn(context, question, subHeader) {
