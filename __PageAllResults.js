@@ -73,20 +73,21 @@ class PageAllResults {
         var wave = getWaveColumn(context);
 
         var responses = getBaseColumn(context, wave);
-        //responses.SubHeaders.Add(wave);
         table.ColumnHeaders.Add(responses);
 
-        /*var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var questions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
 
         for (var i = 0; i < questions.length; i++) {
             var questionColumn = getQuestionColumn(context, questions[i], wave);
             table.ColumnHeaders.Add(questionColumn);
-        }*/
+        }
     }
 
     /*
-     * Create HeaderBase column
+     * @memberof PageAllResults
+     * @function getBaseColumn
+     * @description Create HeaderBase column
      * @return {HeaderBase} created column
      */
     static function getBaseColumn(context, subHeader) {
@@ -100,7 +101,9 @@ class PageAllResults {
     }
 
     /*
-     * Create HeaderQuestion column with the Wave
+     * @memberof PageAllResults
+     * @function getWaveColumn
+     * @description Create HeaderQuestion column with the Wave
      * @return {HeaderQuestion} created column
      */
     static function getWaveColumn(context) {
@@ -121,37 +124,41 @@ class PageAllResults {
     }
 
     /*
-     * Create HeaderQuestion column with the Question
+     * @memberof PageAllResults
+     * @function getQuestionColumn
+     * @description Create HeaderQuestion column with the Question
      * @return {HeaderQuestion} created column
      */
     static function getQuestionColumn(context, question, subHeader) {
         var header = TableUtil.getHeaderDescriptorObject(context, question);
-        var col;
+        var questionColumn;
 
         if (header.Type === 'Question') {
             var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
-            col = new HeaderQuestion(qe);
-            col.IsCollapsed = true;
-            col.DefaultStatistic = StatisticsType.Average;
+            questionColumn = new HeaderQuestion(qe);
+            questionColumn.IsCollapsed = true;
+            questionColumn.DefaultStatistic = StatisticsType.Average;
         } else {
             if (header.Type === 'Dimension') {
-                col = new HeaderCategorization();
-                col.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-                col.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                col.DefaultStatistic = StatisticsType.Average;
-                col.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-                col.Preaggregation = PreaggregationType.Average;
-                col.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
-                col.Collapsed = false;
-                col.Totals = false;
+                questionColumn = new HeaderCategorization();
+                questionColumn.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                questionColumn.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                questionColumn.DefaultStatistic = StatisticsType.Average;
+                questionColumn.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                questionColumn.Preaggregation = PreaggregationType.Average;
+                questionColumn.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
+                questionColumn.Collapsed = false;
+                questionColumn.Totals = false;
             }
         }
 
-        TableUtil.maskOutNA(context, col);
+        TableUtil.maskOutNA(context, questionColumn);
 
         if(!!subHeader) {
-            col.SubHeaders.Add(subHeader);
+            questionColumn.SubHeaders.Add(subHeader);
         }
+
+        return questionColumn;
     }
 
     /**
