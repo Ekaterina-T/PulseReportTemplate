@@ -150,18 +150,23 @@ class PageAllResults {
             default: numberOfWaves = 1; break;
         }
 
-        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
-
         var maskCodes = getLastNWavesFromSelected(numberOfWaves, context);
-        var qmask: MaskFlat = new MaskFlat();
-        qmask.IsInclusive = true;
-        qmask.Codes.AddRange(maskCodes);
+        var waveHeaders = [];
 
-        waveHeader.AnswerMask = qmask;
-        waveHeader.FilterByMask = true;
-        waveHeader.ShowTotals = false;
+        for(var i = 0; i < maskCodes.length; i++) {
+            var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
+            var qmask: MaskFlat = new MaskFlat();
+            qmask.IsInclusive = true;
+            qmask.Codes.AddRange(maskCodes[i]);
 
-        return [waveHeader];
+            waveHeader.AnswerMask = qmask;
+            waveHeader.FilterByMask = true;
+            waveHeader.ShowTotals = false;
+
+            waveHeaders.push(waveHeader);
+        }
+
+        return waveHeaders;
     }
 
     /*
