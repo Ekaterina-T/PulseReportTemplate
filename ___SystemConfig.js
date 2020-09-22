@@ -48,7 +48,8 @@ public class SystemConfig {
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
 
-        'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true}
+        'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
+        'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'}
 
     };
 
