@@ -157,7 +157,7 @@ class PageAllResults {
             var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
             var qmask: MaskFlat = new MaskFlat();
             qmask.IsInclusive = true;
-            qmask.Codes.AddRange(maskCodes[i]);
+            qmask.Codes.Add(maskCodes[i]);
 
             waveHeader.AnswerMask = qmask;
             waveHeader.FilterByMask = true;
@@ -230,7 +230,9 @@ class PageAllResults {
             if (answers[i].Precode == selectedWave) {
                 codes.push(answers[i].Precode);
                 for (var j = 1; j < N; j++) {
-                    if (i - j >= 0) codes.push(answers[i - j].Precode);
+                    if (i - j >= 0) {
+                        codes.push(answers[i - j].Precode);
+                    }
                 }
                 break;
             }
