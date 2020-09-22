@@ -126,7 +126,7 @@ class PageAllResults {
         waveHeader.FilterByMask = true;
         waveHeader.ShowTotals = false;
 
-        return waveHeader;
+        return [waveHeader];
     }
 
     /*
@@ -161,7 +161,7 @@ class PageAllResults {
         waveHeader.FilterByMask = true;
         waveHeader.ShowTotals = false;
 
-        return waveHeader;
+        return [waveHeader];
     }
 
     /*
