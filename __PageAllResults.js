@@ -169,6 +169,35 @@ class PageAllResults {
         return waveHeaders;
     }
 
+    /**
+     * @memberof PageAllResults
+     * @function getLastNWavesFromSelected
+     * @description gets last n waves from selected in dd parameter
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Number} N - number of last waves needed
+     * @returns {Array} codes
+     */
+    static function getLastNWavesFromSelected(N, context) {
+        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
+        var codes = [];
+
+        for (var i = answers.length - 1; i >= 0; i--) {
+            if (answers[i].Precode == selectedWave) {
+                codes.push(answers[i].Precode);
+                for (var j = 1; j < N; j++) {
+                    if (i - j >= 0) {
+                        codes.push(answers[i - j].Precode);
+                    }
+                }
+                break;
+            }
+        }
+
+        return codes;
+    }
+
     /*
      * @memberof PageAllResults
      * @function getQuestionColumn
@@ -210,34 +239,5 @@ class PageAllResults {
         }
 
         return questionColumn;
-    }
-
-    /**
-     * @memberof PageAllResults
-     * @function getLastNWavesFromSelected
-     * @description gets last n waves from selected in dd parameter
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Number} N - number of last waves needed
-     * @returns {Array} codes
-     */
-    static function getLastNWavesFromSelected(N, context) {
-        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
-        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
-        var codes = [];
-
-        for (var i = answers.length - 1; i >= 0; i--) {
-            if (answers[i].Precode == selectedWave) {
-                codes.push(answers[i].Precode);
-                for (var j = 1; j < N; j++) {
-                    if (i - j >= 0) {
-                        codes.push(answers[i - j].Precode);
-                    }
-                }
-                break;
-            }
-        }
-
-        return codes;
     }
 }
