@@ -58,7 +58,7 @@ public class SystemConfig {
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher',
                                             'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy',
-                                            'p_ImpactAnalysisDimension', 'p_CorrelationQuestion'];
+                                            'p_ImpactAnalysisDimension', 'p_CorrelationQuestion', 'p_WaveSelector'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
