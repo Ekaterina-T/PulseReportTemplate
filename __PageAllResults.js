@@ -70,7 +70,8 @@ class PageAllResults {
         var table = context.table;
         var log = context.log;
 
-        var wave = getWaveColumn(context);
+        //var wave = getWaveColumn(context);
+        var wave = getSelectedWavesColumns(context);
 
         var responses = getBaseColumn(context, wave);
         table.ColumnHeaders.Add(responses);
@@ -89,14 +90,16 @@ class PageAllResults {
      * @function getBaseColumn
      * @description Create HeaderBase column
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Object} subHeader
+     * @param {Object} subHeaders
      * @return {HeaderBase} created column
      */
-    static function getBaseColumn(context, subHeader) {
+    static function getBaseColumn(context, subHeaders) {
         var headerBase: HeaderBase = new HeaderBase();
 
-        if(!!subHeader) {
-            headerBase.SubHeaders.Add(subHeader);
+        if(!!subHeaders && subHeaders.length > 0) {
+            for(var i = 0; i < subHeaders.length; i++) {
+                headerBase.SubHeaders.Add(subHeaders[i]);
+            }
         }
 
         return headerBase;
@@ -128,14 +131,49 @@ class PageAllResults {
 
     /*
      * @memberof PageAllResults
+     * @function getSelectedWavesColumns
+     * @description Create HeaderQuestion columns with the Waves selected from the dropdown
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @return {Object} created columns
+     */
+    static function getSelectedWavesColumns(context) {
+        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+        var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
+
+        var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
+        var numberOfWaves = 0;
+
+        switch (selectedWaveType) {
+            case "CurrentWave" : numberOfWaves = 1; break;
+            case "LastTwoWaves" : numberOfWaves = 2; break;
+            case "LastThreeWaves" : numberOfWaves = 3; break;
+            default: numberOfWaves = 1; break;
+        }
+
+        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
+
+        var maskCodes = getLastNWavesFromSelected(numberOfWaves, context);
+        var qmask: MaskFlat = new MaskFlat();
+        qmask.IsInclusive = true;
+        qmask.Codes.AddRange(maskCodes);
+
+        waveHeader.AnswerMask = qmask;
+        waveHeader.FilterByMask = true;
+        waveHeader.ShowTotals = false;
+
+        return waveHeader;
+    }
+
+    /*
+     * @memberof PageAllResults
      * @function getQuestionColumn
      * @description Create HeaderQuestion column with the Question
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      * @param {Object} question
-     * @param {Object} subHeader
+     * @param {Object} subHeaders
      * @return {HeaderQuestion} created column
      */
-    static function getQuestionColumn(context, question, subHeader) {
+    static function getQuestionColumn(context, question, subHeaders) {
         var header = TableUtil.getHeaderDescriptorObject(context, question);
         var questionColumn;
 
@@ -160,8 +198,10 @@ class PageAllResults {
 
         TableUtil.maskOutNA(context, questionColumn);
 
-        if(!!subHeader) {
-            questionColumn.SubHeaders.Add(subHeader);
+        if(!!subHeaders && subHeaders.length > 0) {
+            for(var i = 0; i < subHeaders.length; i++) {
+                questionColumn.SubHeaders.Add(subHeaders[i]);
+            }
         }
 
         return questionColumn;
