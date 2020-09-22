@@ -32,6 +32,23 @@ class PageEmails {
            var log = context.log;
           return Hitlist.hitlistComments_Hide(context, "Base");
         }
+		
+		/**
+         * @memberof PageEmails
+         * @function setDatasource
+         * @description sets datasource for the Emails page from config setting 'Source' for this page
+         * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+         */
+        static function setDatasource(context) {
+          var log = context.log;
+          var pageId = context.page.CurrentPageId;
+          var pageContext = context.pageContext;
+          
+          var emails_source = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source');
+          if (!pageContext.Items['PageSource']) {
+             pageContext.Items.Add('PageSource', emails_source);
+          }
+        }
     
         /**
          * @memberof PageEmails
@@ -46,10 +63,39 @@ class PageEmails {
     
             var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
     
+			context.isCustomSource = true;
             for (var i=0; i<staticCols.length; i++) {
                 Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
             }
         }
+		
+		/**
+		 * @memberof PageEmails
+		 * @function getTagColumnNumbers
+		 * @description function to get the number of columns with tags.
+		 * @param {Object} context - {component: hitlist, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+		 * @return {Array} - array with numbers of columns
+		 */
+		static function getTagColumnNumbers (context) {
+
+			var log = context.log;
+			var state = context.state;
+			var pageContext = context.pageContext;
+			var pageId = pageContext.Items['CurrentPageId'];
+			var tagColumnNumbers = [];
+
+			var numberOfStaticColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns').length;
+			var numberOfTagColumns = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist').length;
+
+			var numberOfColumnsAtStart = 2 + numberOfStaticColumns; // Hitlist always contains 1 first hidden column with the system field Respondent ID
+
+
+
+			for (var i=0; i<numberOfTagColumns; i++) {
+				tagColumnNumbers.push(i + numberOfColumnsAtStart);
+			}
+			return tagColumnNumbers;
+		}
     
          /**
          * @memberof PageEmails
@@ -60,8 +106,9 @@ class PageEmails {
           static function tableBase_Render (context) {
               var log = context.log;
               var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
-              var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
-              SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
+              //var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
+              //SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
+			  SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, []);
           }
   
   
