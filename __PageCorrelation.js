@@ -4,10 +4,11 @@ class PageCorrelation {
      * Assemble Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      */
-    static function tableCorrelation_Render(context, suppressSettings) {
+    static function tableCorrelation_Render(context) {
 
         var log = context.log;
         var table = context.table;
+        var suppressSettings = context.suppressSettings;
 
         table.Caching.Enabled = false;
         table.TotalsFirst = true;
