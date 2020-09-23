@@ -15,7 +15,7 @@ class PageCorrelation {
 
         TableUtil.addClasses(context, ["reportal-table","reportal-categories", "correlation-table"]);
 
-        SuppressUtil.setTableSuppress(table, suppressSettings);
+        //SuppressUtil.setTableSuppress(table, suppressSettings);
 
         tableCorrelation_AddRows(context);
         tableCorrelation_AddColumns(context);
