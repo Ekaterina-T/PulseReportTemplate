@@ -96,7 +96,7 @@ class PageAllResults {
         var log = context.log;
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
 
-        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave')[0];
         var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
         var numberOfWaves = 0;
 
@@ -110,12 +110,17 @@ class PageAllResults {
         var maskCodes = getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
         var waveHeaders = [];
 
+        log.LogDebug("selectedWave " + selectedWave);
+
         for(var i = 0; i < maskCodes.length; i++) {
             var gapHeader = getGapFormula(context);
             var waveHeader = getWaveColumn(context, waveQid, maskCodes[i]);
 
             var previousWave = getPreviousWaveFromSelected(context, waveQid, maskCodes[i]);
             var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
+
+            log.LogDebug("currentWave " + maskCodes[i]);
+            log.LogDebug("previousWave " + previousWave);
 
             //waveHeaders.push(gapHeader);
             waveHeaders.push(previousWaveHeader);
