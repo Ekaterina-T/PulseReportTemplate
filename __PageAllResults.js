@@ -26,12 +26,12 @@ class PageAllResults {
 
         // global table settings
         table.Caching.Enabled = false;
-        //table.RemoveEmptyHeaders.Rows = true;
-        //table.RemoveEmptyHeaders.Columns = true;
+        table.RemoveEmptyHeaders.Rows = true;
+        table.RemoveEmptyHeaders.Columns = true;
         table.Decimals = Config.Decimal;
         table.TotalsFirst = true;
 
-        //SuppressUtil.setTableSuppress(table, suppressSettings);
+        SuppressUtil.setTableSuppress(table, suppressSettings);
 
         tableAllResults_AddRows(context);
         tableAllResults_AddColumns(context);
