@@ -93,6 +93,7 @@ class PageAllResults {
      * @return {Object} created columns
      */
     static function getSelectedWavesColumns(context) {
+        var log = context.log;
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
         //var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
 
@@ -106,7 +107,13 @@ class PageAllResults {
             default: numberOfWaves = 1; break;
         }
 
+        log.LogDebug("selectedWaveType " + selectedWaveType);
+        log.LogDebug("numberOfWaves " + numberOfWaves);
+
         var maskCodes = getLastNWavesFromSelected(numberOfWaves, context);
+
+        log.LogDebug("maskCodes " + maskCodes);
+
         var waveHeaders = [];
 
         for(var i = 0; i < maskCodes.length; i++) {
@@ -122,9 +129,13 @@ class PageAllResults {
 
             var waveHeader = getWaveColumn(context, waveQid, maskCodes[i]);
 
+            log.LogDebug("waveHeader " + maskCodes[i]);
+
             //waveHeaders.push(gapHeader);
             waveHeaders.push(waveHeader);
         }
+
+        log.LogDebug("waveHeaders " + waveHeaders.length);
 
         return waveHeaders;
     }
