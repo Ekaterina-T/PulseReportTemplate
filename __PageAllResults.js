@@ -87,50 +87,6 @@ class PageAllResults {
 
     /*
      * @memberof PageAllResults
-     * @function getBaseColumn
-     * @description Create HeaderBase column
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Object} subHeaders
-     * @return {HeaderBase} created column
-     */
-    static function getBaseColumn(context, subHeaders) {
-        var headerBase: HeaderBase = new HeaderBase();
-
-        if(!!subHeaders && subHeaders.length > 0) {
-            for(var i = 0; i < subHeaders.length; i++) {
-                headerBase.SubHeaders.Add(subHeaders[i]);
-            }
-        }
-
-        return headerBase;
-    }
-
-    /*
-     * @memberof PageAllResults
-     * @function getWaveColumn
-     * @description Create HeaderQuestion column with the Wave
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @return {HeaderQuestion} created column
-     */
-    static function getWaveColumn(context) {
-        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
-        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
-
-        var maskCodes = getLastNWavesFromSelected(3, context);
-        var qmask: MaskFlat = new MaskFlat();
-        qmask.IsInclusive = true;
-        qmask.Codes.AddRange(maskCodes);
-
-        waveHeader.AnswerMask = qmask;
-        waveHeader.FilterByMask = true;
-        waveHeader.ShowTotals = false;
-
-        return [waveHeader];
-    }
-
-    /*
-     * @memberof PageAllResults
      * @function getSelectedWavesColumns
      * @description Create HeaderQuestion columns with the Waves selected from the dropdown
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
@@ -138,7 +94,7 @@ class PageAllResults {
      */
     static function getSelectedWavesColumns(context) {
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
+        //var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
 
         var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
         var numberOfWaves = 0;
@@ -154,15 +110,19 @@ class PageAllResults {
         var waveHeaders = [];
 
         for(var i = 0; i < maskCodes.length; i++) {
-            var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
+            var gapHeader = getGapFormula(context);
+            /*var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
             var qmask: MaskFlat = new MaskFlat();
             qmask.IsInclusive = true;
             qmask.Codes.Add(maskCodes[i]);
 
             waveHeader.AnswerMask = qmask;
             waveHeader.FilterByMask = true;
-            waveHeader.ShowTotals = false;
+            waveHeader.ShowTotals = false;*/
 
+            var waveHeader = getWaveColumn(context, waveQid, maskCodes[i]);
+
+            //waveHeaders.push(gapHeader);
             waveHeaders.push(waveHeader);
         }
 
@@ -196,6 +156,74 @@ class PageAllResults {
         }
 
         return codes;
+    }
+
+    /*
+     * @memberof PageAllResults
+     * @function getGapFormula
+     * @description Create HeaderFormula columns with the gap calculation between the wave and the previous wave
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @return {Object} created column
+     */
+    static function getGapFormula(context) {
+        var gapFormula : HeaderFormula = new HeaderFormula();
+
+        gapFormula.Type = FormulaType.Expression;
+        gapFormula.Expression = 'cellv(col-2, row) - cellv(col-1,row)';
+        gapFormula.Decimals = 0;
+
+        return gapFormula;
+    }
+
+    /*
+     * @memberof PageAllResults
+     * @function getWaveColumn
+     * @description Create HeaderQuestion column with the Wave
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} waveQid - id for the wave question
+     * @param {Object} maskCodes - codes for the mask
+     * @return {HeaderQuestion} created column
+     */
+    static function getWaveColumn(context, waveQid, maskCodes) {
+        //var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+        var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
+        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
+
+        //var maskCodes = getLastNWavesFromSelected(3, context);
+        var qmask: MaskFlat = new MaskFlat();
+        qmask.IsInclusive = true;
+
+        if(ArrayUtil.isArray(maskCodes)) {
+            qmask.Codes.AddRange(maskCodes);
+        } else {
+            qmask.Codes.Add(maskCodes);
+        }
+
+        waveHeader.AnswerMask = qmask;
+        waveHeader.FilterByMask = true;
+        waveHeader.ShowTotals = false;
+
+        return waveHeader;
+    }
+
+    /*
+     * @memberof PageAllResults
+     * @function getBaseColumn
+     * @description Create HeaderBase column
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} subHeaders
+     * @return {HeaderBase} created column
+     */
+    static function getBaseColumn(context, subHeaders) {
+        var headerBase: HeaderBase = new HeaderBase();
+
+        if(!!subHeaders && subHeaders.length > 0) {
+            for(var i = 0; i < subHeaders.length; i++) {
+                headerBase.SubHeaders.Add(subHeaders[i]);
+            }
+        }
+
+        return headerBase;
     }
 
     /*
