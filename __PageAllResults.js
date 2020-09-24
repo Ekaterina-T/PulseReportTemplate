@@ -176,7 +176,7 @@ class PageAllResults {
                 if (i == 0) {
                     return null;
                 } else {
-                    return answers[i - 1];
+                    return answers[i - 1].Precode;
                 }
             }
         }
@@ -193,7 +193,7 @@ class PageAllResults {
         var gapFormula : HeaderFormula = new HeaderFormula();
 
         gapFormula.Type = FormulaType.Expression;
-        gapFormula.Expression = 'cellv(col-2, row) - cellv(col-1,row)';
+        gapFormula.Expression = 'cellv(col+2, row) - cellv(col+1,row)';
         gapFormula.Decimals = 0;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
