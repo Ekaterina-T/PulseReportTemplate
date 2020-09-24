@@ -110,7 +110,7 @@ class PageAllResults {
         var maskCodes = getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
         var waveHeaders = [];
 
-        for(var i = 0; i < maskCodes.length; i++) {
+        for(var i = maskCodes.length - 1; i >= 0; i--) {
             var gapHeader = getGapFormula(context);
             var waveHeader = getWaveColumn(context, waveQid, maskCodes[i]);
 
@@ -118,7 +118,7 @@ class PageAllResults {
             var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
 
             //waveHeaders.push(gapHeader);
-            //waveHeaders.push(previousWaveHeader);
+            waveHeaders.push(previousWaveHeader);
             waveHeaders.push(waveHeader);
         }
 
