@@ -119,6 +119,9 @@ class PageAllResults {
             var previousWave = getPreviousWaveFromSelected(context, waveQid, maskCodes[i]);
             var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
 
+            log.LogDebug('current' + maskCodes[i]);
+            log.LogDebug('previous' + previousWave);
+
             //waveHeaders.push(gapHeader);
             waveHeaders.push(previousWaveHeader);
             waveHeaders.push(waveHeader);
