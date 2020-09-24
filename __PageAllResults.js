@@ -116,6 +116,8 @@ class PageAllResults {
 
             var previousWave = getPreviousWaveFromSelected(context, waveQid, maskCodes[i]);
             var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
+            previousWaveHeader.HideHeader = true;
+            previousWaveHeader.HideData = true;
 
             waveHeaders.push(gapHeader);
             waveHeaders.push(previousWaveHeader);
