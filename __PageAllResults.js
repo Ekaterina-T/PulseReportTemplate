@@ -172,7 +172,7 @@ class PageAllResults {
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
 
         for (var i = 0; i < answers.length; i++) {
-            if (answers[i].Precode == selectedWave) {
+            if (answers[i].Precode === selectedWave) {
                 if (i == 0) {
                     return null;
                 } else {
