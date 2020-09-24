@@ -27,7 +27,7 @@ class PageAllResults {
         // global table settings
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Rows = true;
-        table.RemoveEmptyHeaders.Columns = true;
+        //table.RemoveEmptyHeaders.Columns = true;
         table.Decimals = Config.Decimal;
         table.TotalsFirst = true;
 
@@ -95,8 +95,8 @@ class PageAllResults {
     static function getSelectedWavesColumns(context) {
         var log = context.log;
         var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        //var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
 
+        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
         var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
         var numberOfWaves = 0;
 
@@ -107,35 +107,20 @@ class PageAllResults {
             default: numberOfWaves = 1; break;
         }
 
-        log.LogDebug("selectedWaveType " + selectedWaveType);
-        log.LogDebug("numberOfWaves " + numberOfWaves);
-
-        var maskCodes = getLastNWavesFromSelected(numberOfWaves, context);
-
-        log.LogDebug("maskCodes " + maskCodes);
-
+        var maskCodes = getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
         var waveHeaders = [];
 
         for(var i = 0; i < maskCodes.length; i++) {
             var gapHeader = getGapFormula(context);
-            /*var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
-            var qmask: MaskFlat = new MaskFlat();
-            qmask.IsInclusive = true;
-            qmask.Codes.Add(maskCodes[i]);
-
-            waveHeader.AnswerMask = qmask;
-            waveHeader.FilterByMask = true;
-            waveHeader.ShowTotals = false;*/
-
             var waveHeader = getWaveColumn(context, waveQid, maskCodes[i]);
 
-            log.LogDebug("waveHeader " + maskCodes[i]);
+            var previousWave = getPreviousWaveFromSelected(context, waveQid, selectedWave);
+            var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
 
-            //waveHeaders.push(gapHeader);
+            waveHeaders.push(gapHeader);
+            waveHeaders.push(previousWaveHeader);
             waveHeaders.push(waveHeader);
         }
-
-        log.LogDebug("waveHeaders " + waveHeaders.length);
 
         return waveHeaders;
     }
@@ -146,11 +131,11 @@ class PageAllResults {
      * @description gets last n waves from selected in dd parameter
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      * @param {Number} N - number of last waves needed
+     * @param {Object} waveQid - id for the wave question
+     * @param {String} selectedWave - code of the selected wave
      * @returns {Array} codes
      */
-    static function getLastNWavesFromSelected(N, context) {
-        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
-        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave');
+    static function getLastNWavesFromSelected(context, N, waveQid, selectedWave) {
         var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
         var codes = [];
 
@@ -169,6 +154,29 @@ class PageAllResults {
         return codes;
     }
 
+    /**
+     * @memberof PageAllResults
+     * @function getPreviousWaveFromSelected
+     * @description gets the id of the previous wave from the wave selected in the drop down
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} waveQid - id for the wave question
+     * @param {String} selectedWave - code of the selected wave
+     * @returns {String} code of the previous wave
+     */
+    static function getPreviousWaveFromSelected(context, waveQid, selectedWave) {
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
+
+        for (var i = 0; i < answers.length; i++) {
+            if (answers[i].Precode == selectedWave) {
+                if (i == 0) {
+                    return null;
+                } else {
+                    return answers[i - 1];
+                }
+            }
+        }
+    }
+
     /*
      * @memberof PageAllResults
      * @function getGapFormula
@@ -182,6 +190,7 @@ class PageAllResults {
         gapFormula.Type = FormulaType.Expression;
         gapFormula.Expression = 'cellv(col-2, row) - cellv(col-1,row)';
         gapFormula.Decimals = 0;
+        gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
         return gapFormula;
     }
@@ -198,23 +207,32 @@ class PageAllResults {
     static function getWaveColumn(context, waveQid, maskCodes) {
         //var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
         var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
-        var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
 
-        //var maskCodes = getLastNWavesFromSelected(3, context);
-        var qmask: MaskFlat = new MaskFlat();
-        qmask.IsInclusive = true;
+        if(!!maskCodes) {
+            var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
 
-        if(ArrayUtil.isArray(maskCodes)) {
-            qmask.Codes.AddRange(maskCodes);
+            var qmask: MaskFlat = new MaskFlat();
+            qmask.IsInclusive = true;
+
+            if (ArrayUtil.isArray(maskCodes)) {
+                qmask.Codes.AddRange(maskCodes);
+            } else {
+                qmask.Codes.Add(maskCodes);
+            }
+
+            waveHeader.AnswerMask = qmask;
+            waveHeader.FilterByMask = true;
+            waveHeader.ShowTotals = false;
+
+            return waveHeader;
         } else {
-            qmask.Codes.Add(maskCodes);
+            var emptyWaveHeader : HeaderFormula = new HeaderFormula();
+            emptyWaveHeader.Expression = 'emptyv()';
+            emptyWaveHeader.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
+
+            return emptyWaveHeader;
         }
 
-        waveHeader.AnswerMask = qmask;
-        waveHeader.FilterByMask = true;
-        waveHeader.ShowTotals = false;
-
-        return waveHeader;
     }
 
     /*
@@ -228,7 +246,7 @@ class PageAllResults {
     static function getBaseColumn(context, subHeaders) {
         var headerBase: HeaderBase = new HeaderBase();
 
-        if(!!subHeaders && subHeaders.length > 0) {
+        if(!!subHeaders && ArrayUtil.isArray(subHeaders)) {
             for(var i = 0; i < subHeaders.length; i++) {
                 headerBase.SubHeaders.Add(subHeaders[i]);
             }
@@ -271,7 +289,7 @@ class PageAllResults {
 
         TableUtil.maskOutNA(context, questionColumn);
 
-        if(!!subHeaders && subHeaders.length > 0) {
+        if(!!subHeaders && ArrayUtil.isArray(subHeaders)) {
             for(var i = 0; i < subHeaders.length; i++) {
                 questionColumn.SubHeaders.Add(subHeaders[i]);
             }
