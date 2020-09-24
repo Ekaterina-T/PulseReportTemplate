@@ -117,7 +117,7 @@ class PageAllResults {
             var previousWave = getPreviousWaveFromSelected(context, waveQid, selectedWave);
             //var previousWaveHeader = getWaveColumn(context, waveQid, previousWave);
 
-            waveHeaders.push(gapHeader);
+            //waveHeaders.push(gapHeader);
             //waveHeaders.push(previousWaveHeader);
             waveHeaders.push(waveHeader);
         }
