@@ -313,27 +313,29 @@ class PageAllResults {
 
         var conditions = [
             {
-                expression: 'cellv() < 0',
-                style: 'cond0'
-            },
-            {
-                expression: 'cellv() > 0',
-                style: 'cond1'
-            }/*,
-            {
-                expression: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
-                style: 'strength'
-            },
-            {
-                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
-                style: 'maintain'
-            }*/
+                style: 'emptyCell'
+            }, {
+                style: 'cellLevel1',
+                condition: '<55'
+            }, {
+                style: 'cellLevel2',
+                condition: '<70'
+            }, {
+                style: 'cellLevel3'
+            }
         ];
+
+        var indexes = [];
+
+        for(var i = 0; i < 999; i++) {
+            indexes.push(i * 3 + 1);
+        }
+
         var name = "GapAreas";
         var applyTo = {
             axis: Area.Columns,
             direction: Area.Left,
-            indexes: "1,4,7"
+            indexes: indexes.join(',')
         };
 
         TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);

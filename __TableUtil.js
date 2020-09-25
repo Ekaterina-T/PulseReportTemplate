@@ -464,11 +464,20 @@ class TableUtil {
         area.Name = name;
         area.ApplyTo(applyTo.axis, applyTo.direction, applyTo.indexes);
 
-        for(var i = 0; i< conditions.length; i++){
-            var condition: Condition = new Condition();
-            condition.Expression = conditions[i].expression;
-            condition.Style = conditions[i].style;
-            area.AddCondition(condition);
+        for (var i = 0; i < conditions.length; i++) {
+            var c1 : Condition = new Condition();
+            c1.Style = conditions[i].style;
+
+            if (i === 0) {
+                c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + '==emptyv()';
+            } else {
+                if (conditions[i].condition) {
+                    c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + conditions[i].condition;
+                } else {
+                    c1.Expression = 'true';
+                }
+            }
+            area.AddCondition(c1);
         }
 
         formatter.AddArea(area);

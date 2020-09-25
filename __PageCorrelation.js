@@ -167,22 +167,27 @@ class PageCorrelation {
 
         var conditions = [
             {
-                expression: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
-                style: 'issues'
+                conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
+                style: 'issues',
+                condition: ""
             },
             {
-                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
-                style: 'monitor'
+                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
+                style: 'monitor',
+                condition: ""
             },
             {
-                expression: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
-                style: 'strength'
+                conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
+                style: 'strength',
+                condition: ""
             },
             {
-                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
-                style: 'maintain'
+                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
+                style: 'maintain',
+                condition: ""
             }
         ];
+
         var name = "KeyAreas";
         var applyTo = {
             axis: Area.Columns,
