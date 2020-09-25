@@ -35,6 +35,7 @@ class PageAllResults {
 
         tableAllResults_AddRows(context);
         tableAllResults_AddColumns(context);
+        tableAllResults_ApplyConditionalFormatting(context);
     }
 
     /**
@@ -298,5 +299,44 @@ class PageAllResults {
         }
 
         return questionColumn;
+    }
+
+    /**
+     * @memberof PageAllResults
+     * @function tableAllResults_ApplyConditionalFormatting
+     * @description function to apply conditional formatting
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     */
+    static function tableAllResults_ApplyConditionalFormatting(context) {
+        var log = context.log;
+        var table = context.table;
+
+        var conditions = [
+            {
+                expression: 'cellv() < 0',
+                style: 'cond0'
+            }
+            /*{
+                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
+                style: 'monitor'
+            },
+            {
+                expression: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
+                style: 'strength'
+            },
+            {
+                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
+                style: 'maintain'
+            }*/
+        ];
+        var name = "GapAreas";
+        var applyTo = {
+            axis: Area.Columns,
+            direction: Area.Left,
+            indexes: "1,4,7"
+        };
+
+        TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+
     }
 }
