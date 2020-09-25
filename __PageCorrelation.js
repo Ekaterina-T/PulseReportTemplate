@@ -32,7 +32,7 @@ class PageCorrelation {
         var log = context.log;
         var table = context.table;
 
-        table.RowHeaders.Add(getHeaderFormula_Average());
+        table.RowHeaders.Add(getHeaderFormula_Average(context));
 
         var headerID = ParamUtil.GetSelectedOptions(context, 'p_ImpactAnalysisDimension');
 
@@ -68,12 +68,21 @@ class PageCorrelation {
      * Create HeaderFormula which calculates the average among all column values starting from the second one
      * @return {HeaderFormula} Formula for the average
      */
-    static function getHeaderFormula_Average() {
-        var avg: HeaderFormula = new HeaderFormula();
+    static function getHeaderFormula_Average(context) {
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
+        var correlationAxis = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CorrelationAxis');
 
+        var avg: HeaderFormula = new HeaderFormula();
         avg.Type = FormulaType.Expression;
         avg.Expression = 'AVERAGE(COLVALUES(2, ROWS))';
         avg.Decimals = 0;
+
+        if(correlationAxis.Type === 'manual') {
+            avg.Expression = 'if(col = 2, ' + correlationAxis.ZeroLine + ', AVERAGE(COLVALUES(2, ROWS)))';
+        } else {
+            avg.Expression = 'AVERAGE(COLVALUES(2, ROWS))';
+        }
 
         return avg;
     }
@@ -170,22 +179,22 @@ class PageCorrelation {
                 style: 'emptyCell'
             },
             {
-                conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
+                conditionBody: 'cellv(col + 1, row) > cellv(col+1, 1) AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'issues',
                 condition: " "
             },
             {
-                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
+                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row) <= cellv(col+1, 1)) AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'monitor',
                 condition: " "
             },
             {
-                conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
+                conditionBody: 'cellv(col + 1, row) > cellv(col+1, 1) AND cellv(col,row) > cellv(col, 1) ',
                 style: 'strength',
                 condition: " "
             },
             {
-                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
+                conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row) <= cellv(col+1, 1)) AND cellv(col,row) > cellv(col, 1) ',
                 style: 'maintain',
                 condition: " "
             }
