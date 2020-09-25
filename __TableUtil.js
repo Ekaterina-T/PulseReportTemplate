@@ -457,6 +457,9 @@ class TableUtil {
      */
     static function setupConditionalFormatting(context, conditions, name, applyTo){
         var table = context.table;
+        var log = context.log;
+
+        log.LogDebug('conditions ' + conditions.length);
 
         var formatter : ConditionalFormatting = table.ConditionalFormatting;
 
@@ -467,6 +470,8 @@ class TableUtil {
         for (var i = 0; i < conditions.length; i++) {
             var c1 : Condition = new Condition();
             c1.Style = conditions[i].style;
+
+            log.LogDebug('conditions[i].conditionBody ' + conditions[i].conditionBody);
 
             if (i === 0) {
                 c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + '==emptyv()';
