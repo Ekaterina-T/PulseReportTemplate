@@ -245,6 +245,7 @@ class PageCorrelation {
             "   palette: correlationPalette," +
             "   questionName: '" + (correlationVariableName || correlationVariableId) + "'," +
             "   translations: correlationTranslations," +
+            "   correlationAxis: correlationAxis"
             "});"+
             "</script>";
 
