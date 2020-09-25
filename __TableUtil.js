@@ -482,6 +482,9 @@ class TableUtil {
                     c1.Expression = 'true';
                 }
             }
+
+            log.LogDebug('c1.Expression ' + c1.Expression);
+
             area.AddCondition(c1);
         }
 
