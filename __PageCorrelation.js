@@ -75,13 +75,12 @@ class PageCorrelation {
 
         var avg: HeaderFormula = new HeaderFormula();
         avg.Type = FormulaType.Expression;
-        avg.Expression = 'AVERAGE(COLVALUES(2, ROWS))';
         avg.Decimals = 0;
 
         if(correlationAxis.Type === 'manual') {
             avg.Expression = 'if(col = 2, ' + correlationAxis.ZeroLine + ', AVERAGE(COLVALUES(2, ROWS)))';
         } else {
-            avg.Expression = 'AVERAGE(COLVALUES(2, ROWS))';
+            avg.Expression = 'if(col = 2, (if(min(colvalues(2, rows)) < -0.3, (1 - 0.3) / 2, (1 - min(colvalues(2, rows))) / 2)), AVERAGE(COLVALUES(2, ROWS)))';
         }
 
         return avg;
