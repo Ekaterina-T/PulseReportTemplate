@@ -169,22 +169,22 @@ class PageCorrelation {
             {
                 conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'issues',
-                condition: ""
+                condition: ">0"
             },
             {
                 conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'monitor',
-                condition: ""
+                condition: "<=0"
             },
             {
                 conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
                 style: 'strength',
-                condition: ""
+                condition: ">0"
             },
             {
                 conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
                 style: 'maintain',
-                condition: ""
+                condition: "<=0"
             }
         ];
 
