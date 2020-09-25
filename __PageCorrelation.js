@@ -167,24 +167,27 @@ class PageCorrelation {
 
         var conditions = [
             {
+                style: 'emptyCell'
+            },
+            {
                 conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'issues',
-                condition: ">0"
+                condition: " "
             },
             {
                 conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
                 style: 'monitor',
-                condition: "<=0"
+                condition: " "
             },
             {
                 conditionBody: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
                 style: 'strength',
-                condition: ">0"
+                condition: " "
             },
             {
                 conditionBody: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) > cellv(col, 1) ',
                 style: 'maintain',
-                condition: "<=0"
+                condition: " "
             }
         ];
 
