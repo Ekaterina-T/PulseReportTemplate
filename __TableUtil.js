@@ -459,8 +459,6 @@ class TableUtil {
         var table = context.table;
         var log = context.log;
 
-        log.LogDebug('conditions ' + conditions.length);
-
         var formatter : ConditionalFormatting = table.ConditionalFormatting;
 
         var area : Area = new Area();
@@ -471,8 +469,6 @@ class TableUtil {
             var c1 : Condition = new Condition();
             c1.Style = conditions[i].style;
 
-            log.LogDebug('conditions[i].conditionBody ' + conditions[i].conditionBody);
-
             if (i === 0) {
                 c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + '==emptyv()';
             } else {
@@ -482,8 +478,6 @@ class TableUtil {
                     c1.Expression = 'true';
                 }
             }
-
-            log.LogDebug('c1.Expression ' + c1.Expression);
 
             area.AddCondition(c1);
         }
