@@ -311,20 +311,7 @@ class PageAllResults {
         var log = context.log;
         var table = context.table;
 
-        var conditions = [
-            {
-                style: 'emptyCell'
-            }, {
-                style: 'cellLevel1',
-                condition: '<55'
-            }, {
-                style: 'cellLevel2',
-                condition: '<70'
-            }, {
-                style: 'cellLevel3'
-            }
-        ];
-
+        var conditions = Config.ConditionalFormatting['AllResults'];
         var indexes = [];
 
         for(var i = 0; i < 999; i++) {
