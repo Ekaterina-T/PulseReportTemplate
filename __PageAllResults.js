@@ -315,11 +315,11 @@ class PageAllResults {
             {
                 expression: 'cellv() < 0',
                 style: 'cond0'
-            }
-            /*{
-                expression: '(cellv(col + 1, row) = EMPTYV() OR cellv(col + 1, row)<=0) AND cellv(col,row) <= cellv(col, 1) ',
-                style: 'monitor'
             },
+            {
+                expression: 'cellv() > 0',
+                style: 'cond1'
+            }/*,
             {
                 expression: 'cellv(col + 1, row)>0 AND cellv(col,row) > cellv(col, 1) ',
                 style: 'strength'
