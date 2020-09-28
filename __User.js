@@ -40,13 +40,12 @@ class UserUtil {
 
         var log = context.log;
         var user = context.user;
-        var roles = [];
 
         if(UserUtil.isViewerManager(context)) {
-            roles = [SystemConfig.USER_ROLES.VIEWER_MANAGER].concat(user.Roles);
+            return [SystemConfig.USER_ROLES.VIEWER_MANAGER].concat(user.Roles);
         }
 
-        return roles;
+        return [].concat(user.Roles);
     }
 
     /**

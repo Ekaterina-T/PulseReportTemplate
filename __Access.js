@@ -23,6 +23,111 @@ class Access {
 
     /**
      * @memberof Access
+     * @example Access.isElementAllowed({user:user, state: state, report: report, log: log, pageContext: pageContext}, "elementId", "elementType")
+     * @description function checks if question is allowed for current user
+     * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
+     * @param {String} elementId - id of question or control which is checked
+     * @param {String} elementType - 'Questions' or 'Controls' as groups in AccessConfig
+     * @returns {Boolean}
+     */
+    static function isElementAllowed(context, elementId, elementType) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        //do not calc this many times
+        var key = 'access_'+elementType+'_'+elementId;
+
+        if(!!pageContext.Items[key]) {
+            return pageContext.Items[key];
+        }
+
+        var elementConfig = getAccessConfigForElement(context, elementId, elementType);
+        var isEntityAllowed  = Access.isEntityAllowed(context, elementConfig);
+        pageContext.Items[key] = isEntityAllowed;
+
+        return isEntityAllowed
+    }
+
+
+    /**
+     * @author EkaterinaT
+     * @example Access.getAccessConfigForElement({user:user, state: state, report: report, log: log, pageContext: pageContext}, "elementId", "elementType")
+     * @description function gets access config for particular question or control
+     * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
+     * @param {String} elementId - id of question or control which is checked
+     * @param {String} elementType - 'Questions' or 'Controls' as groups in AccessConfig
+     * @returns {Object}: null or {show: 'hidden/visible', exception: [roles]}
+     */
+    static function getAccessConfigForElement(context, elementId, elementType) {
+
+        var log = context.log;
+        var elementConfig;
+
+        switch(elementType) {
+            case 'Questions': elementConfig = AccessConfig.Questions; break;
+            case 'Controls': elementConfig = AccessConfig.Controls; break;
+        }
+
+        if(!elementConfig) {
+            throw new Error("Access.isElementAllowed: unknown elementType");
+        }
+
+        //element has no special visibility rules
+        if(!elementConfig.hasOwnProperty(elementId)) {
+            return null;
+        }
+
+        return elementConfig[elementId];
+    }
+
+    /**
+     * @memberof Access
+     * @author EkaterinaT
+     * @function isQuestionAllowed
+     * @description function checks if validated entity is allowed for current user based on its access Rules
+     * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
+     * @param {Object} accessRules {show: ['visible' || 'hidden'], exception: ['Role']}
+     * @returns {Boolean}
+     */
+    static function isEntityAllowed(context, accessRules) {
+
+        var log = context.log;
+        var user = context.user;
+
+        //prof users see everything, if elem is not described in config -> show it
+        if(user.UserType === ReportUserType.Confirmit || !accessRules) {
+            return true;
+        }
+
+        var toShow = accessRules.show == 'visible' ? true : false;
+        var exceptions = accessRules.exception;//role related exceptions
+        var roles = UserUtil.getUserRoles(context);
+
+        for (var i=0; i<exceptions.length; i++) {
+
+            var exception = exceptions[i].toLowerCase();
+
+            //hierarchy related exceptions: top, lowest
+            if (exception == 'top' && HierarchyUtil.topNodeAssigned(context)) {
+                return !toShow;
+            }
+
+            if (exception == 'lowest' && HierarchyUtil.allAssignedNodesLowest(context)) {
+                return !toShow;
+            }
+
+            if(ArrayUtil.itemExistInArray(roles, exception)) {
+                return !toShow;
+            }
+        }
+
+        return toShow;
+    }
+
+    /**
+     * @deprecated - isElementAllowed should be used instead, remains in old code as no time to re-qa
+     * @memberof Access
      * @function isQuestionAllowed
      * @description function checks if question is allowed for current user
      * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
@@ -38,32 +143,7 @@ class Access {
             return true;
         }
 
-        var questionAccessRules = questionsConfig[qid];
-        var toShow = (questionAccessRules.show == 'visible') ? true : false;
-        var exceptions = questionAccessRules.exception;
-
-
-        for (var i=0; i<exceptions.length; i++) {
-
-            var exception = exceptions[i];
-
-            //hierarchy related exceptions: top, lowes
-            if (exception == 'top' && HierarchyUtil.topNodeAssigned(context)) {
-                return !toShow;
-            }
-
-            if (exception == 'lowest' && HierarchyUtil.allAssignedNodesLowest(context)) {
-                return !toShow;
-            }
-
-            //role related exceptions
-            var roles = UserUtil.getUserRoles(context);
-            if(ArrayUtil.itemExistInArray(roles, exception)) {
-                return !toShow;
-            }
-        }
-        return toShow;
-
+        return isEntityAllowed(context, questionsConfig[qid])
     }
 
 
@@ -87,7 +167,6 @@ class Access {
 
         return false;
     }
-
 
 
 }

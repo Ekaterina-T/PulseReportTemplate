@@ -56,6 +56,10 @@ class StyleAndJavaScriptUtil {
 
         properties.push('hideWaveFilter: ' + Filters.isWaveFilterHidden(context));
 
+        properties.push('isDirectFilterEnabled: '+Filters.isDirectFilterEnabled(context));
+
+        properties.push('DirectToggleLabelText: '+JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'DirectToggleLabelText')));
+
         properties.push('noDataWarning: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg')));
 
         properties.push('TableChartColName_ScoreVsNormValue: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));

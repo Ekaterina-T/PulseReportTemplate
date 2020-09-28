@@ -533,4 +533,52 @@ class Filters {
 
 
     }
+
+
+
+    /**
+     * @description function indicating if the direct filter is needed or not
+     * @author - IrinaK
+     * @param {Object} context
+     * @returns {Boolean} true or false
+     */
+    static function isDirectFilterEnabled(context) {
+
+        var log = context.log;
+
+        var isDirectFilterEnabled_MainConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'isDirectFilterEnabled');
+        var isDirectFilterEnabled_AccessConfig = Access.isElementAllowed(context, "DirectReportsFilter", "Controls"); //RBI-130
+
+        return isDirectFilterEnabled_MainConfig && isDirectFilterEnabled_AccessConfig;
+    }
+
+    /**
+     * @description function to generate a script expression to filter by node without children
+     * @author - IrinaK
+     * @param {Object} context
+     * @returns {String} filter script expression
+     */
+    static function getDirectFilterExpression(context) {
+
+        var log = context.log;
+        var user = context.user;
+
+        if (!isDirectFilterEnabled(context)) {
+            return '';
+        }
+
+        var selectedCodes = ParamUtil.GetSelectedCodes(context, 'p_DirectFilter');
+        var hierarchyQId = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion');
+
+        var reportBase = user.PersonalizedReportBase.split(',');
+        var allSelectedHierarchyLevels = '"' + reportBase[0] + '"';
+        for (var i = 1; i < reportBase.length; i++) {
+            allSelectedHierarchyLevels = allSelectedHierarchyLevels + ',' + '"' + reportBase[i] + '"';
+        }
+
+        if (selectedCodes[0] == 'Direct nodes') {
+            return 'IN(' + hierarchyQId + ',' + allSelectedHierarchyLevels + ')';
+        }
+        return '';
+    }
 }
