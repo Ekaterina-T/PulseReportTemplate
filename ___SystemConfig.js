@@ -44,6 +44,7 @@ public class SystemConfig {
 
         'p_BenchmarkSet': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'BenchmarkSet'},
         'p_HierarchyBasedComparisons': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Results', propertyName: 'HierarchyBasedComparisons'},
+        'p_KPIHierarchyBasedComparisons': { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_KPI', propertyName: 'KPIHierarchyBasedComparisons'},
         'p_Dimensions':   { type: 'StaticArrayofObjects', locationType: 'Page', page: 'Page_Actions', propertyName: 'Dimensions'},
 
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
