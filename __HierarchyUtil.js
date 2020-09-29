@@ -147,6 +147,7 @@ class HierarchyUtil {
      * @memberof HierarchyUtil
      * @function getParentsForHierarchyNode
      * @description gets array of parent nodes for the specified hierarchy node
+     * In case there's no parent for the node (or it's a top node), the same element is added as a parent to avoid having 'null' in array
      * @param {Object} context {confirmit: confirmit, log: log}
      * @param {string} hierarchyNodeId
      * @param {numberOfLevelsUp} number of levels to go up the hierarchy
