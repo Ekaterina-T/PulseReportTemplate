@@ -25,6 +25,9 @@ class Access {
           else if (exceptions[i] == 'lowest' && HierarchyUtil.allAssignedNodesLowest(context)) {
             return !toShow;
           }
+          else if (exceptions[i] == 'topMinusOne' && HierarchyUtilNEW.topMinusOneLevelAssigned(context)) {
+            return !toShow;
+          }
         }
       	return toShow;
       } 

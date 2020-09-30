@@ -357,8 +357,57 @@ class HierarchyUtil {
             return true;
           }
         }
-         return false; 
+      return false; 
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function isTopMinusOneLevel
+     * @description checks if the specified node is top-1 level in hierarchy
+     * @param {String} nodeID 
+     * @param {Object} context {confirmit: confirmit, log: log}
+     * @returns {Boolean} 
+     */  
+    static function isTopMinusOneLevel(nodeID, context) {
+      
+      var log = context.log;
+
+      var row: DataRow[] = dbTable.Select("id='"+ nodeID +"'");
+      if (row.length > 0) {
+        if (row[0][Config.relationName] === topNode){
+          return true;
+        }
       }
+      return false;
+    }
+  
+  /**
+   * @memberof HierarchyUtil
+   * @function topMinusOneLevelAssigned
+   * @description checks if user is assigned to top-1 level of hierarchy
+   * @param {Object} context {confirmit: confirmit, user: user, log: log}
+   * @returns {Boolean} 
+   */  
+  static function topMinusOneLevelAssigned(context) {
+      
+      var user = context.user;
+      var log = context.log;
+      
+      if (user.UserType == ReportUserType.Confirmit) {
+        return true;
+      }
+      
+      setDataTable(context); //temp for using in page hide scripts
+
+      var nodesAssigned = user.GetNodeAssignments();
+      for (var i=0; i<nodesAssigned.length; i++) {
+        var nodeId = nodesAssigned[i];
+        if (isTopMinusOneLevel(nodeId, context)) {
+          return true;
+        }
+      }
+       return false; 
+  }
   
 
     /**
