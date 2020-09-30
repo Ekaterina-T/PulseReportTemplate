@@ -427,6 +427,7 @@ class PageKPI {
 
         var table = context.table;
         var log = context.log;
+        var report = context.report;
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
@@ -435,11 +436,28 @@ class PageKPI {
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
         var hrows: HeaderQuestion = new HeaderQuestion(qe);
 
-        if(rowsQidInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
+        if(rowsQidInfo.standardType === 'hierarchy') { 
+		
+			//add internal benchmarks as top rows
+			var reportBases = context.user.PersonalizedReportBase.split(',');
+			if (reportBases.length === 1) {
+
+				var internalBenchmarks = ParamUtil.GetSelectedCodes(context,'p_KPIHierarchyBasedComparisons');
+				if (internalBenchmarks.length>0) {	
+				
+					var parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context);
+					var parentArr = parentsList[0]; //parent array contains top node twice (two last elements), for top node it contains one element - top node
+									  
+					  for(var i=0; i<internalBenchmarks.length;i++) {
+						addBenchmarkRow(context, internalBenchmarks[i], parentArr);
+					  }
+				}
+			}
+          
             hrows.HierLayout = HierLayout.Flat;
             hrows.ReferenceGroup.Enabled = true;
             hrows.ReferenceGroup.Self = true;
-            hrows.ReferenceGroup.Levels = '+1';
+            hrows.ReferenceGroup.Levels = '+1';                         
         }
 
         hrows.ShowTotals = false;
@@ -502,7 +520,41 @@ class PageKPI {
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
     }
+	
+	 /*
+	  * Adds row with benchmark
+	  * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+	  * @param {string} bmlevel: top, top-1, parent
+	  * @param {array} parentArr: array of parent objects {id: parentId, label: parentLabel} for the current node
+	  */
+    static function addBenchmarkRow(context, bmlevel, parentArr){
+      
+		var table = context.table;
+        var report = context.report;
+      
+		var levelSegment: HeaderSegment = new HeaderSegment();
+		levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
+		levelSegment.SegmentType = HeaderSegmentType.Expression;
+		levelSegment.HideData = false;
+		
+		var index;
 
+		if (bmlevel === 'top' && parentArr.length > 0) {
+			index = parentArr.length - 1;
+		}
+		else if (bmlevel === 'top-1' && parentArr.length > 2){
+			index = parentArr.length - 3;
+		}
+		else if (bmlevel === 'parent' && parentArr.length > 1){
+			index = 0;
+		}
+		else {
+			return;
+		}
 
+		levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+		levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
+		table.RowHeaders.Add(levelSegment);		
+	}
 
 }

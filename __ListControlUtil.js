@@ -13,7 +13,14 @@ class ListControlUtil {
         var pageContext = context.pageContext;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
+		if(parameterName === 'p_KPIHierarchyBasedComparisons') {
 
+            var breakByQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
+            var breakByQidInfo = QuestionUtil.getQuestionInfo(context, breakByQid);
+            if(breakByQidInfo.standardType !== 'hierarchy') {
+            	return true;
+            }
+        }
 
         if(parameterName === 'p_Results_TableTabSwitcher') {
 

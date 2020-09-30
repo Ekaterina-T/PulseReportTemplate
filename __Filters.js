@@ -587,4 +587,20 @@ class Filters {
 
         return expr;
     }
+
+    /**
+     * function returns hierarchy based filter expression for OrgOverview table in KPI page
+     * @param {Object} context
+     * @returns {String} filter expression
+     */
+    static function getHierarchyFilterForOrgOverview(context) {
+
+        var breakByQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
+		var breakByQidInfo = QuestionUtil.getQuestionInfo(context, breakByQid);
+		if (breakByQidInfo.standardType === 'hierarchy') {
+			return '';
+		}
+		
+        return HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
+    }
 }
