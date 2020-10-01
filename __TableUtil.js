@@ -495,4 +495,94 @@ class TableUtil {
 
         table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
     }
+
+    /**
+     * @memberof TableUtil
+     * @function getLastNWavesFromSelected
+     * @description gets last n waves from selected in dd parameter
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Number} N - number of last waves needed
+     * @param {Object} waveQid - id for the wave question
+     * @param {String} selectedWave - code of the selected wave
+     * @returns {Array} codes
+     */
+    static function getLastNWavesFromSelected(context, N, waveQid, selectedWave) {
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
+        var codes = [];
+
+        for (var i = answers.length - 1; i >= 0; i--) {
+            if (answers[i].Precode == selectedWave) {
+                codes.push(answers[i].Precode);
+                for (var j = 1; j < N; j++) {
+                    if (i - j >= 0) {
+                        codes.push(answers[i - j].Precode);
+                    }
+                }
+                break;
+            }
+        }
+
+        return codes;
+    }
+
+    /**
+     * @memberof TableUtil
+     * @function getPreviousWaveFromSelected
+     * @description gets the id of the previous wave from the wave selected in the drop down
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} waveQid - id for the wave question
+     * @param {String} selectedWave - code of the selected wave
+     * @returns {String} code of the previous wave
+     */
+    static function getPreviousWaveFromSelected(context, waveQid, selectedWave) {
+        var answers: Answer[] = QuestionUtil.getQuestionAnswers(context, waveQid);
+
+        for (var i = 0; i < answers.length; i++) {
+            if (answers[i].Precode === selectedWave) {
+                if (i == 0) {
+                    return null;
+                } else {
+                    return answers[i - 1].Precode;
+                }
+            }
+        }
+    }
+
+    /*
+     * @memberof TableUtil
+     * @function getWaveColumn
+     * @description Create HeaderQuestion column with the Wave
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} waveQid - id for the wave question
+     * @param {Object} maskCodes - codes for the mask
+     * @return {HeaderQuestion} created column
+     */
+    static function getWaveColumn(context, waveQid, maskCodes) {
+        var waveQe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, waveQid);
+
+        if(!!maskCodes) {
+            var waveHeader: HeaderQuestion = new HeaderQuestion(waveQe);
+
+            var qmask: MaskFlat = new MaskFlat();
+            qmask.IsInclusive = true;
+
+            if (ArrayUtil.isArray(maskCodes)) {
+                qmask.Codes.AddRange(maskCodes);
+            } else {
+                qmask.Codes.Add(maskCodes);
+            }
+
+            waveHeader.AnswerMask = qmask;
+            waveHeader.FilterByMask = true;
+            waveHeader.ShowTotals = false;
+
+            return waveHeader;
+        } else {
+            var emptyWaveHeader : HeaderFormula = new HeaderFormula();
+            emptyWaveHeader.Expression = 'emptyv()';
+            emptyWaveHeader.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
+
+            return emptyWaveHeader;
+        }
+    }
 }
