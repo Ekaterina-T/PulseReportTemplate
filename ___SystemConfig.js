@@ -50,7 +50,10 @@ public class SystemConfig {
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
 
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
-        'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'}
+        'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'},
+
+        'p_LeadersExport_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'BreakVariables', isQuestionBased: true},
+        'p_LeadersExport_Dimension' : { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'Questions', isQuestionBased: true}
 
     };
 
@@ -58,8 +61,9 @@ public class SystemConfig {
     static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher',
-                                            'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy',
-                                            'p_ImpactAnalysisDimension', 'p_CorrelationQuestion', 'p_WaveSelector'];
+                                          'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy',
+                                          'p_ImpactAnalysisDimension', 'p_CorrelationQuestion', 'p_WaveSelector', 'p_LeadersExport_BreakBy',
+                                          'p_LeadersExport_Dimension'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
