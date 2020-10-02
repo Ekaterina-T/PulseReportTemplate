@@ -13,7 +13,7 @@ class Access {
         var filters = Filters.GetFilterQuestionsListByType(context);
 
         for (var i=0; i<filters.length; i++) {
-            if (isQuestionAllowed(context, filters[i])) {
+            if (isQuestionAllowed(context, filters[i], 'all filters')) {
                 return false;
             }
         }
@@ -30,7 +30,7 @@ class Access {
      * @param {String} elementType - 'Questions' or 'Controls' as groups in AccessConfig
      * @returns {Boolean}
      */
-    static function isElementAllowed(context, elementId, elementType) {
+    static function isElementAllowed(context, elementId, elementType, from) {
 
         var log = context.log;
         var pageContext = context.pageContext;
@@ -43,7 +43,7 @@ class Access {
         }
 
         var elementConfig = getAccessConfigForElement(context, elementId, elementType);
-        var isEntityAllowed  = Access.isEntityAllowed(context, elementConfig);
+        var isEntityAllowed  = Access.isEntityAllowed(context, elementConfig, from);
         pageContext.Items[key] = isEntityAllowed;
 
         return isEntityAllowed
@@ -90,7 +90,7 @@ class Access {
      * @param {Object} accessRules {show: ['visible' || 'hidden'], exception: ['Role']}
      * @returns {Boolean}
      */
-    static function isEntityAllowed(context, accessRules) {
+    static function isEntityAllowed(context, accessRules, from) {
 
         var log = context.log;
         var user = context.user;
@@ -102,6 +102,9 @@ class Access {
 
         var toShow = accessRules.show == 'visible' ? true : false;
         var exceptions = accessRules.exception;//role related exceptions
+
+        //log.LogDebug('from='+from)
+
         var roles = UserUtil.getUserRoles(context);
 
         for (var i=0; i<exceptions.length; i++) {
@@ -133,7 +136,7 @@ class Access {
      * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
      * @returns {Boolean}
      */
-    static function isQuestionAllowed(context, qid) {
+    static function isQuestionAllowed(context, qid, from) {
 
         var log = context.log;
         var questionsConfig = AccessConfig.Questions;
@@ -143,7 +146,7 @@ class Access {
             return true;
         }
 
-        return isEntityAllowed(context, questionsConfig[qid])
+        return isEntityAllowed(context, questionsConfig[qid], from)
     }
 
 

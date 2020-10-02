@@ -406,13 +406,49 @@ class HierarchyUtil {
 
     /**
      * @memberof HierarchyUtil
-     * @function getAdditionalColumnValueForCurrentReportBase
-     * @description gets the value of specified additional column for current report base
+     * @author EkaterinaT
+     * @function getAdditionalNodeValueForCurrentReportBase
+     * @description gets the value of specified additional column for each of the current report base nodes
+     * @param {Object} context {confirmit: confirmit}
+     * @param {String} additionalColumnName
+     * @return {Array} array of strings from additional column for each of the current report base nodes
+     */
+
+    static function getAdditionalNodeValueForCurrentReportBase(context, additionalColumnName) {
+
+        var log = context.log;
+        var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
+        var confirmit = context.confirmit;
+        var additionalValues = [];
+
+        var schema : DBDesignerSchema = confirmit.GetDBDesignerSchema(Config.schemaId);
+        var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
+
+        try {
+            var recordValue = dbTableNew.GetColumnValues('__l9' + additionalColumnName, 'id', bases[0]);
+            additionalValues.push(recordValue[0].split(','));
+        } catch (e) {
+            throw new Error('HierarchyUtil.getAdditionalNodeValueForCurrentReportBase: check if "'+additionalColumnName+'" column exists in the hierarchy');
+        }
+
+        for(var i = 1; i < bases.length; i++) {
+            var recordValue = dbTableNew.GetColumnValues('__l9' + additionalColumnName, 'id', bases[i]);
+            additionalValues.push(recordValue[0]);
+        }
+
+        return additionalValues;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @author ElenaV
+     * @function getReferencedNodeValuesForCurrentReportBase
+     * @description gets the value of reference node {id, label} column for current report base
      * @param {Object} context {confirmit: confirmit}
      * @param {String} additionalColumnName
      */
 
-    static function getAdditionalColumnValuesForCurrentReportBase(context, additionalColumnName) {
+    static function getReferencedNodeValuesForCurrentReportBase(context, additionalColumnName) {
 
         var log = context.log;
         var bases = context.user.PersonalizedReportBase.split(','); //multi nodes

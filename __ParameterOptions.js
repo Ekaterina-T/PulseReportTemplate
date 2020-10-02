@@ -506,7 +506,7 @@ class ParameterOptions {
 
         var masked = [];
         for (var i = 0; i < options.length; i++) {
-            if(Access.isQuestionAllowed(context, options[i]['Code'])) {
+            if(Access.isQuestionAllowed(context, options[i]['Code'], 'param mask')) {
                 masked.push(options[i]);
             }
         }

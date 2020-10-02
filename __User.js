@@ -40,12 +40,71 @@ class UserUtil {
 
         var log = context.log;
         var user = context.user;
+        var pageContext = context.pageContext;
+        var allRoles = [];
 
-        if(UserUtil.isViewerManager(context)) {
-            return [SystemConfig.USER_ROLES.VIEWER_MANAGER].concat(user.Roles);
+        log.LogDebug(!!pageContext.Items['allUserRoles'])
+        //do not calc this many times
+        if(!!pageContext.Items['allUserRoles']) {
+            log.LogDebug('user roles from cache')
+            return pageContext.Items['allUserRoles'];
         }
 
-        return [].concat(user.Roles);
+        //standard roles
+        allRoles = allRoles.concat(user.Roles)
+
+        //super special role
+        if(UserUtil.isViewerManager(context)) {
+            allRoles = allRoles.concat(SystemConfig.USER_ROLES.VIEWER_MANAGER);
+        }
+
+        //hierarchy-based role (additional column)
+        if(AccessConfig.hasRolesInHierarchyAdditionalColumn) {
+            var additionalColumnName = AccessConfig.additionalColumnName;
+            var rolesInHier = HierarchyUtil.getAdditionalNodeValueForCurrentReportBase(context, additionalColumnName);
+            allRoles = allRoles.concat(rolesInHier);
+        }
+
+        //calculatable custom role
+        allRoles = allRoles.concat(UserUtil.getUserCustomRoles(context, AccessConfig.customRoles, allRoles));
+
+        pageContext.Items.Add('allUserRoles', allRoles);
+
+        return allRoles;
+    }
+
+    /**
+     * @author - EkaterinaT
+     * @example - UserUtil.getUserCustomRoles({state: state, report: report, user:user, pageContext: pageContext, log: log, confirmit: confirmit}, [], [])
+     * @param {object} context
+     * @param {Object} customRoles - custom roles object defined in the Access config {CR1: [], CR2: []}
+     * @param {Array} userRoles - all +- standard roles that user has
+     * @return {Array} - array of custom roles that user has
+     */
+    static function getUserCustomRoles(context, customRoles, userRoles) {
+
+        if(!customRoles) {
+            customRoles = AccessConfig.customRoles;
+        }
+
+        var userCustomRoles = [];
+
+        for(var role in customRoles) {
+            var list = customRoles[role];
+            var hasRole = true;
+            var i = 0;
+
+            while (hasRole && i < list.length) {
+                hasRole = hasRole && ArrayUtil.itemExistInArray(userRoles, String(list[i]).toLowerCase());
+                i++;
+            }
+
+            if(hasRole) {
+                userCustomRoles.push(role);
+            }
+        }
+
+        return userCustomRoles;
     }
 
     /**

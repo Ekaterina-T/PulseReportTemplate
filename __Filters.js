@@ -70,7 +70,7 @@ class Filters {
                 return true;
             }
 
-            if (!Access.isQuestionAllowed(context, filterList[paramNum-1])) {
+            if (!Access.isQuestionAllowed(context, filterList[paramNum-1], 'filters'+paramNum)) {
                 return true;
             }
 
@@ -153,10 +153,25 @@ class Filters {
         var filters =  GetFilterQuestionsListByType(context, 'global');
         var invalidIndexes = [];
 
-        var startIndex = GetNumberOfBGFiltersByType(context, 'global'); 
+        var startIndex = GetNumberOfBGFiltersByType(context, 'global');
 
-        for(var i=startIndex; i<filters.length; i++) {
-            if(!activeQids.hasOwnProperty(filters[i])) {
+        var startVisibleIndex = startIndex;
+        var nVisibleFilters = filters.length;
+        var visibleFilters = [];
+
+        for(var i=0; i<filters.length; i++) {
+            if (!Access.isQuestionAllowed(context, filters[i])) {
+                if(i<startIndex) {
+                    startVisibleIndex --;
+                }
+                nVisibleFilters --;
+            } else {
+                visibleFilters.push(filters[i]);
+            }
+        }
+
+        for(var i=startVisibleIndex; i<nVisibleFilters; i++) {
+            if(!activeQids.hasOwnProperty(visibleFilters[i])) {
                 invalidIndexes.push(i+1);
             }
         }
@@ -547,7 +562,7 @@ class Filters {
         var log = context.log;
 
         var isDirectFilterEnabled_MainConfig = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'isDirectFilterEnabled');
-        var isDirectFilterEnabled_AccessConfig = Access.isElementAllowed(context, "DirectReportsFilter", "Controls"); //RBI-130
+        var isDirectFilterEnabled_AccessConfig = Access.isElementAllowed(context, "DirectReportsFilter", "Controls", 'direct filter'); //RBI-130
 
         return isDirectFilterEnabled_MainConfig && isDirectFilterEnabled_AccessConfig;
     }
