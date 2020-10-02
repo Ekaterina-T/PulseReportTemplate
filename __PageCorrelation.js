@@ -110,6 +110,7 @@ class PageCorrelation {
     static function getStatisticsColumn() {
         var headerStatistics = new HeaderStatistics();
         headerStatistics.Statistics.Avg = true;
+        headerStatistics.Decimals = 3;
 
         return headerStatistics
     }
