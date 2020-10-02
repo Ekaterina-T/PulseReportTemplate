@@ -461,6 +461,14 @@ class PageKPI {
         }
 
         hrows.ShowTotals = false;
+        var hs: HeaderSegment = new HeaderSegment();
+		hs.DataSourceNodeId = DataSourceUtil.getDsId(context);
+		hs.SegmentType = HeaderSegmentType.Expression;
+		hs.HideData = false;
+        hs.HideHeader = true;
+		hs.Expression = Filters.getDirectFilterExpression(context);
+        
+        hrows.SubHeaders.Add(hs);
         table.RowHeaders.Add(hrows);
 
         var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
@@ -555,6 +563,19 @@ class PageKPI {
 		levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
 		levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
 		table.RowHeaders.Add(levelSegment);		
+    }
+    
+    /*
+	 * Checks if OrgOverview table breakby is hierarchy
+	 * @param {Object} context 
+	 * @returns {Boolean}
+	 */
+    static function isKPIBreakByHierarchy(context){
+        
+		var breakByQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
+		var breakByQidInfo = QuestionUtil.getQuestionInfo(context, breakByQid);
+		
+        return (breakByQidInfo.standardType === 'hierarchy')? true : false;
 	}
 
 }

@@ -595,12 +595,16 @@ class Filters {
      */
     static function getHierarchyFilterForOrgOverview(context) {
 
-        var breakByQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
-		var breakByQidInfo = QuestionUtil.getQuestionInfo(context, breakByQid);
-		if (breakByQidInfo.standardType === 'hierarchy') {
-			return '';
-		}
-		
-        return HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
+        return (PageKPI.isKPIBreakByHierarchy(context)) ? '' : HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context);
+    }
+
+    /**
+     * function returns direct filter expression for OrgOverview table in KPI page
+     * @param {Object} context
+     * @returns {String} filter expression
+     */
+    static function getDirectFilterForOrgOverview(context) {
+
+        return (PageKPI.isKPIBreakByHierarchy(context)) ? '' : getDirectFilterExpression(context);
     }
 }

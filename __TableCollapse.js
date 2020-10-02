@@ -37,10 +37,7 @@ class TableCollapse
   //setup collapsible structure for table with flat hierarchy (no other headers)
   static function setupCollapsibleTable_Hier(context, table, divId, text, report, confirmit)
   {
-    var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
-    var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
-
-    if(rowsQidInfo.standardType !== 'hierarchy') {
+    if (!PageKPI.isKPIBreakByHierarchy(context)) {
       return;
     }
 

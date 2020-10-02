@@ -15,9 +15,7 @@ class ListControlUtil {
 
 		if(parameterName === 'p_KPIHierarchyBasedComparisons') {
 
-            var breakByQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
-            var breakByQidInfo = QuestionUtil.getQuestionInfo(context, breakByQid);
-            if(breakByQidInfo.standardType !== 'hierarchy') {
+            if (!PageKPI.isKPIBreakByHierarchy(context)) {
             	return true;
             }
         }
