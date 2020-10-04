@@ -1,4 +1,4 @@
-class PageResults2 {
+class PageResults {
 
     /*
   * Assemble Statements table
