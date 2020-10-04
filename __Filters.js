@@ -480,15 +480,18 @@ class Filters {
      * @returns {string} filter expression
      */
 
-    static function getHierarchyAndWaveFilter(context, hierLevel, waveId, projectId) {
+    static function getFilterForBenchmarkTableColumns(context, hierLevel, waveId, projectId, excludeDirectReportFilter) {
 
         var log = context.log;
 
         var excludedFilters = [];
-        var hierFilter = hierLevel ? HierarchyUtil.getHierarchyFilterExpressionForNode(context, hierLevel) : HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context); // '' if hierarchy is not defined
+
         var waveQId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+
+        var hierFilter = hierLevel ? HierarchyUtil.getHierarchyFilterExpressionForNode(context, hierLevel) : HierarchyUtil.getHierarchyFilterExpressionForCurrentRB(context); // '' if hierarchy is not defined
         var waveFilter = waveId ? getFilterExpressionByAnswerRange(context, waveQId, [waveId]) : getCurrentWaveExpression(context);
         var projectFilter = projectId ? getProjectExpression(context, projectId) : projectSelectorInPulseProgram(context);
+        var directReportFilter = excludeDirectReportFilter ? '' : Filters.getDirectFilterExpression(context);
 
         if(projectFilter) {
             excludedFilters.push(projectFilter);
@@ -500,6 +503,10 @@ class Filters {
 
         if (waveFilter) {
             excludedFilters.push(waveFilter);
+        }
+
+        if(directReportFilter) {
+            excludedFilters.push(directReportFilter);
         }
 
         return excludedFilters.join(' AND ');

@@ -1020,7 +1020,7 @@ class PageResults {
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
-        var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);
+        var excludedFiltersExpression = Filters.getFilterForBenchmarkTableColumns(context);
 
 
         // add Responses Column
@@ -1109,7 +1109,7 @@ class PageResults {
                 var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, companyTotalField);
 
                 if(companyTotals && companyTotals.length === 1) {
-                    levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, companyTotals[0]['id'], null);
+                    levelSegment.Expression = Filters.getFilterForBenchmarkTableColumns(context, companyTotals[0]['id'], null, null, true);
                     levelSegment.Label = new Label(report.CurrentLanguage, companyTotals[0]['label']);
                 } else {
                     return ;
@@ -1133,7 +1133,7 @@ class PageResults {
                 var parentArr = parentsList[0];
                 var index = parentArr.length - 1;
 
-                levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+                levelSegment.Expression = Filters.getFilterForBenchmarkTableColumns(context, parentArr[index]['id'], null, null, true);
                 levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
 
             } else {
@@ -1162,7 +1162,7 @@ class PageResults {
         surveySegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
         surveySegment.SegmentType = HeaderSegmentType.Expression;
         surveySegment.HideData = true;
-        surveySegment.Expression = Filters.getHierarchyAndWaveFilter(context, null, null, survey.Code);
+        surveySegment.Expression = Filters.getFilterForBenchmarkTableColumns(context, null, null, survey.Code, true);
 
         surveySegment.Label = new Label(report.CurrentLanguage, survey.Label);
         //calc score
@@ -1187,7 +1187,7 @@ class PageResults {
                 var surveySegmentExpressions = [];
 
                 for (var i = 0; i < projectsToCompare.length; i++) {
-                    surveySegmentExpressions.push(Filters.getHierarchyAndWaveFilter(context, null, null, projectsToCompare[i]));
+                    surveySegmentExpressions.push(Filters.getFilterForBenchmarkTableColumns(context, null, null, projectsToCompare[i], true));
                 }
 
                 var surveySegment: HeaderSegment = new HeaderSegment();
@@ -1226,10 +1226,10 @@ class PageResults {
         currentHierarchyAndWaveId.HideData = true;
 
         if (prevWave) { // current wave is not the 1st wave ever
-            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
+            currentHierarchyAndWaveId.Expression = Filters.getFilterForBenchmarkTableColumns(context, null, prevWave.Precode, null, true);
             newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
         } else {
-            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, 'noPrevWave');
+            currentHierarchyAndWaveId.Expression = Filters.getFilterForBenchmarkTableColumns(context, null, 'noPrevWave', null, true);
             newHeaders[0].Title = TextAndParameterUtil.getLabelByKey(context, 'noPrevWave');
         }
 
