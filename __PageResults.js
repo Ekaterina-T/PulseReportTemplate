@@ -1,4 +1,4 @@
-class PageResults {
+class PageResults2 {
 
     /*
   * Assemble Statements table
@@ -317,11 +317,11 @@ class PageResults {
     }
 
     /**
-  * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  * @param {string} scoreType
-  * @param {boolean} isNormalizedTable: true for table for normalized questions
-  */
+     * Add set of columns: Score, distribution barChart, Scale Distribution, Responses, Benchmarks, Benchmark comparison bar chart, hierarchy comparison columns
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} scoreType
+     * @param {boolean} isNormalizedTable: true for table for normalized questions
+     */
 
     static function tableStatements_AddColumns_Banner0(context, isNormalizedTable) {
 
@@ -345,12 +345,12 @@ class PageResults {
     }
 
     /**
-  * Add Score calculation
-  * @param {object} context: {state: state, report: report, log: log, table: table}
-  * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
-  * @param {Header} parentHeader - not mandotary
-  * @param {Array} [Header1, Header2,...]
-  */
+     * Add Score calculation
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
+     * @param {Header} parentHeader - not mandotary
+     * @param {Array} [Header1, Header2,...]
+     */
     static function addScore(context, parentHeader) {
 
         var table = context.table;
@@ -461,9 +461,9 @@ class PageResults {
     }
 
     /**
-  *  add distribution bar chart
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     *  add distribution bar chart
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function addDistributionBarChart(context) {
 
         var log = context.log;
@@ -521,9 +521,9 @@ class PageResults {
     }
 
     /**
-  *  add scale distribution columns
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  */
+     *  add scale distribution columns
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     */
     static function addScaleDistributionColumns(context) {
 
         var state = context.state;
@@ -559,10 +559,10 @@ class PageResults {
     }
 
     /**
-  *  add base column
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  *  @param {Header} parentHeader - not mandatory
-  */
+     *  add base column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {Header} parentHeader - not mandatory
+     */
     static function addResponsesColumn(context, parentHeader, isMandatory) {
 
         var state = context.state;
@@ -583,10 +583,10 @@ class PageResults {
     }
 
     /**
-  *  create base column
-  *  @param {object} context: {state: state, report: report, log: log, table: table}
-  *  @param {boolean} isHidden - not mandatory
-  */
+     *  create base column
+     *  @param {object} context: {state: state, report: report, log: log, table: table}
+     *  @param {boolean} isHidden - not mandatory
+     */
     static function getResponsesColumn(context, isHidden) {
 
         var table = context.table;
@@ -866,11 +866,25 @@ class PageResults {
         if (reportBases.length === 1) {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
+
             for (var i = 0; i < hierCompCols.length; i++) {
-                var hierCompContent: HeaderContent = new HeaderContent();
-                copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
-                bmColumn += 1;
+
+                var toCopy = true;
+
+                if(hierCompCols[i] === 'company-total') {
+                    var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, Config.companyTotalField);
+                    if(!(companyTotals && companyTotals.length === 1)) {
+                        toCopy = false;
+                    }
+                }
+
+                if(toCopy) {
+                    var hierCompContent: HeaderContent = new HeaderContent();
+                    copyBenchmarkValues(context, baseValues, bmColumn, hierCompContent, benchmarkTableLabels[bmColumn - 1], isNormalizedTable);
+                    bmColumn += 1;
+                }
             }
+
         }
 
     }
@@ -992,7 +1006,7 @@ class PageResults {
         table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
         table.RemoveEmptyHeaders.Rows = false;
-		table.Caching.Enabled = false;
+        table.Caching.Enabled = false;
     }
 
     /*
@@ -1007,6 +1021,7 @@ class PageResults {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         var excludedFiltersExpression = Filters.getHierarchyAndWaveFilter(context);
+
 
         // add Responses Column
         var excludedFiltersForN: HeaderSegment = new HeaderSegment();
@@ -1062,6 +1077,7 @@ class PageResults {
 
         //add Benchmark as comparison to upper hierarchy levels
         var bases = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion') && context.user.PersonalizedReportBase.split(',');
+
         if (bases && bases.length === 1) {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
@@ -1088,6 +1104,7 @@ class PageResults {
 
         if (level === 'company-total') {
             var companyTotalField = Config.companyTotalField;
+
             if(companyTotalField && companyTotalField.length > 0) {
                 var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, companyTotalField);
 
@@ -1154,10 +1171,10 @@ class PageResults {
         newHeaders[1].SubHeaders.Add(surveySegment);
     }
 
-     /*
-      * Adds segment with the filter based on the selected tracker surveys
-      * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
-      */
+    /*
+     * Adds segment with the filter based on the selected tracker surveys
+     * @param {object} context: {state: state, report: report, log: log, table: table, user: user}
+     */
     static function tableBenchmarks_addTrackerBasedComparison(context) {
 
         var log = context.log;
