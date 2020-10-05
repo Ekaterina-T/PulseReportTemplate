@@ -58,11 +58,16 @@ class ParamUtil {
     static function getDefaultParameterValue(context, parameterName) {
 
         var log = context.log;
+        var page = context.page;
         var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName, 'get default'); // get all options
         var paramInfo = SystemConfig.reportParameterValuesMap[parameterName];
         
         if (parameterName == 'p_Wave') {
             return DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DefaultWaveValue');
+        }
+
+        if (parameterName == 'p_TrendQs') {
+            return DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, 'TrendQuestions');
         }
 
         if (!DataSourceUtil.isProjectSelectorNotNeeded(context) && paramInfo.hasOwnProperty('isQuestionBased') && paramInfo['isQuestionBased']) {
@@ -190,8 +195,21 @@ class ParamUtil {
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
-            var valArr = [new ParameterValueResponse(defaultParameterValue)];
-            var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(valArr);
+            
+            var multiResponse: ParameterValueMultiSelect = new ParameterValueMultiSelect(); 
+
+            if (typeof defaultParameterValue === 'string') {
+
+                multiResponse.Add(new ParameterValueResponse(defaultParameterValue));
+            }
+
+            if (defaultParameterValue instanceof Array) {
+                  
+                 for(var i=0; i<defaultParameterValue.length; i++) {
+                    multiResponse.Add(new ParameterValueResponse(defaultParameterValue[i]));
+                }
+            }
+
             state.Parameters[paramId] = multiResponse;
         }
             //if not, set it as single select parameter

@@ -83,6 +83,10 @@ class StyleAndJavaScriptUtil {
             properties.push('gaugeData: '+JSON.stringify(PageKPI.getKPIResult(context)));
         }
 
+        if (pageId === 'Trends') {
+            properties.push('trendQuestionsSelected: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_TrendQs')));
+        }
+        
         if (pageId === 'Results') {
             var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
