@@ -145,6 +145,19 @@ class HierarchyUtil {
 
     /**
      * @memberof HierarchyUtil
+     * @function getTopNode
+     * @description getter for topNode
+     * @param {Object} context {confirmit: confirmit, log: log}
+     */
+    static function getTopNode(context) {
+        var log = context.log;
+
+        return topNode;
+
+    }
+
+    /**
+     * @memberof HierarchyUtil
      * @function getParentsForHierarchyNode
      * @description gets array of parent nodes for the specified hierarchy node
      * @param {Object} context {confirmit: confirmit, log: log}
