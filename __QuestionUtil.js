@@ -135,6 +135,24 @@ class QuestionUtil {
     }
 
     /*
+     * Get the list of answer labels for specified question.
+     * @param {object} context object {state: state, report: report, log: log}
+     * @param {string} questionId
+     * @returns {String []} labels for answers
+     */
+    static function getQuestionAnswerLabels (context, questionId) {
+        var answers = getQuestionAnswers(context, questionId);
+        var labels = [];
+
+        for(var i = 0; i < answers.length; i++) {
+            var answer : Answer = answers[i];
+            labels.push(answer.Text);
+        }
+
+        return labels;
+    }
+
+    /*
      * Get question answer list.
      * @param {object} context object {state: state, report: report, log: log}
      * @param {string} questionId
