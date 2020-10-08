@@ -43,7 +43,7 @@ class UserUtil {
         var pageContext = context.pageContext;
         var allRoles = [];
 
-        log.LogDebug(!!pageContext.Items['allUserRoles'])
+        //log.LogDebug(!!pageContext.Items['allUserRoles'])
         //do not calc this many times
         if(!!pageContext.Items['allUserRoles']) {
             log.LogDebug('user roles from cache')
@@ -51,7 +51,10 @@ class UserUtil {
         }
 
         //standard roles
-        allRoles = allRoles.concat(user.Roles)
+        allRoles = allRoles.concat(user.Roles);
+
+        //roles from User Roles table
+        allRoles = allRoles.concat(getRolesFromUserRolesTable(context));
 
         //super special role
         if(UserUtil.isViewerManager(context)) {
@@ -140,9 +143,31 @@ class UserUtil {
 
     /**
      * @author - EkaterinaT
-     * @example - UserUtil.hasHRRoleInCustomTable({state: state, report: report, user:user, pageContext: pageContext, log: log, confirmit: confirmit})
+     * @example - UserUtil.getRolesFromUserRolesTable({state: state, report: report, user:user, pageContext: pageContext, log: log, confirmit: confirmit})
      * @description - this function checks if customTables:CT_EndUserRoles has some role;
      * @param {object} context
+     * @return {boolean}
+     */
+    static function getRolesFromUserRolesTable(context) {
+
+        var log = context.log;
+        var report = context.report;
+        var usernameFilter = Filters.currentUsername(context);
+
+        if(usernameFilter.length > 0) {
+            var userRoles = report.TableUtils.GetRowHeaderCategoryIds('customTables:CT_EndUserRoles');
+            return !userRoles.length ? [] : userRoles;
+        } else {
+            return []; //no table, no role
+        }
+    }
+
+    /**
+     * @author - EkaterinaT
+     * @example - UserUtil.hasRoleInCustomTable({state: state, report: report, user:user, pageContext: pageContext, log: log, confirmit: confirmit})
+     * @description - this function checks if customTables:CT_EndUserRoles has some role;
+     * @param {object} context
+     * @param {String} - role to check
      * @return {boolean}
      */
     static function hasRoleInCustomTable(context, role) {
