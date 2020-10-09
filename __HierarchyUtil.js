@@ -454,6 +454,18 @@ class HierarchyUtil {
         return nodes;
     }
 
+    /**
+      * @memberof HierarchyUtil
+      * @function hideForLowestLevels
+      * @description hides page/component for users assigned to lowest levels only 
+      * @param {Object} context {confirmit: confirmit, user: user, log: log}
+      * @returns {Boolean} 
+      */  
+    static function hideForLowestLevels(context) {
+         
+      return (allAssignedNodesLowest(context) && !topMinusOneLevelAssigned(context));
+    }
+
     /*
       static function getLevel(user) {
         return getParents(user).length;
