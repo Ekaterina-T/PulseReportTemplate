@@ -305,7 +305,7 @@ static function reportBaseIsLowForFilters(context) {
         var log = context.log;
 
         // data suppression isn't applied to Response Rate page, so no warning is displayed
-        if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions' || pageContext.Items['CurrentPageId'] === 'SuppressMessage') {
+        if (pageContext.Items['CurrentPageId'] === 'Response_Rate' || pageContext.Items['CurrentPageId'] === 'Actions' || pageContext.Items['CurrentPageId'] === 'SuppressMessage' || pageContext.Items['CurrentPageId'] === 'Correlation') {
             return true;
         }
         return !(reportBaseIsLow (context) || hierarchyUnitIsSensitive (context));
