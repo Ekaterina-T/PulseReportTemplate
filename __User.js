@@ -46,7 +46,7 @@ class UserUtil {
         //log.LogDebug(!!pageContext.Items['allUserRoles'])
         //do not calc this many times
         if(!!pageContext.Items['allUserRoles']) {
-            log.LogDebug('user roles from cache')
+            //log.LogDebug('user roles from cache')
             return pageContext.Items['allUserRoles'];
         }
 
