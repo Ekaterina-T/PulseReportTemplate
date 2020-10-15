@@ -488,4 +488,26 @@ class HierarchyUtil {
 
      */
 
+    /**
+    * @memberof HierarchyUtil
+    * @function getNodeLabelById
+    * @description gets the label of the requested node by it's id
+    * @param {String} nodeId
+    */
+
+    static function getNodeLabelById(nodeId) {
+        var rows = dbTable && dbTable.Rows;
+        var label = '';
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row: DataRow = rows[i];
+            if(row['id'] === nodeId) {
+                label = row['__l9'];
+                break;
+            }
+        }
+
+        return label;
+    }
+
 }
