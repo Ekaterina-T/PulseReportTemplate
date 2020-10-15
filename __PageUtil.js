@@ -193,4 +193,22 @@ class PageUtil {
 
         return union && union.length>0;
     }
+
+    /**
+     * @memberof PageUtil
+     * @function setPageTitle
+     * @description function to set page title in excel export
+     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param {String} title - page title
+     */
+    static function setPageTitle(context, title) {
+        var page = context.page;
+
+        if(Export.isExcelExportMode(context)) {
+            var export_page_title = title;
+
+            for (var i=0; i < page.Title.Texts.Count; i++)
+                page.Title.Texts[i].Text = export_page_title;
+        }
+    }
 }
