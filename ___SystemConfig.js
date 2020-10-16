@@ -51,6 +51,7 @@ public class SystemConfig {
 
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
         'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'},
+        'p_AllResults_GapSettings': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'GapSettings'},
 
         'p_LeadersExport_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_LeadersExport_Dimension' : { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'Questions', isQuestionBased: true}
