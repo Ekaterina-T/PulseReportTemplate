@@ -830,6 +830,7 @@ class PageResults {
         var report = context.report;
         var state = context.state;
         var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var barChart_ScoreVsNorm: HeaderChartCombo = new HeaderChartCombo();
         var chartValue_ScoreVsNorm = [];
         var barChart_ScoreVsNormColors = Config.barChartColors_NormVsScore;
@@ -853,6 +854,17 @@ class PageResults {
             chartValue_Main.Expression = 'cellv(col-1,row)'; // diff between score and norm value, always previous column (formula)
             chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
             chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
+
+            var max = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "TrendChartMaxValue");
+            var min = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, "TrendChartMinValue");
+            if (min != null) {
+                var low: double = min;
+                chartValue_Main.Low = low;
+            }          
+            if (max != null) {
+                var high: double = max;
+                chartValue_Main.High = high;
+            }
 
             var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
             chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
