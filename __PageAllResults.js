@@ -110,9 +110,10 @@ class PageAllResults {
 
         var maskCodes = TableUtil.getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
         var waveHeaders = [];
+        var gapSettings = getGapSetting(context);
 
         for(var i = maskCodes.length - 1; i >= 0; i--) {
-            var gapHeader = getGapFormula(context);
+            var gapHeader = getGapFormula(context, gapSettings.ShowGap);
             var waveHeader = TableUtil.getWaveColumn(context, waveQid, maskCodes[i]);
 
             var previousWave = TableUtil.getPreviousWaveFromSelected(context, waveQid, maskCodes[i]);
@@ -133,14 +134,17 @@ class PageAllResults {
      * @function getGapFormula
      * @description Create HeaderFormula columns with the gap calculation between the wave and the previous wave
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Boolean} isHidden - whether this column is hidden or not
      * @return {Object} created column
      */
-    static function getGapFormula(context) {
+    static function getGapFormula(context, isHidden) {
         var gapFormula : HeaderFormula = new HeaderFormula();
 
         gapFormula.Type = FormulaType.Expression;
         gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row)) - ROUND(cellv(col+1,row)))';
         gapFormula.Decimals = 0;
+        gapFormula.HideHeader = isHidden;
+        gapFormula.HideData = isHidden;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
         return gapFormula;
@@ -219,7 +223,19 @@ class PageAllResults {
         var log = context.log;
         var table = context.table;
 
-        var conditions = Config.ConditionalFormatting['AllResults'];
+        var gapSettings = getGapSetting(context);
+
+        if(gapSettings.GapFormatting) {
+            applyGapFormatting();
+        }
+
+        if(gapSettings.ScoreFormatting) {
+
+        }
+    }
+
+    static function applyGapFormatting() {
+        var conditions = Config.ConditionalFormatting['AllResults_Gap'];
         var indexes = [];
 
         for(var i = 0; i < 999; i++) {
@@ -234,6 +250,27 @@ class PageAllResults {
         };
 
         TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+    }
+    static function applyScoreFormatting() {
+
+    }
+
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get selected gap settings based on the parameter
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @return {Object} gap settings
+     */
+    static function getGapSetting(context) {
+        var selectedSettings = ParamUtil.GetSelectedCodes(context, 'p_AllResults_GapSettings');
+        var gapSettings = {
+            ShowGap: ArrayUtil.itemExistInArray(selectedSettings, 'ShowGap'),
+            GapFormatting: ArrayUtil.itemExistInArray(selectedSettings, 'GapFormatting') && ArrayUtil.itemExistInArray(selectedSettings, 'ShowGap'),
+            ScoreFormatting: ArrayUtil.itemExistInArray(selectedSettings, 'ScoreFormatting')
+        };
+
+        return gapSettings;
 
     }
 }
