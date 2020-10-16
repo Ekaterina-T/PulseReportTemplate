@@ -289,7 +289,17 @@ class PageAllResults {
     static function getScoreFormattingIndexes() {
         var indexes = [];
 
-        for(var i = 1; i < 999; i++) {
+        var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
+        var startingPoint = 0;
+
+        switch (selectedWaveType) {
+            case "CurrentWave" : startingPoint = 1; break;
+            case "LastTwoWaves" : startingPoint = 2; break;
+            case "LastThreeWaves" : startingPoint = 3; break;
+            default: startingPoint = 1; break;
+        }
+
+        for(var i = startingPoint; i < 999; i++) {
             indexes.push(i * 3 + 3);
         }
 
