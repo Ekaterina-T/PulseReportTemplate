@@ -224,37 +224,28 @@ class PageAllResults {
         var table = context.table;
 
         var gapSettings = getGapSetting(context);
-
-        if(gapSettings.GapFormatting) {
-            applyGapFormatting();
-        }
-
-        if(gapSettings.ScoreFormatting) {
-
-        }
-    }
-
-    static function applyGapFormatting() {
-        var conditions = Config.ConditionalFormatting['AllResults_Gap'];
-        var indexes = [];
-
-        for(var i = 0; i < 999; i++) {
-            indexes.push(i * 3 + 1);
-        }
-
-        var name = "GapAreas";
+        var conditions = [];
+        var name = '';
         var applyTo = {
             axis: Area.Columns,
             direction: Area.Left,
-            indexes: indexes.join(',')
+            indexes: []
         };
 
-        TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
-    }
-    static function applyScoreFormatting() {
+        if(gapSettings.GapFormatting) {
+            conditions = Config.ConditionalFormatting['AllResults_Gap'];
+            name = "GapAreas";
+            applyTo.indexes = getGapFormattingIndexes();
+            TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+        }
 
+        if(gapSettings.ScoreFormatting) {
+            conditions = Config.ConditionalFormatting['AllResults_Score'];
+            name = "ScoreAreas";
+            applyTo.indexes = getScoreFormattingIndexes();
+            TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+        }
     }
-
     /**
      * @memberof PageAllResults
      * @function getGapSetting
@@ -271,6 +262,37 @@ class PageAllResults {
         };
 
         return gapSettings;
+    }
 
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get indexes of gap columns
+     * @return {Array} gap indexes
+     */
+    static function getGapFormattingIndexes() {
+        var indexes = [];
+
+        for(var i = 0; i < 999; i++) {
+            indexes.push(i * 3 + 1);
+        }
+
+        return indexes;
+    }
+
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get indexes of score columns
+     * @return {Array} score indexes
+     */
+    static function getScoreFormattingIndexes() {
+        var indexes = [];
+
+        for(var i = 1; i < 999; i++) {
+            indexes.push(i * 3 + 3);
+        }
+
+        return indexes;
     }
 }
