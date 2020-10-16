@@ -67,7 +67,7 @@ public class SystemConfig {
                                           'p_LeadersExport_Dimension'];
 
     // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
+    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_AllResults_GapSettings']; // we must add them empty option as 1st value instead
 
     static const paramTypesToBeReset = {
         'PulseSurveyInfo': false,
