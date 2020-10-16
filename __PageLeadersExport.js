@@ -13,6 +13,17 @@ class PageLeadersExport {
 
     /**
      * @memberof PageLeadersExport
+     * @function isElementGloballyHidden
+     * @description function to hide the element based on the global settings
+     * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @returns {Boolean}
+     */
+    static function isElementGloballyHidden(context) {
+        return SuppressUtil.isGloballyHidden(context);
+    }
+
+    /**
+     * @memberof PageLeadersExport
      * @function renderHeartbeatSummary
      * @description function to render summary element at the top left of the page
      * @param {Object} context - {pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
@@ -364,6 +375,13 @@ class PageLeadersExport {
             questionHeader.ReferenceGroup.Enabled = true;
             questionHeader.ReferenceGroup.Self = false;
             questionHeader.ReferenceGroup.Levels = '+1';
+
+            var bases = context.user.PersonalizedReportBase.split(',');
+
+            if(bases.length > 1) {
+                questionHeader.HideHeader = true;
+                questionHeader.HideData = true;
+            }
         }
 
         //add mask if any codes specified in the config
@@ -516,6 +534,13 @@ class PageLeadersExport {
                     questionHeader.ReferenceGroup.Enabled = true;
                     questionHeader.ReferenceGroup.Self = false;
                     questionHeader.ReferenceGroup.Levels = '+1';
+
+                    var bases = context.user.PersonalizedReportBase.split(',');
+
+                    if(bases.length > 1) {
+                        questionHeader.HideHeader = true;
+                        questionHeader.HideData = true;
+                    }
                 }
 
                 //add mask if any codes specified in the config
@@ -664,8 +689,14 @@ class PageLeadersExport {
             var ids = HierarchyUtil.getDirectChildrenForCurrentReportBase(context);
             name = TextAndParameterUtil.getTextTranslationByKey(context, 'Organization');
 
-            for(var j = 0; j < ids.length; j++) {
-                answers.push(HierarchyUtil.getNodeLabelById(ids[j]));
+            var bases = context.user.PersonalizedReportBase.split(',');
+
+            if(bases.length > 1) {
+                answers = [];
+            } else {
+                for (var j = 0; j < ids.length; j++) {
+                    answers.push(HierarchyUtil.getNodeLabelById(ids[j]));
+                }
             }
         } else {
             name = qName;
