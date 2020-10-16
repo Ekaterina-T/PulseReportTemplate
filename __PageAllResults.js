@@ -134,17 +134,17 @@ class PageAllResults {
      * @function getGapFormula
      * @description Create HeaderFormula columns with the gap calculation between the wave and the previous wave
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Boolean} isHidden - whether this column is hidden or not
+     * @param {Boolean} isVisible - whether this column is visible or not
      * @return {Object} created column
      */
-    static function getGapFormula(context, isHidden) {
+    static function getGapFormula(context, isVisible) {
         var gapFormula : HeaderFormula = new HeaderFormula();
 
         gapFormula.Type = FormulaType.Expression;
         gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row)) - ROUND(cellv(col+1,row)))';
         gapFormula.Decimals = 0;
-        gapFormula.HideHeader = !isHidden;
-        gapFormula.HideData = !isHidden;
+        gapFormula.HideHeader = !isVisible;
+        gapFormula.HideData = !isVisible;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
         return gapFormula;
