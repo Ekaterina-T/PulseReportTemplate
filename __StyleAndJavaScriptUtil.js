@@ -134,6 +134,7 @@ class StyleAndJavaScriptUtil {
 
         var log = context.log;
         var greenColor = Config.primaryGreenColor;
+		var toggleGreenColor = Config.toggleGreenColor;
         var redColor = Config.primaryRedColor;
         var kpiColor = Config.kpiColor;
         var kpiColor_dark = Config.kpiColor_dark;
@@ -226,6 +227,15 @@ class StyleAndJavaScriptUtil {
             css_string += '.material-card--favorable tr:nth-last-child(n+6) td { display: none; }' +
                 '.material-card--unfavorable tr:nth-last-child(n+6) td { display: none; }';
         }
+		
+		//Direct filter toggle
+        css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label {'
+                        +'background-color: '+toggleGreenColor
+                        +'}';
+        
+        css_string += '.hierarchy-direct-toggle:checked + .direct-toggle-label::after {'
+                        +'background-color: '+toggleGreenColor
+                        +'}';
 
         return '<style>' + css_string + '</style>';
     }
