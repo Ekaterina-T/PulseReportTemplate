@@ -143,8 +143,8 @@ class PageAllResults {
         gapFormula.Type = FormulaType.Expression;
         gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row)) - ROUND(cellv(col+1,row)))';
         gapFormula.Decimals = 0;
-        gapFormula.HideHeader = isHidden;
-        gapFormula.HideData = isHidden;
+        gapFormula.HideHeader = !isHidden;
+        gapFormula.HideData = !isHidden;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
         return gapFormula;
