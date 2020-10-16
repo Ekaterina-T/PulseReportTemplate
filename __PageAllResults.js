@@ -235,14 +235,14 @@ class PageAllResults {
         if(gapSettings.GapFormatting) {
             conditions = Config.ConditionalFormatting['AllResults_Gap'];
             name = "GapAreas";
-            applyTo.indexes = getGapFormattingIndexes();
+            applyTo.indexes = getGapFormattingIndexes(context);
             TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
         }
 
         if(gapSettings.ScoreFormatting) {
             conditions = Config.ConditionalFormatting['AllResults_Score'];
             name = "ScoreAreas";
-            applyTo.indexes = getScoreFormattingIndexes();
+            applyTo.indexes = getScoreFormattingIndexes(context);
             TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
         }
     }
@@ -270,7 +270,7 @@ class PageAllResults {
      * @description function to get indexes of gap columns
      * @return {Array} gap indexes
      */
-    static function getGapFormattingIndexes() {
+    static function getGapFormattingIndexes(context) {
         var indexes = [];
 
         for(var i = 0; i < 999; i++) {
@@ -286,7 +286,7 @@ class PageAllResults {
      * @description function to get indexes of score columns
      * @return {Array} score indexes
      */
-    static function getScoreFormattingIndexes() {
+    static function getScoreFormattingIndexes(context) {
         var indexes = [];
 
         var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
