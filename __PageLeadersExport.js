@@ -422,7 +422,7 @@ class PageLeadersExport {
             var report = context.report;
 
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var qTitle = QuestionUtil.getQuestionTitle (context, qid);
+            var qTitle = QuestionUtil.getQuestionTitle (context, Qs[i]);
             var row: HeaderQuestion = new HeaderQuestion(qe);
             row.IsCollapsed = true;
             row.HideHeader = false;
