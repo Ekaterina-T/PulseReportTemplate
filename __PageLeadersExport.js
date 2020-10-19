@@ -155,7 +155,7 @@ class PageLeadersExport {
             var questionRow = new HeaderQuestion(qe);
             questionRow.IsCollapsed = true;
             questionRow.DefaultStatistic = StatisticsType.Average;
-            questionRow.Totals = false;
+            questionRow.ShowTotals = false;
 
             TableUtil.maskOutNA(context, questionRow);
             table.RowHeaders.Add(questionRow);
@@ -423,7 +423,7 @@ class PageLeadersExport {
             var questionRow = new HeaderQuestion(qe);
             questionRow.IsCollapsed = true;
             questionRow.DefaultStatistic = StatisticsType.Average;
-            questionRow.Totals = false;
+            questionRow.ShowTotals = false;
 
             TableUtil.maskOutNA(context, questionRow);
             table.RowHeaders.Add(questionRow);
