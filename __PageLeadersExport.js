@@ -150,15 +150,15 @@ class PageLeadersExport {
         var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, 'LeadersExport', 'KeyQuestions', true);
 
         for (var i=0; i<Qs.length; i++) {
-            //table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
-            var qe = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
+            /*var qe = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
             var questionRow = new HeaderQuestion(qe);
             questionRow.IsCollapsed = true;
             questionRow.DefaultStatistic = StatisticsType.Average;
             questionRow.ShowTotals = false;
 
             TableUtil.maskOutNA(context, questionRow);
-            table.RowHeaders.Add(questionRow);
+            table.RowHeaders.Add(questionRow);*/
         }
 
         //add column - trending by Date variable
@@ -420,7 +420,7 @@ class PageLeadersExport {
         for (var i = 0; i < Qs.length; i++) {
             //table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
             var qe = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var questionRow = new HeaderQuestion(qe);
+            var questionRow : HeaderQuestion = new HeaderQuestion(qe);
             questionRow.IsCollapsed = true;
             questionRow.DefaultStatistic = StatisticsType.Average;
             questionRow.ShowTotals = false;
