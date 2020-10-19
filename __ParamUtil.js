@@ -178,6 +178,7 @@ class ParamUtil {
 
         var state = context.state;
         var log = context.log;
+        var page = context.page;
 
         // safety check: set default value if not defined or pulse program changed
         if (!state.Parameters.IsNull(paramId)) {
@@ -204,9 +205,11 @@ class ParamUtil {
             }
 
             if (defaultParameterValue instanceof Array) {
-                  
-                 for(var i=0; i<defaultParameterValue.length; i++) {
-                    multiResponse.Add(new ParameterValueResponse(defaultParameterValue[i]));
+                
+                var n = (paramId == 'p_TrendQs') ? DataSourceUtil.getPagePropertyValueFromConfig(context, page.CurrentPageId, "NFirstSelected") : defaultParameterValue.length;
+                for(var i = 0; i < n; i++) {
+                    var value = (defaultParameterValue[i].Type && defaultParameterValue[i].Type === 'Dimension') ? defaultParameterValue[i].Code : defaultParameterValue[i];
+                    multiResponse.Add(new ParameterValueResponse(value));
                 }
             }
 

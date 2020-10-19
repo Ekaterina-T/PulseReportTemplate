@@ -53,7 +53,7 @@ class PageTrend {
         var headers = ParamUtil.GetSelectedOptions(context, "p_TrendQs");
 
         for (var i = 0; i < headers.length; i++) {
-            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
+            table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i], true));
         }
 
         // in pulse program Trend shows comparison between surveys
