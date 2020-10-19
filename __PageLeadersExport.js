@@ -430,10 +430,10 @@ class PageLeadersExport {
 
             var hs : HeaderStatistics = new HeaderStatistics();
             hs.Statistics.Avg = true;
-            hs.Statistics.Count = true;
+            //hs.Statistics.Count = true;
             hs.HideHeader = false;
             hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
-            hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+            //hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
             //hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
             //hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
             row.SubHeaders.Add(hs);
