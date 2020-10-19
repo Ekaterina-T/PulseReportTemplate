@@ -291,9 +291,10 @@ class TableUtil {
      *Function adds AVG and Base subheader to a
      *@param {object} context
      *@param {object} header {Type: "Question"|"Dimension", Code: "qid"|"catId"}
+     *@param {boolean} breakByQuestions
      */
 
-    static function getTrendHeader(context, header) {
+    static function getTrendHeader(context, header, breakByQuestion) {
 
         var report = context.report;
         var log = context.log;
@@ -310,7 +311,7 @@ class TableUtil {
 
         //header is dimension
         if (header.Type && header.Type === 'Dimension') {
-            return getTrendCategorizationHeader(context, header.Code);
+            return getTrendCategorizationHeader(context, header.Code, breakByQuestion);
         }
 
         throw new Error('TableUtil.getTrendHeader: cannot process header ' + JSON.stringify(header));
@@ -328,18 +329,20 @@ class TableUtil {
         var report = context.report;
 
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, qid);
-        var qTitle = QuestionUtil.getQuestionTitle (context, qid);
+        //var qTitle = QuestionUtil.getQuestionTitle (context, qid);
         var row: HeaderQuestion = new HeaderQuestion(qe);
         row.IsCollapsed = true;
-        row.HideHeader = true;
+        row.HideHeader = false;
         maskOutNA(context, row);
 
         var hs : HeaderStatistics = new HeaderStatistics();
         hs.Statistics.Avg = true;
         hs.Statistics.Count = true;
-        hs.HideHeader = true;
-        hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
-        hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+        hs.HideHeader = false;
+        //hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
+        //hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+        hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
+        hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
         row.SubHeaders.Add(hs);
 
 
@@ -350,8 +353,9 @@ class TableUtil {
      *Function adds AVG and Base subheader to a
      *@param {object} context
      *@param {string} categorization id
+     *@param {boolean} breakByQuestions  - whether categorization should be shown as aggregated value or broken by questions belonging to it
      */
-    static function getTrendCategorizationHeader(context, catId) {
+    static function getTrendCategorizationHeader(context, catId, breakByQuestions) {
 
         var report = context.report;
         var row: HeaderCategorization = new HeaderCategorization();
@@ -362,9 +366,18 @@ class TableUtil {
         row.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
         row.Preaggregation = PreaggregationType.Average;
         row.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/browse/TQA-4116
-        row.Collapsed = true;
-        row.Totals = true;
+        row.Collapsed = !breakByQuestions;
+        row.Totals = !breakByQuestions;
         maskOutNA(context, row);
+
+        var hs : HeaderStatistics = new HeaderStatistics();
+        hs.Statistics.Avg = true;
+        hs.Statistics.Count = true;
+        hs.HideHeader = false;
+        hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
+        hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
+        row.HideHeader = false;
+        row.SubHeaders.Add(hs);
 
         return row;
     }
