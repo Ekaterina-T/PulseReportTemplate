@@ -419,14 +419,26 @@ class PageLeadersExport {
 
         for (var i = 0; i < Qs.length; i++) {
             //table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
-            var qe = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var questionRow : HeaderQuestion = new HeaderQuestion(qe);
-            questionRow.IsCollapsed = true;
-            questionRow.DefaultStatistic = StatisticsType.Average;
-            questionRow.ShowTotals = false;
+            var report = context.report;
 
-            TableUtil.maskOutNA(context, questionRow);
-            table.RowHeaders.Add(questionRow);
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
+            var qTitle = QuestionUtil.getQuestionTitle (context, qid);
+            var row: HeaderQuestion = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.HideHeader = false;
+            TableUtil.maskOutNA(context, row);
+
+            var hs : HeaderStatistics = new HeaderStatistics();
+            hs.Statistics.Avg = true;
+            hs.Statistics.Count = true;
+            hs.HideHeader = false;
+            hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
+            hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
+            //hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
+            //hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
+            row.SubHeaders.Add(hs);
+
+            table.RowHeaders.Add(row);
         }
     }
 
