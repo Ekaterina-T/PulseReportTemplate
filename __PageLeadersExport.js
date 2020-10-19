@@ -143,22 +143,28 @@ class PageLeadersExport {
     static function renderTrendTable(context) {
         var table = context.table;
         var log = context.log;
+        var report = context.report;
 
         var suppressSettings = {type: 'row', displayBaseOption: 'hide', displayCellOption: 'hide'};
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
-        var Qs = TableUtil.getActiveQuestionsListFromPageConfig (context, 'LeadersExport', 'KeyQuestions', true);
+        var Qs = TableUtil.getActiveQuestionsListFromPageConfig(context, 'LeadersExport', 'KeyQuestions', true);
 
-        for (var i=0; i<Qs.length; i++) {
-            table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
-            /*var qe = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
-            var questionRow = new HeaderQuestion(qe);
-            questionRow.IsCollapsed = true;
-            questionRow.DefaultStatistic = StatisticsType.Average;
-            questionRow.ShowTotals = false;
+        for (var i = 0; i < Qs.length; i++) {
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
+            var qTitle = QuestionUtil.getQuestionTitle (context, Qs[i]);
+            var row: HeaderQuestion = new HeaderQuestion(qe);
+            row.IsCollapsed = true;
+            row.HideHeader = false;
+            TableUtil.maskOutNA(context, row);
 
-            TableUtil.maskOutNA(context, questionRow);
-            table.RowHeaders.Add(questionRow);*/
+            var hs : HeaderStatistics = new HeaderStatistics();
+            hs.Statistics.Avg = true;
+            hs.HideHeader = false;
+            hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
+            row.SubHeaders.Add(hs);
+
+            table.RowHeaders.Add(row);
         }
 
         //add column - trending by Date variable
@@ -428,12 +434,8 @@ class PageLeadersExport {
 
             var hs : HeaderStatistics = new HeaderStatistics();
             hs.Statistics.Avg = true;
-            //hs.Statistics.Count = true;
             hs.HideHeader = false;
-            //hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
-            //hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
-            hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
-            //hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
+            hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
             row.SubHeaders.Add(hs);
 
             table.RowHeaders.Add(row);
