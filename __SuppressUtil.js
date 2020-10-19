@@ -184,7 +184,14 @@ static function getReportBaseValue(context) {
  * @return {Boolean} if filter panel should be hidden by suppress or not
  */
 static function reportBaseIsLowForFilters(context) {
-    return getReportBaseValue(context) < SuppressConfig.FilterSuppressValue;
+
+    var N_of_participants = report.TableUtils.GetCellValue('ConfidentialityInitialSuppress:ReportBaseNoFilters',1, 1).Value;
+
+    if (N_of_participants.Equals(Double.NaN) || (N_of_participants < SuppressConfig.FilterSuppressValue)) {
+        return true;
+    }
+
+    return false;
 }
 
     // Hide small units: a node should not show if it has less than X
