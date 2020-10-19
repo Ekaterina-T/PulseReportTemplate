@@ -414,13 +414,11 @@ class PageLeadersExport {
     static function tableKeyIndicators_AddRows(context) {
         var log = context.log;
         var table = context.table;
+        var report = context.report;
 
         var Qs = TableUtil.getActiveQuestionsListFromPageConfig(context, 'LeadersExport', 'KeyQuestions', true);
 
         for (var i = 0; i < Qs.length; i++) {
-            //table.RowHeaders.Add(TableUtil.getTrendHeader(context, TableUtil.getHeaderDescriptorObject(context, Qs[i])));
-            var report = context.report;
-
             var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, Qs[i]);
             var qTitle = QuestionUtil.getQuestionTitle (context, Qs[i]);
             var row: HeaderQuestion = new HeaderQuestion(qe);
@@ -432,9 +430,9 @@ class PageLeadersExport {
             hs.Statistics.Avg = true;
             //hs.Statistics.Count = true;
             hs.HideHeader = false;
-            hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
+            //hs.Texts.Average = new Label(report.CurrentLanguage, qTitle+' (SCORE)');
             //hs.Texts.Count = new Label(report.CurrentLanguage, qTitle+' (N)');
-            //hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
+            hs.Texts.Average = new Label(report.CurrentLanguage, '(SCORE)');
             //hs.Texts.Count = new Label(report.CurrentLanguage, '(N)');
             row.SubHeaders.Add(hs);
 
