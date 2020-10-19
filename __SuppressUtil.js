@@ -185,7 +185,7 @@ static function getReportBaseValue(context) {
  */
 static function reportBaseIsLowForFilters(context) {
 
-    var N_of_participants = report.TableUtils.GetCellValue('ConfidentialityInitialSuppress:ReportBaseNoFilters',1, 1).Value;
+    var N_of_participants = context.report.TableUtils.GetCellValue('ConfidentialityInitialSuppress:ReportBaseNoFilters',1, 1).Value;
 
     if (N_of_participants.Equals(Double.NaN) || (N_of_participants < SuppressConfig.FilterSuppressValue)) {
         return true;
