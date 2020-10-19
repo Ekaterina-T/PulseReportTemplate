@@ -155,7 +155,7 @@ class PageLeadersExport {
             var qTitle = QuestionUtil.getQuestionTitle (context, Qs[i]);
             var row: HeaderQuestion = new HeaderQuestion(qe);
             row.IsCollapsed = true;
-            row.HideHeader = false;
+            row.HideHeader = true;
             TableUtil.maskOutNA(context, row);
 
             var hs : HeaderStatistics = new HeaderStatistics();
@@ -429,7 +429,7 @@ class PageLeadersExport {
             var qTitle = QuestionUtil.getQuestionTitle (context, Qs[i]);
             var row: HeaderQuestion = new HeaderQuestion(qe);
             row.IsCollapsed = true;
-            row.HideHeader = false;
+            row.HideHeader = true;
             TableUtil.maskOutNA(context, row);
 
             var hs : HeaderStatistics = new HeaderStatistics();
