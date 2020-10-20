@@ -15,7 +15,7 @@ class ListControlUtil {
 
 		if(parameterName === 'p_KPIHierarchyBasedComparisons') {
 
-            if (!PageKPI.isKPIBreakByHierarchy(context)) {
+            if (ParamUtil.isParameterEmpty(context, 'p_OrgOverviewBreakBy') || !PageKPI.isKPIBreakByHierarchy(context)) {
             	return true;
             }
         }

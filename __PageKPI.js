@@ -413,7 +413,7 @@ class PageKPI {
      */
     static function tableOrgOverview_Hide(context){
 
-        return SuppressUtil.isGloballyHidden(context);
+        return SuppressUtil.isGloballyHidden(context) || ParamUtil.isParameterEmpty(context, 'p_OrgOverviewBreakBy');
 
     }
 

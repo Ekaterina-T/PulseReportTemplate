@@ -472,12 +472,15 @@ class ParameterOptionsBuilder {
         var log = context.log;
         var parameterInfo = GetParameterInfoObject(context, parameterId);
         var type = parameterInfo.type;
+        var hierachyId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion');
         
         if (type === 'QuestionList') {
             var masked = [];
             for (var i = 0; i < options.length; i++) {
               if(Access.isQuestionAllowed(options[i]['Code'], context)) {
-                masked.push(options[i]);
+                if (options[i]['Code'] != hierachyId || (options[i]['Code'] == hierachyId && Access.isHierarchyToBeAdded(context))) {
+                    masked.push(options[i]);
+                }
               }
             }
             return masked;

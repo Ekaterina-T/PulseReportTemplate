@@ -35,6 +35,26 @@ class Access {
       return true;
     }
 
+   /**
+    * @memberof Access
+    * @function isHierarchyToBeAdded
+    * @description function checks if hierarchy question should be added to break by parameters
+    * @param {Object} context {confirmit: confirmit, user: user, state:state, report:report, log: log}
+    * @returns {Boolean}
+    */
+   static function isHierarchyToBeAdded(context) {
+      
+    var log = context.log;
+    var user = context.user;
+    
+    var reportBases = user.PersonalizedReportBase.split(',');
+    if (reportBases.length > 1) {
+      return false;
+    }
+    
+    return true;
+  }
+
     /**
     * @memberof Access
     * @function hideHierarchyFilter

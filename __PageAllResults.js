@@ -9,7 +9,7 @@ class PageAllResults {
      */
     static function tableAllResults_Hide(context) {
 
-        return SuppressUtil.isGloballyHidden(context);
+        return SuppressUtil.isGloballyHidden(context) || ParamUtil.isParameterEmpty(context, 'p_AllResults_BreakBy');
 
     }
 

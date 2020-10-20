@@ -497,4 +497,21 @@ class ParamUtil {
         return true;
     }
 
+    /**
+     * Checks if parameter has no options
+     * @param {object} context 
+     * @param: {string} - parameterName
+     * @return {Boolean}
+     */
+    static function isParameterEmpty(context, parameterName) {
+
+        var log = context.log;
+		var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName); 
+           
+        if (parameterOptions.length == 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
