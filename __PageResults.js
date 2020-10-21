@@ -875,6 +875,7 @@ class PageResults {
                     var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, Config.companyTotalField);
                     if(!(companyTotals && companyTotals.length === 1) || reportBases[0] === HierarchyUtil.getTopNode(context)) {
                         toCopy = false;
+                        bmColumn--;
                     }
                 }
 
