@@ -15,9 +15,14 @@ class ListControlUtil {
 
 		if(parameterName === 'p_KPIHierarchyBasedComparisons') {
 
-            if (ParamUtil.isParameterEmpty(context, 'p_OrgOverviewBreakBy') || !PageKPI.isKPIBreakByHierarchy(context)) {
-            	return true;
-            }
+            return (ParamUtil.isParameterEmpty(context, 'p_OrgOverviewBreakBy') || !PageKPI.isKPIBreakByHierarchy(context));
+        }
+
+        if(parameterName === 'p_HierarchyBasedComparisons') {
+
+			var reportBases = context.user.PersonalizedReportBase.split(',');
+            return reportBases.length > 1;
+            
         }
 
         if(parameterName === 'p_Results_TableTabSwitcher') {
