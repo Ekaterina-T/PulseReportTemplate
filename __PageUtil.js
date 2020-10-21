@@ -10,6 +10,7 @@ class PageUtil {
 
         var state = context.state;
         var page = context.page;
+        var user = context.user;
         var log = context.log;
         var pageContext = context.pageContext;
 
@@ -24,10 +25,18 @@ class PageUtil {
         }
         catch (e) { /* 'Source' is optional page property which allows to use different sources for specific pages. So no need for throwing errors  ' */}
 
+
+        //flag how many hierarchy nodes are selected now
+        //needed for suppress: to remove hierarchy from break by when > 1 node is active
+        if(DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion')) {
+            pageContext.Items.Add('numOfSelectedHierarchyNodes',user.PersonalizedReportBase.split(',').length);
+        }
+
         ParamUtil.Initialise(context); // initialise parameters
 		if (!Filters.isWaveFilterHidden(context)) {
            pageContext.Items.Add('p_Wave', ParamUtil.GetSelectedCodes(context, 'p_Wave')[0]);
 		}
+
         
         // if data should be suppressed because there's not enough data on hierarchy levels assigned to user, 
         //then redirect to SuppressMessage page

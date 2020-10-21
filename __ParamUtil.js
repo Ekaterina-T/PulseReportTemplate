@@ -149,9 +149,14 @@ class ParamUtil {
         }
 
         // reset all parameters (=null) if a page refreshes when switching surveys
+        // guess: must be better to collect param ids to reset and then do reset - for future improvement
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
+        } else {
+            log.LogDebug('before rest quids')
+            ParamUtil.resetQuestionBasedParamsWithHieiarchySelected(context);
+            log.LogDebug('after rest quids')
         }
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
@@ -167,6 +172,69 @@ class ParamUtil {
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
         }
         //log.LogDebug('param init end')
+    }
+
+    /**
+     * @author EkaterinaT
+     * @description - hierarchical suppress does not support case when many nodes are selected
+     *                therefore, hierarchy qid must be removed from break by-s in that case
+     * @example: ParamUtil.getParametersByTypes({state: state, report: report, page: page, log: log})
+     * @param {Object} - context
+     */
+    static function resetQuestionBasedParamsWithHieiarchySelected(context) {
+
+        var log = context.log;
+        var numOfSelectedHierarchyNodes = context.pageContext.Items['numOfSelectedHierarchyNodes'];
+
+        if(!numOfSelectedHierarchyNodes || numOfSelectedHierarchyNodes == 1) {
+            return;
+        }
+
+        var parameterIDs = ParamUtil.getParametersByTypes(context, ['QuestionList', 'QuestionAndCategoriesList']);
+        var hierarchyQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'HierarchyQuestion');
+        var parametersToReset = [];
+
+        for(var i=0; i<parameterIDs.length; i++) {
+
+            //some params may not exist relevant in particular report
+            try {
+                var selectedCodes = ParamUtil.GetSelectedCodes(context, parameterIDs[i]);
+            } catch (e) {
+                continue;
+            }
+
+            var hierrachySelected = ArrayUtil.itemExistInArray(selectedCodes, hierarchyQid);
+
+            if(hierrachySelected) {
+                parametersToReset.push(parameterIDs[i]);
+            }
+        }
+
+        ResetParameters(context, parametersToReset);
+    }
+
+    /**
+     * @author EkaterinaT
+     * @example: ParamUtil.getParametersByTypes({state: state, report: report, page: page, log: log}, ['a','b']])
+     * @param context {Object} {state: state, report: report, page: page, log: log}
+     * @param {Array} - array of strings with param types to filter by
+     * @return {Array} - result Array of strings
+     */
+    static function getParametersByTypes(context, types) {
+
+        var log = context.log;
+        var parameters = SystemConfig.reportParameterValuesMap;
+        var filteredParams = [];
+
+        for( var param in parameters) {
+
+            var paramType = parameters[param]['type'];
+            if (ArrayUtil.itemExistInArray(types, paramType)) {
+                filteredParams.push(param);
+            }
+        }
+
+        return filteredParams;
     }
 
     /**

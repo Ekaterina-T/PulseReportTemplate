@@ -27,7 +27,7 @@ public class SystemConfig {
         'p_OrgOverviewBreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_KPI',                  propertyName: 'OrgOverviewBreakVariables', isQuestionBased: true},
         'p_AllResults_BreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_AllResults',           propertyName: 'BreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
-        'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
+        //'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
         'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments', isQuestionBased: true},
         'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory', isQuestionBased: true, CachingDisabled: true},

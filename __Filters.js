@@ -411,7 +411,7 @@ class Filters {
         var log = context.log;
         var user = context.user;
 	    
-	if (!isDirectFilterEnabled(context)) {
+	   if(!isDirectFilterEnabled(context)) {
            return '';
         }
 
