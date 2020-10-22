@@ -139,7 +139,7 @@ class PageAllResults {
         var gapFormula : HeaderFormula = new HeaderFormula();
 
         gapFormula.Type = FormulaType.Expression;
-        gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row)) - ROUND(cellv(col+1,row)))';
+        gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row) - cellv(col+1,row)))';
         gapFormula.Decimals = 0;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 

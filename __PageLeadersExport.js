@@ -264,7 +264,7 @@ class PageLeadersExport {
         var trendFormulaHeader : HeaderFormula = new HeaderFormula();
         trendFormulaHeader.Decimals = 0;
         trendFormulaHeader.Type = FormulaType.Expression;
-        trendFormulaHeader.Expression = 'IF((cellv(col-2, row) = emptyv() OR cellv(col-1,row) = emptyv()), 0, ROUND(cellv(col-2, row)) - ROUND(cellv(col-1,row)))';
+        trendFormulaHeader.Expression = 'IF((cellv(col-2, row) = emptyv() OR cellv(col-1,row) = emptyv()), 0, ROUND(cellv(col-2, row) - cellv(col-1,row)))';
         trendFormulaHeader.Title = TextAndParameterUtil.getLabelByKey(context, 'LeadersExport_Trend');
 
         table.ColumnHeaders.Add(waveHeader);
