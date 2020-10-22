@@ -1172,14 +1172,20 @@ class PageResults {
         currentHierarchyAndWaveId.SegmentType = HeaderSegmentType.Expression;
         currentHierarchyAndWaveId.HideData = true;
 
-        if (prevWave) { // current wave is not the 1st wave ever
-            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode);
-            newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
-        } else {
-            currentHierarchyAndWaveId.Expression = Filters.getHierarchyAndWaveFilter(context, null, 'noPrevWave');
-            newHeaders[0].Title = TextAndParameterUtil.getLabelByKey(context, 'noPrevWave');
+        var waveScoreFilters = [];
+		var directsFilter = Filters.getDirectFilterExpression(context);
+        if(directsFilter && directsFilter.length >0) {
+            waveScoreFilters.push(directsFilter);
         }
 
+        if (prevWave) { // current wave is not the 1st wave ever
+		    waveScoreFilters.push(Filters.getHierarchyAndWaveFilter(context, null, prevWave.Precode));
+            newHeaders[0].Title = new Label(report.CurrentLanguage, prevWave.Text);
+        } else {
+			waveScoreFilters.push(Filters.getHierarchyAndWaveFilter(context, null, 'noPrevWave'));
+            newHeaders[0].Title = TextAndParameterUtil.getLabelByKey(context, 'noPrevWave');
+        }
+        currentHierarchyAndWaveId.Expression = waveScoreFilters.join(' AND ');
         newHeaders[1].SubHeaders.Add(currentHierarchyAndWaveId);
     }
 
