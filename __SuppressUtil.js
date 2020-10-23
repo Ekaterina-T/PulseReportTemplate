@@ -244,17 +244,25 @@ static function reportBaseIsLowForFilters(context) {
 
       
         //2. branch base - (sum of bases of subunits with sufficient base in a subunit) < minGap → hide data
-        //i.e. sum of directs and small subunits < minGap
+        //i.e. sum of small subunits including directs < minGap
         //branch base - (sum of bases of subunits with sufficient base in a subunit) = 0 → show data
-        //i.e. no directs and small subunits
+        //i.e. no small subunits or small directs
 
         var delta = SuppressConfig.HierarchySuppress.minGap;
         var sumOfSufficientSubunits = 0;
+        var sumOfSubunits = 0;
 
         for (var i=1; i<bases.Length; i++) {
+
+            sumOfSubunits += bases[i].Value;
             if (bases[i].Value >= delta) {
                 sumOfSufficientSubunits += bases[i].Value;
             }
+        }
+
+        var directs = selfUnitBase - sumOfSubunits;
+        if (directs >= delta) {
+          sumOfSufficientSubunits += directs;
         }
         //    log.LogDebug('selfUnitBase - sumOfSufficientSubunits='+(selfUnitBase - sumOfSufficientSubunits));		
         if ((selfUnitBase - sumOfSufficientSubunits < delta) && (selfUnitBase - sumOfSufficientSubunits > 0)) {
