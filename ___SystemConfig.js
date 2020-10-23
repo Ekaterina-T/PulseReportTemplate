@@ -51,6 +51,7 @@ public class SystemConfig {
 
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
         'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'},
+        'p_AllResults_GapSettings': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'GapSettings'},
 
         'p_LeadersExport_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_LeadersExport_Dimension' : { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'Questions', isQuestionBased: true}
@@ -66,7 +67,7 @@ public class SystemConfig {
                                           'p_LeadersExport_Dimension'];
 
     // optional parameters are usually multiple. Can be empty by default
-    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
+    static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_AllResults_GapSettings']; // we must add them empty option as 1st value instead
 
     static const paramTypesToBeReset = {
         'PulseSurveyInfo': false,

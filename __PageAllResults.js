@@ -110,9 +110,10 @@ class PageAllResults {
 
         var maskCodes = TableUtil.getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
         var waveHeaders = [];
+        var gapSettings = getGapSetting(context);
 
         for(var i = maskCodes.length - 1; i >= 0; i--) {
-            var gapHeader = getGapFormula(context);
+            var gapHeader = getGapFormula(context, gapSettings.ShowGap);
             var waveHeader = TableUtil.getWaveColumn(context, waveQid, maskCodes[i]);
 
             var previousWave = TableUtil.getPreviousWaveFromSelected(context, waveQid, maskCodes[i]);
@@ -133,14 +134,17 @@ class PageAllResults {
      * @function getGapFormula
      * @description Create HeaderFormula columns with the gap calculation between the wave and the previous wave
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Boolean} isVisible - whether this column is visible or not
      * @return {Object} created column
      */
-    static function getGapFormula(context) {
+    static function getGapFormula(context, isVisible) {
         var gapFormula : HeaderFormula = new HeaderFormula();
 
         gapFormula.Type = FormulaType.Expression;
         gapFormula.Expression = 'IF((cellv(col+2, row) = emptyv() OR cellv(col+1,row) = emptyv()), emptyv(), ROUND(cellv(col+2, row) - cellv(col+1,row)))';
         gapFormula.Decimals = 0;
+        gapFormula.HideHeader = !isVisible;
+        gapFormula.HideData = !isVisible;
         gapFormula.Title = TextAndParameterUtil.getLabelByKey(context, 'HRGap');
 
         return gapFormula;
@@ -219,21 +223,86 @@ class PageAllResults {
         var log = context.log;
         var table = context.table;
 
-        var conditions = Config.ConditionalFormatting['AllResults'];
+        var gapSettings = getGapSetting(context);
+        var conditions = [];
+        var name = '';
+        var applyTo = {
+            axis: Area.Columns,
+            direction: Area.Left,
+            indexes: []
+        };
+
+        if(gapSettings.GapFormatting) {
+            conditions = Config.ConditionalFormatting['AllResults_Gap'];
+            name = "GapAreas";
+            applyTo.indexes = getGapFormattingIndexes(context);
+            TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+        }
+
+        if(gapSettings.ScoreFormatting) {
+            conditions = Config.ConditionalFormatting['AllResults_Score'];
+            name = "ScoreAreas";
+            applyTo.indexes = getScoreFormattingIndexes(context);
+            TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+        }
+    }
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get selected gap settings based on the parameter
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @return {Object} gap settings
+     */
+    static function getGapSetting(context) {
+        var selectedSettings = ParamUtil.GetSelectedCodes(context, 'p_AllResults_GapSettings');
+        var gapSettings = {
+            ShowGap: ArrayUtil.itemExistInArray(selectedSettings, 'ShowGap'),
+            GapFormatting: ArrayUtil.itemExistInArray(selectedSettings, 'GapFormatting') && ArrayUtil.itemExistInArray(selectedSettings, 'ShowGap'),
+            ScoreFormatting: ArrayUtil.itemExistInArray(selectedSettings, 'ScoreFormatting')
+        };
+
+        return gapSettings;
+    }
+
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get indexes of gap columns
+     * @return {Array} gap indexes
+     */
+    static function getGapFormattingIndexes(context) {
         var indexes = [];
 
         for(var i = 0; i < 999; i++) {
             indexes.push(i * 3 + 1);
         }
 
-        var name = "GapAreas";
-        var applyTo = {
-            axis: Area.Columns,
-            direction: Area.Left,
-            indexes: indexes.join(',')
-        };
+        return indexes;
+    }
 
-        TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
+    /**
+     * @memberof PageAllResults
+     * @function getGapSetting
+     * @description function to get indexes of score columns
+     * @return {Array} score indexes
+     */
+    static function getScoreFormattingIndexes(context) {
+        var indexes = [];
 
+        var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveSelector')[0];
+        var startingPoint = 0;
+
+        switch (selectedWaveType) {
+            case "CurrentWave" : startingPoint = 1; break;
+            case "LastTwoWaves" : startingPoint = 2; break;
+            case "LastThreeWaves" : startingPoint = 3; break;
+            default: startingPoint = 1; break;
+        }
+
+        for(var i = startingPoint; i < 999; i++) {
+            indexes.push(i * 3 + 3);
+        }
+
+        return indexes;
     }
 }
