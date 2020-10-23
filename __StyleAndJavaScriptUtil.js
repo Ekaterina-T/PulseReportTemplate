@@ -109,6 +109,8 @@ class StyleAndJavaScriptUtil {
             properties.push('evenDimensionColor: '+JSON.stringify(Config.evenDimensionColor));
             properties.push('oddDimensionColor: '+JSON.stringify(Config.oddDimensionColor));
             properties.push('lineColor: '+JSON.stringify(Config.lineColor));
+
+            properties.push('hideHelp: '+!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave'));
         }
 
         if (pageId === 'Categorical_') {
