@@ -492,8 +492,6 @@ class TableUtil {
                 }
             }
 
-            log.LogDebug('c1.Expression='+c1.Expression)
-
             area.AddCondition(c1);
         }
 
