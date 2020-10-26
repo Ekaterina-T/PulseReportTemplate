@@ -56,8 +56,14 @@ class PageLeadersExport {
         var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave')[0];
         var selectedWaveLabel = QuestionUtil.getQuestionAnswerByCode(context, waveQid, selectedWave).Text;
         var reportBase = getLeaderName(context);
+		var directFilterSelectedCode = ParamUtil.GetSelectedCodes(context, 'p_DirectFilter')[0];
+		var isDirectFilterApplied = false;
+		if (directFilterSelectedCode == 'Direct nodes') {
+			isDirectFilterApplied = true;
+		}
+		var directFilterMessage = TextAndParameterUtil.getTextTranslationByKey(context, 'DirectFilterApplied');
 
-        return "<div>" + summaryHeader + "</div>"  + (isWaveIncluded ? "<div>" + selectedWaveLabel + "</div>" : "") + (isReportBaseIncluded ? "<div>" + reportBase + "</div>" : "");
+        return "<div>" + summaryHeader + "</div>"  + (isWaveIncluded ? "<div>" + selectedWaveLabel + "</div>" : "") + (isReportBaseIncluded ? "<div>" + reportBase + "</div>" : "") + (isDirectFilterApplied ? "<div>" + directFilterMessage + "</div>" : "");
     }
 
     /**
