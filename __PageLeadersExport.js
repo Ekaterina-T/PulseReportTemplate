@@ -78,7 +78,7 @@ class PageLeadersExport {
 
         var pageContext = context.pageContext;
         var pageId = pageContext.Items['CurrentPageId'];
-        var pictureUrl = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'MainPictureUrl');
+        var pictureUrl = DataSourceUtil.getPagePropertyValueFromConfig(context, 'LeadersExport', 'MainPictureUrl');
 
         text.Output.Append("<img src='" + pictureUrl + "'>");
     }
