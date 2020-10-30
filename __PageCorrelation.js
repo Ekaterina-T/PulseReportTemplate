@@ -1,4 +1,4 @@
-class PageCorrelation2 {
+class PageCorrelation {
 
     /*
      * Assemble Statements table
