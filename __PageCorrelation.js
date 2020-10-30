@@ -1,4 +1,4 @@
-class PageCorrelation {
+class PageCorrelation2 {
 
     /*
      * Assemble Statements table
@@ -76,6 +76,7 @@ class PageCorrelation {
         var avg: HeaderFormula = new HeaderFormula();
         avg.Type = FormulaType.Expression;
         avg.Decimals = 0;
+        avg.Priority = 10; //for case when score calced based on one set of scores and correlation on another
 
         if(correlationAxis.Type === 'manual') {
             avg.Expression = 'if(col = 2, ' + correlationAxis.ZeroLine + ', AVERAGE(COLVALUES(2, ROWS)))';
@@ -95,7 +96,37 @@ class PageCorrelation {
         var table = context.table;
 
         var columnsCollection: HeaderCollection = new HeaderCollection();
-        columnsCollection.Add(getStatisticsColumn());
+
+        /*
+        for case when score calced based on one set of scores and correlation on another
+        i.e. whole report uses q scores -100, 0, 100
+        correlation can be calced but it will be not precise and sometimes not claculatable val/0
+        so for corr scores should be different 0,1,2,3, therefore all got a bit more complex and in rush
+         */
+
+        //columnsCollection.Add(getStatisticsColumn());
+
+
+        //add distribution barChart
+        var bcCategories: HeaderCategories = new HeaderCategories();
+        bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+        bcCategories.Totals = false;
+        bcCategories.Distributions.Enabled = true;
+        bcCategories.Distributions.HorizontalPercents = true;
+        bcCategories.Decimals = 2;
+        bcCategories.HideData = true;
+
+        var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
+        var fav: HeaderFormula = new HeaderFormula();
+        fav.Type = FormulaType.Expression;
+        fav.Expression = 'cellv(col-1,row)';
+        fav.Decimals = 2;
+        fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
+
+
+        columnsCollection.Add(bcCategories);
+        columnsCollection.Add(fav);
+
         columnsCollection.Add(getCorrelation(context));
         columnsCollection.Add(getBaseColumn());
         columnsCollection.Add(getFormulaColumn());
@@ -204,7 +235,7 @@ class PageCorrelation {
         var applyTo = {
             axis: Area.Columns,
             direction: Area.Left,
-            indexes: "1"
+            indexes: "4"
         };
 
         TableUtil.setupConditionalFormatting(context, conditions, name, applyTo);
