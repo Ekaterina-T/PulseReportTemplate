@@ -2,7 +2,7 @@ class PageCorrelation {
 
     /*
     * Hide Correlation table because of hierarchy suppress
-    * @param {object} context: {state: state, report: report, log: log, table: table, minGapCorrelation: minGapCorrelation}
+    * @param {object} context: {state: state, report: report, log: log, table: table}
     */
 
     static function tableCorrelation_Hide(context) {

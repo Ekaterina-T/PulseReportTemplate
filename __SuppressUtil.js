@@ -248,7 +248,7 @@ static function reportBaseIsLowForFilters(context) {
         //branch base - (sum of bases of subunits with sufficient base in a subunit) = 0 → show data
         //i.e. no small subunits or small directs
 
-        var delta = context.minGapCorrelation || SuppressConfig.HierarchySuppress.minGap;
+        var delta = context.individualMinGap || SuppressConfig.HierarchySuppress.minGap;
         var sumOfSufficientSubunits = 0;
         var sumOfSubunits = 0;
 
