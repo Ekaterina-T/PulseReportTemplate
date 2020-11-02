@@ -1,6 +1,16 @@
 class PageCorrelation {
 
     /*
+    * Hide Correlation table because of hierarchy suppress
+    * @param {object} context: {state: state, report: report, log: log, table: table, minGapCorrelation: minGapCorrelation}
+    */
+
+    static function tableCorrelation_Hide(context) {
+
+        return SuppressUtil.hierarchyUnitIsSensitive(context);
+    }
+
+    /*
      * Assemble Statements table
      * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext, suppressSettings: suppressSettings}
      */
