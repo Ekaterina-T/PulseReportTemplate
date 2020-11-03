@@ -191,6 +191,7 @@ class Filters {
             return true; // hide
         }
 
+        //IF-216: filter panel should be shown/hidden depending on initial report vase only
         if (SuppressUtil.reportBaseIsLowForFilters(context) /*|| !Access.isQuestionAllowed(filterList[paramNum-1], context)*/) {
             return true; // hide
         }
