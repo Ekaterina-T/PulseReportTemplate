@@ -191,7 +191,7 @@ class Filters {
             return true; // hide
         }
 
-        if (SuppressUtil.reportBaseIsLowForFilters(context) || !Access.isQuestionAllowed(filterList[paramNum-1], context)) {
+        if (SuppressUtil.reportBaseIsLowForFilters(context) /*|| !Access.isQuestionAllowed(filterList[paramNum-1], context)*/) {
             return true; // hide
         }
 
