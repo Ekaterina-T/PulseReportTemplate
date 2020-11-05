@@ -431,6 +431,7 @@ class PageKPI {
         var suppressSettings = context.suppressSettings;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
+        //rows
         var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_OrgOverviewBreakBy')[0];
         var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
@@ -471,7 +472,10 @@ class PageKPI {
         hrows.SubHeaders.Add(hs);
         table.RowHeaders.Add(hrows);
 
-        var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
+		//columns
+		var waves = getWavesColumns(context);
+		
+		var response  = DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'Response');
         qe = QuestionUtil.getQuestionnaireElement(context, response.qId);
         var hq: HeaderQuestion = new HeaderQuestion(qe);
         hq.IsCollapsed = true;
@@ -485,6 +489,7 @@ class PageKPI {
             qmask.Codes.AddRange(response.codes);
             hq.AnswerMask = qmask;
         }
+		AddWavesSubheaders(hq, waves);
         var hc : HeaderSegment = new HeaderSegment(TextAndParameterUtil.getLabelByKey(context, 'Responses'), '');
         hc.DataSourceNodeId = DataSourceUtil.getDsId (context);
         hc.SubHeaders.Add(hq);
@@ -518,6 +523,7 @@ class PageKPI {
             }
 
             TableUtil.maskOutNA(context, col);
+			AddWavesSubheaders(col, waves);
             table.ColumnHeaders.Add(col);
         }
 
@@ -527,6 +533,39 @@ class PageKPI {
         table.Decimals = Config.Decimal;
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
+    }
+	
+	 /*
+     * @memberof PageKPI
+     * @function getWavesColumns
+     * @description Create HeaderQuestion columns with the Waves selected from the dropdown
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @return {array} created columns
+     */
+     static function getWavesColumns(context) {
+        var log = context.log;
+        var waveQid = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'WaveQuestion');
+
+        var selectedWave = ParamUtil.GetSelectedCodes(context, 'p_Wave')[0];
+        var selectedWaveType = ParamUtil.GetSelectedCodes(context, 'p_WaveOrgOverview')[0];
+        var numberOfWaves = 0;
+
+        switch (selectedWaveType) {
+            case "CurrentWave" : numberOfWaves = 1; break;
+            case "LastTwoWaves" : numberOfWaves = 2; break;
+            case "LastThreeWaves" : numberOfWaves = 3; break;
+            default: numberOfWaves = 1; break;
+        }
+
+        var maskCodes = TableUtil.getLastNWavesFromSelected(context, numberOfWaves, waveQid, selectedWave);
+        var waveHeaders = [];
+        
+        for(var i = maskCodes.length - 1; i >= 0; i--) {
+            var waveHeader = TableUtil.getWaveColumn(context, waveQid, maskCodes[i]);
+            waveHeaders.push(waveHeader);
+        }
+
+        return waveHeaders;
     }
 	
 	 /*
@@ -560,10 +599,23 @@ class PageKPI {
 			return;
 		}
 
-		levelSegment.Expression = Filters.getHierarchyAndWaveFilter(context, parentArr[index]['id'], null);
+		levelSegment.Expression = HierarchyUtil.getHierarchyFilterExpressionForNode(context, parentArr[index]['id'])
 		levelSegment.Label = new Label(report.CurrentLanguage, parentArr[index]['label']);
 		table.RowHeaders.Add(levelSegment);		
     }
+	
+	/*
+	  * Adds waves subheaders to specified header
+	  * @param {Object} header
+	  * @param {array} array of subheaders
+	  */
+	static function AddWavesSubheaders(header, waves) {
+		if(!!waves && ArrayUtil.isArray(waves)) {
+			for(var i = 0; i < waves.length; i++) {
+				header.SubHeaders.Add(waves[i]);
+			}
+		}
+	}
     
     /*
 	 * Checks if OrgOverview table breakby is hierarchy
