@@ -50,6 +50,7 @@ public class SystemConfig {
         'p_TrendQs': { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_Trends', propertyName: 'TrendQuestions', isQuestionBased: true },
 
         'p_Wave': { type: 'QuestionId', locationType: 'Survey', propertyName: 'WaveQuestion', isInReverseOrder: true},
+        'p_WaveOrgOverview': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveOrgOverview'},
         'p_WaveSelector': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'WaveSelector'},
         'p_AllResults_GapSettings': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'GapSettings'},
 
