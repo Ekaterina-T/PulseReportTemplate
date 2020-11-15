@@ -188,7 +188,7 @@ class Filters {
     }
 
     /**
-     *
+     * @param {Object}
      */
     static function GetIndividualFilterExpression(context, paramId, qId) {
 
