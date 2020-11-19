@@ -1,5 +1,15 @@
 class TableUtil {
 
+    static var breakByType = '';
+
+    static function setBreakByType(newBreakByType) {
+        breakByType = newBreakByType;
+    }
+
+    static function getBreakByType() {
+        return breakByType;
+    }
+
     /**
      * @memberof TableUtil
      * @function setTimeSeriesByTimeUnit
@@ -235,6 +245,8 @@ class TableUtil {
             breakByType = 'Question';
         }
 
+        setBreakByType(breakByType);
+
         var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
 
         if(selectedOption==null || selectedOption.Code === 'na') {//no break by option is selected
@@ -274,6 +286,7 @@ class TableUtil {
             nestedHeader = new HeaderQuestion(questionElem);
 
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
+                setBreakByType('Hierarchy');
                 nestedHeader.ReferenceGroup.Enabled = true;
                 nestedHeader.ReferenceGroup.Self = false;
                 //var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);

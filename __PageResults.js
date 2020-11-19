@@ -863,7 +863,10 @@ class PageResults {
 
         //add hierarchy comparison benchmarks
         var reportBases = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion') && context.user.PersonalizedReportBase.split(',');
-        if (reportBases.length === 1) {
+        var breakByType = TableUtil.getBreakByType().toLowerCase();
+
+        //do not show hierarchy columns if there are > 1 nodes selected or break by is by hierarchy
+        if (reportBases.length === 1 && breakByType !== 'hierarchy') {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
@@ -1078,8 +1081,9 @@ class PageResults {
 
         //add Benchmark as comparison to upper hierarchy levels
         var bases = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion') && context.user.PersonalizedReportBase.split(',');
+        var breakByType = TableUtil.getBreakByType().toLowerCase();
 
-        if (bases && bases.length === 1) {
+        if (bases && bases.length === 1 && breakByType !== 'hierarchy') {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
@@ -1097,8 +1101,8 @@ class PageResults {
 
         var log = context.log;
         var report = context.report;
-        var levelSegment: HeaderSegment = new HeaderSegment();
 
+        var levelSegment: HeaderSegment = new HeaderSegment();
         levelSegment.DataSourceNodeId = DataSourceUtil.getDsId(context);
         levelSegment.SegmentType = HeaderSegmentType.Expression;
         levelSegment.HideData = true;
