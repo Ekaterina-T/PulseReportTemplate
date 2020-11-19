@@ -1083,6 +1083,7 @@ class PageResults {
         var bases = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion') && context.user.PersonalizedReportBase.split(',');
         var breakByType = TableUtil.getBreakByType().toLowerCase();
 
+        //do not show hierarchy columns if there are > 1 nodes selected or break by is by hierarchy
         if (bases && bases.length === 1 && breakByType !== 'hierarchy') {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 

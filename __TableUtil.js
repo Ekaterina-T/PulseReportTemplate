@@ -1,11 +1,24 @@
 class TableUtil {
 
+    //type of the selected break by variable
     static var breakByType = '';
 
+    /**
+     * @memberof TableUtil
+     * @function setBreakByType
+     * @description set the break by type
+     * @param {String} type of the selected break by variable
+     */
     static function setBreakByType(newBreakByType) {
         breakByType = newBreakByType;
     }
 
+    /**
+     * @memberof TableUtil
+     * @function getBreakByType
+     * @description get the break by type
+     * @return {String} type of the selected break by variable
+     */
     static function getBreakByType() {
         return breakByType;
     }
