@@ -19,7 +19,7 @@ class PageResults {
 
         table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
-        table.RemoveEmptyHeaders.Rows = true;
+        table.RemoveEmptyHeaders.Rows = false;//true;
         table.Caching.Enabled = false;
     }
 
