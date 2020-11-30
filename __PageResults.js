@@ -1108,9 +1108,6 @@ class PageResults {
                     isHierarchyColumnToBeAdded = (bases.length === 1);
                 }
 
-                log.LogDebug("hierarchyLevelsToCompare[i] " + hierarchyLevelsToCompare[i]);
-                log.LogDebug("isHierarchyColumnToBeAdded " + isHierarchyColumnToBeAdded);
-
                 if(isHierarchyColumnToBeAdded) {
                     tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
                 }
