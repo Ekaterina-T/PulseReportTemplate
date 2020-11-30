@@ -1160,7 +1160,7 @@ class PageResults {
                 parentsList = HierarchyUtil.getParentsForCurrentHierarchyNode(context, Number(level));
             }
 
-            if (parentsList && parentsList.length === 1 && parentsList[0].length > 0) { //===1 for multiselect hierarchy
+            if (parentsList && (parentsList.length === 1 || (parentsList.length > 1 && level === 'top')) && parentsList[0].length > 0) { //===1 for multiselect hierarchy
                 var parentArr = parentsList[0];
                 var index = parentArr.length - 1;
 
