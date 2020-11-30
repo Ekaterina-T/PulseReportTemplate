@@ -865,20 +865,32 @@ class PageResults {
         var reportBases = !!DataSourceUtil.getSurveyPropertyValueFromConfig (context, 'HierarchyQuestion') && context.user.PersonalizedReportBase.split(',');
         var breakByType = TableUtil.getBreakByType().toLowerCase();
 
-        //do not show hierarchy columns if there are > 1 nodes selected or break by is by hierarchy
-        if (reportBases.length === 1 && breakByType !== 'hierarchy') {
+        //do not show hierarchy columns if break by is by hierarchy
+        if (breakByType !== 'hierarchy') {
 
             var hierCompCols = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierCompCols.length; i++) {
 
-                var toCopy = true;
+                var toCopy;
 
-                if(hierCompCols[i] === 'company-total') {
-                    var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, Config.companyTotalField);
-                    if(!(companyTotals && companyTotals.length === 1) || reportBases[0] === HierarchyUtil.getTopNode(context)) {
+                //show top columns if there are >= 1 nodes selected
+                //show other hierarchy columns only if 1 node selected
+                if(hierCompCols[i] === 'top') {
+                    toCopy = true;
+                } else {
+                    if(reportBases.length === 1) {
+                        toCopy = true;
+
+                        if(hierCompCols[i] === 'company-total') {
+                            var companyTotals = HierarchyUtil.getReferencedNodeValuesForCurrentReportBase(context, Config.companyTotalField);
+                            if(!(companyTotals && companyTotals.length === 1) || reportBases[0] === HierarchyUtil.getTopNode(context)) {
+                                toCopy = false;
+                                bmColumn--;
+                            }
+                        }
+                    } else {
                         toCopy = false;
-                        bmColumn--;
                     }
                 }
 
@@ -1084,11 +1096,21 @@ class PageResults {
         var breakByType = TableUtil.getBreakByType().toLowerCase();
 
         //do not show hierarchy columns if there are > 1 nodes selected or break by is by hierarchy
-        if (bases && bases.length === 1 && breakByType !== 'hierarchy') {
+        if (bases && breakByType !== 'hierarchy') {
             var hierarchyLevelsToCompare = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBasedComparisons');
 
             for (var i = 0; i < hierarchyLevelsToCompare.length; i++) {
-                tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
+                var isHierarchyColumnToBeAdded;
+
+                if(hierarchyLevelsToCompare[i] === 'top') {
+                    isHierarchyColumnToBeAdded = true;
+                } else {
+                    isHierarchyColumnToBeAdded = (bases.length === 1);
+                }
+
+                if(isHierarchyColumnToBeAdded) {
+                    tableBenchmarks_addHierarchyBasedComparison(context, hierarchyLevelsToCompare[i]);
+                }
             }
         }
     }
