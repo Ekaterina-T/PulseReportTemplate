@@ -62,6 +62,8 @@ class StyleAndJavaScriptUtil {
 
         properties.push('noDataWarning: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NoDataMsg')));
 
+        properties.push('NA: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'NA')));
+
         properties.push('TableChartColName_ScoreVsNormValue: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));
 
         properties.push('TableChartColName_Distribution: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Distribution')));
