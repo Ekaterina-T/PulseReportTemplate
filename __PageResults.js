@@ -939,7 +939,14 @@ class PageResults {
             barChart_ScoreVsNorm.HideHeader = true;
 
             var chartValue_Main: ChartComboValue = new ChartComboValue();
-            chartValue_Main.Expression = 'cellv(col-1,row)'; // diff between score and norm value, always previous column (formula)
+
+            // diff between score and norm value, always previous column (formula)
+            // hack: if diff is 0 or undefined bar chart will not render
+            // therefore we set value to -1 and than js+css will
+            // 1) work with rendered barchart,
+            // 2) check real value in cell to the left
+            // 3) add proper comment and hide "help" barchart
+            chartValue_Main.Expression = 'if(cellv(col-1,row) != emptyv() AND cellv(col-1,row) != 0 , cellv(col-1,row), -1)';
             chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
             chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
 
