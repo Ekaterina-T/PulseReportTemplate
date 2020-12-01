@@ -945,7 +945,7 @@ class PageResults {
 
             var chartValue_Alternative: ChartComboColorAlternative = new ChartComboColorAlternative();
             chartValue_Alternative.Color = new ChartComboColorSet([barChart_ScoreVsNormColors[0].color]);
-            chartValue_Alternative.Threshold = -0.1; // If greater than 0
+            chartValue_Alternative.Threshold = -1; // If greater than 0
 
             chartValue_Main.AltColors = [chartValue_Alternative];
             chartValue_ScoreVsNorm.push(chartValue_Main);
