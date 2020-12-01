@@ -11,6 +11,7 @@ class PageResults {
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
+        var areEmptyRowsShown = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ShowEmptyRows');
 
         tableStatements_AddColumns(context, bannerId, isNormalizedTable);
         tableStatements_AddRows(context, isNormalizedTable);
@@ -19,7 +20,7 @@ class PageResults {
 
         table.Decimals = Config.Decimal;
         table.RowNesting = TableRowNestingType.Nesting;
-        table.RemoveEmptyHeaders.Rows = false;//true;
+        table.RemoveEmptyHeaders.Rows = !areEmptyRowsShown;
         table.Caching.Enabled = false;
     }
 
