@@ -11,6 +11,8 @@ class PageResults {
         var table = context.table;
         var log = context.log;
         var suppressSettings = context.suppressSettings;
+
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var areEmptyRowsShown = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'ShowEmptyRows');
 
         tableStatements_AddColumns(context, bannerId, isNormalizedTable);
