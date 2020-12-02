@@ -66,6 +66,8 @@ class StyleAndJavaScriptUtil {
 
         properties.push('TableChartColName_ScoreVsNormValue: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsNormValue')));
 
+        properties.push('TableChartColName_ScoreVsPrevWaveValue: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'ScoreVsPrevWave')));
+
         properties.push('TableChartColName_Distribution: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'Distribution')));
 
         properties.push('About: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'About')));
