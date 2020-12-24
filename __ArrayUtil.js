@@ -27,6 +27,7 @@ class ArrayUtil {
 
         var arrayToString = '$'+array.join('$')+'$';
         arrayToString = arrayToString.toLowerCase();
+
         return arrayToString.indexOf('$'+item+'$')>=0;
     }
 
@@ -47,6 +48,15 @@ class ArrayUtil {
         }
 
         return true;
+    }
 
+    /**
+     * @param {Object} object to determine whether it's an array
+     * @returns {Boolean} array or not array
+     */
+    static function isArray(obj) {
+        var exampleArray = [];
+
+        return obj.GetType() === exampleArray.GetType();
     }
 }
