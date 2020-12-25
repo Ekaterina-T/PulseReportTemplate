@@ -61,17 +61,34 @@ class PageAllResults {
         var table = context.table;
         var log = context.log;
 
+        log.LogDebug('2.0');
+
         var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_AllResults_BreakBy')[0];
+
+        log.LogDebug('2.1');
+
         var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
+
+        log.LogDebug('2.2');
+
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
+
+        log.LogDebug('2.3');
+
         var hrows: HeaderQuestion = new HeaderQuestion(qe);
+
+        log.LogDebug('2.4');
 
         if (rowsQidInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
             hrows.HierLayout = HierLayout.Flat;
         }
 
+        log.LogDebug('2.5');
+
         hrows.ShowTotals = false;
         table.RowHeaders.Add(hrows);
+
+        log.LogDebug('2.6');
     }
 
     /**
