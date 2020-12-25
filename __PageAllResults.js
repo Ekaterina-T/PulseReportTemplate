@@ -24,7 +24,6 @@ class PageAllResults {
         var log = context.log;
         var suppressSettings = context.suppressSettings;
 
-        log.LogDebug('0');
         // global table settings
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Rows = true;
@@ -32,23 +31,11 @@ class PageAllResults {
         table.Decimals = Config.Decimal;
         table.TotalsFirst = true;
 
-        log.LogDebug('1');
-
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
-        log.LogDebug('2');
-
         tableAllResults_AddRows(context);
-
-        log.LogDebug('3');
-
         tableAllResults_AddColumns(context);
-
-        log.LogDebug('4');
-
         tableAllResults_ApplyConditionalFormatting(context);
-
-        log.LogDebug('5');
     }
 
     /**
@@ -61,34 +48,17 @@ class PageAllResults {
         var table = context.table;
         var log = context.log;
 
-        log.LogDebug('2.0');
-
         var rowsQid = ParamUtil.GetSelectedCodes(context, 'p_AllResults_BreakBy')[0];
-
-        log.LogDebug('2.1');
-
         var rowsQidInfo = QuestionUtil.getQuestionInfo(context, rowsQid);
-
-        log.LogDebug('2.2');
-
         var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, rowsQid);
-
-        log.LogDebug('2.3');
-
         var hrows: HeaderQuestion = new HeaderQuestion(qe);
-
-        log.LogDebug('2.4');
 
         if (rowsQidInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
             hrows.HierLayout = HierLayout.Flat;
         }
 
-        log.LogDebug('2.5');
-
         hrows.ShowTotals = false;
         table.RowHeaders.Add(hrows);
-
-        log.LogDebug('2.6');
     }
 
     /**
