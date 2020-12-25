@@ -24,6 +24,7 @@ class PageAllResults {
         var log = context.log;
         var suppressSettings = context.suppressSettings;
 
+        log.LogDebug('0');
         // global table settings
         table.Caching.Enabled = false;
         table.RemoveEmptyHeaders.Rows = true;
@@ -31,11 +32,23 @@ class PageAllResults {
         table.Decimals = Config.Decimal;
         table.TotalsFirst = true;
 
+        log.LogDebug('1');
+
         SuppressUtil.setTableSuppress(table, suppressSettings);
 
+        log.LogDebug('2');
+
         tableAllResults_AddRows(context);
+
+        log.LogDebug('3');
+
         tableAllResults_AddColumns(context);
+
+        log.LogDebug('4');
+
         tableAllResults_ApplyConditionalFormatting(context);
+
+        log.LogDebug('5');
     }
 
     /**
