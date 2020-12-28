@@ -3,6 +3,7 @@ class HierarchyUtil {
     // cached hierarchy DB table
     // check page initialize script
     static var dbTable : DataTable = new DataTable();
+    static var topNode = "";
 
     /**
      * @memberof HierarchyUtil
@@ -103,6 +104,8 @@ class HierarchyUtil {
             var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
             dbTable = dbTableNew.GetDataTable();
         }
+
+        saveTopNode(context);
     }
 
     /**
@@ -113,6 +116,30 @@ class HierarchyUtil {
      */
     static function getDataTable() {
         return dbTable;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function saveTopNode
+     * @description saves top hierarchy node to static var topNode
+     * @param {Object} context {confirmit: confirmit, log: log}
+     */
+    static function saveTopNode(context) {
+
+        var log = context.log;
+        var rows = dbTable && dbTable.Rows;
+
+        if(!rows || rows.Count === 0) {
+            throw new Error('HierarchyUtil.getParentsForHierarchyNode: hierarchy dbTable is not set although requested.');
+        }
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row : DataRow = rows[i];
+            if(!row[Config.relationName]) {
+                topNode = row['id'];
+                break;
+            }
+        }
     }
 
     /**

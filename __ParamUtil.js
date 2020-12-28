@@ -539,7 +539,7 @@ class ParamUtil {
     static function isParameterEmpty(context, parameterName) {
 
         var log = context.log;
-        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName);
+        var parameterOptions = ParameterOptions.GetOptions(context, parameterName);
 
         if (parameterOptions.length == 0) {
             return true;
