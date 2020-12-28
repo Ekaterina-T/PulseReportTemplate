@@ -78,6 +78,7 @@ class PageAllResults {
         var questions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
 
         for (var i = 0; i < questions.length; i++) {
+            log.LogDebug(questions[i].Code);
             var questionColumn = getQuestionColumn(context, questions[i]);
             table.ColumnHeaders.Add(questionColumn);
         }
