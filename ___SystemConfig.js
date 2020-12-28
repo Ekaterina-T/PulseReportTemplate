@@ -25,6 +25,7 @@ public class SystemConfig {
         'p_Results_BreakBy':      { type: 'QuestionList', locationType: 'Page', page: 'Page_Results',              propertyName: 'BreakVariables', isQuestionBased: true},
         'p_CategoricalDD_BreakBy':{ type: 'QuestionList', locationType: 'Page', page: 'Page_CategoricalDrilldown', propertyName: 'BreakVariables', isQuestionBased: true},
         'p_ResponseRate_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'BreakVariables', isQuestionBased: true},
+        'p_AllResults_BreakBy':   { type: 'QuestionList', locationType: 'Page', page: 'Page_AllResults',           propertyName: 'BreakVariables', isQuestionBased: true},
         'p_Demographics':         { type: 'QuestionList', locationType: 'Page', page: 'Page_Response_Rate',        propertyName: 'DemographicsQuestions', isQuestionBased: true},
         'p_OpenTextQs':           { type: 'QuestionList', locationType: 'Page', page: 'Page_Comments',             propertyName: 'Comments', isQuestionBased: true},
         'p_CustomOpenTextQs':     { type: 'CustomQuestionList',  locationType: 'QuestionCategory', page: 'Page_Comments',  propertyName: 'CustomCommentCategory', isQuestionBased: true, CachingDisabled: true},
@@ -46,7 +47,8 @@ public class SystemConfig {
     // mandatory parameters can be single or multi. Must have default value when a page opens
     static var mandatoryPageParameters = ['p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
-                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher', 'p_Trends_trackerSurveys'];
+                                          'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher', 'p_Trends_trackerSurveys',
+                                          'p_AllResults_BreakBy'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault']; // we must add them empty option as 1st value instead
@@ -71,6 +73,7 @@ public class SystemConfig {
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
+        Page_AllResults: ['BreakVariables'],
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
         Page_Categorical_: ['ResultCategoricalQuestions', 
                             'ResultMultiCategoricalQuestions', 

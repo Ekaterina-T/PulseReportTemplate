@@ -452,5 +452,70 @@ class TableUtil {
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
 
+    /**
+     * @param {Object} context
+     * @param {Boolean} directionAscending
+     * @param {Byte} position
+     * @param {Number} topN
+     * @param {Boolean} positionFromEnd
+     */
+    static function setupRowsTableSorting(context, directionAscending: Boolean, position: Byte, topN, positionFromEnd, fixedFromStart, fixedFromEnd){
+        var table = context.table;
 
+        table.Sorting.Rows.Enabled = true;
+        table.Sorting.Rows.SortByType = TableSortByType.Position;
+        table.Sorting.Rows.Direction = directionAscending ? TableSortDirection.Ascending : TableSortDirection.Descending;
+        table.Sorting.Rows.Position = position;
+        table.Sorting.Rows.PositionDirection =  positionFromEnd ? TableSortByPositionType.FromEnd : TableSortByPositionType.FromStart;
+        table.Sorting.Rows.TopN = topN ? topN : 0;
+        table.Sorting.Rows.FixedFromStart = fixedFromStart ? fixedFromStart : 0;
+        table.Sorting.Rows.FixedFromEnd = fixedFromEnd ? fixedFromEnd : 0;
+    }
+
+    /**
+     * @param {Object} context
+     * @param {Object[]} conditions - array of objects like { expression: 'cellv(col,row)<(-1)', style: 'negative'}
+     * @param {String} name
+     * @param {Object} applyTo - define area in object like {axis: Area.Columns, direction: Area.Left, indexes: "3"}
+     */
+    static function setupConditionalFormatting(context, conditions, name, applyTo){
+        var table = context.table;
+        var log = context.log;
+
+        var formatter : ConditionalFormatting = table.ConditionalFormatting;
+
+        var area : Area = new Area();
+        area.Name = name;
+        area.ApplyTo(applyTo.axis, applyTo.direction, applyTo.indexes);
+
+        for (var i = 0; i < conditions.length; i++) {
+            var c1 : Condition = new Condition();
+            c1.Style = conditions[i].style;
+
+            if (i === 0) {
+                c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + '==emptyv()';
+            } else {
+                if (conditions[i].condition) {
+                    c1.Expression = (conditions[i].conditionBody ? conditions[i].conditionBody : 'cellv(col,row)') + conditions[i].condition;
+                } else {
+                    c1.Expression = 'true';
+                }
+            }
+
+            area.AddCondition(c1);
+        }
+
+        formatter.AddArea(area);
+
+        table.ConditionalFormatting = formatter;
+    }
+
+    /**
+     * @param {String[]} classes
+     */
+    static function addClasses(context, classes) {
+        var table = context.table;
+
+        table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
+    }
 }
