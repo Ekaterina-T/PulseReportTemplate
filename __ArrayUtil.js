@@ -48,4 +48,14 @@ class ArrayUtil {
         return true;
 
     }
+
+    /**
+     * @param {Object} object to determine whether it's an array
+     * @returns {Boolean} array or not array
+     */
+    static function isArray(obj) {
+        var exampleArray = [];
+
+        return obj.GetType() === exampleArray.GetType();
+    }
 }

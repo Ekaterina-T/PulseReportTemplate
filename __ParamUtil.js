@@ -530,4 +530,20 @@ class ParamUtil {
         context.state.Parameters[parameterId] = new ParameterValueMultiSelect(valArr);
     }
 
+    /**
+     * Checks if parameter has no options
+     * @param {object} context
+     * @param: {string} - parameterName
+     * @return {Boolean}
+     */
+    static function isParameterEmpty(context, parameterName) {
+
+        var log = context.log;
+        var parameterOptions = ParameterOptionsBuilder.GetOptions(context, parameterName);
+
+        if (parameterOptions.length == 0) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -251,5 +251,53 @@ class HierarchyUtil {
         return nodes;
     }
 
+    /**
+     * @memberof HierarchyUtil
+     * @function topNodeAssigned
+     * @description checks if user is assigned to top level of hierarchy
+     * @param {Object} context {confirmit: confirmit, user: user, log: log}
+     * @returns {Boolean}
+     */
+    static function topNodeAssigned(context) {
 
+        var user = context.user;
+        var log = context.log;
+
+        if (user.UserType == ReportUserType.Confirmit) {
+            return true;
+        }
+
+        setDataTable(context); //temp for using in page hide scripts
+
+        var nodesAssigned = user.GetNodeAssignments();
+        for (var i=0; i<nodesAssigned.length; i++) {
+            var nodeId = nodesAssigned[i];
+            if (nodeId == topNode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @memberof HierarchyUtil
+     * @function getNodeLabelById
+     * @description gets the label of the requested node by it's id
+     * @param {String} nodeId
+     */
+
+    static function getNodeLabelById(nodeId) {
+        var rows = dbTable && dbTable.Rows;
+        var label = '';
+
+        for (var i = 0; i < rows.Count; i++) {
+            var row: DataRow = rows[i];
+            if(row['id'] === nodeId) {
+                label = row['__l9'];
+                break;
+            }
+        }
+
+        return label;
+    }
 }
