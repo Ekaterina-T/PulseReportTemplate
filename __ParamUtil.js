@@ -378,7 +378,7 @@ class ParamUtil {
         var state = context.state;
         var log = context.log;
 
-        //log.LogDebug('---- GetSelectedCodes START for '+parameterName+' ----'); 
+        //log.LogDebug('---- GetSelectedCodes START for '+parameterName+' ----');
 
         if (state.Parameters.IsNull(parameterName)) {
             //log.LogDebug('param is null')

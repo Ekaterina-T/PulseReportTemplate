@@ -251,6 +251,11 @@ class HierarchyUtil {
 
         var bases = context.user.PersonalizedReportBase.split(','); //multi nodes
         var benchColumn = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'HierarchyBenchmarkDBColumn');
+
+        if(!benchColumn) {
+            return null;
+        }
+
         var colName = benchColumn.name;
         var colType = benchColumn.type;        
         if (colType == "HMcolumn" || colType == "DDcolumn") colName = "__l9" + colName;
@@ -259,7 +264,7 @@ class HierarchyUtil {
         var dbTableNew : DBDesignerTable = schema.GetDBDesignerTable(Config.tableName);
         var StringColl = dbTableNew.GetColumnValues(colName, 'id', bases[0]);
       
-        if (StringColl.Count > 0) 
+        if (StringColl.Count > 0)
         {
           level['id'] = StringColl[0];
           var BARow: DataRow[] = dbTable.Select("id='"+ level['id'] +"'");
