@@ -72,6 +72,7 @@ public class SystemConfig {
     static public var resourcesDependentOnSpecificSurvey = {
 
         Survey: ['FiltersFromSurveyData'],
+        Page_Landing: [],
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
