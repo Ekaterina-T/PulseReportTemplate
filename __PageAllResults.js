@@ -75,7 +75,8 @@ class PageAllResults {
         table.ColumnHeaders.Add(responses);
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
-        var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Questions');
+        //var questions = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Questions');
+        var questions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
 
         for (var i = 0; i < questions.length; i++) {
             var questionColumn = getQuestionColumn(context, questions[i]);
