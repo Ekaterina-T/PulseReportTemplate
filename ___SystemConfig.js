@@ -76,9 +76,7 @@ public class SystemConfig {
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
-        Page_AllResults: ['BreakVariables',
-                          {type: 'QuestionsCategories', propertyWithCategories: 'Questions'}
-                          ],
+        Page_AllResults: ['BreakVariables', 'Questions'],
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
         Page_Categorical_: ['ResultCategoricalQuestions', 
                             'ResultMultiCategoricalQuestions', 
