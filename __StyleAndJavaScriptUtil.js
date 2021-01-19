@@ -106,6 +106,9 @@ class StyleAndJavaScriptUtil {
 
             var isDimensionsVisible = PageResults.isDimensionsMode(context);
             properties.push('isDimensionsTabVisible: ' + isDimensionsVisible);
+
+            var numberOfSubheaderRows = PageResults.getNumberOfSubHeaderRows(context);
+            properties.push('numberOfSubheaderRows: ' + numberOfSubheaderRows);
         }
 
         if (pageId === 'Categorical_') {
