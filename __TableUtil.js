@@ -28,6 +28,11 @@ class TableUtil {
                 headerQuestion.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
                 headerQuestion.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
                 break;
+                
+            case 'W':
+                headerQuestion.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
+                headerQuestion.TimeSeries.Time2 = TimeseriesTimeUnitType.Week;
+                break;
 
             case 'D':
                 headerQuestion.TimeSeries.Time1 = TimeseriesTimeUnitType.Year;
@@ -71,6 +76,10 @@ class TableUtil {
 
             case 'M':
                 headerQuestion.TimeSeries.RollingTimeseries.Unit = RollingUnitType.Month;
+                break;
+                
+            case 'W':
+                headerQuestion.TimeSeries.RollingTimeseries.Unit = RollingUnitType.Week;
                 break;
 
             case 'D':
@@ -258,6 +267,8 @@ class TableUtil {
             } else if(selectedOption.TimeUnit === 'Day') {
                 nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Month;
                 nestedHeader.TimeSeries.Time3 = TimeseriesTimeUnitType.DayOfMonth;
+            } else if(selectedOption.TimeUnit === 'Week'){
+                nestedHeader.TimeSeries.Time2 = TimeseriesTimeUnitType.Week;
             }
 
             TableUtil.applyDateRangeFilterToHeader(context, nestedHeader);
