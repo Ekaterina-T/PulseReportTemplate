@@ -926,8 +926,7 @@ class PageResults {
         // add formula to calculate score vs. prev wave
         var formula_ScoreVsPrevNorm: HeaderFormula = new HeaderFormula();
         formula_ScoreVsPrevNorm.Type = FormulaType.Expression;
-        //formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), emptyv(), cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
-        formula_ScoreVsPrevNorm.Expression = 'if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), 0, cellv(1,row)-cellv(' + normColPosition + ',row))'; // the 1st column in the table is score
+        formula_ScoreVsPrevNorm.Expression = 'if(cellv('+normColPosition+', row)==emptyv(),emptyv(),if((cellv(1,row)-cellv(' + normColPosition + ',row) < 1 AND (cellv(1,row)-cellv(' + normColPosition + ',row) > -1)), 0, cellv(1,row)-cellv(' + normColPosition + ',row)))'; // the 1st column in the table is score
         table.ColumnHeaders.Add(formula_ScoreVsPrevNorm);
 
         // add barchart
@@ -942,11 +941,11 @@ class PageResults {
 
             // diff between score and norm value, always previous column (formula)
             // hack: if diff is 0 or undefined bar chart will not render
-            // therefore we set value to -1 and than js+css will
+            // therefore we set value to -1, when value is 0 and than js+css will
             // 1) work with rendered barchart,
-            // 2) check real value in cell to the left
-            // 3) add proper comment and hide "help" barchart
-            chartValue_Main.Expression = 'if(cellv(col-1,row) != emptyv() AND cellv(col-1,row) != 0 , cellv(col-1,row), -1)';
+            // 2) check real value in cell to the left (set attributes with diff value from formula)
+            // 3) add proper value to barchart and hide "-1" barchart
+            chartValue_Main.Expression = 'if(cellv(col-1,row) != 0 , cellv(col-1,row), -1)';
             chartValue_Main.BaseColor = new ChartComboColorSet([barChart_ScoreVsNormColors[1].color]); // main color is red - negative
             chartValue_Main.CssClass = 'barchart__bar barchart__bar_type_score-vs-norm';
 
