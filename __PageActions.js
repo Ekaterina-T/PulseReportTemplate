@@ -154,6 +154,10 @@ class PageActions {
                 resultSmartViewQuery+="time2: month; ";
                 resultSmartViewQuery+="time3: day; ";
                 break;
+	    case 'W':
+		resultSmartViewQuery+="time1: year; ";
+		resultSmartViewQuery+="time2: week; ";
+		break;
 
             default:
                 resultSmartViewQuery+="time1: year; ";
