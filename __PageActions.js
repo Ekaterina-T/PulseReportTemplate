@@ -213,7 +213,36 @@ class PageActions {
                     resultSmartViewQuery+= timeUnit.Code + "{";
             }
                 var toDate : DateTime = DateTime.Now;
-                var fromDate : DateTime =  SystemConfig.ActionPlannerSettings.TrendingStartDate; //new DateTime (2019, 1, 1);
+                var fromDate : DateTime;
+	        if(timeUnit.TimeUnitCount == null) { 
+			fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+	        } else {
+			switch(timeUnit.Code){
+				case 'D':
+					fromDate = toDate.AddDays(-timeUnit.TimeUnitCount);
+					break;
+				case 'W': 
+					fromDate = toDate.AddDays(-toDate.DayOfWeek); //start of current week
+					fromDate = fromDate.AddDays(-7*timeUnit.TimeUnitCount + 7);
+					break;
+				case 'M': 
+					fromDate = new DateTime(toDate.Year,toDate.Month,1);
+					fromDate = fromDate.AddMonths(-timeUnit.TimeUnitCount +1);
+					break;
+				case 'Q': 
+					var currentQuarter = Math.floor(toDate.Month/3);
+                                        if(toDate.Month%3 === 0) { currentQuarter -=1; }
+                                        fromDate = new DateTime(toDate.Year,1+currentQuarter*3,1); // 1st day of current quarter
+                                        fromDate = fromDate.AddMonths(-(timeUnit.TimeUnitCount-1)*3); // each quarter consists of 3 months
+					break;
+				case 'Y':
+					fromDate = new DateTime(toDate.Year,1,1); // 1st January of this year
+                                        fromDate = fromDate.AddYears(-timeUnit.TimeUnitCount+1); // plus number of years to roll back
+					break;
+				default:
+					fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+			}
+		}
    
                 resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
                 resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToStringForSmartView(fromDate)+ "\"; ";
@@ -223,6 +252,7 @@ class PageActions {
             
             return resultSmartViewQuery;
     }
+
 
      /**
      * @description help function to generate SmartView table code for Action Trend widget
