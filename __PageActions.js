@@ -633,9 +633,7 @@ class PageActions {
         var actionOwnerMask: MaskFlat = new MaskFlat();
         actionOwnerMask.IsInclusive = true;
         var currentHFUserIds = BranchSpecifics.getUserIdsByCurrentBranch(context, user.UserId);
-	    
-	log.LogDebug("currentHFUserIds = " + currentHFUserIds);    
-	    
+	
         for (var i = 0 ; i < currentHFUserIds.length; i++) {
             actionOwnerMask.Codes.Add(currentHFUserIds[i]);
         }
@@ -672,11 +670,11 @@ class PageActions {
         table.ColumnHeaders.Add(hf);
 
         //table settings
-        //table.RemoveEmptyHeaders.Rows = true;
+        table.RemoveEmptyHeaders.Rows = true;
         table.Caching.Enabled = false;
-        //table.Sorting.Rows.Enabled = true;
-        //table.Sorting.Rows.SortByType = TableSortByType.Position;
-        //table.Sorting.Rows.Position = 2;
+        table.Sorting.Rows.Enabled = true;
+        table.Sorting.Rows.SortByType = TableSortByType.Position;
+        table.Sorting.Rows.Position = 2;
     }
 
     /**
