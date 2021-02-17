@@ -247,9 +247,7 @@ class PageActions {
                 resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
                 resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToStringForSmartView(fromDate)+ "\"; ";
                 resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToStringForSmartView(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";  
-	    
-	    log.LogDebug(resultSmartViewQuery);
-            
+	                
             return resultSmartViewQuery;
     }
 
