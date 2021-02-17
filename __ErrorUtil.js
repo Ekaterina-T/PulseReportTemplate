@@ -8,10 +8,18 @@ class ErrorUtil {
      */
     static function hidePage(context) {
         var log = context.log;
+        var pageContext = context.pageContext;
+        const RESULT_FIELD_NAME = "errorUtilHidePageResult";
+        
         log.LogDebug("hidePage starts " + DateTime.Now+ " " + DateTime.Now.Millisecond);
-        var result = hidePageByBranch(context) || hideByDuplicateUser(context);
+        
+        if(pageContext.Items[RESULT_FIELD_NAME] == undefined)  { 
+            pageContext.Items.Add(RESULT_FIELD_NAME, hidePageByBranch(context) || hideByDuplicateUser(context)); 
+        }
+        
         log.LogDebug("hidePage ends " + DateTime.Now+ " " + DateTime.Now.Millisecond);
-        return result;
+        
+        return pageContext.Items[RESULT_FIELD_NAME];
     }
 
     /**
