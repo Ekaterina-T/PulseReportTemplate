@@ -120,13 +120,16 @@ class PageAllResults {
         var pageID = PageUtil.getCurrentPageIdInConfig(context);
         var isTotalsShown = DataSourceUtil.getPagePropertyValueFromConfig(context, pageID, 'ShowTotals');
 
-
         if (header.Type === 'Question') {
-            var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+
+            var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, header.Code);
             questionColumn = new HeaderQuestion(qe);
             questionColumn.IsCollapsed = true;
             questionColumn.DefaultStatistic = StatisticsType.Average;
+            TableUtil.maskOutNA(context, questionColumn, header.Code);
+
         } else {
+
             if (header.Type === 'Dimension') {
                 questionColumn = new HeaderCategorization();
                 questionColumn.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
@@ -137,16 +140,23 @@ class PageAllResults {
                 questionColumn.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
                 questionColumn.Collapsed = false;
                 questionColumn.Totals = !!isTotalsShown;
+
+                //calc cell base with excluded NA
+                var categoryDistr: HeaderCategories = new HeaderCategories();
+                categoryDistr.HideHeader = true;
+                categoryDistr.HideData = true;
+                TableUtil.maskOutNA(context, categoryDistr);
+                categoryDistr.Mask.Type = MaskType.ShowCodes;
+                categoryDistr.Mask.Codes = ''; // do not show any codes but Total
+                categoryDistr.Distributions.Enabled = true;
+                categoryDistr.Distributions.Count = true;
+                questionColumn.SubHeaders.Add(categoryDistr);
+
+                TableUtil.addScore(context, questionColumn, 'cellv(col-1,row)!=emptyv()', true);
+
             }
         }
 
-        TableUtil.maskOutNA(context, questionColumn);
-
-        if(!!subHeaders && ArrayUtil.isArray(subHeaders)) {
-            for(var i = 0; i < subHeaders.length; i++) {
-                questionColumn.SubHeaders.Add(subHeaders[i]);
-            }
-        }
 
         return questionColumn;
     }
