@@ -7,7 +7,11 @@ class ErrorUtil {
      * @example ErrorUtil.hidePage(context);
      */
     static function hidePage(context) {
-        return hidePageByBranch(context) || hideByDuplicateUser(context);
+        var log = context.log;
+        log.LogDebug("hidePage starts " + DateTime.Now+ " " + DateTime.Now.Millisecond);
+        var result = hidePageByBranch(context) || hideByDuplicateUser(context);
+        log.LogDebug("hidePage ends " + DateTime.Now+ " " + DateTime.Now.Millisecond);
+        return result;
     }
 
     /**
