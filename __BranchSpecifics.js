@@ -338,7 +338,20 @@ class BranchSpecifics {
 
         return 'In(' + endUserQuestionId + ', "' + userIds.join('") OR In(' + endUserQuestionId + ', "') + '")';
     }
-
+    /**
+     * @description get filter expression to filter end users that belong to current branch
+     * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
+     * @returns {string} - filter expression
+     * @example BranchSpecifics.getOnlyUsersFromCurrentBranch({confirmit: confirmit, user: user, report: report, state: state, log: log, pageContext: pageContext});
+     */
+      static function getOnlyActionsFromCurrentBranchUsersByQuestion(context) {
+          var log = context.log;
+          
+          var actionownerBranchQuestionId = Config.EndUserByBranch.endUserBranchId;
+          var currentBranch = getSelectedBranchId(context);
+          
+          return 'IN(' + actionownerBranchQuestionId + ',"' + currentBranch + '")';
+      }
     /**
      * @description get dimensions that associated with current branch
      * @param {Object} context = {state: state, report: report, log: log, user: user, pageContext: pageContext, confirmit: confirmit}
