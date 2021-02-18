@@ -568,12 +568,13 @@ class TableUtil {
 
         scoreType = scoreType.toLowerCase();
 
+        //CRUNCH: to every value we have to ad 0.01 because otherwise remove empty headers will hide score 0 even if it is based on 100 responses
         if (scoreType === 'avg') {
 
             // add Score column
             var avg: HeaderFormula = new HeaderFormula();
             avg.Type = FormulaType.Expression;
-            avg.Expression = 'if('+cellSuppressCondition+', cellv(col+1, row), emptyv())';//avg.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
+            avg.Expression = 'if('+cellSuppressCondition+', cellv(col+1, row)+0.001, emptyv())';//avg.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
             avg.Decimals = Config.Decimal;
             avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
             avg.HideHeader = hideHeader;
@@ -603,7 +604,7 @@ class TableUtil {
             // add Score column
             var fav: HeaderFormula = new HeaderFormula();
             fav.Type = FormulaType.Expression;
-            fav.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row), emptyv())';//fav.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
+            fav.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row)+0.001, emptyv())';//fav.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
             fav.Decimals = Config.Decimal;
             fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
             fav.HideHeader = hideHeader;
@@ -633,7 +634,7 @@ class TableUtil {
             // add Score column
             var diff: HeaderFormula = new HeaderFormula();
             diff.Type = FormulaType.Expression;
-            diff.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row), emptyv())';
+            diff.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row)+0.001, emptyv())';
             diff.Decimals = Config.Decimal;
             diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
             diff.HideHeader = hideHeader;
