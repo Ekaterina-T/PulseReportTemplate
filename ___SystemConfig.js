@@ -17,6 +17,7 @@ public class SystemConfig {
         'p_TimePeriod':               { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimePeriods'},
         'p_TimeUnitWithDefault':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsWithDefaultValue'},
         'p_TimeUnitNoDefault':        { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
+        'p_LastTimeUnitsNoDefault':   { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'LastTimeUnitsNoDefaultValue'},
         'p_CatDD_TimeUnitNoDefault':  { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'TimeUnitsNoDefaultValue'},
         'p_DisplayMode':              { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'DisplayMode'},
         'p_ShowAllPulseSurveys':      { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'ShowAllPulseSurveys'},
