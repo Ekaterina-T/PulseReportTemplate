@@ -119,8 +119,8 @@ class PageActions {
 	  var toDate : DateTime = DateTime.Now;
           var fromDate : DateTime = getLastNPeriodStart(context, timeUnit, toDate);
 		
-	  var filterExpression : String = DATE_QUESTION_FILTER_BY + ">= TODATE(" + DateUtil.formatDateTimeToString(fromDate) + ") ";
-	      filterExpression +="AND " + DATE_QUESTION_FILTER_BY + "<= TODATE(" + DateUtil.formatDateTimeToString(toDate) + ") ";
+	  var filterExpression : String = DATE_QUESTION_FILTER_BY + ">= TODATE(\"" + DateUtil.formatDateTimeToString(fromDate) + "\") ";
+	      filterExpression +="AND " + DATE_QUESTION_FILTER_BY + "<= TODATE(\"" + DateUtil.formatDateTimeToString(toDate) + "\") ";
 	   
 	  return filterExpression;
 	}
