@@ -94,6 +94,79 @@ class PageActions {
         return !isFeatureAvailableForUserRole(context, 'AdvancedReporting');
     }
 
+     /**
+     * @description filter on new statistic widget by dates of status change - shows only actions touched during last week/month/etc.
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @requires p_LastTimeUnitsNoDefault
+     * @example PageActions.getFilterExpressionByLastPeriodsParameter(context);
+     */
+	static function getFilterExpressionByLastPeriodsParameter(context){
+	  var log = context.log;
+	  
+	  const LAST_TIMEUNIT_NO_DEFAULT_PARAMETER = "p_LastTimeUnitsNoDefault";
+	  const DATE_QUESTION_FILTER_BY = "last_touched";
+		
+	  var timeUnits = ParamUtil.GetSelectedOptions(context, LAST_TIMEUNIT_NO_DEFAULT_PARAMETER);
+          if(timeUnits == null || timeUnits == undefined){
+                throw new Error('PageActions.getFilterExpressionByLastPeriodsParameter:  cannot get selected options of ' + LAST_TIMEUNIT_NO_DEFAULT_PARAMETER);
+          }
+          if(timeUnits.length==0 || timeUnits.length>1){
+                throw new Error('PageActions.getFilterExpressionByLastPeriodsParameter: ' + LAST_TIMEUNIT_NO_DEFAULT_PARAMETER +' should have selected value and only one selected value');
+          }
+             
+          var timeUnit = timeUnits[0];	
+	
+	  var toDate : DateTime = DateTime.Now;
+          var fromDate : DateTime = getLastNPeriodStart(context, timeUnit, toDate);
+		
+	  var filterExpression : String = DATE_QUESTION_FILTER_BY + ">= TODATE(" + DateUtil.formatDateTimeToString(fromDate) + ") ";
+	      filterExpression +="AND " + DATE_QUESTION_FILTER_BY + "<= TODATE(" + DateUtil.formatDateTimeToString(toDate) + ") ";
+	   
+	  return filterExpression;
+	}
+	
+     /**
+     * @description calculates start date that is a period start (1th of month, 1 day of year...) and n periods ago from given date, but the last period may be incompleted
+     * @param {Object} context
+     * @param {Object} timeUnit - example: {Code: 'W', Label: {9: 'By Week', 20: 'Uke'}, TimeUnit: 'Week', TimeUnitCount: 26} 
+     * @param {DateTime} toDate 
+     * @returns {Object} {startDate: dateValue}
+     * @example PageActions.getLastNPeriodStart(context, timeUnit, toDate)
+     */
+    static function getLastNPeriodStart(context, timeUnit, toDate) {
+	    var fromDate : DateTime;
+	    if(timeUnit.TimeUnitCount == null) { 
+			fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+	    } else {
+			switch(timeUnit.Code){
+				case 'D':
+					fromDate = toDate.AddDays(-timeUnit.TimeUnitCount);
+					break;
+				case 'W': 
+					fromDate = toDate.AddDays(-toDate.DayOfWeek); //start of current week
+					fromDate = fromDate.AddDays(-7*timeUnit.TimeUnitCount + 7);
+					break;
+				case 'M': 
+					fromDate = new DateTime(toDate.Year,toDate.Month,1);
+					fromDate = fromDate.AddMonths(-timeUnit.TimeUnitCount +1);
+					break;
+				case 'Q': 
+					var currentQuarter = Math.floor(toDate.Month/3);
+                                        if(toDate.Month%3 === 0) { currentQuarter -=1; }
+                                        fromDate = new DateTime(toDate.Year,1+currentQuarter*3,1); // 1st day of current quarter
+                                        fromDate = fromDate.AddMonths(-(timeUnit.TimeUnitCount-1)*3); // each quarter consists of 3 months
+					break;
+				case 'Y':
+					fromDate = new DateTime(toDate.Year,1,1); // 1st January of this year
+                                        fromDate = fromDate.AddYears(-timeUnit.TimeUnitCount+1); // plus number of years to roll back
+					break;
+				default:
+					fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+			}
+		}
+          return fromDate;
+    }
+	
     /**
      * @description help function to add trending column (as used for content crossing no matter what Trend we use) 
      * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
@@ -213,37 +286,8 @@ class PageActions {
                     resultSmartViewQuery+= timeUnit.Code + "{";
             }
                 var toDate : DateTime = DateTime.Now;
-                var fromDate : DateTime;
-	        if(timeUnit.TimeUnitCount == null) { 
-			fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
-	        } else {
-			switch(timeUnit.Code){
-				case 'D':
-					fromDate = toDate.AddDays(-timeUnit.TimeUnitCount);
-					break;
-				case 'W': 
-					fromDate = toDate.AddDays(-toDate.DayOfWeek); //start of current week
-					fromDate = fromDate.AddDays(-7*timeUnit.TimeUnitCount + 7);
-					break;
-				case 'M': 
-					fromDate = new DateTime(toDate.Year,toDate.Month,1);
-					fromDate = fromDate.AddMonths(-timeUnit.TimeUnitCount +1);
-					break;
-				case 'Q': 
-					var currentQuarter = Math.floor(toDate.Month/3);
-                                        if(toDate.Month%3 === 0) { currentQuarter -=1; }
-                                        fromDate = new DateTime(toDate.Year,1+currentQuarter*3,1); // 1st day of current quarter
-                                        fromDate = fromDate.AddMonths(-(timeUnit.TimeUnitCount-1)*3); // each quarter consists of 3 months
-					break;
-				case 'Y':
-					fromDate = new DateTime(toDate.Year,1,1); // 1st January of this year
-                                        fromDate = fromDate.AddYears(-timeUnit.TimeUnitCount+1); // plus number of years to roll back
-					break;
-				default:
-					fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
-			}
-		}
-   
+                var fromDate : DateTime = getLastNPeriodStart(context, timeUnit, toDate);
+	          
                 resultSmartViewQuery+="dsnid: "+sourceId+"; total: false; hideheader: false; hidedata: false;";
                 resultSmartViewQuery+=" start: \"" + DateUtil.formatDateTimeToStringForSmartView(fromDate)+ "\"; ";
                 resultSmartViewQuery+=" end: \""+ DateUtil.formatDateTimeToStringForSmartView(toDate) + "\"}"; //toDate.Month +"\/"+toDate.Day+"\/"+toDate.Year+"\"}";  
@@ -1137,46 +1181,5 @@ class PageActions {
         //TO DO: handle case when many pulse surveys are selected
         var selectedPulseSurvey = ParamUtil.GetSelectedOptions(context, 'p_projectSelector')[0];
         return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
-    }
-
-     /**
-     * @description calculates start date that is a period start (1th of month, 1 day of year...) and n periods ago from given date, but the last period may be incompleted
-     * @param {Object} context
-     * @param {Object} timeUnit - example: {Code: 'W', Label: {9: 'By Week', 20: 'Uke'}, TimeUnit: 'Week', TimeUnitCount: 26} 
-     * @param {DateTime} toDate 
-     * @returns {Object} {startDate: dateValue}
-     */
-    static function getLastNPeriodStart(context, timeUnit, toDate) {
-	    var fromDate : DateTime;
-	    if(timeUnit.TimeUnitCount == null) { 
-			fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
-	    } else {
-			switch(timeUnit.Code){
-				case 'D':
-					fromDate = toDate.AddDays(-timeUnit.TimeUnitCount);
-					break;
-				case 'W': 
-					fromDate = toDate.AddDays(-toDate.DayOfWeek); //start of current week
-					fromDate = fromDate.AddDays(-7*timeUnit.TimeUnitCount + 7);
-					break;
-				case 'M': 
-					fromDate = new DateTime(toDate.Year,toDate.Month,1);
-					fromDate = fromDate.AddMonths(-timeUnit.TimeUnitCount +1);
-					break;
-				case 'Q': 
-					var currentQuarter = Math.floor(toDate.Month/3);
-                                        if(toDate.Month%3 === 0) { currentQuarter -=1; }
-                                        fromDate = new DateTime(toDate.Year,1+currentQuarter*3,1); // 1st day of current quarter
-                                        fromDate = fromDate.AddMonths(-(timeUnit.TimeUnitCount-1)*3); // each quarter consists of 3 months
-					break;
-				case 'Y':
-					fromDate = new DateTime(toDate.Year,1,1); // 1st January of this year
-                                        fromDate = fromDate.AddYears(-timeUnit.TimeUnitCount+1); // plus number of years to roll back
-					break;
-				default:
-					fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
-			}
-		}
-          return fromDate;
     }
 }
