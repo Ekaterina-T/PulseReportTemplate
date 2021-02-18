@@ -1139,4 +1139,44 @@ class PageActions {
         return {pid: selectedPulseSurvey.Code, pname: selectedPulseSurvey.Label};
     }
 
+     /**
+     * @description calculates start date that is a period start (1th of month, 1 day of year...) and n periods ago from given date, but the last period may be incompleted
+     * @param {Object} context
+     * @param {Object} timeUnit - example: {Code: 'W', Label: {9: 'By Week', 20: 'Uke'}, TimeUnit: 'Week', TimeUnitCount: 26} 
+     * @param {DateTime} toDate 
+     * @returns {Object} {startDate: dateValue}
+     */
+    static function getLastNPeriodStart(context, timeUnit, toDate) {
+	    var fromDate : DateTime;
+	    if(timeUnit.TimeUnitCount == null) { 
+			fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+	    } else {
+			switch(timeUnit.Code){
+				case 'D':
+					fromDate = toDate.AddDays(-timeUnit.TimeUnitCount);
+					break;
+				case 'W': 
+					fromDate = toDate.AddDays(-toDate.DayOfWeek); //start of current week
+					fromDate = fromDate.AddDays(-7*timeUnit.TimeUnitCount + 7);
+					break;
+				case 'M': 
+					fromDate = new DateTime(toDate.Year,toDate.Month,1);
+					fromDate = fromDate.AddMonths(-timeUnit.TimeUnitCount +1);
+					break;
+				case 'Q': 
+					var currentQuarter = Math.floor(toDate.Month/3);
+                                        if(toDate.Month%3 === 0) { currentQuarter -=1; }
+                                        fromDate = new DateTime(toDate.Year,1+currentQuarter*3,1); // 1st day of current quarter
+                                        fromDate = fromDate.AddMonths(-(timeUnit.TimeUnitCount-1)*3); // each quarter consists of 3 months
+					break;
+				case 'Y':
+					fromDate = new DateTime(toDate.Year,1,1); // 1st January of this year
+                                        fromDate = fromDate.AddYears(-timeUnit.TimeUnitCount+1); // plus number of years to roll back
+					break;
+				default:
+					fromDate = SystemConfig.ActionPlannerSettings.TrendingStartDate;  //new DateTime (2019, 1, 1);
+			}
+		}
+          return fromDate;
+    }
 }
