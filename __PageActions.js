@@ -104,7 +104,7 @@ class PageActions {
 	  var log = context.log;
 	  
 	  const LAST_TIMEUNIT_NO_DEFAULT_PARAMETER = "p_LastTimeUnitsNoDefault";
-	  const DATE_QUESTION_FILTER_BY = "last_touched";
+	  const DATE_QUESTION_FILTER_BY = "lastsavedate";
 		
 	  var timeUnits = ParamUtil.GetSelectedOptions(context, LAST_TIMEUNIT_NO_DEFAULT_PARAMETER);
           if(timeUnits == null || timeUnits == undefined){
