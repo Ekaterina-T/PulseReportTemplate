@@ -1184,6 +1184,47 @@ class PageActions {
         }
         return isAvailable;
     }
+	
+	 /**
+     * @description help function to check specific role permissions by pageId
+     * @param {Object} context - {pageContext: ageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param String feature - name of feature - check list of features in report Config
+     * @param String pageId - page id 
+     * @returns Boolean  
+     * @example PageActions.isFeatureAvailableForUserRoleOnPage(context, 'WriteAndChangeComments', page)
+     * @inner
+     */
+    static function isFeatureAvailableForUserRoleOnPage(context, feature, pageId) {
+        var user = context.user;
+       
+        if (user.UserType == ReportUserType.Confirmit || PublicUtil.isPublic(context)) {
+            return true;
+        } 
+
+        var featuresByRoles = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'FeaturesByRoles');
+        var isAvailable = false;
+        var rolesForCurrentFeature = [];
+
+        if(user.UserType == ReportUserType.Enduser) {
+
+        //check features in Config to find the one mentioned in func argument
+            for (var i=0; i<featuresByRoles.length; i++) {
+                if (featuresByRoles[i].feature == feature) {
+                    rolesForCurrentFeature = featuresByRoles[i].roles;
+                    break;
+                }
+            }
+        // check roles of given feature and find them in user Roles, 
+        // if at least one is found, feature is available
+            for (var i=0; i<rolesForCurrentFeature.length; i++) {
+                if (user.HasRole(rolesForCurrentFeature[i])) {
+                    isAvailable = true;
+                    break;
+                }
+            }
+        }
+        return isAvailable;
+    }
 
     /**
      * @description
