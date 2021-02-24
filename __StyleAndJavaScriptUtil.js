@@ -40,11 +40,12 @@ class StyleAndJavaScriptUtil {
         
         var commonProperties =  getCommonReportTemplateProperties(context);
         var pageSpecificProperties = getPageSpecificReportTemplateProperties(context);
+	
+	var properties = commonProperties.concat(pageSpecificProperties);
+	var resultPropertiesString = properties.join(', ');
+	//var resultPropertiesString = commonProperties.join(', ');
+	//if(pageSpecificProperties.length>0){resultPropertiesString += "," + pageSpecificProperties.join(', ');}
 	    
-	var resultPropertiesString = commonProperties.join(', ');
-	    log.LogDebug("common Prop: " + resultPropertiesString);
-	if(pageSpecificProperties.length>0){resultPropertiesString += "," + pageSpecificProperties.join(', ');}
-	      log.LogDebug("all Prop: " + resultPropertiesString);
 
         globalVarScript.push('<script>');
         globalVarScript.push(';var ReportTemplateConfig = (function(){');
