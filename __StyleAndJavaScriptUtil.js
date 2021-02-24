@@ -204,9 +204,9 @@ class StyleAndJavaScriptUtil {
                 properties.push('U: "' +  user.UserId+'"');
                 properties.push('FeaturesConfig: "'+ user.Roles + '"');
                 //user data
-                var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
-                var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
-                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
+                var schema_EndUsersV2 : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                var table_EndUsersV2 : DBDesignerTable = schema_EndUsersV2.GetDBDesignerTable(Config.EndUserTableName);
+                var endUserIds = table_EndUsersV2.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
                
                  if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
                 
