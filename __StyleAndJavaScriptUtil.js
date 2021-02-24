@@ -42,7 +42,9 @@ class StyleAndJavaScriptUtil {
         var pageSpecificProperties = getPageSpecificReportTemplateProperties(context);
 	    
 	var resultPropertiesString = commonProperties.join(', ');
+	    log.LogDebug("common Prop: " + resultPropertiesString);
 	if(pageSpecificProperties.length>0){resultPropertiesString += "," + pageSpecificProperties.join(', ');}
+	      log.LogDebug("all Prop: " + resultPropertiesString);
 
         globalVarScript.push('<script>');
         globalVarScript.push(';var ReportTemplateConfig = (function(){');
