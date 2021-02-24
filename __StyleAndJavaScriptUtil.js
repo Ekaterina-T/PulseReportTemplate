@@ -39,10 +39,31 @@ class StyleAndJavaScriptUtil {
         var globalVarScript = [];
         var properties = []; // array of strings like 'property: propertyValue'
 
-        // the place to define ReportTemplate's properties
-        // examples
-        // pagesToHide: [\'page1\', \'page2\']
-        // logo: \'some url\';
+        var commonProperties =  getCommonReportTemplateProperties(context);
+        var pageSpecificProperties = getPageSpecificReportTemplateProperties(context);
+
+        properties = commonProperties.concat(pageSpecificProperties);		
+
+        globalVarScript.push('<script>');
+        globalVarScript.push(';var ReportTemplateConfig = (function(){');
+        globalVarScript.push('return {');
+        globalVarScript.push(properties.join(', '));
+        globalVarScript.push('}');
+        globalVarScript.push('})();');
+        globalVarScript.push('</script>');
+
+        return globalVarScript.join('');
+    }
+	static function getCommonReportTemplateProperties(context){
+		var log = context.log;
+        var state = context.state;
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
+        var report = context.report;
+        var user = context.user;
+
+        var properties = []; // array of strings like 'property: propertyValue'
+
         properties.push('questionsWithData: ' + JSON.stringify(PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context)));
         
         properties.push('hiddenFilterIndexes: ' + JSON.stringify(Filters.getHiddenFilterIndexes(context)));
@@ -80,9 +101,20 @@ class StyleAndJavaScriptUtil {
         if (!PublicUtil.isPublic(context)) {
             properties.push('userRoles: "' + user.Roles + '"');
         }
+		
+		return properties;
+	}
+	static function getPageSpecificReportTemplateProperties(context){
+		var log = context.log;
+        var state = context.state;
+        var pageContext = context.pageContext;
+        var pageId = pageContext.Items['CurrentPageId'];
+        var report = context.report;
+        var user = context.user;
 
-
-        if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
+        var properties = []; // array of strings like 'property: propertyValue'
+		
+		 if (pageId === 'Comments' && !DataSourceUtil.getPagePropertyValueFromConfig(context, 'Page_Comments', 'isHidden')) {
             properties.push('tagColumnNumbers: ' + JSON.stringify(Hitlist.GetTagColumnNumbers(context, 'p_ScoreQs', 'p_TagQs')));
             properties.push('score_columns: ' + JSON.stringify(ParamUtil.GetSelectedCodes(context, 'p_ScoreQs')));
         }
@@ -120,6 +152,7 @@ class StyleAndJavaScriptUtil {
         }
 
         if (pageId === 'Actions' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
+			
             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
             properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
             properties.push('EndUserDeleted: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'EndUserDeleted')));
@@ -135,12 +168,8 @@ class StyleAndJavaScriptUtil {
                 var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
                 var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
                 var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
-            
-               // var branch = BranchSpecifics.getSelectedBranchId(context);
-
-               // properties.push('B: "' +  ((branch == "" || branch == undefined || branch == null)? "null":branch) +'"');
                
-               if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
+                 if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
                 
 
             } else {
@@ -151,17 +180,44 @@ class StyleAndJavaScriptUtil {
             properties.push('tagIds: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist')));
             properties.push('actionLinks: ' + JSON.stringify(PageActions.hitlistsActions_getActionLinks(context)));
         }
+        
+		// AP version 2.2
+        if (pageId === 'Work' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
+			
+            properties.push('tagColumnNumbers: ' + JSON.stringify(PageActions.getTagColumnNumbers(context)));
+            properties.push('EndUserDeleted: ' + JSON.stringify(TextAndParameterUtil.getTextTranslationByKey(context, 'EndUserDeleted')));         
+            properties.push('columnWithTagsId: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns')[0].id));
+            properties.push('tagIds: ' + JSON.stringify(DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'TagsForHitlist')));
+            properties.push('actionLinks: ' + JSON.stringify(PageActions.hitlistsActions_getActionLinks(context)));
+        }
+		
+		if (pageId === 'Overview' && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
+             properties.push('gaugeData: ' + JSON.stringify(PageActions.getKPIResult(context)));
+        }
+		
+		if ((pageId === 'Work' || pageId === 'Overview') && !DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'isHidden')) {
+			if (!PublicUtil.isPublic(context)) {
+                properties.push('isResponsibleVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'Delegation'));
+                properties.push('isWriting: ' + PageActions.isFeatureAvailableForUserRole(context, 'WriteAndChangeComments'));
+                properties.push('isAdvancedReportingVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'AdvancedReporting'));
+                properties.push('isShowOwnActionsSelectorVisible: ' + PageActions.isFeatureAvailableForUserRole(context, 'ReportLevelAccess'));
+                properties.push('U: "' +  user.UserId+'"');
+                properties.push('FeaturesConfig: "'+ user.Roles + '"');
+                //user data
+                var schema_EndUsers : DBDesignerSchema = context.confirmit.GetDBDesignerSchema(Config.DBSchemaID_ForProject);
+                var table_EndUsers : DBDesignerTable = schema_EndUsers.GetDBDesignerTable(Config.EndUserTableName);
+                var endUserIds = table_EndUsers.GetColumnValues("id", "__l9"+Config.EndUserTableLoginColumnName, user.UserId);
+               
+                 if(endUserIds.Count>0){ properties.push('Id: "' + endUserIds[0] +'"');}
+                
 
-        globalVarScript.push('<script>');
-        globalVarScript.push(';var ReportTemplateConfig = (function(){');
-        globalVarScript.push('return {');
-        globalVarScript.push(properties.join(', '));
-        globalVarScript.push('}');
-        globalVarScript.push('})();');
-        globalVarScript.push('</script>');
-
-        return globalVarScript.join('');
-    }
+            } else {
+                properties.push('isAdvancedReportingVisible: true');
+            }
+		}
+		
+        return properties;
+	}
 
     static function applyTheme(context) {
 
