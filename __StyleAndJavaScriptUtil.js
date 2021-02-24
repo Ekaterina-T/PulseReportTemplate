@@ -37,17 +37,17 @@ class StyleAndJavaScriptUtil {
         var user = context.user;
 
         var globalVarScript = [];
-        var properties = []; // array of strings like 'property: propertyValue'
-
+        
         var commonProperties =  getCommonReportTemplateProperties(context);
         var pageSpecificProperties = getPageSpecificReportTemplateProperties(context);
-
-        properties = commonProperties.concat(pageSpecificProperties);		
+	    
+	var resultPropertiesString = commonProperties.join(', ');
+	if(pageSpecificProperties.length>0){resultPropertiesString += "," + pageSpecificProperties.join(', ');}
 
         globalVarScript.push('<script>');
         globalVarScript.push(';var ReportTemplateConfig = (function(){');
         globalVarScript.push('return {');
-        globalVarScript.push(properties.join(', '));
+        globalVarScript.push(resultPropertiesString);
         globalVarScript.push('}');
         globalVarScript.push('})();');
         globalVarScript.push('</script>');
