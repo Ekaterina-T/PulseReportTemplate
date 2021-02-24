@@ -93,7 +93,33 @@ class PageActions {
     static function hideAdvancedReportingWidget(context) {
         return !isFeatureAvailableForUserRole(context, 'AdvancedReporting');
     }
+     /**
+     * @description table for last saved widget (instead of Trend)
+     * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
+     * @param table - system var from aggregated table script
+     * @example PageActions.lastSavedTable_Render(context, table);
+     */
+     static function lastSavedTable_Render(context, table){
+	var log = context.log;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context); 
+	   
+	var actionstatusQId = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'ActionStatusQuestionId');
 
+        var qe: QuestionnaireElement = QuestionUtil.getQuestionnaireElement(context, actionstatusQId);
+        var hq: HeaderQuestion = new HeaderQuestion(qe);
+
+        hq.UseDefaults = false;
+        hq.Distributions.Enabled = true;
+        hq.Distributions.VerticalPercents = false;
+        hq.Distributions.Count = true;
+        hq.ShowTotals = false;
+        hq.Decimals = Config.Decimal;
+        table.RowHeaders.Add(hq);
+
+        // global table settings
+        table.Caching.Enabled = false;
+        
+     }
      /**
      * @description filter on new statistic widget by dates of status change - shows only actions touched during last week/month/etc.
      * @param {Object} context - {component: table, pageContext: pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log}
