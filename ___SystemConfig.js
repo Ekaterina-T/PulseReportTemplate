@@ -58,7 +58,7 @@ public class SystemConfig {
 
     // mandatory parameters can be single or multi. Must have default value when a page opens
     static var mandatoryPageParameters = ['p_ActionAllocation','p_Actions_BreakBy','p_ActionCost_BreakBy',
-                                          'p_projectSelector', 'p_TimeUnitWithDefault', 'p_TimePeriod', 'p_BenchmarkSet',
+                                          'p_projectSelector', 'p_TimeUnitWithDefault', 'p_LastTimeUnitsNoDefault', 'p_TimePeriod', 'p_BenchmarkSet',
                                           'p_Wave', 'p_OpenTextQs', 'p_CustomOpenTextQs', 'p_AllOpenTextQs', 'p_TrendQs',
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher', 'p_Trends_trackerSurveys', 'p_Hierarchy'];
 
