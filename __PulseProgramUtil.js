@@ -61,6 +61,7 @@ class PulseProgramUtil {
         for(i=0; i<pageProperties.length; i++) {
             listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, pageId, pageProperties[i]));
         }
+        //log.LogDebug('Page Resources: '+JSON.stringify(listOfResources));
 
         return listOfResources;
     }
@@ -82,9 +83,10 @@ class PulseProgramUtil {
 
         // keep property values in array
         for(i=0; i<surveyProperties.length; i++) {
-            //listOfResources=listOfResources.concat(DataSourceUtil.getSurveyPropertyValueFromConfig (context, surveyProperties[i])); //old version
             listOfResources=listOfResources.concat(buildQuestionAndCategoryId(context, null, surveyProperties[i]))
         }
+
+        //log.LogDebug('Survey Resources: '+JSON.stringify(listOfResources));
 
         return listOfResources;
     }
@@ -97,6 +99,7 @@ class PulseProgramUtil {
      */
     static private function removeDuplicates (context, listOfResources) {
 
+        var log = context.log;
         var resources = [];
         var resourcesLog = {};
         var i;
@@ -109,7 +112,7 @@ class PulseProgramUtil {
             if(typeof item === 'string') {
                 code = item;
                 type = 'QuestionId';
-            } else { //dimension
+            } else {
                 code = item.Code;
                 type = item.Type;
             }
@@ -128,6 +131,7 @@ class PulseProgramUtil {
      */
     static private function getResourcesList (context) {
 
+        var log = context.log;
         var listOfResources = [];        
         var resourcesDependentOnSpecificSurvey = SystemConfig.resourcesDependentOnSpecificSurvey;
         
@@ -143,6 +147,7 @@ class PulseProgramUtil {
                 }
             }
         }
+
         return removeDuplicates(context, listOfResources);
     }
 
@@ -174,37 +179,42 @@ class PulseProgramUtil {
     static public function setPulseSurveyContentBaseValues (context) {
 
         var log = context.log;
-        //log.LogDebug('setPulseSurveyContentBaseValues start')
+        //log.LogDebug('setPulseSurveyContentBaseValues 1 start' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
         var key = getKeyForPulseSurveyContentInfo(context);
         var report = context.report;
 
         var resourcesBase : Datapoint[];
         var baseValues = [];
+        //log.LogDebug('setPulseSurveyContentBaseValues 2 ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         if(!pulseSurveyContentInfo[key]) {
             throw new Error('PulseProgramUtil.setPulseSurveyContentBaseValues: pulseSurveyContentInfo['+key+'] does not exist.');
         }
+        //log.LogDebug('setPulseSurveyContentBaseValues 3 ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         if(Export.isExcelExportMode(context) && pulseSurveyContentBaseValues.hasOwnProperty(key)) {
             return pulseSurveyContentBaseValues[key];
         }
+        //log.LogDebug('setPulseSurveyContentBaseValues 4 ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         if(pulseSurveyContentInfo[key].length === 0) {
             resourcesBase = [];
         } else {
             resourcesBase = report.TableUtils.GetColumnValues('PulseSurveyData:PulseSurveyContentInfo', 1);
         }
+        //log.LogDebug('setPulseSurveyContentBaseValues 5 ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         for(var i=0; i< resourcesBase.length; i++) {
             var baseVal: Datapoint = resourcesBase[i];
             baseValues.push(baseVal.Value);
         }
+        //log.LogDebug('setPulseSurveyContentBaseValues 6 ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         // remove old value as it might have changed if new data appeared
         delete pulseSurveyContentBaseValues.key;
         pulseSurveyContentBaseValues[key] = baseValues;
 
-        //log.LogDebug('setPulseSurveyContentBaseValues end')
+        //log.LogDebug('setPulseSurveyContentBaseValues 7 end ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         return;
     }
@@ -217,7 +227,7 @@ class PulseProgramUtil {
     static public function getKeyForPulseSurveyContentInfo(context) {
 
         var log = context.log;
-        var currentPage = PageUtil.getCurrentPageIdInConfig (context);
+        var currentPage = PageUtil.getCurrentPageIdInConfig(context);
         var pageContext = context.pageContext;
         var key = !Export.isExcelExportMode(context) ? pageContext.Items['userEmail']+'_'+currentPage : pageContext.Items['userEmail'];
 
@@ -231,16 +241,21 @@ class PulseProgramUtil {
     static public function getPulseSurveyContentInfo_ItemsWithData(context) {
 
         var log = context.log;
+        var pageContext = context.pageContext;
 
         if(DataSourceUtil.isProjectSelectorNotNeeded(context)) { //not pulse program
             return null;
         }
 
+        if(!!pageContext.Items['PulseSurveyContentInfo_ItemsWithData']) {
+            return pageContext.Items['PulseSurveyContentInfo_ItemsWithData'];
+        }
+
         //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData start')
         var key = getKeyForPulseSurveyContentInfo(context);
         //log.LogDebug('key='+key)
-        //log.LogDebug(JSON.stringify(pulseSurveyContentInfo))
-        //log.LogDebug(JSON.stringify(pulseSurveyContentBaseValues))
+        //log.LogDebug('getPulseSurveyContentInfo info: '+JSON.stringify(pulseSurveyContentInfo))
+        //log.LogDebug('getPulseSurveyContentInfo base: '+JSON.stringify(pulseSurveyContentBaseValues))
         var resources = pulseSurveyContentInfo[key];
         var resourcesBase = pulseSurveyContentBaseValues[key];
         var resourcesWithData = {};
@@ -248,7 +263,7 @@ class PulseProgramUtil {
 
         if(resources.length > resourcesBase.length) {
             setPulseSurveyContentBaseValues(context);
-            var resourcesBase = pulseSurveyContentBaseValues[key];
+            resourcesBase = pulseSurveyContentBaseValues[key];
         }
 
         for(var i=0; i< resourcesBase.length; i++) {
@@ -257,6 +272,7 @@ class PulseProgramUtil {
             }
         }
         //log.LogDebug('getPulseSurveyContentInfo_ItemsWithData end')
+        pageContext.Items.Add('PulseSurveyContentInfo_ItemsWithData', resourcesWithData);
 
         return resourcesWithData;
     }

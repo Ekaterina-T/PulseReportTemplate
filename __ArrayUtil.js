@@ -26,7 +26,8 @@ class ArrayUtil {
     static function itemExistInArray(array, item) {
 
         var arrayToString = '$'+array.join('$')+'$';
-        return arrayToString.indexOf('$'+item+'$')>=0;
+        arrayToString = arrayToString.toLowerCase();
+        return arrayToString.indexOf('$'+item.toLowerCase()+'$')>=0;
     }
 
     /**

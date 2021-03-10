@@ -73,7 +73,7 @@ public class SystemConfig {
         Page_KPI: ['KPI', 'KPIQuestionsToFilterVerbatim'],
         Page_Trends: ['TrendQuestions'],
         Page_Results: ['BreakVariables'],
-        Page_AllResults: ['BreakVariables', 'Questions'],
+        Page_AllResults: ['BreakVariables'], //'Questions' are not included due to performance troubles PulseSurveyContentInfo table starts building around 35 sec
         Page_Comments: ['Comments', 'ScoresForComments', 'TagsForComments', {type: 'QuestionsCategory', propertyWithCat: 'CustomCommentCategory'}],
         Page_Categorical_: ['ResultCategoricalQuestions', 
                             'ResultMultiCategoricalQuestions', 

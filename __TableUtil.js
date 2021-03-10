@@ -1,5 +1,28 @@
 class TableUtil {
 
+    //type of the selected break by variable
+    static var breakByType = '';
+
+    /**
+     * @memberof TableUtil
+     * @function setBreakByType
+     * @description set the break by type
+     * @param {String} type of the selected break by variable
+     */
+    static function setBreakByType(newBreakByType) {
+        breakByType = newBreakByType;
+    }
+
+    /**
+     * @memberof TableUtil
+     * @function getBreakByType
+     * @description get the break by type
+     * @return {String} type of the selected break by variable
+     */
+    static function getBreakByType() {
+        return breakByType;
+    }
+
     /**
      * @memberof TableUtil
      * @function setTimeSeriesByTimeUnit
@@ -143,9 +166,9 @@ class TableUtil {
      * param {HeaderQuestion} headerDateQuestion - header based on date question
      */
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
-        
+
         if(!Filters.isTimePeriodFilterHidden(context)) {
- 
+
             var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
 
             if(dateRange) {
@@ -157,12 +180,12 @@ class TableUtil {
     }
 
     /**
-   * Function that excludes NA answer from header.
-   * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
-   * param {Header} headerQuestion or headerCategory
-   */
+     * Function that excludes NA answer from header.
+     * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
+     * param {Header} headerQuestion or headerCategory
+     */
 
-    static function maskOutNA(context, header) {
+    static function maskOutNA(context, header, headerElemID) {
 
         var log = context.log;
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
@@ -173,19 +196,26 @@ class TableUtil {
         }
 
         if(header.HeaderType === HeaderVariableType.QuestionnaireElement) {
-            var qId = header.QuestionnaireElement.QuestionId;
+
             var project : Project = DataSourceUtil.getProject(context);
-            var q : Question = project.GetQuestion(qId);
+            var q : Question;
+
+            if(!!headerElemID) {
+                //for some unclear reason the below approach wouldn't work in All Results table
+                q = project.GetQuestion(headerElemID);
+            } else {
+                var qId = header.QuestionnaireElement.QuestionId;
+                q = project.GetQuestion(qId);
+            }
 
             // additional check for Multi. Apply Mask only if a question has NA answer, otherwise Internal Server Error
-            if (q.QuestionType != QuestionType.Multi || (q.QuestionType == QuestionType.Multi && QuestionUtil.hasAnswer(context, qId, naCode))) {
+            if (q.QuestionType != QuestionType.Multi || (q.QuestionType == QuestionType.Multi && QuestionUtil.hasAnswer(context, headerElemID, naCode))) {
                 var qMask : MaskFlat = new MaskFlat();
                 qMask.Codes.Add(naCode);
                 qMask.IsInclusive = false;
                 header.AnswerMask = qMask;
                 header.FilterByMask = true;
             }
-
         }
 
         if(header.HeaderType === HeaderVariableType.Categories) {
@@ -197,10 +227,10 @@ class TableUtil {
 
 
     /**
-   * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
-   * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
-   * @param {Header} parent header
-   */
+     * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
+     * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
+     * @param {Header} parent header
+     */
 
     static function addBreakByNestedHeader(context, parentHeader) {
 
@@ -234,6 +264,8 @@ class TableUtil {
             breakByParameter = 'p_CategoricalDD_BreakBy';
             breakByType = 'Question';
         }
+
+        setBreakByType('Hierarchy');
 
         var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
 
@@ -274,6 +306,7 @@ class TableUtil {
             nestedHeader = new HeaderQuestion(questionElem);
 
             if(questionInfo.standardType === 'hierarchy') { // the same code exists in __PageResponseRate by demographics function :(
+                setBreakByType('Hierarchy');
                 nestedHeader.ReferenceGroup.Enabled = true;
                 nestedHeader.ReferenceGroup.Self = false;
                 //var parentLevels = HierarchyUtil.getParentLevelsForCurrentHierarchyNode(context);
@@ -391,27 +424,27 @@ class TableUtil {
 
         return row;
     }
-    
-      
+
+
     /**
-    *@param {object} context
-    *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
-    */
+     *@param {object} context
+     *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
+     */
     static function getHeaderDescriptorObject(context, configItem) {
-        
+
         var header = {}; // prepare param for getTrendHeader
-        
+
         if(typeof configItem === 'string') {
-        header.Code = configItem;
-        header.Type = 'Question';
+            header.Code = configItem;
+            header.Type = 'Question';
         } else {
-        header = configItem;
+            header = configItem;
         }
-        
+
         if(!header || !header.Type || !header.Code) {
-        throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
+            throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
         }
-        
+
         return header;
     }
 
@@ -429,9 +462,77 @@ class TableUtil {
         if (doPreCheck && Qs.length == 0) {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
         }
-
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
+
+
+    static function excludeNotActiveDimensionsFromQuestionsList(context, questions) {
+
+        var log = context.log;
+
+        // not pulse program -> nothing to exclude
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return questions;
+        }
+
+        var activeDimensions = getActiveCategorizationsForPulseSurveys(context);
+        var activeQuestionsAndDimensions = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var activeQuestions = [];
+
+        for(var i=0; i<questions.length; i++) {
+
+            if(typeof questions[i] === 'string' && activeQuestionsAndDimensions.hasOwnProperty(questions[i])) { //qid
+                activeQuestions.push(questions[i]);
+            } else if(questions[i].hasOwnProperty('Type') && questions[i].Type === 'Dimension') { //dimension
+
+                if(ArrayUtil.itemExistInArray(activeDimensions, questions[i].Code)) {
+                    activeQuestions.push(questions[i]);
+                }
+            }
+        }
+
+        return activeQuestions;
+
+    }
+
+    /**
+     * Retuns active categorizations for selected baby surveys from pulse program it'll be limited list of categorizations.
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @return {array} array of categorization ids
+     */
+    static function getActiveCategorizationsForPulseSurveys(context) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        if(!!pageContext.Items['ActiveCategorizationsForPulseSurveys']) {
+            return pageContext.Items['ActiveCategorizationsForPulseSurveys'];
+        }
+
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
+        var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+        var DBTable: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+        var pids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+        var activeDimensionsIDs = [];
+
+        for(var i=0;i <pids.length; i++) {
+            var pid = pids[i];
+            var dimensions = DBTable.GetColumnValues('__l9', 'id', pid); //only one or none
+
+            if (dimensions && dimensions.Count > 0) {
+                activeDimensionsIDs = activeDimensionsIDs.concat(dimensions[0].split(','));
+            }
+        }
+
+        activeDimensionsIDs = ArrayUtil.removeDuplicatesFromArray(activeDimensionsIDs);
+        pageContext.Items.Add("ActiveCategorizationsForPulseSurveys", activeDimensionsIDs);
+
+        return activeDimensionsIDs;
+    }
+
+
 
     /**
      * @param {Object} context
@@ -517,5 +618,122 @@ class TableUtil {
         var table = context.table;
 
         table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
+    }
+
+    /**
+     * Add Score calculation
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @param {string} scoreType: 'avg', '%fav', '%fav-%unfav'
+     * @param {Header} parentHeader - not mandotary
+     * @param {Array} [Header1, Header2,...]
+     */
+    static function addScore(context, parentHeader, baseValExpression, hideHeader) {
+
+        var table = context.table;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+        var scoreType = DataSourceUtil.getPropertyValueFromConfig(context, pageId, 'ScoreType');
+
+        var posScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_PositiveCols');
+        var negScoreRecodingCols = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecoding_NegativeCols');
+
+        //Create separate responses column to be able to check it independently
+        //var scoreResponses = getResponsesColumn(context, true);
+
+        var cellSuppressCondition = !!baseValExpression ? baseValExpression : 'true'
+
+        scoreType = scoreType.toLowerCase();
+
+        //CRUNCH: to every value we have to ad 0.01 because otherwise remove empty headers will hide score 0 even if it is based on 100 responses
+        if (scoreType === 'avg') {
+
+            // add Score column
+            var avg: HeaderFormula = new HeaderFormula();
+            avg.Type = FormulaType.Expression;
+            avg.Expression = 'if('+cellSuppressCondition+', cellv(col+1, row)+0.001, emptyv())';//avg.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+1,row))';
+            avg.Decimals = Config.Decimal;
+            avg.Title = TextAndParameterUtil.getLabelByKey(context, 'Score');
+            avg.HideHeader = hideHeader;
+
+            var score: HeaderStatistics = new HeaderStatistics();
+            score.Decimals = Config.Decimal;
+            score.Statistics.Avg = true;
+            score.HideData = true;
+
+            if (parentHeader) {
+                //parentHeader.SubHeaders.Add(scoreResponses);
+                parentHeader.SubHeaders.Add(avg);
+                parentHeader.SubHeaders.Add(score);
+            } else {
+                //table.ColumnHeaders.Add(scoreResponses);
+                table.ColumnHeaders.Add(avg);
+                table.ColumnHeaders.Add(score);
+            }
+            return [avg, score]; // TO DO: revise, this is cruntch to align avg with other types of scores which consits of 2 cols
+        }
+
+        var bcCategories: HeaderCategories = new HeaderCategories();
+        //bcCategories.RecodingShowOriginal = true;
+        //bcCategories.RecodingPosition = RecodingPositionType.OnStart;
+        if (scoreType === '%fav') {
+
+            // add Score column
+            var fav: HeaderFormula = new HeaderFormula();
+            fav.Type = FormulaType.Expression;
+            fav.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row)+0.001, emptyv())';//fav.Expression = 'if(cellv(col-1,row) = emptyv() OR ROUND(cellv(col-1,row), '+Config.Decimal+') < ' + suppressValue + ', emptyv(), cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row))';
+            fav.Decimals = Config.Decimal;
+            fav.Title = TextAndParameterUtil.getLabelByKey(context, 'Fav');
+            fav.HideHeader = hideHeader;
+
+            //add distribution barChart
+            bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+            bcCategories.Totals = false;
+            bcCategories.Distributions.Enabled = true;
+            bcCategories.Distributions.HorizontalPercents = true;
+            bcCategories.Decimals = Config.Decimal;
+            bcCategories.HideData = true;
+
+            if (parentHeader) {
+                //parentHeader.SubHeaders.Add(scoreResponses);
+                parentHeader.SubHeaders.Add(fav);
+                parentHeader.SubHeaders.Add(bcCategories);
+            } else {
+                //table.ColumnHeaders.Add(scoreResponses);
+                table.ColumnHeaders.Add(fav);
+                table.ColumnHeaders.Add(bcCategories);
+            }
+            return [fav, bcCategories];
+        }
+
+        if (scoreType === '%fav-%unfav') {
+
+            // add Score column
+            var diff: HeaderFormula = new HeaderFormula();
+            diff.Type = FormulaType.Expression;
+            diff.Expression = 'if('+cellSuppressCondition+', cellv(col+'+posScoreRecodingCols.join(', row)+cellv(col+')+',row) - cellv(col+'+negScoreRecodingCols.join(', row)-cellv(col+')+',row)+0.001, emptyv())';
+            diff.Decimals = Config.Decimal;
+            diff.Title = TextAndParameterUtil.getLabelByKey(context, 'FavMinUnfav');
+            diff.HideHeader = hideHeader;
+
+            //add distribution barChart
+            bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+            bcCategories.Totals = false;
+            bcCategories.Distributions.Enabled = true;
+            bcCategories.Distributions.HorizontalPercents = true;
+            bcCategories.Decimals = Config.Decimal;
+            bcCategories.HideData = true;
+
+            if (parentHeader) {
+                //parentHeader.SubHeaders.Add(scoreResponses);
+                parentHeader.SubHeaders.Add(diff);
+                parentHeader.SubHeaders.Add(bcCategories);
+            } else {
+                //table.ColumnHeaders.Add(scoreResponses);
+                table.ColumnHeaders.Add(diff);
+                table.ColumnHeaders.Add(bcCategories);
+            }
+            return [diff, bcCategories];
+        }
+
+        throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
     }
 }
