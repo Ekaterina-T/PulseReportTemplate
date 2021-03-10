@@ -24,15 +24,14 @@ class PageUtil {
         //save page source to page context
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
         pageContext.Items.Add('PageSource', pageSource);
-        //log.LogDebug('page init 1');
 
         var pageSpecificFiltersDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFilters', false);
         var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
-        //log.LogDebug('page init 3');
+        //log.LogDebug('page init 3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
         ParamUtil.Initialise(context); // initialise parameters
-        //log.LogDebug('page init 4');
+        //log.LogDebug('page init 4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible

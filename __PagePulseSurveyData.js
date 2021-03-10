@@ -6,12 +6,13 @@ class PagePulseSurveyData {
     static public function tablePulseSurveyContentInfo_Render(context) {
 
         var log = context.log;
-        //log.LogDebug('pulse filtering table build start')
+        //log.LogDebug('pulse filtering table 1 start:  ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
         var table = context.table;
         var key = PulseProgramUtil.getKeyForPulseSurveyContentInfo(context);
         var resources = PulseProgramUtil.pulseSurveyContentInfo[key];
 
         //log.LogDebug('res from table build='+JSON.stringify(resources))
+        //log.LogDebug('pulse filtering table 2:  ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         for (var i = 0; i < resources.length; i++) {
 
@@ -19,14 +20,14 @@ class PagePulseSurveyData {
             var base: HeaderBase = new HeaderBase();
             var header;
 
-            if (resource.Type === 'Dimension') { //category;            
+            if (resource.Type === 'Dimension') { //category;
 
                 header = new HeaderCategorization();
                 header.CategorizationId = resource.Code;
                 header.DataSourceNodeId = DataSourceUtil.getDsId(context);
                 header.Collapsed = true;
                 header.Totals = true;
-                table.RowHeaders.Add(header); // to avoid case when previous header is added if troubles 
+                table.RowHeaders.Add(header); // to avoid case when previous header is added if trouble
 
             } else if (resource.Type === 'QuestionId') { // question id
 
@@ -76,8 +77,11 @@ class PagePulseSurveyData {
 
         }
 
+        //log.LogDebug('pulse filtering table 3:  ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
+
         table.ColumnHeaders.Add(base);
         table.Caching.Enabled = false;
+        //log.LogDebug('pulse filtering table 4 end:  ' + DateTime.Now+ ' ' + DateTime.Now.Millisecond)
 
         //log.LogDebug('pulse filtering table build end')
     }
