@@ -198,7 +198,15 @@ class TableUtil {
         if(header.HeaderType === HeaderVariableType.QuestionnaireElement) {
 
             var project : Project = DataSourceUtil.getProject(context);
-            var q : Question = project.GetQuestion(headerElemID);
+            var q : Question;
+
+            if(!!headerElemID) {
+                //for some unclear reason the below approach wouldn't work in All Results table
+               q = project.GetQuestion(headerElemID);
+            } else {
+                var qId = header.QuestionnaireElement.QuestionId;
+                q = project.GetQuestion(qId);
+            }
 
             // additional check for Multi. Apply Mask only if a question has NA answer, otherwise Internal Server Error
             if (q.QuestionType != QuestionType.Multi || (q.QuestionType == QuestionType.Multi && QuestionUtil.hasAnswer(context, headerElemID, naCode))) {
