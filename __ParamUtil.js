@@ -146,11 +146,12 @@ class ParamUtil {
 
         var state = context.state;
         var log = context.log;
-
+        log.LogDebug('paramId ' + paramId)
         // safety check: set default value if not defined or pulse program changed
         if (!state.Parameters.IsNull(paramId)) {
             return;
         }
+        log.LogDebug('setDefaultValueForParameter1 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //TO DO: check why this try catch is needed
         try {
@@ -159,6 +160,7 @@ class ParamUtil {
                 return;
             }
         } catch (e) { return; }
+        log.LogDebug('setDefaultValueForParameter2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
@@ -170,10 +172,12 @@ class ParamUtil {
                 valArr = defaultParameterValue;
             }
             setMultiSelectParameter(context, paramId, valArr);
+            log.LogDebug('setDefaultValueForParameter3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         } catch (e) { //if not, set it as single select parameter
             state.Parameters[paramId] = new ParameterValueResponse(defaultParameterValue);
         }
+        log.LogDebug('setDefaultValueForParameter4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         
     }
 
