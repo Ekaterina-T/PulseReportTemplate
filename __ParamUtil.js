@@ -126,14 +126,14 @@ class ParamUtil {
         //log.LogDebug('param init start 2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         pulseInit(context);
-        log.LogDebug('param init start 3: ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             //log.LogDebug('param: '+mandatoryPageParameters[i])
+            log.LogDebug('param '+mandatoryPageParameters[i]+' init start 3: ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
+            log.LogDebug('param '+mandatoryPageParameters[i]+' init end ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         }
-        log.LogDebug('param init end ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
     }
 
 
