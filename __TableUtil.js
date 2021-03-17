@@ -166,9 +166,9 @@ class TableUtil {
      * param {HeaderQuestion} headerDateQuestion - header based on date question
      */
     static function applyDateRangeFilterToHeader(context, headerDateQuestion) {
-        
+
         if(!Filters.isTimePeriodFilterHidden(context)) {
- 
+
             var dateRange = DateUtil.defineDateRangeBasedOnFilters(context);
 
             if(dateRange) {
@@ -180,10 +180,10 @@ class TableUtil {
     }
 
     /**
-   * Function that excludes NA answer from header.
-   * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
-   * param {Header} headerQuestion or headerCategory
-   */
+     * Function that excludes NA answer from header.
+     * param {object} context {state: state, report: report, pageContext: pageContext, log: log}
+     * param {Header} headerQuestion or headerCategory
+     */
 
     static function maskOutNA(context, header, headerElemID) {
 
@@ -202,7 +202,7 @@ class TableUtil {
 
             if(!!headerElemID) {
                 //for some unclear reason the below approach wouldn't work in All Results table
-               q = project.GetQuestion(headerElemID);
+                q = project.GetQuestion(headerElemID);
             } else {
                 var qId = header.QuestionnaireElement.QuestionId;
                 q = project.GetQuestion(qId);
@@ -227,10 +227,10 @@ class TableUtil {
 
 
     /**
-   * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
-   * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
-   * @param {Header} parent header
-   */
+     * Add nested header based on BreakVariables and BreakByTimeUnits properties for 'Results' page.
+     * @param {object} context: {state: state, report: report, log: log, table: table, pageContext: pageContext}
+     * @param {Header} parent header
+     */
 
     static function addBreakByNestedHeader(context, parentHeader) {
 
@@ -265,7 +265,7 @@ class TableUtil {
             breakByType = 'Question';
         }
 
-        setBreakByType(breakByType);
+        setBreakByType('Hierarchy');
 
         var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
 
@@ -424,27 +424,27 @@ class TableUtil {
 
         return row;
     }
-    
-      
+
+
     /**
-    *@param {object} context
-    *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
-    */
+     *@param {object} context
+     *@param {string|object} either qid or object {Type: 'Dimension', Code: 'catId'}
+     */
     static function getHeaderDescriptorObject(context, configItem) {
-        
+
         var header = {}; // prepare param for getTrendHeader
-        
+
         if(typeof configItem === 'string') {
-        header.Code = configItem;
-        header.Type = 'Question';
+            header.Code = configItem;
+            header.Type = 'Question';
         } else {
-        header = configItem;
+            header = configItem;
         }
-        
+
         if(!header || !header.Type || !header.Code) {
-        throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
+            throw new Error('TableUtil.getHeaderDescriptorObject: cannot create proper header object based on '+JSON.stringify());
         }
-        
+
         return header;
     }
 
@@ -462,9 +462,77 @@ class TableUtil {
         if (doPreCheck && Qs.length == 0) {
             throw new Error('TableUtil.getActiveQuestionsListFromPageConfig: questions from page=' + pageId + ', property=' + propertyName + ' are not specified.');
         }
-
         return PulseProgramUtil.excludeItemsWithoutData(context, Qs);
     }
+
+
+    static function excludeNotActiveDimensionsFromQuestionsList(context, questions) {
+
+        var log = context.log;
+
+        // not pulse program -> nothing to exclude
+        if (DataSourceUtil.isProjectSelectorNotNeeded(context)) {
+            return questions;
+        }
+
+        var activeDimensions = getActiveCategorizationsForPulseSurveys(context);
+        var activeQuestionsAndDimensions = PulseProgramUtil.getPulseSurveyContentInfo_ItemsWithData(context);
+        var activeQuestions = [];
+
+        for(var i=0; i<questions.length; i++) {
+
+            if(typeof questions[i] === 'string' && activeQuestionsAndDimensions.hasOwnProperty(questions[i])) { //qid
+                activeQuestions.push(questions[i]);
+            } else if(questions[i].hasOwnProperty('Type') && questions[i].Type === 'Dimension') { //dimension
+
+                if(ArrayUtil.itemExistInArray(activeDimensions, questions[i].Code)) {
+                    activeQuestions.push(questions[i]);
+                }
+            }
+        }
+
+        return activeQuestions;
+
+    }
+
+    /**
+     * Retuns active categorizations for selected baby surveys from pulse program it'll be limited list of categorizations.
+     * @param {object} context: {state: state, report: report, log: log, table: table}
+     * @return {array} array of categorization ids
+     */
+    static function getActiveCategorizationsForPulseSurveys(context) {
+
+        var log = context.log;
+        var pageContext = context.pageContext;
+
+        if(!!pageContext.Items['ActiveCategorizationsForPulseSurveys']) {
+            return pageContext.Items['ActiveCategorizationsForPulseSurveys'];
+        }
+
+        var schemaId = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysSchemaId');
+        var tableName = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'DimensionsForSurveysTable');
+        var schema: DBDesignerSchema = context.confirmit.GetDBDesignerSchema(schemaId);
+        var DBTable: DBDesignerTable = schema.GetDBDesignerTable(tableName);
+        var pids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
+
+        var activeDimensionsIDs = [];
+
+        for(var i=0;i <pids.length; i++) {
+            var pid = pids[i];
+            var dimensions = DBTable.GetColumnValues('__l9', 'id', pid); //only one or none
+
+            if (dimensions && dimensions.Count > 0) {
+                activeDimensionsIDs = activeDimensionsIDs.concat(dimensions[0].split(','));
+            }
+        }
+
+        activeDimensionsIDs = ArrayUtil.removeDuplicatesFromArray(activeDimensionsIDs);
+        pageContext.Items.Add("ActiveCategorizationsForPulseSurveys", activeDimensionsIDs);
+
+        return activeDimensionsIDs;
+    }
+
+
 
     /**
      * @param {Object} context
@@ -551,7 +619,6 @@ class TableUtil {
 
         table.CssClass = ( ( !table.CssClass ) ? "" : (table.CssClass + " " ) ) + classes.join(" ");
     }
-
 
     /**
      * Add Score calculation
@@ -669,5 +736,4 @@ class TableUtil {
 
         throw new Error('PageResults.addScore: Calculation of score for type "' + scoreType + ' is not found."');
     }
-
 }

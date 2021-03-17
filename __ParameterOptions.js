@@ -527,6 +527,7 @@ class ParameterOptions {
         var isCached = CacheUtil.isParameterCached(context, parameterId);
 
         //log.LogDebug(' ---- START '+parameterId+ ' from '+((String)(from)).toUpperCase()+' ---- ')
+
         if (isCachable(context, parameterId) && !isCached) {
             CacheParameterOptions(context, parameterId);
         }

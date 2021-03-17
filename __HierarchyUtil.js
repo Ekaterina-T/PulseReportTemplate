@@ -107,6 +107,8 @@ class HierarchyUtil {
 
             saveTopNode(context);
         }
+
+        saveTopNode(context);
     }
 
     /**
@@ -151,9 +153,7 @@ class HierarchyUtil {
      */
     static function getTopNode(context) {
         var log = context.log;
-
         return topNode;
-
     }
 
     /**
@@ -497,12 +497,11 @@ class HierarchyUtil {
 
         for (var i = 0; i < rows.Count; i++) {
             var row: DataRow = rows[i];
-            if(row['id'] === nodeId) {
+            if (row['id'] === nodeId) {
                 label = row['__l9'];
                 break;
             }
         }
-
         return label;
     }
 }

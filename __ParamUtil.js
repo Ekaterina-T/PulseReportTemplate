@@ -104,35 +104,36 @@ class ParamUtil {
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
-        //log.LogDebug('param init start')
+        //log.LogDebug('param init start ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         //set ds if it is not defined
         if (state.Parameters.IsNull('p_SurveyType')) {
             var projectSource = new ProjectSource(ProjectSourceType.DataSourceNodeId, DataSourceUtil.getDefaultDSFromConfig(context));
             state.Parameters['p_SurveyType'] = new ParameterValueProject(projectSource);
         }
-        //log.LogDebug('param init start 0')
+        //log.LogDebug('param init start 0 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         // reset all parameters (=null) if a page refreshes when switching surveys
         if (page.SubmitSource === 'surveyType') {
             ResetParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
-        //log.LogDebug('param init start 1')
+        //log.LogDebug('param init start 1 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         // Actions page parameters: reset 'p_Statements' if 'p_Dimensions' has been reloaded
         if (page.SubmitSource === 'p_Dimensions') {
             ResetParameters(context, ['p_Statements']);
         }
-        //log.LogDebug('param init start 2')
+        //log.LogDebug('param init start 2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         pulseInit(context);
-        //log.LogDebug('param init start 3')
 
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
+            //log.LogDebug('param: '+mandatoryPageParameters[i])
+            //log.LogDebug('param '+mandatoryPageParameters[i]+' init start 3: ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
+            //log.LogDebug('param '+mandatoryPageParameters[i]+' init end ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         }
-        //log.LogDebug('param init end')
     }
 
 
@@ -150,6 +151,7 @@ class ParamUtil {
         if (!state.Parameters.IsNull(paramId)) {
             return;
         }
+        //log.LogDebug('setDefaultValueForParameter1 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //TO DO: check why this try catch is needed
         try {
@@ -158,6 +160,7 @@ class ParamUtil {
                 return;
             }
         } catch (e) { return; }
+        //log.LogDebug('setDefaultValueForParameter2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
@@ -169,10 +172,12 @@ class ParamUtil {
                 valArr = defaultParameterValue;
             }
             setMultiSelectParameter(context, paramId, valArr);
+            //log.LogDebug('setDefaultValueForParameter3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         } catch (e) { //if not, set it as single select parameter
             state.Parameters[paramId] = new ParameterValueResponse(defaultParameterValue);
         }
+        //log.LogDebug('setDefaultValueForParameter4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         
     }
 
@@ -237,8 +242,12 @@ class ParamUtil {
         var mandatoryPageParameters = SystemConfig.mandatoryPageParameters;
         var optionalPageParameters = SystemConfig.optionalPageParameters;
 
+        //log.LogDebug('pulse init 1 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
+
         // mass export by pid
         var configurableExportMode = Export.isMassExportMode(context);
+
+        //log.LogDebug('pulse init 2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         if (configurableExportMode) {
 
@@ -251,12 +260,15 @@ class ParamUtil {
             setMultiSelectParameter(context, 'p_projectSelector', pidsFromConfig);
             pageContext.Items['p_projectSelector'] = JSON.stringify(pidsFromConfig);
         }
+        //log.LogDebug('pulse init 2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //set default pulse baby project
         if (!configurableExportMode && !state.Parameters.IsNull('p_projectSelector')) {
+            //log.LogDebug('pulse init 21 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
             var selectedPulseSurveys = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
             var showAll = ParamUtil.GetSelectedCodes(context, 'p_ShowAllPulseSurveys');
+            //log.LogDebug('pulse init 22 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
             //user unchecked "show all pulse surveys" checkbox while some survey was selected
             if (selectedPulseSurveys[0] !== 'none' && showAll[0] !== 'showAll') {
@@ -281,8 +293,11 @@ class ParamUtil {
                     pageContext.Items['p_projectSelector'] = JSON.stringify(surveysThatRemainSelected);
                 }
             }
+
+            //log.LogDebug('pulse init 23 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
             
         }
+        //log.LogDebug('pulse init 3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //in the end project is still undefined -> set default
         if (state.Parameters.IsNull('p_projectSelector')) {
@@ -290,6 +305,7 @@ class ParamUtil {
             setMultiSelectParameter(context, 'p_projectSelector', [defaultVal]);
             pageContext.Items['p_projectSelector'] = JSON.stringify([defaultVal]);
         }
+        //log.LogDebug('pulse init 4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //reset question and category based params when baby surveys change
         if (selectedPulseSurveysHaveChanged(context)) {
@@ -297,12 +313,16 @@ class ParamUtil {
             ResetQuestionBasedParameters(context, mandatoryPageParameters.concat(optionalPageParameters));
             Filters.ResetAllFilters(context);
         }
+        //log.LogDebug('pulse init 5 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         savePreviousPulseSurveys(context, ParamUtil.GetSelectedCodes(context, 'p_projectSelector'));
+        //log.LogDebug('pulse init 6 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
 
         //set up object holding questions available on current page
         PulseProgramUtil.setPulseSurveyContentInfo(context);
+        //log.LogDebug('pulse init 7 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         PulseProgramUtil.setPulseSurveyContentBaseValues(context);
+        //log.LogDebug('pulse init 8 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         
     }
 
