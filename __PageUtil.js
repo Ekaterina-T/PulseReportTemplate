@@ -14,12 +14,12 @@ class PageUtil {
         var page = context.page;
         var pageContext = context.pageContext;
 
-        //log.LogDebug('page init start: '+page.CurrentPageId);
+        log.LogDebug('page init start: '+page.CurrentPageId+' ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
         pageContext.Items.Add('userEmail', context.user.Email);
         pageContext.Items.Add('CurrentPageId', page.CurrentPageId);
 
         var pageId = getCurrentPageIdInConfig(context);
-        //log.LogDebug('page init 1: hier='+context.user.PersonalizedReportBase);
+        log.LogDebug('page init 1: hier='+context.user.PersonalizedReportBase);
 
         //save page source to page context
         var pageSource = !!context.pageSourceId ? context.pageSourceId : DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'Source', false);
@@ -29,9 +29,9 @@ class PageUtil {
         var pageSpecificFiltersFromSurveyDataDefined = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'PageSpecificFromSurveyData', false);
         pageContext.Items.Add('pageOverridesProgramFilters', (pageSpecificFiltersDefined || pageSpecificFiltersFromSurveyDataDefined));
 
-        //log.LogDebug('page init 3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
+        log.LogDebug('page init 3 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
         ParamUtil.Initialise(context); // initialise parameters
-        //log.LogDebug('page init 4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
+        log.LogDebug('page init 4 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
 
         // if in current DS a page shouldn't be visible, than redirect to default page
         // very actual when 1st report page should not be visible
@@ -46,11 +46,11 @@ class PageUtil {
             // for now it's only needed for results page hierarchy benchamrks
             HierarchyUtil.setDataTable(context);
         }
-        //log.LogDebug('page init 6');
+        //log.LogDebug('page init 6 ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
 
         //for tests
         //PulseProgramUtil.printPulseSurveyContentInfoTable(context);
-        //log.LogDebug('page init end');
+        log.LogDebug('page init end ' + DateTime.Now+ " " + DateTime.Now.Millisecond);
     }
 
     /*
