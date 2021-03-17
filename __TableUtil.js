@@ -265,7 +265,7 @@ class TableUtil {
             breakByType = 'Question';
         }
 
-        setBreakByType('Hierarchy');
+        setBreakByType(breakByType);
 
         var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
 
