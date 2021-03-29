@@ -31,7 +31,7 @@ class PageTrend {
      * @returns {Boolean}
      */
     static function tableTrend_Hide(context){
-        return /*context.state.Parameters.IsNull("p_TrendQs") || */ SuppressUtil.isGloballyHidden(context);
+        return SuppressUtil.isGloballyHidden(context);
     }
 
     /**
@@ -48,7 +48,7 @@ class PageTrend {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add rows (1 or more KPI questions)
-        var headers = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'TrendQuestions');//ParamUtil.GetSelectedOptions(context, "p_TrendQs");
+        var headers = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'TrendQuestions', true)//DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'TrendQuestions');
 
         for (var i = 0; i < headers.length; i++) {
             table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
