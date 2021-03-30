@@ -48,7 +48,7 @@ class PageTrend {
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         // add rows (1 or more KPI questions)
-        var headers = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'TrendQuestions', true)//DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'TrendQuestions');
+        var headers = TableUtil.getActiveQuestionsListFromPageConfig (context, pageId, 'TrendQuestions', true);//DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'TrendQuestions');
 
         for (var i = 0; i < headers.length; i++) {
             table.RowHeaders.Add(TableUtil.getTrendHeader(context, headers[i]));
