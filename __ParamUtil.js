@@ -78,12 +78,12 @@ class ParamUtil {
         var log = context.log;
         var i;
 
-        log.LogDebug('parameterList='+JSON.stringify(parameterList))
+        //log.LogDebug('parameterList='+JSON.stringify(parameterList))
 
         for (i = 0; i < parameterList.length; i++) {
             var paramType = SystemConfig.reportParameterValuesMap[parameterList[i]].type;
             var isTypeToReset = SystemConfig.paramTypesToBeReset[paramType];
-            log.LogDebug(parameterList[i]+': isTypeToReset='+isTypeToReset);
+            //log.LogDebug(parameterList[i]+': isTypeToReset='+isTypeToReset);
             if (isTypeToReset) {
                 state.Parameters[parameterList[i]] = null;
             }
@@ -134,7 +134,7 @@ class ParamUtil {
         // set default values for mandatory page parameters
         for (i = 0; i <mandatoryPageParameters.length; i++) {
             //log.LogDebug('param: '+mandatoryPageParameters[i])
-            //log.LogDebug('param '+mandatoryPageParameters[i]+' init start 3: ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
+            log.LogDebug('param '+mandatoryPageParameters[i]+' init start 3: ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
             setDefaultValueForParameter(context, mandatoryPageParameters[i]);
             //log.LogDebug('param '+mandatoryPageParameters[i]+' init end ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
         }
@@ -165,7 +165,7 @@ class ParamUtil {
             }
         } catch (e) { return; }
         //log.LogDebug('setDefaultValueForParameter2 ' + DateTime.Now+ " " + DateTime.Now.Millisecond)
-
+log.LogDebug('defaultParameterValue='+JSON.stringify(defaultParameterValue))
         // We can't get the type of parameter (single or multi) before its initialisation.
         // So firstly check if it supports ParameterValueMultiSelect options
         try {
