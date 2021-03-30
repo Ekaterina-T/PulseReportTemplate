@@ -75,11 +75,15 @@ class ParamUtil {
     static function ResetQuestionBasedParameters(context, parameterList) {
 
         var state = context.state;
+        var log = context.log;
         var i;
+
+        log.LogDebug('parameterList='+JSON.stringify(parameterList))
 
         for (i = 0; i < parameterList.length; i++) {
             var paramType = SystemConfig.reportParameterValuesMap[parameterList[i]].type;
             var isTypeToReset = SystemConfig.paramTypesToBeReset[paramType];
+            log.LogDebug(parameterList[i]+': isTypeToReset='+isTypeToReset);
             if (isTypeToReset) {
                 state.Parameters[parameterList[i]] = null;
             }
