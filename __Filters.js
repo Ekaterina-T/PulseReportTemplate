@@ -436,7 +436,7 @@ class Filters {
             selectedPids = ParamUtil.GetSelectedCodes(context, 'p_projectSelector');
         }
 
-        return Filters.getFilterExpressionByAnswerRange(context, 'source_projectid', selectedPids);
+        return Filters.getFilterExpressionByAnswerRange(context, 'combined_sourceid_text', selectedPids);
     }
 
     /**
@@ -447,7 +447,7 @@ class Filters {
      */
     static function getProjectExpression(context, projectId) {
 
-        return 'source_projectid = "' + projectId + '"';
+        return 'combined_sourceid_text = "' + projectId + '"';
     }
 
     /**
