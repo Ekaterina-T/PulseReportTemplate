@@ -138,7 +138,7 @@ class PageCorrelation {
         columnsCollection.Add(fav);
 
         columnsCollection.Add(getCorrelation(context));
-        columnsCollection.Add(getBaseColumn());
+        columnsCollection.Add(TableUtil.getBaseColumn(context));
         columnsCollection.Add(getFormulaColumn());
 
         table.ColumnHeaders.AddRange(columnsCollection);
@@ -180,11 +180,11 @@ class PageCorrelation {
      * Create HeaderBase column
      * @return {HeaderBase} created column
      */
-    static function getBaseColumn() {
+    /*static function getBaseColumn() {
         var headerBase: HeaderBase = new HeaderBase();
 
         return headerBase;
-    }
+    }*/
 
     /*
      * Create HeaderFormula column which is calculated based on AdjustedSentiment

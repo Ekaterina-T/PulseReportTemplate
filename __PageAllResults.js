@@ -74,14 +74,14 @@ class PageAllResults {
         //var wave = getWaveColumn(context);
         var wave = getSelectedWavesColumns(context);
 
-        var responses = getBaseColumn(context, wave);
+        var responses = TableUtil.getBaseColumn(context, wave);
         table.ColumnHeaders.Add(responses);
 
         var pageId = PageUtil.getCurrentPageIdInConfig(context);
         var questions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Questions', true);
 
         for (var i = 0; i < questions.length; i++) {
-            var questionColumn = getQuestionColumn(context, questions[i], wave);
+            var questionColumn = TableUtil.getSimpleQuestionHeader(context, questions[i], wave);
             table.ColumnHeaders.Add(questionColumn);
         }
     }
@@ -158,7 +158,7 @@ class PageAllResults {
      * @param {Object} subHeaders
      * @return {HeaderBase} created column
      */
-    static function getBaseColumn(context, subHeaders) {
+    /*static function getBaseColumn(context, subHeaders) {
         var headerBase: HeaderBase = new HeaderBase();
 
         if(!!subHeaders && ArrayUtil.isArray(subHeaders)) {
@@ -168,7 +168,7 @@ class PageAllResults {
         }
 
         return headerBase;
-    }
+    }*/
 
     /*
      * @memberof PageAllResults
@@ -179,7 +179,7 @@ class PageAllResults {
      * @param {Object} subHeaders
      * @return {HeaderQuestion} created column
      */
-    static function getQuestionColumn(context, question, subHeaders) {
+    /*static function getQuestionColumn(context, question, subHeaders) {
         var header = TableUtil.getHeaderDescriptorObject(context, question);
         var questionColumn;
 
@@ -211,7 +211,7 @@ class PageAllResults {
         }
 
         return questionColumn;
-    }
+    }*/
 
     /**
      * @memberof PageAllResults
