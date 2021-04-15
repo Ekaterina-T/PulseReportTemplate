@@ -233,6 +233,9 @@ class TableUtil {
         } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_CategoricalDrilldown') {
             breakByParameter = 'p_CategoricalDD_BreakBy';
             breakByType = 'Question';
+        } else if(breakVariables && breakVariables.length>0 && pageId === 'Page_CulturalBehaviors') {
+            breakByParameter = 'p_CulturalBehaviors_BreakBy';
+            breakByType = 'Question';
         }
 
         var selectedOption = ParamUtil.GetSelectedOptions(context, breakByParameter)[0];
