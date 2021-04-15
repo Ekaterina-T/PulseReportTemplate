@@ -50,7 +50,7 @@ class PageCulturalBehaviors {
         var dimensions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Dimensions', true);
 
         for (var i = 0; i < dimensions.length; i++) {
-            var row = TableUtil.getSimpleQuestionHeader(context, dimensions[i]);
+            var row = TableUtil.getSimpleQuestionHeader(context, dimensions[i], true);
             table.RowHeaders.Add(row);
         }
     }

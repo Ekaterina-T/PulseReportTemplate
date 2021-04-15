@@ -608,7 +608,7 @@ class TableUtil {
      * @param {Object} subHeaders
      * @return {HeaderQuestion} created column
      */
-    static function getSimpleQuestionHeader(context, question, subHeaders) {
+    static function getSimpleQuestionHeader(context, question, showTotals, subHeaders) {
         var header = getHeaderDescriptorObject(context, question);
         var questionColumn;
 
@@ -627,7 +627,7 @@ class TableUtil {
                 questionColumn.Preaggregation = PreaggregationType.Average;
                 questionColumn.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
                 questionColumn.Collapsed = false;
-                questionColumn.Totals = false;
+                questionColumn.Totals = showTotals;
             }
         }
 
