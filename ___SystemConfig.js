@@ -55,7 +55,9 @@ public class SystemConfig {
         'p_AllResults_GapSettings': { type: 'StaticArrayofObjects', locationType: 'TextAndParameterLibrary', propertyName: 'GapSettings'},
 
         'p_LeadersExport_BreakBy': { type: 'QuestionList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'BreakVariables', isQuestionBased: true},
-        'p_LeadersExport_Dimension' : { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'Questions', isQuestionBased: true}
+        'p_LeadersExport_Dimension' : { type: 'QuestionAndCategoriesList', locationType: 'Page', page: 'Page_LeadersExport', propertyName: 'Questions', isQuestionBased: true},
+
+        'p_CulturalBehaviors_BreakBy' : { type: 'QuestionList', locationType: 'Page', page: 'Page_CulturalBehaviors', propertyName: 'BreakVariables', isQuestionBased: true}
 
     };
 
@@ -65,7 +67,7 @@ public class SystemConfig {
                                           'p_Demographics', 'p_QsToFilterBy', 'p_Dimensions', 'p_Results_TableTabSwitcher',
                                           'p_OrgOverviewBreakBy', 'p_AllResults_BreakBy', 'p_WaveOrgOverview', 
                                           'p_ImpactAnalysisDimension', 'p_CorrelationQuestion', 'p_WaveSelector', 
-                                          'p_LeadersExport_BreakBy', 'p_LeadersExport_Dimension'];
+                                          'p_LeadersExport_BreakBy', 'p_LeadersExport_Dimension', 'p_CulturalBehaviors_BreakBy'];
 
     // optional parameters are usually multiple. Can be empty by default
     static var optionalPageParameters = ['p_ScoreQs', 'p_TagQs', 'p_TimeUnitNoDefault', 'p_CatDD_TimeUnitNoDefault', 'p_AllResults_GapSettings']; // we must add them empty option as 1st value instead
@@ -97,6 +99,7 @@ public class SystemConfig {
                             {type: 'QuestionsCategories', propertyWithCategories: 'CustomCategoriesMulti'}
                         ],
         Page_CategoricalDrilldown: ['BreakVariables'],
-        Page_Response_Rate: ['DemographicsQuestions']
+        Page_Response_Rate: ['DemographicsQuestions'],
+        Page_CulturalBehaviors: ['BreakVariables']
     }
 }
