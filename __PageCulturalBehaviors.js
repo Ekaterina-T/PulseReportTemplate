@@ -79,7 +79,7 @@ class PageCulturalBehaviors {
      * @return {HeaderQuestion} created column
      */
     static function getRowHeader(context, question) {
-        var header = getHeaderDescriptorObject(context, question);
+        var header = TableUtil.getHeaderDescriptorObject(context, question);
         var questionRow;
 
         if (header.Type === 'Question') {
