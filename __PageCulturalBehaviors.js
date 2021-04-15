@@ -50,7 +50,7 @@ class PageCulturalBehaviors {
         var dimensions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Dimensions', true);
 
         for (var i = 0; i < dimensions.length; i++) {
-            var row = TableUtil.getSimpleQuestionHeader(context, dimensions[i], true);
+            var row = getRowHeader(context, dimensions[i]);
             table.RowHeaders.Add(row);
         }
     }
@@ -67,6 +67,43 @@ class PageCulturalBehaviors {
 
         var responses = TableUtil.getBaseColumn(context);
         table.ColumnHeaders.Add(responses);
+    }
+
+    /*
+     * @memberof TableUtil
+     * @function getSimpleQuestionHeader
+     * @description Create HeaderQuestion column with the Question
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     * @param {Object} question
+     * @param {Object} subHeaders
+     * @return {HeaderQuestion} created column
+     */
+    static function getRowHeader(context, question) {
+        var header = getHeaderDescriptorObject(context, question);
+        var questionRow;
+
+        if (header.Type === 'Question') {
+            var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+            questionRow = new HeaderQuestion(qe);
+            questionRow.IsCollapsed = true;
+            questionRow.DefaultStatistic = StatisticsType.Average;
+        } else {
+            if (header.Type === 'Dimension') {
+                questionRow = new HeaderCategorization();
+                questionRow.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                questionRow.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                questionRow.DefaultStatistic = StatisticsType.Average;
+                questionRow.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                questionRow.Preaggregation = PreaggregationType.Average;
+                questionRow.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
+                questionRow.Collapsed = false;
+                questionRow.Totals = true;
+            }
+        }
+
+        TableUtil.addBreakByNestedHeader(context, questionRow);
+
+        return questionRow;
     }
 
 }
