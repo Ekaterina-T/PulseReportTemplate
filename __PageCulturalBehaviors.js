@@ -132,7 +132,7 @@ class PageCulturalBehaviors {
 
         table.ColumnHeaders.Add(bcCategories);
 
-        var barChartColors = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DistributionColors');//Config.barChartColors_Distribution;
+        var barChartColors = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DistributionColors');
         var n = barChartColors.length;
 
         if (state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
@@ -169,5 +169,32 @@ class PageCulturalBehaviors {
                 table.ColumnHeaders.Add(formula);
             }
         }
+    }
+
+    /*
+     * @memberof PageCulturalBehaviors
+     * @function drawDistributionChartLegend
+     * @description show distribution bar chart legend
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     */
+    static function drawDistributionChartLegend(context) {
+
+        var text = context.text;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
+
+        var barChartColors = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DistributionColors');
+        var legend = '<div class="bar-chart-legend-container"><div class="bar-chart-legend">';
+
+        for (var i = 0; i < barChartColors.length; i++) {
+            legend += '<div class="bar-chart-legend__item legend-item">' +
+                '<div class="legend-item__color" style="background-color: ' + barChartColors[i].color + ';"></div>' +
+                '<div class="legend-item__label">' + TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label) + '</div>' +
+                '</div>';
+        }
+
+        legend += '</div></div>';
+        text.Output.Append(legend);
+
+        return;
     }
 }
