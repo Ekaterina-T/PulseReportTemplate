@@ -50,8 +50,47 @@ class PageCulturalBehaviors {
         var dimensions = TableUtil.getActiveQuestionsListFromPageConfig(context, pageId, 'Dimensions', true);
 
         for (var i = 0; i < dimensions.length; i++) {
-            var row = getRowHeader(context, dimensions[i]);
-            table.RowHeaders.Add(row);
+            var header = TableUtil.getHeaderDescriptorObject(context, dimensions[i]);
+
+            if (header.Type === 'Question') {
+                var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
+                var questionRow = new HeaderQuestion(qe);
+
+                questionRow.IsCollapsed = true;
+                questionRow.DefaultStatistic = StatisticsType.Average;
+
+                TableUtil.addBreakByNestedHeader(context, questionRow);
+                table.RowHeaders.Add(questionRow);
+            } else {
+                if (header.Type === 'Dimension') {
+                    var dimension: HeaderCategorization = new HeaderCategorization();
+
+                    dimension.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                    dimension.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                    dimension.DefaultStatistic = StatisticsType.Average;
+                    dimension.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                    dimension.Preaggregation = PreaggregationType.Average;
+                    dimension.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+                    dimension.Collapsed = true;
+                    dimension.Totals = true;
+
+                    table.RowHeaders.Add(dimension);
+
+                    var categorization: HeaderCategorization = new HeaderCategorization();
+
+                    categorization.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
+                    categorization.DataSourceNodeId = DataSourceUtil.getDsId(context);
+                    categorization.DefaultStatistic = StatisticsType.Average;
+                    categorization.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
+                    categorization.Preaggregation = PreaggregationType.Average;
+                    categorization.SampleRule = SampleEvaluationRule.Max; // https://jiraosl.firmglobal.com/browse/TQA-4116
+                    categorization.Collapsed = false;
+                    categorization.Totals = false;
+
+                    TableUtil.addBreakByNestedHeader(context, categorization);
+                    table.RowHeaders.Add(categorization);
+                }
+            }
         }
     }
 
@@ -69,43 +108,6 @@ class PageCulturalBehaviors {
         table.ColumnHeaders.Add(responses);
 
         addDistributionBarChart(context);
-    }
-
-    /*
-     * @memberof PageCulturalBehaviors
-     * @function getRowHeader
-     * @description Create HeaderQuestion column with the Question
-     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
-     * @param {Object} question
-     * @param {Object} subHeaders
-     * @return {HeaderQuestion} created column
-     */
-    static function getRowHeader(context, question) {
-        var header = TableUtil.getHeaderDescriptorObject(context, question);
-        var questionRow;
-
-        if (header.Type === 'Question') {
-            var qe = QuestionUtil.getQuestionnaireElement(context, header.Code);
-            questionRow = new HeaderQuestion(qe);
-            questionRow.IsCollapsed = true;
-            questionRow.DefaultStatistic = StatisticsType.Average;
-        } else {
-            if (header.Type === 'Dimension') {
-                questionRow = new HeaderCategorization();
-                questionRow.CategorizationId = String(header.Code).replace(/[ ,&]/g, '');
-                questionRow.DataSourceNodeId = DataSourceUtil.getDsId(context);
-                questionRow.DefaultStatistic = StatisticsType.Average;
-                questionRow.CalculationRule = CategorizationType.AverageOfAggregates; // AvgOfIndividual affects performance
-                questionRow.Preaggregation = PreaggregationType.Average;
-                questionRow.SampleRule = SampleEvaluationRule.Max;// https://jiraosl.firmglobal.com/bcolse/TQA-4116
-                questionRow.Collapsed = false;
-                questionRow.Totals = true;
-            }
-        }
-
-        TableUtil.addBreakByNestedHeader(context, questionRow);
-
-        return questionRow;
     }
 
     /*
