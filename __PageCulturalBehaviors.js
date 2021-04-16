@@ -67,11 +67,13 @@ class PageCulturalBehaviors {
 
         var responses = TableUtil.getBaseColumn(context);
         table.ColumnHeaders.Add(responses);
+
+        addDistributionBarChart(context);
     }
 
     /*
-     * @memberof TableUtil
-     * @function getSimpleQuestionHeader
+     * @memberof PageCulturalBehaviors
+     * @function getRowHeader
      * @description Create HeaderQuestion column with the Question
      * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
      * @param {Object} question
@@ -106,4 +108,65 @@ class PageCulturalBehaviors {
         return questionRow;
     }
 
+    /*
+     * @memberof PageCulturalBehaviors
+     * @function addDistributionBarChart
+     * @description add distribution bar chart
+     * @param {Object} context - {table: table, pageContext: this.pageContext, report: report, user: user, state: state, confirmit: confirmit, log: log, suppressSettings: suppressSettings}
+     */
+    static function addDistributionBarChart(context) {
+
+        var log = context.log;
+        var table = context.table;
+        var state = context.state;
+
+        //add distribution barChart
+        var bcCategories: HeaderCategories = new HeaderCategories();
+        //bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
+        bcCategories.Totals = false;
+        bcCategories.Distributions.Enabled = true;
+        bcCategories.Distributions.HorizontalPercents = true;
+        bcCategories.Decimals = Config.Decimal;
+        bcCategories.HideData = true;
+
+        table.ColumnHeaders.Add(bcCategories);
+
+        var barChartColors = Config.barChartColors_Distribution;
+        var n = barChartColors.length;
+
+        if (state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
+
+            var barChart: HeaderChartCombo = new HeaderChartCombo();
+            var chartValues = [];
+            var i;
+
+            bcCategories.HideData = true;
+
+            for (i = 0; i < n; i++) {
+                var chartValue: ChartComboValue = new ChartComboValue();
+                chartValue.Expression = 'cellv(col-' + (i + 1) + ', row)'; //'cellv(col-'+(n-i)+', row)';//
+                chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
+                chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
+                chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution ' + barChartColors[i].type;
+                chartValues.push(chartValue);
+            }
+
+            barChart.Values = chartValues;
+            barChart.TypeOfChart = ChartComboType.Bar100;
+            barChart.Title = TextAndParameterUtil.getLabelByKey(context, 'Distribution');
+            table.ColumnHeaders.Add(barChart);
+        } else {
+            //workaround for Excel export that shows recording (not chart) and takes translations from recording
+            //so show formula instead of original recording
+
+            for (i = 0; i < barChartColors.length; i++) {
+                var formula: HeaderFormula = new HeaderFormula();
+                formula.Type = FormulaType.Expression;
+                formula.Expression = 'cellv(col-' + (i * 2 + 1) + ', row)/100';
+                formula.Percent = true;
+                formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
+                table.ColumnHeaders.Add(formula);
+            }
+        }
+    }
 }
