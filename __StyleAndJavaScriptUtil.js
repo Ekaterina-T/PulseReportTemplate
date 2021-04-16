@@ -87,7 +87,7 @@ class StyleAndJavaScriptUtil {
             properties.push('trendQuestionsSelected: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_TrendQs')));
         }
         
-        if (pageId === 'Results') {
+        if (pageId === 'Results' || pageId === 'CulturalBehaviors') {
             var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
 
