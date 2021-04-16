@@ -119,6 +119,7 @@ class PageCulturalBehaviors {
         var log = context.log;
         var table = context.table;
         var state = context.state;
+        var pageId = PageUtil.getCurrentPageIdInConfig(context);
 
         //add distribution barChart
         var bcCategories: HeaderCategories = new HeaderCategories();
@@ -131,7 +132,7 @@ class PageCulturalBehaviors {
 
         table.ColumnHeaders.Add(bcCategories);
 
-        var barChartColors = Config.barChartColors_Distribution;
+        var barChartColors = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'DistributionColors');//Config.barChartColors_Distribution;
         var n = barChartColors.length;
 
         if (state.ReportExecutionMode !== ReportExecutionMode.ExcelExport) {
