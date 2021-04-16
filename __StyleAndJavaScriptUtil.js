@@ -87,7 +87,7 @@ class StyleAndJavaScriptUtil {
             properties.push('trendQuestionsSelected: '+JSON.stringify(ParamUtil.GetSelectedCodes (context, 'p_TrendQs')));
         }
         
-        if (pageId === 'Results' || pageId === 'CulturalBehaviors') {
+        if (pageId === 'Results') {
             var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
             var custom_category = DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'CustomStatementCategory');
 
@@ -104,13 +104,14 @@ class StyleAndJavaScriptUtil {
 
             var isDimensionsVisible = PageResults.isDimensionsMode(context);
             properties.push('isDimensionsTabVisible: ' + isDimensionsVisible);
+            properties.push('hideHelp: '+!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave'));
+        }
 
+        if (pageId === 'Results' || pageId === 'CulturalBehaviors') {
             properties.push('evenRowColor: '+JSON.stringify(Config.evenRowColor));
             properties.push('evenDimensionColor: '+JSON.stringify(Config.evenDimensionColor));
             properties.push('oddDimensionColor: '+JSON.stringify(Config.oddDimensionColor));
             properties.push('lineColor: '+JSON.stringify(Config.lineColor));
-
-            properties.push('hideHelp: '+!DataSourceUtil.getPagePropertyValueFromConfig(context, pageId, 'showPrevWave'));
         }
 
         if (pageId === 'Categorical_') {
