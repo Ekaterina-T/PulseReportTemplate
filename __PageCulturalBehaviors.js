@@ -104,8 +104,8 @@ class PageCulturalBehaviors {
         var table = context.table;
         var log = context.log;
 
-        var responses = TableUtil.getBaseColumn(context);
-        table.ColumnHeaders.Add(responses);
+        //var responses = TableUtil.getBaseColumn(context);
+        //table.ColumnHeaders.Add(responses);
 
         addDistributionBarChart(context);
     }
