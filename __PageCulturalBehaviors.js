@@ -9,7 +9,7 @@ class PageCulturalBehaviors {
      */
     static function tableCulturalBehaviors_Hide(context) {
 
-        return SuppressUtil.isGloballyHidden(context) || ParamUtil.isParameterEmpty(context, 'p_CulturalBehaviors_BreakBy');
+        return SuppressUtil.isGloballyHidden(context);
     }
 
     /**
