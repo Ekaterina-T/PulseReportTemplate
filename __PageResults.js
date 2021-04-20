@@ -339,7 +339,7 @@ class PageResults {
             addScaleDistributionColumns(context);
         }
         // add Responses Column
-        addResponsesColumn(context);
+        addResponsesColumn(context, null, null, isNormalizedTable);
         // add Benchmark related columns
         tableStatements_AddBenchmarkColumns_Banner0(context, isNormalizedTable);
     }
@@ -563,9 +563,11 @@ class PageResults {
   *  @param {object} context: {state: state, report: report, log: log, table: table}
   *  @param {Header} parentHeader - not mandatory
   */
-    static function addResponsesColumn(context, parentHeader, isMandatory) {
+    static function addResponsesColumn(context, parentHeader, isMandatory, isNormalizedTable) {
 
         var state = context.state;
+        var log = context.log;
+
         // add Responses Column if it's not Excel export (KN-353)
         if (!isMandatory && state.ReportExecutionMode === ReportExecutionMode.ExcelExport) {
             return;
@@ -579,6 +581,29 @@ class PageResults {
             parentHeader.SubHeaders.Add(responses);
         } else {
             table.ColumnHeaders.Add(responses);
+        }
+
+        //when marker suppress is used table shows questions without answers
+        //so we mark rows without answers and then hide help column and rows with js
+        var suppressSettings = context.suppressSettings;
+        var isPulseProgram = !DataSourceUtil.isProjectSelectorNotNeeded(context);
+
+        if(isPulseProgram && !Export.isExcelExportMode(context) && suppressSettings.displayBaseOption == 'showMarker') {
+
+            var report = context.report;
+            var benchmarkTable = (isNormalizedTable) ? "BenchmarksNorm": "Benchmarks";
+            var baseValues: Datapoint[] = report.TableUtils.GetColumnValues(benchmarkTable, 1);
+
+            var jsRowSuppressIndicator: HeaderContent = new HeaderContent();
+            jsRowSuppressIndicator.Title = new Label(9, 'noResponsesIndicator');
+
+            for (var i = 0; i < baseValues.length; i++) {
+                if (baseValues[i].Value ==0 || baseValues[i].IsEmpty) {
+                    jsRowSuppressIndicator.SetCellValue(i,  'noresponses');
+                }
+            }
+
+            table.ColumnHeaders.Add(jsRowSuppressIndicator);
         }
     }
 
