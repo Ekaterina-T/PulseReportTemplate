@@ -163,10 +163,10 @@ class PageCulturalBehaviors {
             //workaround for Excel export that shows recording (not chart) and takes translations from recording
             //so show formula instead of original recording
 
-            for (i = 0; i < barChartColors.length; i++) {
+            for (i = 0; i < n; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
-                formula.Expression = 'cellv(col-' + (i * 2 + 1) + ', row)/100';
+                formula.Expression = 'cellv(col-' + (n - i) + ', row)/100';
                 formula.Percent = true;
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
