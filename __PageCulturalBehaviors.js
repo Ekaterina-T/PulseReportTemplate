@@ -128,10 +128,10 @@ class PageCulturalBehaviors {
         //bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
         bcCategories.Totals = false;
         bcCategories.Distributions.Enabled = true;
-        //bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Distributions.Count = true;
+        bcCategories.Distributions.HorizontalPercents = true;
+        //bcCategories.Distributions.Count = true;
         bcCategories.Decimals = Config.Decimal;
-        //bcCategories.HideData = true;
+        bcCategories.HideData = true;
 
         table.ColumnHeaders.Add(bcCategories);
 
