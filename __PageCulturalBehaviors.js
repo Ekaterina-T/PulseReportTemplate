@@ -129,7 +129,7 @@ class PageCulturalBehaviors {
         bcCategories.Totals = false;
         bcCategories.Distributions.Enabled = true;
         //bcCategories.Distributions.HorizontalPercents = true;
-        bcCategories.Distributions.Counts = true;
+        bcCategories.Distributions.Count = true;
         bcCategories.Decimals = Config.Decimal;
         bcCategories.HideData = true;
 
