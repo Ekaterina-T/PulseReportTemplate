@@ -128,7 +128,8 @@ class PageCulturalBehaviors {
         //bcCategories.RecodingIdent = DataSourceUtil.getSurveyPropertyValueFromConfig(context, 'ReusableRecodingId');
         bcCategories.Totals = false;
         bcCategories.Distributions.Enabled = true;
-        bcCategories.Distributions.HorizontalPercents = true;
+        //bcCategories.Distributions.HorizontalPercents = true;
+        bcCategories.Distributions.Counts = true;
         bcCategories.Decimals = Config.Decimal;
         bcCategories.HideData = true;
 
