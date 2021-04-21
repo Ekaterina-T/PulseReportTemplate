@@ -145,9 +145,9 @@ class PageCulturalBehaviors {
 
             bcCategories.HideData = true;
 
-            for (i = n; i > 0; i--) {
+            for (i = 0; i < n; i++) {
                 var chartValue: ChartComboValue = new ChartComboValue();
-                chartValue.Expression = 'cellv(col-' + (i) + ', row)'; //'cellv(col-'+(n-i)+', row)';//
+                chartValue.Expression = 'cellv(col-' + (n - i) + ', row)'; //'cellv(col-'+(n-i)+', row)';//
                 chartValue.BaseColor = new ChartComboColorSet([barChartColors[i].color]);
                 chartValue.Name = TextAndParameterUtil.getTextTranslationByKey(context, barChartColors[i].label);
                 chartValue.CssClass = 'barchart__bar barchart__bar_type_distribution ' + barChartColors[i].type;
