@@ -166,7 +166,7 @@ class PageCulturalBehaviors {
             for (i = 0; i < n; i++) {
                 var formula: HeaderFormula = new HeaderFormula();
                 formula.Type = FormulaType.Expression;
-                formula.Expression = 'cellv(col-' + (n - i) + ', row)/100';
+                formula.Expression = 'cellv(col-' + (n) + ', row)/100';
                 formula.Percent = true;
                 formula.Title = TextAndParameterUtil.getLabelByKey(context, barChartColors[i].label);
                 table.ColumnHeaders.Add(formula);
