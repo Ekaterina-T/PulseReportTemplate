@@ -131,7 +131,7 @@ class PageCulturalBehaviors {
         //bcCategories.Distributions.HorizontalPercents = true;
         bcCategories.Distributions.Count = true;
         bcCategories.Decimals = Config.Decimal;
-        bcCategories.HideData = true;
+        //bcCategories.HideData = true;
 
         table.ColumnHeaders.Add(bcCategories);
 
