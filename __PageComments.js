@@ -42,7 +42,10 @@ class PageComments {
         static function hitlistComments_Render(context){
     
             var log = context.log;
+
+            log.LogDebug('before getting pageid');
             var pageId = PageUtil.getCurrentPageIdInConfig(context);
+            log.LogDebug('after getting pageid ' + pageId);
     
             Hitlist.AddColumnsByParameter(context, "p_AllOpenTextQs", {sortable: true, searchable: false});
             Hitlist.AddColumnsByParameter(context, "p_ScoreQs", {sortable: true, searchable: false});
