@@ -67,9 +67,12 @@ class PageComments {
          */
           static function tableBase_Render (context) {
               var log = context.log;
+
+              log.LogDebug("start tableBase_Render");
               var open_Ids = ParamUtil.GetSelectedCodes (context, 'p_AllOpenTextQs');
               var tag_Ids = ParamUtil.GetSelectedCodes (context, 'p_TagQs');
               SuppressUtil.buildReportBaseTableForHitlist(context, open_Ids, tag_Ids);
+              log.LogDebug("end tableBase_Render");
           }
 
     }
