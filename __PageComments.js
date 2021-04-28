@@ -48,14 +48,21 @@ class PageComments {
             log.LogDebug('after getting pageid ' + pageId);
     
             Hitlist.AddColumnsByParameter(context, "p_AllOpenTextQs", {sortable: true, searchable: false});
+            log.LogDebug('after AddColumnsByParameter p_AllOpenTextQs ' + pageId);
             Hitlist.AddColumnsByParameter(context, "p_ScoreQs", {sortable: true, searchable: false});
+            log.LogDebug('after AddColumnsByParameter p_ScoreQs ' + pageId);
             Hitlist.AddColumnsByParameter(context, "p_TagQs", {sortable: false, searchable: false});
+            log.LogDebug('after AddColumnsByParameter p_TagQs ' + pageId);
     
             var staticCols = DataSourceUtil.getPagePropertyValueFromConfig (context, pageId, 'staticColumns');
+
+            log.LogDebug('after get  staticCols' + pageId);
     
             for (var i=0; i<staticCols.length; i++) {
                 Hitlist.AddColumn(context, staticCols[i], {sortable: true, searchable: true});
             }
+
+            log.LogDebug('end hitlistComments_Render' + pageId);
         }
     
          /**
