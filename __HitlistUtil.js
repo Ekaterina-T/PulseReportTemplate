@@ -11,17 +11,22 @@ class Hitlist {
          * @returns {Boolean}
          */
         static function hitlistComments_Hide(context, baseTable, parameterWithOpenText){
-    
+            var log = context.log;
+
+            log.LogDebug("start Hitlist.hitlistComments_Hide");
+
             if (SuppressUtil.isGloballyHidden(context)) {
                 return true;
             }
+
+            log.LogDebug("after SuppressUtil.isGloballyHidden");
     
             // if the parameter is passed and no open texts available, the hitlist should be hidden
             if(parameterWithOpenText && ParamUtil.GetSelectedCodes (context, parameterWithOpenText).length === 0) {
                 return true;
             }
     
-            var log = context.log;
+
             var report = context.report;
     
             // check base value in each table cell. If at least 1 value is less than Config.CommentSuppressValue, the whole hitlist is hidden
@@ -34,6 +39,9 @@ class Hitlist {
                     }
                 }
             }
+
+            log.LogDebug("end Hitlist.hitlistComments_Hide");
+
             return false;
         }
       
