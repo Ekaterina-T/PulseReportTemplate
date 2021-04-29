@@ -13,13 +13,9 @@ class Hitlist {
         static function hitlistComments_Hide(context, baseTable, parameterWithOpenText){
             var log = context.log;
 
-            log.LogDebug("start Hitlist.hitlistComments_Hide");
-
             if (SuppressUtil.isGloballyHidden(context)) {
                 return true;
             }
-
-            log.LogDebug("after SuppressUtil.isGloballyHidden");
     
             // if the parameter is passed and no open texts available, the hitlist should be hidden
             if(parameterWithOpenText && ParamUtil.GetSelectedCodes (context, parameterWithOpenText).length === 0) {
@@ -39,8 +35,6 @@ class Hitlist {
                     }
                 }
             }
-
-            log.LogDebug("end Hitlist.hitlistComments_Hide");
 
             return false;
         }

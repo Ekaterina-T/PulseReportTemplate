@@ -31,9 +31,7 @@ class PageComments {
         static function hitlistComments_Hide(context){
            var log = context.log;
 
-           log.LogDebug("before Hitlist.hitlistComments_Hide");
            return Hitlist.hitlistComments_Hide(context, "Base", "p_AllOpenTextQs");
-           log.LogDebug("after Hitlist.hitlistComments_Hide");
         }
     
         /**
